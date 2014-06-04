@@ -1,21 +1,46 @@
+/**
+ * @file network.h
+ * @author Soroush Haeri <soroosh.haeri@me.com>
+ * @date Jun 3, 2014
+ *
+ * @copyright Copyright (c) Jun 3, 2014                      SOROUSH HAERI
+ *      All Rights Reserved
+ *
+ *      Permission to use, copy, modify, and distribute this software and its
+ *      documentation for any purpose and without fee is hereby granted, provided
+ *      that the above copyright notice appear in all copies and that both that
+ *      copyright notice and this permission notice appear in supporting
+ *      documentation, and that the name of the author not be used in advertising or
+ *      publicity pertaining to distribution of the software without specific,
+ *      written prior permission.
+ *
+ *      THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+ *      ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS; IN NO EVENT SHALL
+ *      AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY
+ *      DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+ *      AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ *      OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ */
 #ifndef NODE_H_
 #define NODE_H_
 
 #include <tuple>
 #include "core-types.h"
+
 #include "id-generator.h"
 
-namespace vne{
-template<typename... Args>
+namespace vne
+{
+template<typename ... Args>
 class Node
 {
 public:
-	Node ();
-	Node (Entity_t t);
-	virtual ~Node ();
-	int getId ();
+	Node();
+	Node(Entity_t t);
+	virtual ~Node();
+	int getId();
 	Entity_t getType();
-	std::tuple<Args...> getResources ();
+	std::tuple<Args...> getResources();
 	void setResources(std::tuple<Args...>);
 private:
 	typedef Node<Args...> this_t;
@@ -24,37 +49,39 @@ private:
 	std::tuple<Args...> resources;
 };
 
-template<typename... Args>
-Node<Args...>::Node ()
-       : id(vne::IdGenerator::getId<this_t>(this)),
-         type (Entity_t::substrate)
+template<typename ... Args>
+Node<Args...>::Node() :
+		id(vne::IdGenerator::getId<this_t>(this)), type(Entity_t::substrate)
 {
 }
 
-template<typename... Args>
-Node<Args...>::Node (Entity_t t)
-	: id(vne::IdGenerator::getId<this_t>(this)),
-	  type (t)
+template<typename ... Args>
+Node<Args...>::Node(Entity_t t) :
+		id(vne::IdGenerator::getId<this_t>(this)), type(t)
 {
 }
-template<typename... Args>
-Node<Args...>::~Node ()
+template<typename ... Args>
+Node<Args...>::~Node()
 {
 }
-template<typename... Args>
-void Node<Args...>::setResources (std::tuple<Args...> t){
-        resources = t;
+template<typename ... Args>
+void Node<Args...>::setResources(std::tuple<Args...> t)
+{
+	resources = t;
 }
-template<typename... Args>
-std::tuple<Args...> Node<Args...>::getResources (){
-        return resources;
+template<typename ... Args>
+std::tuple<Args...> Node<Args...>::getResources()
+{
+	return resources;
 }
-template<typename... Args>
-Entity_t Node<Args...>::getType () {
+template<typename ... Args>
+Entity_t Node<Args...>::getType()
+{
 	return type;
 }
-template<typename... Args>
-int Node<Args...>::getId () {
+template<typename ... Args>
+int Node<Args...>::getId()
+{
 	return id;
 }
 }
