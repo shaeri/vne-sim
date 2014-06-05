@@ -135,13 +135,16 @@ BOOST_AUTO_TEST_CASE(createNetwork)
 {
 	//typedef vne::Node<int> t1;
 	//int nCount = vne::IdGenerator::peekId<t1>();
-	vne::Network<vne::Node<int>, vne::Link<int>> net = vne::Network<vne::Node<int>, vne::Link<int>> ();
+	//vne::Network<vne::Node<int>, int, vne::Link<int>, int> net = vne::Network<vne::Node<int>, int, vne::Link<int>, int> ();
+	vne::Network<vne::Node<int>, vne::Link<int>> net = vne::Network<vne::Node<int>, vne::Link<int>>();
+	/*
 	std::shared_ptr<vne::Node<int>> nodePtr = std::make_shared<vne::Node<int>>(
 			vne::Entity_t::substrate);
 	std::shared_ptr<vne::Link<int>> linkPtr = std::make_shared<vne::Link<int>>(
 			vne::Entity_t::substrate, 0, 0);
 	net.addLink(linkPtr);
 	net.addNode(nodePtr);
+	*/
 }
 BOOST_AUTO_TEST_SUITE_END()
 	/*
