@@ -30,38 +30,37 @@
 
 namespace vne
 {
-template <typename...> class Network;
-template<template<typename...> class Node, typename... NodeT,
-			template<typename...> class Link, typename... LinkT>
+template<typename ...> class Network;
+template<typename ... NodeT, typename ... LinkT>
 class Network<Node<NodeT...>, Link<LinkT...>>
 {
 public:
-	Network ();
+	Network();
 	~Network();
-	void addNode (std::shared_ptr<Node<NodeT...>> node) ;
-	//void addLink (std::shared_ptr<Link<LinkT...>> link) ;
+	void addNode(std::shared_ptr<Node<NodeT...>> node);
+	void addLink(std::shared_ptr<Link<LinkT...>> link);
 private:
-	std::map<int, std::shared_ptr<Node<NodeT...>>> nodesMap;
-	//std::map<int, std::vector<std::shared_ptr<Link<LinkT...>>>> linksMap;
+	std::map<int, std::shared_ptr<Node<NodeT...>>>nodesMap;
+	std::map<int, std::vector<std::shared_ptr<Link<LinkT...>>>> linksMap;
 };
-template<template<typename...> class Node, typename... NodeT,
-			template<typename...> class Link, typename... LinkT>
-Network<Node<NodeT...>, Link<LinkT...>>::Network ()
+template<typename ... NodeT, typename ... LinkT>
+Network<Node<NodeT...>, Link<LinkT...>>::Network()
 {
 }
-/*
-template<vne::Node, typename... args1, vne::Link, typename... args2>
-Network<NodeT, LinkT>::~Network ()
+template<typename ... NodeT, typename ... LinkT>
+Network<Node<NodeT...>, Link<LinkT...>>::~Network()
 {
 }
-template<vne::Node, typename... args1, vne::Link, typename... args2>
-void Network<NodeT, LinkT>::addNode(std::shared_ptr<NodeT> node)
+template<typename ... NodeT, typename ... LinkT>
+void Network<Node<NodeT...>, Link<LinkT...>>::addNode(
+		std::shared_ptr<Node<NodeT...>> node)
 {
 }
-template<vne::Node, typename... args1, vne::Link, typename... args2>
-void Network<NodeT, LinkT>::addLink(std::shared_ptr<LinkT> link)
+template<typename ... NodeT, typename ... LinkT>
+void Network<Node<NodeT...>, Link<LinkT...>>::addLink(
+		std::shared_ptr<Link<LinkT...>> link)
 {
 }
-*/
+
 }
 #endif /* NETWORK_H_ */

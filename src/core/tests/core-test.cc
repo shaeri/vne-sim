@@ -42,7 +42,6 @@ typedef vne::Node<int, double, std::string> node_fixture;
 
 typedef vne::Link<int, double, std::string> t1;
 typedef vne::Node<int, double, std::string> t2;
-
 //extern class IdGenerator;
 //extern std::map<const char*, int> vne::IdGenerator::m_map;
 
@@ -136,7 +135,7 @@ BOOST_AUTO_TEST_CASE(createNetwork)
 	//typedef vne::Node<int> t1;
 	//int nCount = vne::IdGenerator::peekId<t1>();
 	//vne::Network<vne::Node<int>, int, vne::Link<int>, int> net = vne::Network<vne::Node<int>, int, vne::Link<int>, int> ();
-	vne::Network<vne::Node<int>, vne::Link<int>> net = vne::Network<vne::Node<int>, vne::Link<int>>();
+	vne::Network<vne::Node<int,int>,vne::Link<std::string>> n = vne::Network<vne::Node<int,int>,vne::Link<std::string>> ();
 	/*
 	std::shared_ptr<vne::Node<int>> nodePtr = std::make_shared<vne::Node<int>>(
 			vne::Entity_t::substrate);
