@@ -40,6 +40,8 @@ public:
 	Link(Entity_t t, int node_from, int node_to);
 	virtual ~Link();
 	int getId();
+	int getNodeFromId ();
+	int getNodeToId ();
 	Entity_t getType();
 	std::tuple<Args...> getResources();
 	void setResources(std::tuple<Args...>);
@@ -58,8 +60,10 @@ Link<Args...>::Link() :
 }
 template<typename ... Args>
 Link<Args...>::Link(Entity_t t, int node_from, int node_to) :
-		id(IdGenerator::getId<this_t>(this)), type(t), node_from_id(node_from), node_to_id(
-				node_to)
+		id(IdGenerator::getId<this_t>(this)),
+		type(t),
+		node_from_id(node_from),
+		node_to_id(node_to)
 {
 }
 template<typename ... Args>
@@ -85,6 +89,16 @@ template<typename ... Args>
 int Link<Args...>::getId()
 {
 	return id;
+}
+template<typename ... Args>
+int Link<Args...>::getNodeFromId()
+{
+	return node_from_id;
+}
+template<typename ... Args>
+int Link<Args...>::getNodeToId()
+{
+	return node_to_id;
 }
 }
 #endif

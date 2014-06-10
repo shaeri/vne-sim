@@ -118,50 +118,65 @@ BOOST_AUTO_TEST_SUITE_END()
  * Generator tests
  */
 BOOST_AUTO_TEST_SUITE(NetworkTest)
-BOOST_AUTO_TEST_CASE(AddSimpleNodeTest)
-{
-	//typedef vne::Node<int> t1;
-	//int nCount = vne::IdGenerator::peekId<t1>();
-	vne::SimpleNetwork net = vne::SimpleNetwork();
-	for (int i = 0; i < 5; i++)
-	{
-		std::shared_ptr<vne::Node<int>> n = std::make_shared<vne::Node<int>>(
-				vne::Entity_t::substrate);
-		net.addNode(n);
-	}
-}
+/*BOOST_AUTO_TEST_CASE(AddSimpleNodeTest)
+ {
+ //typedef vne::Node<int> t1;
+ //int nCount = vne::IdGenerator::peekId<t1>();
+ vne::SimpleNetwork net = vne::SimpleNetwork();
+ for (int i = 0; i < 5; i++)
+ {
+ std::shared_ptr<vne::Node<int>> n = std::make_shared<vne::Node<int>>(
+ vne::Entity_t::substrate);
+ net.addNode(n);
+ }
+ }*/
 BOOST_AUTO_TEST_CASE(createNetwork)
 {
 	//typedef vne::Node<int> t1;
 	//int nCount = vne::IdGenerator::peekId<t1>();
 	//vne::Network<vne::Node<int>, int, vne::Link<int>, int> net = vne::Network<vne::Node<int>, int, vne::Link<int>, int> ();
-	vne::Network<vne::Node<int,int>,vne::Link<std::string>> n = vne::Network<vne::Node<int,int>,vne::Link<std::string>> ();
-	/*
-	std::shared_ptr<vne::Node<int>> nodePtr = std::make_shared<vne::Node<int>>(
+	vne::Network<vne::Node<int>, vne::Link<int>> n = vne::Network<
+			vne::Node<int>, vne::Link<int>>();
+
+	std::shared_ptr<vne::Node<int>> node1Ptr = std::make_shared<vne::Node<int>>(
 			vne::Entity_t::substrate);
-	std::shared_ptr<vne::Link<int>> linkPtr = std::make_shared<vne::Link<int>>(
-			vne::Entity_t::substrate, 0, 0);
-	net.addLink(linkPtr);
-	net.addNode(nodePtr);
-	*/
+	n.addNode(node1Ptr);
+	std::shared_ptr<vne::Node<int>> anotherPtr = n.getNode(node1Ptr->getId());
+	BOOST_REQUIRE(anotherPtr->getId() == node1Ptr->getId());
+	anotherPtr.reset();
+	std::shared_ptr<vne::Node<int>> node2Ptr = std::make_shared<vne::Node<int>>(
+			vne::Entity_t::substrate);
+	BOOST_REQUIRE(node1Ptr->getId() != node2Ptr->getId());
+	n.addNode(node2Ptr);
+	std::shared_ptr<vne::Link<int>> lPtr = std::make_shared<vne::Link<int>>(
+			vne::Entity_t::substrate, node1Ptr->getId(), node2Ptr->getId());
+	BOOST_REQUIRE(lPtr->getNodeFromId() != lPtr->getNodeToId());
+	n.addLink(lPtr);
+	BOOST_CHECK(n.getLinksForNodeId(node1Ptr->getId())->size() == 1);
+	BOOST_CHECK(n.getLinksForNodeId(node2Ptr->getId())->size() == 1);
+	/*std::shared_ptr<vne::Link<int>> linkPtr = std::make_shared<vne::Link<int>>(
+	 vne::Entity_t::substrate, 0, 0);
+	 net.addLink(linkPtr);
+	 net.addNode(nodePtr);
+	 */
 }
 BOOST_AUTO_TEST_SUITE_END()
-	/*
-	 * Network tests
-	 */
-BOOST_AUTO_TEST_SUITE	(GeneratorTest)
-	BOOST_AUTO_TEST_CASE(Resources)
+/*
+ * Network tests
+ */
+BOOST_AUTO_TEST_SUITE(GeneratorTest)
+BOOST_AUTO_TEST_CASE(Resources)
+{
+	int lCount = vne::IdGenerator::peekId<t1>();
+	int nCount = vne::IdGenerator::peekId<t2>();
+	for (int i = 0; i < 100; i++)
 	{
-		int lCount = vne::IdGenerator::peekId<t1>();
-		int nCount = vne::IdGenerator::peekId<t2>();
-		for (int i = 0; i < 100; i++)
-		{
-			vne::Link<int, double, std::string> l = vne::Link<int, double,
-					std::string>(vne::Entity_t::virt, 0, 0);
-			vne::Node<int, double, std::string> n = vne::Node<int, double,
-					std::string>(vne::Entity_t::virt);
-			BOOST_CHECK(l.getId() == lCount + i);
-			BOOST_CHECK(n.getId() == nCount + i);
-		}
+		vne::Link<int, double, std::string> l = vne::Link<int, double,
+				std::string>(vne::Entity_t::virt, 0, 0);
+		vne::Node<int, double, std::string> n = vne::Node<int, double,
+				std::string>(vne::Entity_t::virt);
+		BOOST_CHECK(l.getId() == lCount + i);
+		BOOST_CHECK(n.getId() == nCount + i);
 	}
-	BOOST_AUTO_TEST_SUITE_END()
+}
+BOOST_AUTO_TEST_SUITE_END()
