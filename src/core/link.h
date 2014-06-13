@@ -43,15 +43,20 @@ public:
 	int getNodeFromId ();
 	int getNodeToId ();
 	Entity_t getType();
-	std::tuple<Args...> getResources();
-	void setResources(std::tuple<Args...>);
+	/*
+	 * I do not think these functions are necessary
+	 */
+	//std::tuple<Args...> getResources();
+	//void setResources(std::tuple<Args...>);
 private:
 	typedef Link<Args...> this_t;
+protected:
 	int id;
 	Entity_t type;
 	std::tuple<Args...> resources;
 	int node_from_id;
 	int node_to_id;
+
 };
 template<typename ... Args>
 Link<Args...>::Link() :
@@ -70,6 +75,7 @@ template<typename ... Args>
 Link<Args...>::~Link()
 {
 }
+/*
 template<typename ... Args>
 void Link<Args...>::setResources(std::tuple<Args...> t)
 {
@@ -80,6 +86,7 @@ std::tuple<Args...> Link<Args...>::getResources()
 {
 	return resources;
 }
+*/
 template<typename ... Args>
 Entity_t Link<Args...>::getType()
 {

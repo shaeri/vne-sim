@@ -1,9 +1,9 @@
 /**
- * @file network-simple.h
+ * @file simple-request-proc.h
  * @author Soroush Haeri <soroosh.haeri@me.com>
- * @date Jun 3, 2014
+ * @date Jun 12, 2014
  * 
- * @copyright Copyright (c) Jun 3, 2014                      SOROUSH HAERI
+ * @copyright Copyright (c) Jun 12, 2014                      SOROUSH HAERI
  *            All Rights Reserved 
  *
  *            Permission to use, copy, modify, and distribute this software and its
@@ -21,22 +21,31 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef SIMPLE_NETWORK_H_
-#define SIMPLE_NETWORK_H_
+#ifndef SIMPLE_REQUEST_PROC_H_
+#define SIMPLE_REQUEST_PROC_H_
 
-#include "node.h"
+#include "core/request-processor.h"
 
 namespace vne
 {
-class SimpleNetwork
-{
-public:
-	SimpleNetwork();
-	~SimpleNetwork();
-	int addNode(std::shared_ptr<Node<int>> node);
-private:
-	std::map<int, std::shared_ptr<Node<int>>>nodes;
-};
-}
 
-#endif /* NETWORK_SIMPLE_H_ */
+/*
+ *
+ */
+class SimpleRequestProcessor: public RequestProcessor<
+		Request<std::tuple<int>, std::tuple<int>>> {
+public:
+	SimpleRequestProcessor();
+	~SimpleRequestProcessor();
+	void delta_int();
+	void delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb);
+	void delta_conf(const adevs::Bag<ADEVS_IO_TYPE>& xb);
+	void output_func(adevs::Bag<ADEVS_IO_TYPE>& yb);
+	double ta();
+	void gc_output(adevs::Bag<ADEVS_IO_TYPE>& g);
+};
+
+}
+/* namespace vne */
+
+#endif /* SIMPLE_REQUEST_PROC_H_ */

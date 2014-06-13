@@ -22,18 +22,20 @@
  *      OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE CoreTest 
-
 #include <boost/test/unit_test.hpp>
 #include <tuple>
 #include <string>
+#include <typeinfo>
 
-#include "../simple-network.h"
-#include "../core-types.h"
-#include "../link.h"
-#include "../network.h"
+#include "simple-impl/simple-network.h"
+#include "core/core-types.h"
+#include "core/link.h"
+#include "core/network.h"
+#include "core/request.h"
+#include "simple-impl/simple-request-proc.h"
 //#include "../node.h"
+
+#include "adevs.h"
 
 /*
  * Node test suites
@@ -46,7 +48,7 @@ typedef vne::Node<int, double, std::string> t2;
 //extern std::map<const char*, int> vne::IdGenerator::m_map;
 
 BOOST_FIXTURE_TEST_SUITE (NodeTest, node_fixture)
-
+/*
 BOOST_AUTO_TEST_CASE(Resources)
 {
 	std::tuple<int, double, std::string> t = std::make_tuple(22, 4.2, "test");
@@ -55,6 +57,7 @@ BOOST_AUTO_TEST_CASE(Resources)
 	BOOST_CHECK(std::get<1>(getResources()) == 4.2);
 	BOOST_CHECK(std::get<2>(getResources()).compare("test") == 0);
 }
+*/
 BOOST_AUTO_TEST_CASE(TypeId)
 {
 	vne::Node<int, double, std::string> n = vne::Node<int, double, std::string>(
@@ -83,6 +86,7 @@ BOOST_AUTO_TEST_SUITE_END()
 typedef vne::Link<int, double, std::string> link_fixture;
 BOOST_FIXTURE_TEST_SUITE (LinkTest, link_fixture)
 
+/*
 BOOST_AUTO_TEST_CASE(Resources)
 {
 	std::tuple<int, double, std::string> t = std::make_tuple(22, 4.2, "test");
@@ -92,6 +96,7 @@ BOOST_AUTO_TEST_CASE(Resources)
 	BOOST_CHECK(std::get<1>(link.getResources()) == 4.2);
 	BOOST_CHECK(std::get<2>(link.getResources()).compare("test") == 0);
 }
+*/
 BOOST_AUTO_TEST_CASE(TypeId)
 {
 	vne::Link<int, double, std::string> l = vne::Link<int, double, std::string>(
@@ -158,7 +163,15 @@ BOOST_AUTO_TEST_CASE(createNetwork)
 	 vne::Entity_t::substrate, 0, 0);
 	 net.addLink(linkPtr);
 	 net.addNode(nodePtr);
-	 */
+
+	adevs::crand *rand = new adevs::crand();
+	rand->set_seed(1);
+	adevs::rv randvar =  adevs::rv(rand);
+	for (int i=0; i<10; i++)
+	{
+		std::cout<< randvar.exponential(1) << std::endl;
+	}
+	*/
 }
 BOOST_AUTO_TEST_SUITE_END()
 /*
@@ -178,5 +191,23 @@ BOOST_AUTO_TEST_CASE(Resources)
 		BOOST_CHECK(l.getId() == lCount + i);
 		BOOST_CHECK(n.getId() == nCount + i);
 	}
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(RequestTest)
+BOOST_AUTO_TEST_CASE(RequestTest)
+{
+	vne::Request<std::tuple<int>, std::tuple<int>> req =
+			vne::Request<std::tuple<int>, std::tuple<int>> (std::tuple<int> (1), std::tuple<int> (10));
+	BOOST_CHECK(std::get<0>(req.getNodeResources())==1);
+	BOOST_CHECK(std::get<0>(req.getLinkResources())==10);
+}
+
+BOOST_AUTO_TEST_CASE(SimpleRequestProcessorTest)
+{
+	vne::SimpleRequestProcessor simpleProc =  vne::SimpleRequestProcessor ();
+	vne::SimpleRequestProcessor::ADEVS_IO_TYPE a;
+	std::cout << typeid(vne::SimpleRequestProcessor::ADEVS_IO_TYPE).name();
+	simpleProc.delta_int ();
 }
 BOOST_AUTO_TEST_SUITE_END()

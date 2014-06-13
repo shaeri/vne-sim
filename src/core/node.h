@@ -40,10 +40,12 @@ public:
 	virtual ~Node();
 	int getId();
 	Entity_t getType();
-	std::tuple<Args...> getResources();
-	void setResources(std::tuple<Args...>);
+
+	//std::tuple<Args...> getResources();
+	//void setResources(std::tuple<Args...>);
 private:
 	typedef Node<Args...> this_t;
+protected:
 	int id;
 	Entity_t type;
 	std::tuple<Args...> resources;
@@ -64,6 +66,7 @@ template<typename ... Args>
 Node<Args...>::~Node()
 {
 }
+/*
 template<typename ... Args>
 void Node<Args...>::setResources(std::tuple<Args...> t)
 {
@@ -74,6 +77,7 @@ std::tuple<Args...> Node<Args...>::getResources()
 {
 	return resources;
 }
+*/
 template<typename ... Args>
 Entity_t Node<Args...>::getType()
 {
