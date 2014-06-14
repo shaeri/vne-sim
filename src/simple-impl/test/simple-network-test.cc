@@ -1,5 +1,5 @@
 /**
- * @file simple-link.h
+ * @file simple-network-test.cc
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date Jun 13, 2014
  * 
@@ -21,25 +21,31 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef SIMPLE_LINK_H_
-#define SIMPLE_LINK_H_
+#include <boost/test/unit_test.hpp>
+#include "simple-impl/simple-link.h"
+#include "simple-impl/simple-node.h"
+#include "simple-impl/simple-network.h"
 
-#include "core/link.h"
+using namespace vne;
 
-namespace vne{
-
-/*
- * This type of link has only one resource: Bandwidth (double)
- */
-class SimpleLink: public Link<double>
+BOOST_AUTO_TEST_SUITE (SimpleNetworkTest)
+BOOST_AUTO_TEST_CASE(IDTEST)
 {
-public:
-	SimpleLink();
-	SimpleLink(Entity_t t, int node_from, int node_to, double _bandwidth);
-	double getBandwidth ();
-	virtual ~SimpleLink();
-};
+	std::shared_ptr<SimpleNode> n0 = std::make_shared<SimpleNode>(SimpleNode(Entity_t::substrate, 10));
+	std::shared_ptr<SimpleNode> n1 = std::make_shared<SimpleNode>(SimpleNode(Entity_t::substrate, 10));
+	std::shared_ptr<SimpleNode> n2 = std::make_shared<SimpleNode>(SimpleNode(Entity_t::substrate, 10));
+	std::shared_ptr<SimpleLink> l0 = std::make_shared<SimpleLink>(SimpleLink(Entity_t::substrate, n0->getId(), n1->getId(), 7.5));
+	std::shared_ptr<SimpleLink> l1 = std::make_shared<SimpleLink>(SimpleLink(Entity_t::substrate, n1->getId(), n2->getId(), 7.5));
+	std::shared_ptr<SimpleLink> l2 = std::make_shared<SimpleLink>(SimpleLink(Entity_t::substrate, n1->getId(), n2->getId(), 7.5));
+	SimpleNetwork net = SimpleNetwork ();
+	net.addNode(n0);
+	net.addNode(n1);
+	net.addNode(n2);
+	net.addLink(l0);
+	net.addLink(l1);
+	net.addLink(l2);
+}
 
-} /* namespace vne */
+BOOST_AUTO_TEST_SUITE_END()
 
-#endif /* SIMPLE_LINK_H_ */
+

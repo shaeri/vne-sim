@@ -21,23 +21,22 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include <assert.h>
 #include "simple-network.h"
-
-namespace vne
-{
+namespace vne{
 SimpleNetwork::SimpleNetwork()
 {
 }
 SimpleNetwork::~SimpleNetwork()
 {
 }
-int SimpleNetwork::addNode(std::shared_ptr<Node<int>> node)
+void
+SimpleNetwork::addNode(std::shared_ptr<SimpleNode> node)
 {
-	auto it = nodes.find(node->getId());
-	assert(it == nodes.end());
-	nodes[node->getId()] = node;
-	return 1;
+	Network<Node<double>, Link<double>>::addNode (node);
+}
+void
+SimpleNetwork::addLink(std::shared_ptr<SimpleLink> link)
+{
+	Network<Node<double>, Link<double>>::addLink (link);
 }
 }
-

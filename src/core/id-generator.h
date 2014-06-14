@@ -25,7 +25,8 @@
 #define ID_GENERATOR_H_
 
 #include <typeinfo>
-#include <map>
+#include <typeindex>
+#include <unordered_map>
 
 namespace vne
 {
@@ -42,7 +43,7 @@ public:
 	//static void resetTypeCounter(T obj);
 	//static void resetAllCounters();
 private:
-	static std::map<const char*, int> m_map;
+	static std::unordered_map<std::type_index, int> m_map;
 };
 /*
  IdGenerator::IdGenerator ()
@@ -55,11 +56,11 @@ template<typename T>
 int IdGenerator::getId(T *obj)
 {
 	int ret;
-	const char* type_name = typeid(*obj).name();
-	auto it = m_map.find(type_name);
+	//const char* type_name = typeid(*obj).name();
+	auto it = m_map.find(typeid(*obj));
 	if (it == m_map.end())
 	{
-		m_map[type_name] = 0;
+		m_map[typeid(*obj)] = 0;
 		ret = 0;
 	}
 	else
@@ -72,8 +73,8 @@ template<typename T>
 int IdGenerator::peekId()
 {
 	int ret;
-	const char* type_name = typeid(T).name();
-	auto it = m_map.find(type_name);
+	//const char* type_name = typeid(T).name();
+	auto it = m_map.find(typeid(T));
 	if (it == m_map.end())
 	{
 		ret = 0;

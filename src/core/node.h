@@ -25,6 +25,7 @@
 #define NODE_H_
 
 #include <tuple>
+#include <map>
 #include "core-types.h"
 
 #include "id-generator.h"

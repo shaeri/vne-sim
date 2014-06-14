@@ -24,7 +24,6 @@
 #ifndef REQUEST_H_
 #define REQUEST_H_
 
-#include "adevs.h"
 #include "id-generator.h"
 #include <tuple>
 

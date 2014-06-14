@@ -1,5 +1,5 @@
 /**
- * @file simple-link.h
+ * @file simple-node.h
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date Jun 13, 2014
  * 
@@ -21,25 +21,22 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef SIMPLE_LINK_H_
-#define SIMPLE_LINK_H_
+#ifndef SIMPLE_NODE_H_
+#define SIMPLE_NODE_H_
 
-#include "core/link.h"
+#include <core/node.h>
 
-namespace vne{
-
+namespace vne {
 /*
- * This type of link has only one resource: Bandwidth (double)
+ *
  */
-class SimpleLink: public Link<double>
+class SimpleNode: public Node<double>
 {
 public:
-	SimpleLink();
-	SimpleLink(Entity_t t, int node_from, int node_to, double _bandwidth);
-	double getBandwidth ();
-	virtual ~SimpleLink();
+	SimpleNode(double _cpu);
+	SimpleNode(Entity_t t, double _cpu);
+	double getCPU ();
+	virtual ~SimpleNode();
 };
-
-} /* namespace vne */
-
-#endif /* SIMPLE_LINK_H_ */
+}
+#endif /* SIMPLE_NODE_H_ */

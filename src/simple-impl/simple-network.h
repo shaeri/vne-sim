@@ -24,18 +24,21 @@
 #ifndef SIMPLE_NETWORK_H_
 #define SIMPLE_NETWORK_H_
 
-#include "core/node.h"
+#include "core/network.h"
+
+#include "simple-link.h"
+#include "simple-node.h"
 
 namespace vne
 {
-class SimpleNetwork
+
+class SimpleNetwork : public Network<Node<double>, Link<double>>
 {
 public:
 	SimpleNetwork();
+	void addNode(std::shared_ptr<SimpleNode> node);
+	void addLink(std::shared_ptr<SimpleLink> link);
 	~SimpleNetwork();
-	int addNode(std::shared_ptr<Node<int>> node);
-private:
-	std::map<int, std::shared_ptr<Node<int>>>nodes;
 };
 }
 

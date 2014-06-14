@@ -27,6 +27,7 @@
 
 #include "node.h"
 #include "link.h"
+#include <vector>
 #include <memory>
 #include <boost/log/trivial.hpp>
 
@@ -43,7 +44,7 @@ public:
 	std::shared_ptr<Node<NodeT...>> getNode(int id);
 	void addLink(std::shared_ptr<Link<LinkT...>> link);
 	std::shared_ptr<std::vector<std::shared_ptr<Link<LinkT...>>> >getLinksForNodeId (int id);
-private:
+protected:
 	std::map<int, std::shared_ptr<Node<NodeT...>>>nodesMap;
 	std::map<int, std::shared_ptr<std::vector<std::shared_ptr<Link<LinkT...>>>>> linksMap;
 };

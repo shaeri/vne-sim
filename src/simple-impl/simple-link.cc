@@ -23,9 +23,7 @@
  */
 #include "simple-link.h"
 
-namespace vne
-{
-
+namespace vne{
 SimpleLink::SimpleLink() :
 		Link<double>()
 {
@@ -45,5 +43,4 @@ double SimpleLink::getBandwidth()
 {
 	return std::get<0>(resources);
 }
-
-} /* namespace vne */
+}

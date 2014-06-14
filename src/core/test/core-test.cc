@@ -27,7 +27,7 @@
 #include <string>
 #include <typeinfo>
 
-#include "simple-impl/simple-network.h"
+//#include "simple-impl/simple-network.h"
 #include "core/core-types.h"
 #include "core/link.h"
 #include "core/network.h"

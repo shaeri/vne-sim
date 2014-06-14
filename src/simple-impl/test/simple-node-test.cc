@@ -1,5 +1,5 @@
 /**
- * @file simple-link.h
+ * @file simple-node-test.cc
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date Jun 13, 2014
  * 
@@ -21,25 +21,25 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef SIMPLE_LINK_H_
-#define SIMPLE_LINK_H_
+#include "simple-impl/simple-node.h"
+#include <boost/test/unit_test.hpp>
 
-#include "core/link.h"
 
-namespace vne{
+using namespace vne;
 
-/*
- * This type of link has only one resource: Bandwidth (double)
- */
-class SimpleLink: public Link<double>
+BOOST_AUTO_TEST_SUITE (SimpleNodeTest)
+BOOST_AUTO_TEST_CASE(IDTEST)
 {
-public:
-	SimpleLink();
-	SimpleLink(Entity_t t, int node_from, int node_to, double _bandwidth);
-	double getBandwidth ();
-	virtual ~SimpleLink();
-};
+	SimpleNode n1 = SimpleNode(Entity_t::substrate, 12.5);
+	BOOST_CHECK(n1.getCPU() == 12.5);
+	SimpleNode n2 = SimpleNode(Entity_t::substrate, 6.5);
+	BOOST_CHECK(n2.getType() != Entity_t::virt);
+	BOOST_CHECK(n2.getCPU() == 6.5);
+	Node<double> n3 = Node<double>(Entity_t::substrate);
+	BOOST_TEST_MESSAGE("l3.id = " << n3.getId());
+	BOOST_CHECK(n3.getId() != n1.getId());
+	BOOST_CHECK(n3.getId() != n2.getId());
 
-} /* namespace vne */
-
-#endif /* SIMPLE_LINK_H_ */
+}
+BOOST_AUTO_TEST_SUITE_END()
+/* namespace vne */

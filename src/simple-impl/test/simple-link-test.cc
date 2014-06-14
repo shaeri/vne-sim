@@ -22,7 +22,7 @@
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include <boost/test/unit_test.hpp>
-#include "../simple-link.h"
+#include "simple-impl/simple-link.h"
 
 using namespace vne;
 
