@@ -1,5 +1,5 @@
 /**
- * @file simple-node.cc
+ * @file boost-test-driver.cc
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date Jun 13, 2014
  * 
@@ -21,27 +21,25 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include <simple-impl/simple-node.h>
-#include <tuple>
-namespace vne
-{
+
 /*
-SimpleNode::SimpleNode(double _cpu)
-	: Node<double>()
+ * This is just the definition of the test module
+ */
+#define BOOST_ALL_DYN_LINK
+#define BOOST_TEST_MODULE VNE_MCTS_TESTS
+//#define BOOST_TEST_NO_MAIN
+#include <boost/test/unit_test.hpp>
+//#include "logger.h"
+
+/*
+int main(int, char*[])
 {
-	std::get<0> (resources) = _cpu;
+    logging::add_common_attributes();
+
+    using namespace logging::trivial;
+
+    vne::Logger::getInstance()->logInfo("himom");
+
+    return 0;
 }
 */
-SimpleNode::SimpleNode(double _cpu, Entity_t t)
-	: Node<double>(std::make_tuple(_cpu), t)
-{
-}
-double SimpleNode::getCPU()
-{
-	return std::get<0> (resources);
-}
-SimpleNode::~SimpleNode()
-{
-}
-
-} /* namespace vne */

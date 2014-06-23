@@ -25,6 +25,9 @@
 #define REQUEST_H_
 
 #include "id-generator.h"
+#include "node.h"
+#include "link.h"
+
 #include <tuple>
 
 namespace vne
@@ -33,58 +36,58 @@ template<typename ...> class Request;
 
 
 template<typename ... NODERES, typename ... LINKRES>
-class Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>
+class Request<Node<NODERES...>, Link<LINKRES...>>
 {
 public:
-	Request(std::tuple<NODERES...> noderes, std::tuple<LINKRES...> linkres);
+	Request();
 	int getId ();
-	std::tuple<NODERES...> getNodeResources();
-	std::tuple<LINKRES...> getLinkResources();
-	//void setNodeResources(std::tuple<NODERES...> t);
-	//void setLinkResources(std::tuple<LINKRES...> t);
+	std::tuple<NODERES...> getNodeResources(int node_id);
+	void setNodeResources (int node_id, std::tuple<NODERES...> res);
+	std::tuple<LINKRES...> getLinkResources(int link_id);
+	void setLinkResources (int link_id, std::tuple<LINKRES...> res);
+
 private:
-	typedef Request<std::tuple<NODERES...>, std::tuple<LINKRES...>> this_t;
+	typedef Request<Node<NODERES...>, Link<LINKRES...>> this_t;
+protected:
 	int id;
-	std::tuple<LINKRES...> nodeResources;
-	std::tuple<NODERES...> linkResources;
+	//For every link and node holds a set of resources requests
+	std::unordered_map<int, std::tuple<LINKRES...>> linkResources;
+	std::unordered_map<int, std::tuple<NODERES...>> nodeResources;
+
 };
 template<typename ... NODERES, typename ... LINKRES>
-Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>::Request
-		(std::tuple<NODERES...> nodeRes, std::tuple<LINKRES...> linkRes)
-				: id (vne::IdGenerator::getId<this_t>(this)),
-				  nodeResources (nodeRes),
-				  linkResources (linkRes)
+Request<Node<NODERES...>, Link<LINKRES...>>::Request ()
+	: id (IdGenerator::getId<this_t>(this))
 {
 }
 
 template<typename ... NODERES, typename ... LINKRES>
-int Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>::getId()
+int Request<Node<NODERES...>, Link<LINKRES...>>::getId()
 {
 	return id;
 }
 template<typename ... NODERES, typename ... LINKRES>
-std::tuple<NODERES...> Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>::getNodeResources()
+std::tuple<NODERES...> Request<Node<NODERES...>, Link<LINKRES...>>::getNodeResources(int node_id)
 {
-	return nodeResources;
+	return nodeResources[node_id];
 }
 template<typename ... NODERES, typename ... LINKRES>
-std::tuple<LINKRES...> Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>::getLinkResources()
+std::tuple<LINKRES...> Request<Node<NODERES...>, Link<LINKRES...>>::getLinkResources(int link_id)
 {
-	return linkResources;
+	return linkResources[link_id];
 }
-/*
+
 template<typename ... NODERES, typename ... LINKRES>
-void Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>::setNodeResources
-		(std::tuple<NODERES...> t)
+void Request<Node<NODERES...>, Link<LINKRES...>>::setNodeResources
+		(int node_id, std::tuple<NODERES...> res)
 {
-	nodeResources = t;
+	nodeResources[node_id] = res;
 }
 template<typename ... NODERES, typename ... LINKRES>
-void Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>::setLinkResources
-		(std::tuple<LINKRES...> t)
+void Request<Node<NODERES...>, Link<LINKRES...>>::setLinkResources
+		(int link_id, std::tuple<LINKRES...> res)
 {
-	linkResources = t;
+	linkResources[link_id] = res;
 }
-*/
 }
 #endif /* REQUEST_H_ */

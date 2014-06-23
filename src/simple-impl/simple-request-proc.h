@@ -33,7 +33,7 @@ namespace vne
  *
  */
 class SimpleRequestProcessor: public RequestProcessor<
-		Request<std::tuple<int>, std::tuple<int>>> {
+		Request<Node<int>, Link<int>>> {
 public:
 	SimpleRequestProcessor();
 	~SimpleRequestProcessor();

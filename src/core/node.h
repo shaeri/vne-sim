@@ -24,11 +24,14 @@
 #ifndef NODE_H_
 #define NODE_H_
 
+#include "core-types.h"
+#include "id-generator.h"
+
+#include <boost/log/trivial.hpp>
+#include <boost/log/attributes/named_scope.hpp>
+
 #include <tuple>
 #include <map>
-#include "core-types.h"
-
-#include "id-generator.h"
 
 namespace vne
 {
@@ -36,31 +39,45 @@ template<typename ... Args>
 class Node
 {
 public:
-	Node();
-	Node(Entity_t t);
+	//Node();
+	//Node(Entity_t t);
+	Node(std::tuple<Args...> _res, Entity_t t);
 	virtual ~Node();
 	int getId();
 	Entity_t getType();
-
-	//std::tuple<Args...> getResources();
+	std::tuple<Args...> getResources();
 	//void setResources(std::tuple<Args...>);
 private:
 	typedef Node<Args...> this_t;
 protected:
+	Node(std::tuple<Args...> _res, Entity_t t, bool noid);
 	int id;
 	Entity_t type;
 	std::tuple<Args...> resources;
 };
-
+/*
 template<typename ... Args>
 Node<Args...>::Node() :
 		id(vne::IdGenerator::getId<this_t>(this)), type(Entity_t::substrate)
 {
 }
-
 template<typename ... Args>
 Node<Args...>::Node(Entity_t t) :
 		id(vne::IdGenerator::getId<this_t>(this)), type(t)
+{
+}
+*/
+template<typename ... Args>
+Node<Args...>::Node(std::tuple<Args...> _res, Entity_t t) :
+		id (vne::IdGenerator::getId<this_t>(this)),
+		type(t),
+		resources (_res)
+{
+}
+template<typename ... Args>
+Node<Args...>::Node(std::tuple<Args...> _res, Entity_t t, bool noid)
+		: type(t),
+		  resources (_res)
 {
 }
 template<typename ... Args>
@@ -73,12 +90,13 @@ void Node<Args...>::setResources(std::tuple<Args...> t)
 {
 	resources = t;
 }
+*/
 template<typename ... Args>
 std::tuple<Args...> Node<Args...>::getResources()
 {
 	return resources;
 }
-*/
+
 template<typename ... Args>
 Entity_t Node<Args...>::getType()
 {

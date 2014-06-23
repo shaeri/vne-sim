@@ -30,6 +30,7 @@
 #include <vector>
 #include <memory>
 #include <boost/log/trivial.hpp>
+#include <boost/log/attributes/named_scope.hpp>
 
 namespace vne
 {
@@ -44,12 +45,16 @@ public:
 	std::shared_ptr<Node<NodeT...>> getNode(int id);
 	void addLink(std::shared_ptr<Link<LinkT...>> link);
 	std::shared_ptr<std::vector<std::shared_ptr<Link<LinkT...>>> >getLinksForNodeId (int id);
+private:
+	typedef Network<Node<NodeT...>, Link<LinkT...>> this_t;
 protected:
-	std::map<int, std::shared_ptr<Node<NodeT...>>>nodesMap;
-	std::map<int, std::shared_ptr<std::vector<std::shared_ptr<Link<LinkT...>>>>> linksMap;
+	int id;
+	std::unordered_map<int, std::shared_ptr<Node<NodeT...>>>nodesMap;
+	std::unordered_map<int, std::shared_ptr<std::vector<std::shared_ptr<Link<LinkT...>>>>> linksMap;
 };
 template<typename ... NodeT, typename ... LinkT>
 Network<Node<NodeT...>, Link<LinkT...>>::Network()
+	: id(IdGenerator::getId<this_t>(this))
 {
 }
 template<typename ... NodeT, typename ... LinkT>

@@ -1,9 +1,9 @@
 /**
- * @file simple-node.cc
+ * @file virtual-network.h
  * @author Soroush Haeri <soroosh.haeri@me.com>
- * @date Jun 13, 2014
+ * @date Jun 17, 2014
  * 
- * @copyright Copyright (c) Jun 13, 2014                      SOROUSH HAERI
+ * @copyright Copyright (c) Jun 17, 2014                      SOROUSH HAERI
  *            All Rights Reserved 
  *
  *            Permission to use, copy, modify, and distribute this software and its
@@ -21,27 +21,11 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include <simple-impl/simple-node.h>
-#include <tuple>
-namespace vne
-{
-/*
-SimpleNode::SimpleNode(double _cpu)
-	: Node<double>()
-{
-	std::get<0> (resources) = _cpu;
-}
-*/
-SimpleNode::SimpleNode(double _cpu, Entity_t t)
-	: Node<double>(std::make_tuple(_cpu), t)
-{
-}
-double SimpleNode::getCPU()
-{
-	return std::get<0> (resources);
-}
-SimpleNode::~SimpleNode()
-{
-}
+#ifndef VIRTUAL_NETWORK_H_
+#define VIRTUAL_NETWORK_H_
 
-} /* namespace vne */
+
+
+
+
+#endif /* VIRTUAL_NETWORK_H_ */

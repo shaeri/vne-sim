@@ -1,5 +1,5 @@
 /**
- * @file boost-test-driver.cc
+ * @file simple-request.h
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date Jun 13, 2014
  * 
@@ -21,10 +21,24 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+#ifndef SIMPLE_REQUEST_H_
+#define SIMPLE_REQUEST_H_
+
+#include <core/request.h>
+
+namespace vne
+{
 
 /*
- * This is just the definition of the test module
+ *
  */
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE VNE_MCTS_TESTS
-#include <boost/test/unit_test.hpp>
+class SimpleRequest: public Request<Node<int>, Link<int>>
+{
+public:
+	SimpleRequest();
+	virtual ~SimpleRequest();
+};
+
+} /* namespace vne */
+
+#endif /* SIMPLE_REQUEST_H_ */

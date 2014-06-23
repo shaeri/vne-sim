@@ -1,5 +1,5 @@
 /**
- * @file simple-node.cc
+ * @file simple-request-test.cc
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date Jun 13, 2014
  * 
@@ -21,27 +21,9 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include <simple-impl/simple-node.h>
-#include <tuple>
+#include <simple-impl/simple-request.h>
+
 namespace vne
 {
-/*
-SimpleNode::SimpleNode(double _cpu)
-	: Node<double>()
-{
-	std::get<0> (resources) = _cpu;
-}
-*/
-SimpleNode::SimpleNode(double _cpu, Entity_t t)
-	: Node<double>(std::make_tuple(_cpu), t)
-{
-}
-double SimpleNode::getCPU()
-{
-	return std::get<0> (resources);
-}
-SimpleNode::~SimpleNode()
-{
-}
 
 } /* namespace vne */

@@ -33,10 +33,12 @@
 #include "core/network.h"
 #include "core/request.h"
 #include "simple-impl/simple-request-proc.h"
-//#include "../node.h"
+#include "core/substrate-node.h"
 
 #include "adevs.h"
 
+using namespace vne;
+//boost::logging::core::get()->add_global_attribute("Scope", boost::make_shared< attrs::named_scope >());
 /*
  * Node test suites
  */
@@ -47,7 +49,7 @@ typedef vne::Node<int, double, std::string> t2;
 //extern class IdGenerator;
 //extern std::map<const char*, int> vne::IdGenerator::m_map;
 
-BOOST_FIXTURE_TEST_SUITE (NodeTest, node_fixture)
+BOOST_AUTO_TEST_SUITE (NodeTest)
 /*
 BOOST_AUTO_TEST_CASE(Resources)
 {
@@ -61,10 +63,12 @@ BOOST_AUTO_TEST_CASE(Resources)
 BOOST_AUTO_TEST_CASE(TypeId)
 {
 	vne::Node<int, double, std::string> n = vne::Node<int, double, std::string>(
-			vne::Entity_t::virt);
+			std::make_tuple(5, 3.5, "yoyo"), vne::Entity_t::virt);
+	vne::Node<int, double> n1 = vne::Node<int, double>(
+				std::make_tuple(5, 3.5), vne::Entity_t::virt);
 	//BOOST_TEST_MESSAGE ("New node object is: " << int(n.getType()));
 	//BOOST_TEST_MESSAGE ("Old node object is: " << int(getType()));
-	BOOST_CHECK(getType() != n.getType());
+	BOOST_CHECK(n.getType() != n1.getType());
 }
 BOOST_AUTO_TEST_CASE(Id)
 {
@@ -72,7 +76,7 @@ BOOST_AUTO_TEST_CASE(Id)
 	for (int i = 0; i < 5; i++)
 	{
 		vne::Node<int, double, std::string> n = vne::Node<int, double,
-				std::string>(vne::Entity_t::virt);
+				std::string>(std::make_tuple (3, 2.5, "test"), vne::Entity_t::virt);
 		//BOOST_TEST_MESSAGE ("New node object is: " << int(n.getType()));
 		//BOOST_TEST_MESSAGE ("Old node object is: " << int(getType()));
 		BOOST_REQUIRE(n.getId() == nCount + i);
@@ -144,13 +148,13 @@ BOOST_AUTO_TEST_CASE(createNetwork)
 			vne::Node<int>, vne::Link<int>>();
 
 	std::shared_ptr<vne::Node<int>> node1Ptr = std::make_shared<vne::Node<int>>(
-			vne::Entity_t::substrate);
+			std::make_tuple(5), vne::Entity_t::substrate);
 	n.addNode(node1Ptr);
 	std::shared_ptr<vne::Node<int>> anotherPtr = n.getNode(node1Ptr->getId());
 	BOOST_REQUIRE(anotherPtr->getId() == node1Ptr->getId());
 	anotherPtr.reset();
 	std::shared_ptr<vne::Node<int>> node2Ptr = std::make_shared<vne::Node<int>>(
-			vne::Entity_t::substrate);
+			std::make_tuple(6), vne::Entity_t::substrate);
 	BOOST_REQUIRE(node1Ptr->getId() != node2Ptr->getId());
 	n.addNode(node2Ptr);
 	std::shared_ptr<vne::Link<int>> lPtr = std::make_shared<vne::Link<int>>(
@@ -187,7 +191,7 @@ BOOST_AUTO_TEST_CASE(Resources)
 		vne::Link<int, double, std::string> l = vne::Link<int, double,
 				std::string>(vne::Entity_t::virt, 0, 0);
 		vne::Node<int, double, std::string> n = vne::Node<int, double,
-				std::string>(vne::Entity_t::virt);
+				std::string>(std::make_tuple(7, 6.5, "TEST"), vne::Entity_t::virt);
 		BOOST_CHECK(l.getId() == lCount + i);
 		BOOST_CHECK(n.getId() == nCount + i);
 	}
@@ -197,10 +201,10 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(RequestTest)
 BOOST_AUTO_TEST_CASE(RequestTest)
 {
-	vne::Request<std::tuple<int>, std::tuple<int>> req =
-			vne::Request<std::tuple<int>, std::tuple<int>> (std::tuple<int> (1), std::tuple<int> (10));
-	BOOST_CHECK(std::get<0>(req.getNodeResources())==1);
-	BOOST_CHECK(std::get<0>(req.getLinkResources())==10);
+	vne::Request<vne::Node<int>, vne::Link<int>> req =
+			vne::Request<vne::Node<int>, vne::Link<int>> ();
+	BOOST_CHECK(std::get<0>(req.getNodeResources(0))!=1);
+	BOOST_CHECK(std::get<0>(req.getLinkResources(0))!=10);
 }
 
 BOOST_AUTO_TEST_CASE(SimpleRequestProcessorTest)
@@ -209,5 +213,32 @@ BOOST_AUTO_TEST_CASE(SimpleRequestProcessorTest)
 	vne::SimpleRequestProcessor::ADEVS_IO_TYPE a;
 	std::cout << typeid(vne::SimpleRequestProcessor::ADEVS_IO_TYPE).name();
 	simpleProc.delta_int ();
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(SubstrateNetworkTest)
+BOOST_AUTO_TEST_CASE(SubstrateNodeTest)
+{
+	std::shared_ptr<SubstrateNode<double,int>>  sn1   (new SubstrateNode<double,int> (std::make_tuple<double> (10.0, 10)));
+
+	std::shared_ptr<VirtualNode<double,int>> vn1 (new VirtualNode<double,int> (std::make_tuple<double> (5.0, 4)));
+	std::shared_ptr<VirtualNode<double, int>> vn2 (new VirtualNode<double,int> (std::make_tuple<double> (3.0, 5)));
+	std::shared_ptr<VirtualNode<double, int>> vn3 (new VirtualNode<double, int> (std::make_tuple<double> (1.0, 1)));
+
+	BOOST_CHECK (sn1->hasResources(vn1->getResources()));
+	BOOST_CHECK (sn1->hasResources(vn2->getResources()));
+	sn1->embedNode(vn1);
+	BOOST_LOG_TRIVIAL(debug) << std::get<0>(sn1->getResources()) << ", " << std::get<1>(sn1->getResources()) << endl;
+	sn1->embedNode(vn2);
+	BOOST_LOG_TRIVIAL(debug) << std::get<0>(sn1->getResources()) << ", " << std::get<1>(sn1->getResources()) << endl;
+	sn1->embedNode(vn3);
+	BOOST_LOG_TRIVIAL(debug)  << std::get<0>(sn1->getResources()) << ", " << std::get<1>(sn1->getResources()) << endl;
+	BOOST_CHECK(std::get<0>(sn1->getResources()) == 1.0);
+	BOOST_CHECK(std::get<1>(sn1->getResources()) == 0);
+	BOOST_LOG_TRIVIAL(debug) << "VN2 pointer count Before free: " << vn2.use_count () << endl;
+	sn1->freeResources(vn2->getId ());
+	BOOST_LOG_TRIVIAL(debug) << "VN2 pointer count After free: " << vn2.use_count () << endl;
+	BOOST_LOG_TRIVIAL(debug) << std::get<0>(sn1->getResources()) << ", " << std::get<1>(sn1->getResources()) << endl;
+	//BOOST_LOG_TRIVIAL(debug) << "Sn1 pointer count " << sn1.use_count () << endl;
 }
 BOOST_AUTO_TEST_SUITE_END()

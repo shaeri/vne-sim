@@ -30,12 +30,12 @@ using namespace vne;
 BOOST_AUTO_TEST_SUITE (SimpleNodeTest)
 BOOST_AUTO_TEST_CASE(IDTEST)
 {
-	SimpleNode n1 = SimpleNode(Entity_t::substrate, 12.5);
+	SimpleNode n1 = SimpleNode(12.5, Entity_t::substrate);
 	BOOST_CHECK(n1.getCPU() == 12.5);
-	SimpleNode n2 = SimpleNode(Entity_t::substrate, 6.5);
+	SimpleNode n2 = SimpleNode(6.5, Entity_t::substrate);
 	BOOST_CHECK(n2.getType() != Entity_t::virt);
 	BOOST_CHECK(n2.getCPU() == 6.5);
-	Node<double> n3 = Node<double>(Entity_t::substrate);
+	Node<double> n3 = Node<double>(std::make_tuple<double>(11.5), Entity_t::substrate);
 	BOOST_TEST_MESSAGE("l3.id = " << n3.getId());
 	BOOST_CHECK(n3.getId() != n1.getId());
 	BOOST_CHECK(n3.getId() != n2.getId());

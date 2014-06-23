@@ -25,35 +25,36 @@
 #define REQUEST_PROCESSOR_H_
 
 #include "request.h"
+#include "adevs.h"
 
 namespace vne
 {
 template<typename...> class RequestProcessor;
 
 template<typename ... NODERES, typename ... LINKRES>
-class RequestProcessor<Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>>
-		: public adevs::Atomic<adevs::PortValue<Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>* >>
+class RequestProcessor<Request<Node<NODERES...>, Link<LINKRES...>>>
+		: public adevs::Atomic<adevs::PortValue<Request<Node<NODERES...>, Link<LINKRES...>>* >>
 {
 public:
 	RequestProcessor();
 	virtual ~RequestProcessor();
 	virtual void delta_int() = 0;
-	virtual void delta_ext(double e, const adevs::Bag<adevs::PortValue<Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>*>>& xb) = 0;
-	virtual void delta_conf(const adevs::Bag<adevs::PortValue<Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>*>>& xb) = 0;
-	virtual void output_func(adevs::Bag<adevs::PortValue<Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>*>>& yb) = 0;
+	virtual void delta_ext(double e, const adevs::Bag<adevs::PortValue<Request<Node<NODERES...>, Link<LINKRES...>>*>>& xb) = 0;
+	virtual void delta_conf(const adevs::Bag<adevs::PortValue<Request<Node<NODERES...>, Link<LINKRES...>>*>>& xb) = 0;
+	virtual void output_func(adevs::Bag<adevs::PortValue<Request<Node<NODERES...>, Link<LINKRES...>>*>>& yb) = 0;
 	virtual double ta() = 0;
-	virtual void gc_output(adevs::Bag<adevs::PortValue<Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>*>>& g) = 0;
+	virtual void gc_output(adevs::Bag<adevs::PortValue<Request<Node<NODERES...>, Link<LINKRES...>>*>>& g) = 0;
 
-	typedef adevs::PortValue<Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>* > ADEVS_IO_TYPE;
+	typedef adevs::PortValue<Request<Node<NODERES...>, Link<LINKRES...>>* > ADEVS_IO_TYPE;
 };
 
 template<typename ... NODERES, typename ... LINKRES>
-RequestProcessor<Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>>::RequestProcessor()
- :adevs::Atomic<adevs::PortValue<Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>* >> ()
+RequestProcessor<Request<Node<NODERES...>, Link<LINKRES...>>>::RequestProcessor()
+ :adevs::Atomic<adevs::PortValue<Request<Node<NODERES...>, Link<LINKRES...>>* >> ()
 {
 }
 template<typename ... NODERES, typename ... LINKRES>
-RequestProcessor<Request<std::tuple<NODERES...>, std::tuple<LINKRES...>>>::~RequestProcessor()
+RequestProcessor<Request<Node<NODERES...>, Link<LINKRES...>>>::~RequestProcessor()
 {
 }
 }

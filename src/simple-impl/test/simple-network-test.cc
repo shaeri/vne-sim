@@ -31,9 +31,9 @@ using namespace vne;
 BOOST_AUTO_TEST_SUITE (SimpleNetworkTest)
 BOOST_AUTO_TEST_CASE(IDTEST)
 {
-	std::shared_ptr<SimpleNode> n0 = std::make_shared<SimpleNode>(SimpleNode(Entity_t::substrate, 10));
-	std::shared_ptr<SimpleNode> n1 = std::make_shared<SimpleNode>(SimpleNode(Entity_t::substrate, 10));
-	std::shared_ptr<SimpleNode> n2 = std::make_shared<SimpleNode>(SimpleNode(Entity_t::substrate, 10));
+	std::shared_ptr<SimpleNode> n0 = std::make_shared<SimpleNode>(SimpleNode(10, Entity_t::substrate));
+	std::shared_ptr<SimpleNode> n1 = std::make_shared<SimpleNode>(SimpleNode(10 ,Entity_t::substrate));
+	std::shared_ptr<SimpleNode> n2 = std::make_shared<SimpleNode>(SimpleNode(10 ,Entity_t::substrate));
 	std::shared_ptr<SimpleLink> l0 = std::make_shared<SimpleLink>(SimpleLink(Entity_t::substrate, n0->getId(), n1->getId(), 7.5));
 	std::shared_ptr<SimpleLink> l1 = std::make_shared<SimpleLink>(SimpleLink(Entity_t::substrate, n1->getId(), n2->getId(), 7.5));
 	std::shared_ptr<SimpleLink> l2 = std::make_shared<SimpleLink>(SimpleLink(Entity_t::substrate, n1->getId(), n2->getId(), 7.5));

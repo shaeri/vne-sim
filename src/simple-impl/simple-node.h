@@ -33,8 +33,8 @@ namespace vne {
 class SimpleNode: public Node<double>
 {
 public:
-	SimpleNode(double _cpu);
-	SimpleNode(Entity_t t, double _cpu);
+	//SimpleNode(double _cpu);
+	SimpleNode(double _cpu, Entity_t t);
 	double getCPU ();
 	virtual ~SimpleNode();
 };
