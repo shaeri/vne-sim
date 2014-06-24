@@ -56,3 +56,6 @@ Thumbs.db
 .dropbox
 
 Debug/
+
+# Xcode user data
+vne-mcts.xcodeproj/project.xcworkspace/xcuserdata
