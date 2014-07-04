@@ -25,7 +25,7 @@
 
 namespace vne
 {
-std::unordered_map<std::type_index, int> IdGenerator::m_map;
+std::map<std::type_index, int> IdGenerator::m_map;
 IdGenerator::IdGenerator()
 {
 }

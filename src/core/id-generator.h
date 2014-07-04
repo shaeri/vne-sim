@@ -26,7 +26,7 @@
 
 #include <typeinfo>
 #include <typeindex>
-#include <unordered_map>
+#include <map>
 
 namespace vne
 {
@@ -43,7 +43,7 @@ public:
 	//static void resetTypeCounter(T obj);
 	//static void resetAllCounters();
 private:
-	static std::unordered_map<std::type_index, int> m_map;
+    static std::map<std::type_index, int> m_map;
 };
 /*
  IdGenerator::IdGenerator ()

@@ -49,8 +49,8 @@ private:
 	typedef Network<Node<NodeT...>, Link<LinkT...>> this_t;
 protected:
 	int id;
-	std::unordered_map<int, std::shared_ptr<Node<NodeT...>>>nodesMap;
-	std::unordered_map<int, std::shared_ptr<std::vector<std::shared_ptr<Link<LinkT...>>>>> linksMap;
+	std::map<int, std::shared_ptr<Node<NodeT...>>>nodesMap;
+	std::map<int, std::shared_ptr<std::vector<std::shared_ptr<Link<LinkT...>>>>> linksMap;
 };
 template<typename ... NodeT, typename ... LinkT>
 Network<Node<NodeT...>, Link<LinkT...>>::Network()

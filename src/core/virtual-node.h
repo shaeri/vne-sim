@@ -35,7 +35,7 @@ class VirtualNode: public Node<NODERES...>
 {
 public:
 	//VirtualNode ();
-	VirtualNode (std::tuple<NODERES...> _res);
+	VirtualNode (Resources<NODERES...> _res);
 	void setHostNode (SubstrateNode<NODERES...>* _n);
 	virtual ~VirtualNode();
 private:
@@ -51,7 +51,7 @@ VirtualNode<NODERES...>::VirtualNode ()
 }
 */
 template<typename ... NODERES>
-VirtualNode<NODERES...>::VirtualNode (std::tuple<NODERES...> _res)
+VirtualNode<NODERES...>::VirtualNode (Resources<NODERES...> _res)
 	: 	Node<NODERES...> (_res, Entity_t::virt)
 {
 	this->id  = vne::IdGenerator::getId<this_t>(this);

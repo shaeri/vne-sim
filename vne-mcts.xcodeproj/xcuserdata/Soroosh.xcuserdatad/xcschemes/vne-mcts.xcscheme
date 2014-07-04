@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "--log_level=test_suite --run_test=SubstrateNetworkTest"
+            argument = "--log_level=test_suite"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -34,7 +34,7 @@
 #include "core/request.h"
 #include "simple-impl/simple-request-proc.h"
 #include "core/substrate-node.h"
-
+#include "core/substrate-link.h"
 #include "adevs.h"
 
 using namespace vne;
@@ -62,13 +62,13 @@ BOOST_AUTO_TEST_CASE(Resources)
 */
 BOOST_AUTO_TEST_CASE(TypeId)
 {
-	vne::Node<int, double, std::string> n = vne::Node<int, double, std::string>(
-			std::make_tuple(5, 3.5, "yoyo"), vne::Entity_t::virt);
-	vne::Node<int, double> n1 = vne::Node<int, double>(
-				std::make_tuple(5, 3.5), vne::Entity_t::virt);
+	vne::Node<int, double, std::string> n = vne::Node<int, double, std::string>
+        (Resources<int, double, std::string>(5, 3.5, "yoyo"), vne::Entity_t::virt);
+	vne::Node<int, double> n1 = vne::Node<int, double>
+        (Resources<int, double>(5, 3.5), vne::Entity_t::virt);
 	//BOOST_TEST_MESSAGE ("New node object is: " << int(n.getType()));
 	//BOOST_TEST_MESSAGE ("Old node object is: " << int(getType()));
-	BOOST_CHECK(n.getType() != n1.getType());
+	BOOST_CHECK(n.getType() == n1.getType());
 }
 BOOST_AUTO_TEST_CASE(Id)
 {
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(Id)
 	for (int i = 0; i < 5; i++)
 	{
 		vne::Node<int, double, std::string> n = vne::Node<int, double,
-				std::string>(std::make_tuple (3, 2.5, "test"), vne::Entity_t::virt);
+        std::string>( Resources<int, double, std::string>(3, 2.5, "test"), vne::Entity_t::virt);
 		//BOOST_TEST_MESSAGE ("New node object is: " << int(n.getType()));
 		//BOOST_TEST_MESSAGE ("Old node object is: " << int(getType()));
 		BOOST_REQUIRE(n.getId() == nCount + i);
@@ -148,13 +148,13 @@ BOOST_AUTO_TEST_CASE(createNetwork)
 			vne::Node<int>, vne::Link<int>>();
 
 	std::shared_ptr<vne::Node<int>> node1Ptr = std::make_shared<vne::Node<int>>(
-			std::make_tuple(5), vne::Entity_t::substrate);
+			Resources<int>(5), vne::Entity_t::substrate);
 	n.addNode(node1Ptr);
 	std::shared_ptr<vne::Node<int>> anotherPtr = n.getNode(node1Ptr->getId());
 	BOOST_REQUIRE(anotherPtr->getId() == node1Ptr->getId());
 	anotherPtr.reset();
 	std::shared_ptr<vne::Node<int>> node2Ptr = std::make_shared<vne::Node<int>>(
-			std::make_tuple(6), vne::Entity_t::substrate);
+			Resources<int>(6), vne::Entity_t::substrate);
 	BOOST_REQUIRE(node1Ptr->getId() != node2Ptr->getId());
 	n.addNode(node2Ptr);
 	std::shared_ptr<vne::Link<int>> lPtr = std::make_shared<vne::Link<int>>(
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_SUITE_END()
  * Network tests
  */
 BOOST_AUTO_TEST_SUITE(GeneratorTest)
-BOOST_AUTO_TEST_CASE(Resources)
+BOOST_AUTO_TEST_CASE(Resource)
 {
 	int lCount = vne::IdGenerator::peekId<t1>();
 	int nCount = vne::IdGenerator::peekId<t2>();
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(Resources)
 		vne::Link<int, double, std::string> l = vne::Link<int, double,
 				std::string>(vne::Entity_t::virt, 0, 0);
 		vne::Node<int, double, std::string> n = vne::Node<int, double,
-				std::string>(std::make_tuple(7, 6.5, "TEST"), vne::Entity_t::virt);
+        std::string>(Resources<int, double, std::string>(7, 6.5, "TEST"), vne::Entity_t::virt);
 		BOOST_CHECK(l.getId() == lCount + i);
 		BOOST_CHECK(n.getId() == nCount + i);
 	}
@@ -219,11 +219,10 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(SubstrateNetworkTest)
 BOOST_AUTO_TEST_CASE(SubstrateNodeTest)
 {
-	std::shared_ptr<SubstrateNode<double,int>>  sn1   (new SubstrateNode<double,int> (std::make_tuple<double> (10.0, 10)));
-
-	std::shared_ptr<VirtualNode<double,int>> vn1 (new VirtualNode<double,int> (std::make_tuple<double> (5.0, 4)));
-	std::shared_ptr<VirtualNode<double, int>> vn2 (new VirtualNode<double,int> (std::make_tuple<double> (3.0, 5)));
-	std::shared_ptr<VirtualNode<double, int>> vn3 (new VirtualNode<double, int> (std::make_tuple<double> (1.0, 1)));
+	std::shared_ptr<SubstrateNode<double,int>>  sn1   (new SubstrateNode<double,int> (Resources<double,int> (10.0, 10)));
+	std::shared_ptr<VirtualNode<double,int>> vn1 (new VirtualNode<double,int> (Resources<double,int> (5.0, 4)));
+	std::shared_ptr<VirtualNode<double, int>> vn2 (new VirtualNode<double,int> (Resources<double,int> (3.0, 5)));
+	std::shared_ptr<VirtualNode<double, int>> vn3 (new VirtualNode<double, int> (Resources<double,int> (1.0, 1)));
 
 	BOOST_CHECK (sn1->hasResources(vn1->getResources()));
 	BOOST_CHECK (sn1->hasResources(vn2->getResources()));
@@ -240,5 +239,11 @@ BOOST_AUTO_TEST_CASE(SubstrateNodeTest)
 	BOOST_LOG_TRIVIAL(debug) << "VN2 pointer count After free: " << vn2.use_count () << endl;
 	BOOST_LOG_TRIVIAL(debug) << std::get<0>(sn1->getResources()) << ", " << std::get<1>(sn1->getResources()) << endl;
 	//BOOST_LOG_TRIVIAL(debug) << "Sn1 pointer count " << sn1.use_count () << endl;
+    /*while (true)
+    {
+        SubstrateLink<int>* sl1 = new SubstrateLink<int> (std::make_tuple(10), Entity_t::virt, 1, 2);
+        delete sl1;
+    }
+    */
 }
 BOOST_AUTO_TEST_SUITE_END()

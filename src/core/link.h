@@ -29,6 +29,7 @@
 
 #include "core-types.h"
 #include "id-generator.h"
+#include "core/resources.h"
 
 namespace vne
 {
@@ -37,7 +38,8 @@ class Link
 {
 public:
 	Link();
-	Link(Entity_t t, int node_from, int node_to);
+	Link(Resources<Args...> _res, Entity_t t, int node_from, int node_to);
+    Link(Entity_t t, int node_from, int node_to);
 	virtual ~Link();
 	int getId();
 	int getNodeFromId ();
@@ -51,12 +53,12 @@ public:
 private:
 	typedef Link<Args...> this_t;
 protected:
+    Link(Resources<Args...> _res, Entity_t t, int node_from, int node_to, bool noid);
 	int id;
 	Entity_t type;
-	std::tuple<Args...> resources;
+    Resources<Args...> resources;
 	int node_from_id;
 	int node_to_id;
-
 };
 template<typename ... Args>
 Link<Args...>::Link() :
@@ -64,8 +66,25 @@ Link<Args...>::Link() :
 {
 }
 template<typename ... Args>
-Link<Args...>::Link(Entity_t t, int node_from, int node_to) :
+        Link<Args...>::Link(Resources<Args...> _res, Entity_t t, int node_from, int node_to) :
 		id(IdGenerator::getId<this_t>(this)),
+        resources(_res),
+		type(t),
+		node_from_id(node_from),
+		node_to_id(node_to)
+{
+}
+template<typename ... Args>
+        Link<Args...>::Link(Entity_t t, int node_from, int node_to) :
+		id(IdGenerator::getId<this_t>(this)),
+		type(t),
+		node_from_id(node_from),
+		node_to_id(node_to)
+{
+}
+template<typename ... Args>
+        Link<Args...>::Link(Resources<Args...> _res, Entity_t t, int node_from, int node_to, bool noid) :
+        resources(_res),
 		type(t),
 		node_from_id(node_from),
 		node_to_id(node_to)
@@ -109,4 +128,3 @@ int Link<Args...>::getNodeToId()
 }
 }
 #endif
-

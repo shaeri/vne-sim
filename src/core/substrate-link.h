@@ -1,0 +1,56 @@
+  /**
+   * @file substrate-link.h
+   * @author Soroush Haeri <soroosh.haeri@me.com>
+   * @date 6/23/14
+   * 
+   * @copyright Copyright (c) 6/23/14                      SOROUSH HAERI
+   *     All Rights Reserved 
+   *    
+   *     Permission to use, copy, modify, and distribute this software and its
+   *     documentation for any purpose and without fee is hereby granted, provided
+   *     that the above copyright notice appear in all copies and that both that
+   *     copyright notice and this permission notice appear in supporting
+   *     documentation, and that the name of the author not be used in advertising or
+   *     publicity pertaining to distribution of the software without specific,
+   *     written prior permission.
+   *
+   *     THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+   *     ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS; IN NO EVENT SHALL
+   *     AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY
+   *     DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+   *     AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+   *     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  **/
+
+#ifndef SUBSTRATE_LINK_H_
+#define SUBSTRATE_LINK_H_
+
+#include "core/link.h"
+#include "core/virtual-link.h"
+
+namespace vne
+{
+//template<typename...> class SubstrateLink;
+    
+template<typename... LINKRES>
+class SubstrateLink: public Link<LINKRES...>
+{
+public:
+    SubstrateLink(Resources<LINKRES...> _res, Entity_t t, int node_from, int node_to);
+    virtual ~SubstrateLink();
+	bool hasResources(Resources<LINKRES...>& _res);
+	Embedding_Result embedLink(std::shared_ptr<VirtualLink<LINKRES...> > _n);
+	void freeResources(int _id);
+protected:
+    std::map<int, std::shared_ptr<VirtualLink<LINKRES...>>> embedded_links;
+private:
+    typedef SubstrateLink<LINKRES...> this_t;
+};
+template<typename... LINKRES>
+    SubstrateLink<LINKRES...>::SubstrateLink(Resources<LINKRES...> _res, Entity_t t, int node_from, int node_to)
+    : Link<LINKRES...>(_res, t, node_from, node_to, true)
+    {
+        this -> id = IdGenerator::getId<this_t>(this);
+    }
+}
+#endif

@@ -51,9 +51,8 @@ private:
 protected:
 	int id;
 	//For every link and node holds a set of resources requests
-	std::unordered_map<int, std::tuple<LINKRES...>> linkResources;
-	std::unordered_map<int, std::tuple<NODERES...>> nodeResources;
-
+	std::map<int, std::tuple<LINKRES...>> linkResources;
+	std::map<int, std::tuple<NODERES...>> nodeResources;
 };
 template<typename ... NODERES, typename ... LINKRES>
 Request<Node<NODERES...>, Link<LINKRES...>>::Request ()
