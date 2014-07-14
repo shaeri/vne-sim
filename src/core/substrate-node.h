@@ -38,9 +38,9 @@ class SubstrateNode: public Node<NODERES...>
 {
 public:
 	//SubstrateNode();
-	SubstrateNode(Resources<NODERES...> _res);
+	SubstrateNode(const Resources<NODERES...>& _res);
 	virtual ~SubstrateNode();
-	bool hasResources(Resources<NODERES...> _res);
+	bool hasResources(const Resources<NODERES...>& _res);
 	Embedding_Result embedNode(std::shared_ptr<VirtualNode<NODERES...> > _n);
 	void freeResources(int _id);
 private:
@@ -55,7 +55,7 @@ SubstrateNode<NODERES...>::SubstrateNode() :
 }
 */
 template<typename ... NODERES>
-SubstrateNode<NODERES...>::SubstrateNode(Resources<NODERES...> _res) :
+SubstrateNode<NODERES...>::SubstrateNode(const Resources<NODERES...>& _res) :
 		Node<NODERES...>(_res, Entity_t::substrate, true)
 {
 	this->id  = vne::IdGenerator::getId<this_t>(this);
@@ -68,7 +68,7 @@ SubstrateNode<NODERES...>::~SubstrateNode()
 			 endl;
 }
 template<typename ... NODERES>
-bool SubstrateNode<NODERES...>::hasResources(Resources<NODERES...> _res)
+bool SubstrateNode<NODERES...>::hasResources(const Resources<NODERES...>& _res)
 {
 	return this->resources.hasResources(_res);
 }
@@ -79,8 +79,7 @@ Embedding_Result SubstrateNode<NODERES...>::embedNode(
 	BOOST_LOG_NAMED_SCOPE("SubstrateNode::embedNode");
 	auto it = embedded_nodes.find(_n->getId());
 	assert(it == embedded_nodes.end());
-    Resources<NODERES...> _res = _n->getResources ();
-    Embedding_Result result = this->resources.embedResources(_res);
+    Embedding_Result result = this->resources.embedResources(_n->getResources ());
 	if(result == Embedding_Result::NOT_ENOUGH_SUBSTRATE_NODE_RESOURCES)
 	{
 		return Embedding_Result::NOT_ENOUGH_SUBSTRATE_NODE_RESOURCES;

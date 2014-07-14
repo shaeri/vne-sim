@@ -32,7 +32,7 @@ SimpleNode::SimpleNode(double _cpu)
 	std::get<0> (resources) = _cpu;
 }
 */
-SimpleNode::SimpleNode(double _cpu, Entity_t t)
+SimpleNode::SimpleNode(double _cpu, const Entity_t& t)
 	: Node<double>(Resources<double>(_cpu), t)
 {
 }

@@ -42,19 +42,19 @@ class Node
 public:
 	//Node();
 	//Node(Entity_t t);
-	Node(Resources<Args...> _res, Entity_t t);
+	Node(const Resources<Args...>& _res, const Entity_t& t);
 	virtual ~Node();
 	int getId();
-	Entity_t getType();
-	Resources<Args...> getResources();
+	const Entity_t& getType() const;
+    const Resources<Args...>& getResources() const;
 	//void setResources(std::tuple<Args...>);
 private:
 	typedef Node<Args...> this_t;
 protected:
-	Node(Resources<Args...> _res, Entity_t t, bool noid);
+	Node(const Resources<Args...>& _res, const Entity_t& t, bool noid);
 	int id;
 	Entity_t type;
-	Resources<Args...> resources;
+    Resources<Args...> resources;
 };
 /*
 template<typename ... Args>
@@ -69,16 +69,16 @@ Node<Args...>::Node(Entity_t t) :
 }
 */
 template<typename ... Args>
-Node<Args...>::Node(Resources<Args...> _res, Entity_t t) :
+Node<Args...>::Node(const Resources<Args...>& _res, const Entity_t& t) :
 		id (vne::IdGenerator::getId<this_t>(this)),
 		type(t),
-		resources (_res)
+        resources (_res)
 {
 }
 template<typename ... Args>
-Node<Args...>::Node(Resources<Args...> _res, Entity_t t, bool noid)
-		: type(t),
-		  resources (_res)
+Node<Args...>::Node(const Resources<Args...>& _res, const Entity_t& t, bool noid)
+    : type(t),
+    resources (_res)
 {
 }
 template<typename ... Args>
@@ -93,13 +93,13 @@ void Node<Args...>::setResources(std::tuple<Args...> t)
 }
 */
 template<typename ... Args>
-Resources<Args...> Node<Args...>::getResources()
+const Resources<Args...>& Node<Args...>::getResources() const
 {
 	return resources;
 }
 
 template<typename ... Args>
-Entity_t Node<Args...>::getType()
+const Entity_t& Node<Args...>::getType() const
 {
 	return type;
 }

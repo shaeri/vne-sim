@@ -24,7 +24,4 @@
 #ifndef VIRTUAL_NETWORK_H_
 #define VIRTUAL_NETWORK_H_
 
-
-
-
 #endif /* VIRTUAL_NETWORK_H_ */

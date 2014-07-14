@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(SimpleRequestProcessorTest)
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(SubstrateNetworkTest)
-BOOST_AUTO_TEST_CASE(SubstrateNodeTest)
+BOOST_AUTO_TEST_CASE(SubstrateVirtualNodeTest)
 {
 	std::shared_ptr<SubstrateNode<double,int>>  sn1   (new SubstrateNode<double,int> (Resources<double,int> (10.0, 10)));
 	std::shared_ptr<VirtualNode<double,int>> vn1 (new VirtualNode<double,int> (Resources<double,int> (5.0, 4)));
@@ -238,6 +238,35 @@ BOOST_AUTO_TEST_CASE(SubstrateNodeTest)
 	sn1->freeResources(vn2->getId ());
 	BOOST_LOG_TRIVIAL(debug) << "VN2 pointer count After free: " << vn2.use_count () << endl;
 	BOOST_LOG_TRIVIAL(debug) << std::get<0>(sn1->getResources()) << ", " << std::get<1>(sn1->getResources()) << endl;
+	//BOOST_LOG_TRIVIAL(debug) << "Sn1 pointer count " << sn1.use_count () << endl;
+    /*while (true)
+    {
+        SubstrateLink<int>* sl1 = new SubstrateLink<int> (std::make_tuple(10), Entity_t::virt, 1, 2);
+        delete sl1;
+    }
+    */
+}
+BOOST_AUTO_TEST_CASE(SubstrateVirtualLinkTest)
+{
+	std::shared_ptr<SubstrateLink<double,int>>  sl1   (new SubstrateLink<double,int> (Resources<double,int> (10.0, 10),1,2));
+	std::shared_ptr<VirtualLink<double,int>> vl1 (new VirtualLink<double,int> (Resources<double,int> (5.0, 4),1,2));
+	std::shared_ptr<VirtualLink<double, int>> vl2 (new VirtualLink<double,int> (Resources<double,int> (3.0, 5),1,2));
+	std::shared_ptr<VirtualLink<double, int>> vl3 (new VirtualLink<double, int> (Resources<double,int> (1.0, 1),1,2));
+
+	BOOST_CHECK (sl1->hasResources(vl1->getResources()));
+	BOOST_CHECK (sl1->hasResources(vl2->getResources()));
+	sl1->embedLink(vl1);
+	BOOST_LOG_TRIVIAL(debug) << std::get<0>(sl1->getResources()) << ", " << std::get<1>(sl1->getResources()) << endl;
+	sl1->embedLink(vl2);
+	BOOST_LOG_TRIVIAL(debug) << std::get<0>(sl1->getResources()) << ", " << std::get<1>(sl1->getResources()) << endl;
+	sl1->embedLink(vl3);
+	BOOST_LOG_TRIVIAL(debug)  << std::get<0>(sl1->getResources()) << ", " << std::get<1>(sl1->getResources()) << endl;
+	BOOST_CHECK(std::get<0>(sl1->getResources()) == 1.0);
+	BOOST_CHECK(std::get<1>(sl1->getResources()) == 0);
+	BOOST_LOG_TRIVIAL(debug) << "VL2 pointer count Before free: " << vl2.use_count () << endl;
+	sl1->freeResources(vl2->getId ());
+	BOOST_LOG_TRIVIAL(debug) << "VL2 pointer count After free: " << vl2.use_count () << endl;
+	BOOST_LOG_TRIVIAL(debug) << std::get<0>(sl1->getResources()) << ", " << std::get<1>(sl1->getResources()) << endl;
 	//BOOST_LOG_TRIVIAL(debug) << "Sn1 pointer count " << sn1.use_count () << endl;
     /*while (true)
     {

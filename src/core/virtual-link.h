@@ -26,12 +26,45 @@
 #define VIRTUAL_LINK_H_
 
 #include "core/link.h"
+#include "core/substrate-link.h"
+
 namespace vne
 {
+template<typename...> class SubstrateLink;
+    
 template<typename... LINKRES>
 class VirtualLink : public Link<LINKRES...>
 {
+public:
+	//VirtualNode ();
+	VirtualLink (const Resources<LINKRES...>& _res, int node_from, int node_to);
+	void addHostLink (SubstrateLink<LINKRES...>* _l);
+	virtual ~VirtualLink();
+protected:
+    std::map<int, SubstrateLink<LINKRES...>*> substrate_host_links;
+private:
+	typedef VirtualLink<LINKRES...> this_t;
+	//the substrate links that are hosting the virtual link 
+    //std::vector<SubstrateLink<LINKRES...>*> ;
     
 };
+template<typename ... LINKRES>
+VirtualLink<LINKRES...>::VirtualLink (const Resources<LINKRES...>& _res, int node_from, int node_to)
+    : Link<LINKRES...> (_res, Entity_t::virt, node_from, node_to)
+{
+    this->id  = vne::IdGenerator::getId<this_t>(this);
+}
+
+template<typename ... LINKRES>
+void VirtualLink<LINKRES...>::addHostLink (SubstrateLink<LINKRES...>* _l)
+{
+    BOOST_LOG_NAMED_SCOPE("VirtualLink::addHostLink")
+    substrate_host_links.insert(std::make_pair(_l->getId(), _l));
+}
+template<typename ... LINKRES>
+VirtualLink<LINKRES...>::~VirtualLink ()
+{
+    BOOST_LOG_TRIVIAL(debug) << "Destructing VirtualLink id : " << this->id <<endl;
+}
 }
 #endif

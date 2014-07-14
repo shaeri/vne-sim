@@ -38,13 +38,14 @@ class Link
 {
 public:
 	Link();
-	Link(Resources<Args...> _res, Entity_t t, int node_from, int node_to);
-    Link(Entity_t t, int node_from, int node_to);
+	Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to);
+    Link(const Entity_t& t, int node_from, int node_to);
 	virtual ~Link();
-	int getId();
-	int getNodeFromId ();
-	int getNodeToId ();
-	Entity_t getType();
+	const int& getId() const;
+	const int& getNodeFromId () const;
+	const int& getNodeToId () const;
+	const Entity_t& getType() const;
+    const Resources<Args...>& getResources () const;
 	/*
 	 * I do not think these functions are necessary
 	 */
@@ -53,7 +54,7 @@ public:
 private:
 	typedef Link<Args...> this_t;
 protected:
-    Link(Resources<Args...> _res, Entity_t t, int node_from, int node_to, bool noid);
+    Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to, bool noid);
 	int id;
 	Entity_t type;
     Resources<Args...> resources;
@@ -66,7 +67,7 @@ Link<Args...>::Link() :
 {
 }
 template<typename ... Args>
-        Link<Args...>::Link(Resources<Args...> _res, Entity_t t, int node_from, int node_to) :
+        Link<Args...>::Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to) :
 		id(IdGenerator::getId<this_t>(this)),
         resources(_res),
 		type(t),
@@ -75,7 +76,7 @@ template<typename ... Args>
 {
 }
 template<typename ... Args>
-        Link<Args...>::Link(Entity_t t, int node_from, int node_to) :
+        Link<Args...>::Link(const Entity_t& t, int node_from, int node_to) :
 		id(IdGenerator::getId<this_t>(this)),
 		type(t),
 		node_from_id(node_from),
@@ -83,7 +84,7 @@ template<typename ... Args>
 {
 }
 template<typename ... Args>
-        Link<Args...>::Link(Resources<Args...> _res, Entity_t t, int node_from, int node_to, bool noid) :
+        Link<Args...>::Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to, bool noid) :
         resources(_res),
 		type(t),
 		node_from_id(node_from),
@@ -94,37 +95,30 @@ template<typename ... Args>
 Link<Args...>::~Link()
 {
 }
-/*
 template<typename ... Args>
-void Link<Args...>::setResources(std::tuple<Args...> t)
-{
-	resources = t;
-}
-template<typename ... Args>
-std::tuple<Args...> Link<Args...>::getResources()
-{
-	return resources;
-}
-*/
-template<typename ... Args>
-Entity_t Link<Args...>::getType()
+const Entity_t& Link<Args...>::getType() const
 {
 	return type;
 }
 template<typename ... Args>
-int Link<Args...>::getId()
+const int& Link<Args...>::getId() const
 {
 	return id;
 }
 template<typename ... Args>
-int Link<Args...>::getNodeFromId()
+const int& Link<Args...>::getNodeFromId() const
 {
 	return node_from_id;
 }
 template<typename ... Args>
-int Link<Args...>::getNodeToId()
+const int& Link<Args...>::getNodeToId() const
 {
 	return node_to_id;
+}
+template<typename ... Args>
+const Resources<Args...>& Link<Args...>::getResources() const
+{
+	return resources;
 }
 }
 #endif
