@@ -36,6 +36,7 @@ class VirtualNode: public Node<NODERES...>
 public:
 	//VirtualNode ();
 	VirtualNode (const Resources<NODERES...>& _res);
+    VirtualNode (const NODERES &... _res);
 	void setHostNode (SubstrateNode<NODERES...>* _n);
 	virtual ~VirtualNode();
 private:
@@ -54,9 +55,14 @@ template<typename ... NODERES>
 VirtualNode<NODERES...>::VirtualNode (const Resources<NODERES...>& _res)
 	: 	Node<NODERES...> (_res, Entity_t::virt)
 {
+	this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
+}
+template<typename ... NODERES>
+VirtualNode<NODERES...>::VirtualNode (const NODERES &... _res)
+	: 	Node<NODERES...> (_res..., Entity_t::virt)
+{
 	this->id  = vne::IdGenerator::getId<this_t>(this);
 }
-
 template<typename ... NODERES>
 void VirtualNode<NODERES...>::setHostNode (SubstrateNode<NODERES...>* _n)
 {
@@ -68,7 +74,7 @@ void VirtualNode<NODERES...>::setHostNode (SubstrateNode<NODERES...>* _n)
 template<typename ... NODERES>
 VirtualNode<NODERES...>::~VirtualNode ()
 {
-	BOOST_LOG_TRIVIAL(debug) << "Destructing VirtualNode id : " << this->id <<endl;
+	BOOST_LOG_TRIVIAL(debug) << "Destructing VirtualNode id : " << this->id <<std::endl;
 }
 }
 

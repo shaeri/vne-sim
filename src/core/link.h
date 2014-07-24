@@ -37,9 +37,8 @@ template<typename ... Args>
 class Link
 {
 public:
-	Link();
 	Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to);
-    Link(const Entity_t& t, int node_from, int node_to);
+    Link(const Args &... _args, const Entity_t& t, int node_from, int node_to);
 	virtual ~Link();
 	const int& getId() const;
 	const int& getNodeFromId () const;
@@ -55,6 +54,7 @@ private:
 	typedef Link<Args...> this_t;
 protected:
     Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to, bool noid);
+    Link(const Args &... _args, const Entity_t& t, int node_from, int node_to, bool noid);
 	int id;
 	Entity_t type;
     Resources<Args...> resources;
@@ -62,13 +62,8 @@ protected:
 	int node_to_id;
 };
 template<typename ... Args>
-Link<Args...>::Link() :
-		id(IdGenerator::getId<this_t>(this)), type(Entity_t::substrate)
-{
-}
-template<typename ... Args>
         Link<Args...>::Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to) :
-		id(IdGenerator::getId<this_t>(this)),
+		id(IdGenerator::Instance()->getId<this_t>(this)),
         resources(_res),
 		type(t),
 		node_from_id(node_from),
@@ -76,8 +71,9 @@ template<typename ... Args>
 {
 }
 template<typename ... Args>
-        Link<Args...>::Link(const Entity_t& t, int node_from, int node_to) :
-		id(IdGenerator::getId<this_t>(this)),
+        Link<Args...>::Link(const Args &... _args, const Entity_t& t, int node_from, int node_to) :
+		id(IdGenerator::Instance()->getId<this_t>(this)),
+        resources(Resources<Args...> (_args...)),
 		type(t),
 		node_from_id(node_from),
 		node_to_id(node_to)
@@ -86,6 +82,14 @@ template<typename ... Args>
 template<typename ... Args>
         Link<Args...>::Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to, bool noid) :
         resources(_res),
+		type(t),
+		node_from_id(node_from),
+		node_to_id(node_to)
+{
+}
+template<typename ... Args>
+        Link<Args...>::Link(const Args &... _args, const Entity_t& t, int node_from, int node_to, bool noid) :
+        resources(Resources<Args...> (_args...)),
 		type(t),
 		node_from_id(node_from),
 		node_to_id(node_to)

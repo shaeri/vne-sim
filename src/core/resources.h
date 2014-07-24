@@ -41,6 +41,7 @@ public:
     Resources (RES ... _res);
     virtual ~Resources ();
     bool hasResources(const std::tuple<RES...>& _res);
+    bool hasResources(const RES &... _res);
 	Embedding_Result embedResources(const std::tuple<RES...>&  _res);
     void freeResources(const std::tuple<RES...>& _res);
 private:
@@ -125,6 +126,11 @@ template<typename ... RES>
 bool Resources<RES...>::hasResources(const std::tuple<RES...>& _res)
 {
 	return hasResources(_res, int_<sizeof...(RES)>(), true);
+}
+template<typename ... RES>
+bool Resources<RES...>::hasResources(const RES &... _res)
+{
+	return hasResources(Resources<RES...>(_res...), int_<sizeof...(RES)>(), true);
 }
 template<typename ... RES>
 Embedding_Result Resources<RES...>::embedResources(const std::tuple<RES...>&  _res)

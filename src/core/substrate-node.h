@@ -33,14 +33,18 @@
 
 namespace vne
 {
+template<typename...> class VirtualNode;
+    
 template<typename ... NODERES>
 class SubstrateNode: public Node<NODERES...>
 {
 public:
 	//SubstrateNode();
 	SubstrateNode(const Resources<NODERES...>& _res);
+    SubstrateNode(const NODERES &... _res);
 	virtual ~SubstrateNode();
 	bool hasResources(const Resources<NODERES...>& _res);
+    bool hasResources (const NODERES &... _res);
 	Embedding_Result embedNode(std::shared_ptr<VirtualNode<NODERES...> > _n);
 	void freeResources(int _id);
 private:
@@ -58,19 +62,29 @@ template<typename ... NODERES>
 SubstrateNode<NODERES...>::SubstrateNode(const Resources<NODERES...>& _res) :
 		Node<NODERES...>(_res, Entity_t::substrate, true)
 {
-	this->id  = vne::IdGenerator::getId<this_t>(this);
+	this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
 }
-
+template<typename ... NODERES>
+SubstrateNode<NODERES...>::SubstrateNode(const NODERES &... _res) :
+		Node<NODERES...>(_res..., Entity_t::substrate, true)
+{
+	this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
+}
 template<typename ... NODERES>
 SubstrateNode<NODERES...>::~SubstrateNode()
 {
 	BOOST_LOG_TRIVIAL(debug) << "Destructing SubstrateNode id :" << this->id <<
-			 endl;
+			 std::endl;
 }
 template<typename ... NODERES>
 bool SubstrateNode<NODERES...>::hasResources(const Resources<NODERES...>& _res)
 {
 	return this->resources.hasResources(_res);
+}
+template<typename ... NODERES>
+bool SubstrateNode<NODERES...>::hasResources(const NODERES &... _res)
+{
+	return this->resources.hasResources(_res...);
 }
 template<typename ... NODERES>
 Embedding_Result SubstrateNode<NODERES...>::embedNode(

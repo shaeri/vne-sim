@@ -23,5 +23,49 @@
  */
 #ifndef VIRTUAL_NETWORK_H_
 #define VIRTUAL_NETWORK_H_
+#if 0
+#include "core/network.h"
+#include "core/virtual-network.h"
 
+namespace vne{
+    template<typename ...> class VirtualNetwork;
+    //template<typename ...> class Network;
+    template<typename ... NodeT, typename ... LinkT>
+    class VirtualNetwork<VirtualNode<NodeT...>, VirtualLink<LinkT...>> : public Network<Node<NodeT...>, Link<LinkT...>>
+    {
+    public:
+        VirtualNetwork ();
+        virtual ~VirtualNetwork();
+        void addNode (std::shared_ptr<VirtualNode<NodeT...>> node);
+        std::shared_ptr<VirtualNode<NodeT...>> getNode(int id);
+        //void addLink(std::shared_ptr<VirtualLink<LinkT...>> link);
+        //std::shared_ptr<std::vector<std::shared_ptr<VirtualLink<LinkT...>>> >getLinksForNodeId (int id);
+    private:
+        typedef VirtualNetwork<VirtualNode<NodeT...>, VirtualLink<LinkT...>> this_t;
+    };
+    template<typename ... NodeT, typename ... LinkT>
+    VirtualNetwork<VirtualNode<NodeT...>, VirtualLink<LinkT...>>::VirtualNetwork ()
+    : Network<Node<NodeT...>, Link<LinkT...>> (true)
+    {
+        this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
+    }
+    template<typename ... NodeT, typename ... LinkT>
+    VirtualNetwork<VirtualNode<NodeT...>, VirtualLink<LinkT...>>::~VirtualNetwork ()
+    {
+    }
+    
+    template<typename ... NodeT, typename ... LinkT>
+    void VirtualNetwork<VirtualNode<NodeT...>, VirtualLink<LinkT...>>::addNode (std::shared_ptr<VirtualNode<NodeT...>> node)
+    {
+        Network<Node<NodeT...>, Link<LinkT...>>::addNode (node);
+    }
+    
+    template<typename ... NodeT, typename ... LinkT>
+    std::shared_ptr<VirtualNode<NodeT...>> VirtualNetwork<VirtualNode<NodeT...>, VirtualLink<LinkT...>>::getNode (int id)
+    {
+        return std::static_pointer_cast<VirtualNode<NodeT...>> (Network<Node<NodeT...>, Link<LinkT...>>::getNode (id));
+    }
+    
+}
+#endif
 #endif /* VIRTUAL_NETWORK_H_ */

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		95175EC319591CBF0080AE1F /* substrate-link.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A0867E19591BBE00D00295 /* substrate-link.h */; };
+		951FC81519805D50003E052C /* vy-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 951FC81419805D50003E052C /* vy-test.cc */; };
 		9561A8A41958E15200BF44A6 /* libadevs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9561A6FB1958E15200BF44A6 /* libadevs.a */; };
 		9561A8AF1958E15200BF44A6 /* poly.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 9561A70A1958E15200BF44A6 /* poly.o */; };
 		9561A8B11958E15200BF44A6 /* rv.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 9561A70C1958E15200BF44A6 /* rv.o */; };
@@ -16,11 +17,10 @@
 		9561A9331958E30700BF44A6 /* id-generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8041958E15200BF44A6 /* id-generator.cc */; };
 		9561A9341958E30700BF44A6 /* id-generator.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8051958E15200BF44A6 /* id-generator.h */; };
 		9561A9351958E30700BF44A6 /* link.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8061958E15200BF44A6 /* link.h */; };
-		9561A9361958E30700BF44A6 /* network-request.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8071958E15200BF44A6 /* network-request.h */; };
 		9561A9371958E30700BF44A6 /* network.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8081958E15200BF44A6 /* network.h */; };
 		9561A9381958E30700BF44A6 /* node.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8091958E15200BF44A6 /* node.h */; };
 		9561A9391958E30700BF44A6 /* request-processor.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A80A1958E15200BF44A6 /* request-processor.h */; };
-		9561A93A1958E30700BF44A6 /* request.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A80B1958E15200BF44A6 /* request.h */; };
+		9561A93A1958E30700BF44A6 /* virtual-network-request.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A80B1958E15200BF44A6 /* virtual-network-request.h */; };
 		9561A93B1958E30700BF44A6 /* substrate-node.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A80C1958E15200BF44A6 /* substrate-node.h */; };
 		9561A93C1958E30700BF44A6 /* core-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9561A80E1958E15200BF44A6 /* core-test.cc */; };
 		9561A93D1958E30700BF44A6 /* virtual-network.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A80F1958E15200BF44A6 /* virtual-network.h */; };
@@ -39,10 +39,14 @@
 		9561A94A1958E30700BF44A6 /* simple-network-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9561A81E1958E15200BF44A6 /* simple-network-test.cc */; };
 		9561A94B1958E30700BF44A6 /* simple-node-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9561A81F1958E15200BF44A6 /* simple-node-test.cc */; };
 		9561A94C1958E30700BF44A6 /* simple-request-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8201958E15200BF44A6 /* simple-request-test.cc */; };
-		9561A94D1958E30700BF44A6 /* substrate-network.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8211958E15200BF44A6 /* substrate-network.h */; };
 		9561A94E1958E30700BF44A6 /* boost-test-driver.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8231958E15200BF44A6 /* boost-test-driver.cc */; };
 		9561A94F1958E30700BF44A6 /* logger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8241958E15200BF44A6 /* logger.cc */; };
 		9561A9501958E30700BF44A6 /* logger.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8251958E15200BF44A6 /* logger.h */; };
+		956A375F197712F500243FDD /* substrate-network.h in Sources */ = {isa = PBXBuildFile; fileRef = 95E425EF1975C06700D22767 /* substrate-network.h */; };
+		956A3761197712F500243FDD /* network-builder.h in Sources */ = {isa = PBXBuildFile; fileRef = 95E425F219770BA100D22767 /* network-builder.h */; };
+		956AA8791980572B00DA6619 /* vy-substrate-node.cc in Sources */ = {isa = PBXBuildFile; fileRef = 956AA8771980572B00DA6619 /* vy-substrate-node.cc */; };
+		956AA87B198058BB00DA6619 /* vy-substrate-node.h in Sources */ = {isa = PBXBuildFile; fileRef = 956AA8781980572B00DA6619 /* vy-substrate-node.h */; };
+		958AABD119805A6A00912DD9 /* vy-coordinate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 958AABD019805A6A00912DD9 /* vy-coordinate.cc */; };
 		95E42C8B1958F95C0016EDBE /* libboost_log_setup.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C871958F95C0016EDBE /* libboost_log_setup.dylib */; };
 		95E42C8C1958F95C0016EDBE /* libboost_log.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C881958F95C0016EDBE /* libboost_log.dylib */; };
 		95E42C8D1958F95C0016EDBE /* libboost_system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C891958F95C0016EDBE /* libboost_system.dylib */; };
@@ -64,6 +68,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		951FC81419805D50003E052C /* vy-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "vy-test.cc"; sourceTree = "<group>"; };
 		9561A5571958E0C600BF44A6 /* vne-mcts */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "vne-mcts"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9561A56D1958E15100BF44A6 /* copyright.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = copyright.txt; sourceTree = "<group>"; };
 		9561A56F1958E15100BF44A6 /* doxygen.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.config; sourceTree = "<group>"; };
@@ -668,11 +673,10 @@
 		9561A8041958E15200BF44A6 /* id-generator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "id-generator.cc"; sourceTree = "<group>"; };
 		9561A8051958E15200BF44A6 /* id-generator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "id-generator.h"; sourceTree = "<group>"; };
 		9561A8061958E15200BF44A6 /* link.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = link.h; sourceTree = "<group>"; };
-		9561A8071958E15200BF44A6 /* network-request.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "network-request.h"; sourceTree = "<group>"; };
 		9561A8081958E15200BF44A6 /* network.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = network.h; sourceTree = "<group>"; };
 		9561A8091958E15200BF44A6 /* node.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = node.h; sourceTree = "<group>"; };
 		9561A80A1958E15200BF44A6 /* request-processor.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "request-processor.h"; sourceTree = "<group>"; };
-		9561A80B1958E15200BF44A6 /* request.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = request.h; sourceTree = "<group>"; };
+		9561A80B1958E15200BF44A6 /* virtual-network-request.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "virtual-network-request.h"; sourceTree = "<group>"; };
 		9561A80C1958E15200BF44A6 /* substrate-node.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "substrate-node.h"; sourceTree = "<group>"; };
 		9561A80E1958E15200BF44A6 /* core-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "core-test.cc"; sourceTree = "<group>"; };
 		9561A80F1958E15200BF44A6 /* virtual-network.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "virtual-network.h"; sourceTree = "<group>"; };
@@ -691,13 +695,19 @@
 		9561A81E1958E15200BF44A6 /* simple-network-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "simple-network-test.cc"; sourceTree = "<group>"; };
 		9561A81F1958E15200BF44A6 /* simple-node-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "simple-node-test.cc"; sourceTree = "<group>"; };
 		9561A8201958E15200BF44A6 /* simple-request-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "simple-request-test.cc"; sourceTree = "<group>"; };
-		9561A8211958E15200BF44A6 /* substrate-network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "substrate-network.h"; path = "../substrate-network.h"; sourceTree = "<group>"; };
 		9561A8231958E15200BF44A6 /* boost-test-driver.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "boost-test-driver.cc"; sourceTree = "<group>"; };
 		9561A8241958E15200BF44A6 /* logger.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = logger.cc; sourceTree = "<group>"; };
 		9561A8251958E15200BF44A6 /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
+		956A3796197F39B800243FDD /* coordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = coordinate.h; sourceTree = "<group>"; };
+		956AA8771980572B00DA6619 /* vy-substrate-node.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "vy-substrate-node.cc"; sourceTree = "<group>"; };
+		956AA8781980572B00DA6619 /* vy-substrate-node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vy-substrate-node.h"; sourceTree = "<group>"; };
+		956AA87D1980590000DA6619 /* vy-coordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vy-coordinate.h"; sourceTree = "<group>"; };
 		958705E61964A62D000A4132 /* virtual-link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "virtual-link.h"; sourceTree = "<group>"; };
 		958705E71964AB15000A4132 /* resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resources.h; sourceTree = "<group>"; };
+		958AABD019805A6A00912DD9 /* vy-coordinate.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = "vy-coordinate.cc"; sourceTree = "<group>"; };
 		95A0867E19591BBE00D00295 /* substrate-link.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "substrate-link.h"; sourceTree = "<group>"; };
+		95E425EF1975C06700D22767 /* substrate-network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "substrate-network.h"; sourceTree = "<group>"; };
+		95E425F219770BA100D22767 /* network-builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "network-builder.h"; sourceTree = "<group>"; };
 		95E42C871958F95C0016EDBE /* libboost_log_setup.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_log_setup.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_log_setup.dylib; sourceTree = "<group>"; };
 		95E42C881958F95C0016EDBE /* libboost_log.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_log.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_log.dylib; sourceTree = "<group>"; };
 		95E42C891958F95C0016EDBE /* libboost_system.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_system.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_system.dylib; sourceTree = "<group>"; };
@@ -727,6 +737,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		951FC81319805D1D003E052C /* test */ = {
+			isa = PBXGroup;
+			children = (
+				951FC81419805D50003E052C /* vy-test.cc */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
 		9561A54E1958E0C600BF44A6 = {
 			isa = PBXGroup;
 			children = (
@@ -1855,6 +1873,7 @@
 		9561A8011958E15200BF44A6 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				956AA8751980572B00DA6619 /* VineYard */,
 				9561A8021958E15200BF44A6 /* core */,
 				9561A8111958E15200BF44A6 /* simple-impl */,
 				9561A8221958E15200BF44A6 /* utilities */,
@@ -1869,19 +1888,20 @@
 				9561A8041958E15200BF44A6 /* id-generator.cc */,
 				9561A8051958E15200BF44A6 /* id-generator.h */,
 				9561A8061958E15200BF44A6 /* link.h */,
-				9561A8071958E15200BF44A6 /* network-request.h */,
 				9561A8081958E15200BF44A6 /* network.h */,
 				9561A8091958E15200BF44A6 /* node.h */,
 				9561A80A1958E15200BF44A6 /* request-processor.h */,
-				9561A80B1958E15200BF44A6 /* request.h */,
+				9561A80B1958E15200BF44A6 /* virtual-network-request.h */,
 				95A0867E19591BBE00D00295 /* substrate-link.h */,
-				9561A8211958E15200BF44A6 /* substrate-network.h */,
 				9561A80C1958E15200BF44A6 /* substrate-node.h */,
 				9561A80D1958E15200BF44A6 /* test */,
 				9561A80F1958E15200BF44A6 /* virtual-network.h */,
 				9561A8101958E15200BF44A6 /* virtual-node.h */,
 				958705E61964A62D000A4132 /* virtual-link.h */,
 				958705E71964AB15000A4132 /* resources.h */,
+				95E425EF1975C06700D22767 /* substrate-network.h */,
+				95E425F219770BA100D22767 /* network-builder.h */,
+				956A3796197F39B800243FDD /* coordinate.h */,
 			);
 			path = core;
 			sourceTree = "<group>";
@@ -1931,6 +1951,18 @@
 				9561A8251958E15200BF44A6 /* logger.h */,
 			);
 			path = utilities;
+			sourceTree = "<group>";
+		};
+		956AA8751980572B00DA6619 /* VineYard */ = {
+			isa = PBXGroup;
+			children = (
+				951FC81319805D1D003E052C /* test */,
+				956AA8771980572B00DA6619 /* vy-substrate-node.cc */,
+				956AA8781980572B00DA6619 /* vy-substrate-node.h */,
+				956AA87D1980590000DA6619 /* vy-coordinate.h */,
+				958AABD019805A6A00912DD9 /* vy-coordinate.cc */,
+			);
+			path = VineYard;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1984,24 +2016,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				956AA87B198058BB00DA6619 /* vy-substrate-node.h in Sources */,
+				956A375F197712F500243FDD /* substrate-network.h in Sources */,
+				956A3761197712F500243FDD /* network-builder.h in Sources */,
+				956AA8791980572B00DA6619 /* vy-substrate-node.cc in Sources */,
 				95175EC319591CBF0080AE1F /* substrate-link.h in Sources */,
 				9561A9321958E30700BF44A6 /* core-types.h in Sources */,
 				9561A9331958E30700BF44A6 /* id-generator.cc in Sources */,
 				9561A9341958E30700BF44A6 /* id-generator.h in Sources */,
 				9561A9351958E30700BF44A6 /* link.h in Sources */,
-				9561A9361958E30700BF44A6 /* network-request.h in Sources */,
 				9561A9371958E30700BF44A6 /* network.h in Sources */,
 				9561A9381958E30700BF44A6 /* node.h in Sources */,
 				9561A9391958E30700BF44A6 /* request-processor.h in Sources */,
-				9561A93A1958E30700BF44A6 /* request.h in Sources */,
+				9561A93A1958E30700BF44A6 /* virtual-network-request.h in Sources */,
 				9561A93B1958E30700BF44A6 /* substrate-node.h in Sources */,
 				9561A93C1958E30700BF44A6 /* core-test.cc in Sources */,
 				9561A93D1958E30700BF44A6 /* virtual-network.h in Sources */,
 				9561A93E1958E30700BF44A6 /* virtual-node.h in Sources */,
 				9561A93F1958E30700BF44A6 /* simple-link.cc in Sources */,
+				951FC81519805D50003E052C /* vy-test.cc in Sources */,
 				9561A9401958E30700BF44A6 /* simple-link.h in Sources */,
 				9561A9411958E30700BF44A6 /* simple-network.cc in Sources */,
 				9561A9421958E30700BF44A6 /* simple-network.h in Sources */,
+				958AABD119805A6A00912DD9 /* vy-coordinate.cc in Sources */,
 				9561A9431958E30700BF44A6 /* simple-node.cc in Sources */,
 				9561A9441958E30700BF44A6 /* simple-node.h in Sources */,
 				9561A9451958E30700BF44A6 /* simple-request-proc.cc in Sources */,
@@ -2012,7 +2049,6 @@
 				9561A94A1958E30700BF44A6 /* simple-network-test.cc in Sources */,
 				9561A94B1958E30700BF44A6 /* simple-node-test.cc in Sources */,
 				9561A94C1958E30700BF44A6 /* simple-request-test.cc in Sources */,
-				9561A94D1958E30700BF44A6 /* substrate-network.h in Sources */,
 				9561A94E1958E30700BF44A6 /* boost-test-driver.cc in Sources */,
 				9561A94F1958E30700BF44A6 /* logger.cc in Sources */,
 				9561A9501958E30700BF44A6 /* logger.h in Sources */,

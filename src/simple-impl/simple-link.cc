@@ -22,18 +22,19 @@
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include "simple-link.h"
+#include "core/resources.h"
 
 namespace vne{
+/*
 SimpleLink::SimpleLink() :
 		Link<double>()
 {
 }
-
+*/
 SimpleLink::SimpleLink(Entity_t t, int node_from, int node_to,
 		double _bandwidth)
-	: Link<double>(t, node_from, node_to)
+	: Link<double>(Resources<double>(_bandwidth), t, node_from, node_to)
 {
-	  std::get<0>(resources) = _bandwidth;
 }
 SimpleLink::~SimpleLink()
 {

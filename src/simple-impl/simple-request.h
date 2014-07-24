@@ -23,15 +23,13 @@
  */
 #ifndef SIMPLE_REQUEST_H_
 #define SIMPLE_REQUEST_H_
-
+/*
 #include <core/request.h>
 
 namespace vne
 {
 
 /*
- *
- */
 class SimpleRequest: public Request<Node<int>, Link<int>>
 {
 public:
@@ -39,6 +37,5 @@ public:
 	virtual ~SimpleRequest();
 };
 
-} /* namespace vne */
-
+} */
 #endif /* SIMPLE_REQUEST_H_ */

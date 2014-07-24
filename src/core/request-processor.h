@@ -4,7 +4,7 @@
  * @date Jun 12, 2014
  * 
  * @copyright Copyright (c) Jun 12, 2014                      SOROUSH HAERI
- *            All Rights Reserved 
+ *            All Rights Reserved
  *
  *            Permission to use, copy, modify, and distribute this software and its
  *            documentation for any purpose and without fee is hereby granted, provided

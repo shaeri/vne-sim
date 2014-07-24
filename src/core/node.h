@@ -37,23 +37,25 @@
 namespace vne
 {
 template<typename ... Args>
-class Node
+class Node 
 {
 public:
 	//Node();
 	//Node(Entity_t t);
-	Node(const Resources<Args...>& _res, const Entity_t& t);
-	virtual ~Node();
-	int getId();
-	const Entity_t& getType() const;
+    Node(const Resources<Args...>& _res, const Entity_t& t);
+    Node(const Args &... _args, const Entity_t& t);
+    virtual ~Node();
+    int getId();
+    const Entity_t& getType() const;
     const Resources<Args...>& getResources() const;
 	//void setResources(std::tuple<Args...>);
 private:
 	typedef Node<Args...> this_t;
 protected:
-	Node(const Resources<Args...>& _res, const Entity_t& t, bool noid);
-	int id;
-	Entity_t type;
+    Node(const Resources<Args...>& _res, const Entity_t& t, bool noid);
+    Node(const Args &... _args, const Entity_t& t, bool noid);
+    int id;
+    Entity_t type;
     Resources<Args...> resources;
 };
 /*
@@ -70,15 +72,28 @@ Node<Args...>::Node(Entity_t t) :
 */
 template<typename ... Args>
 Node<Args...>::Node(const Resources<Args...>& _res, const Entity_t& t) :
-		id (vne::IdGenerator::getId<this_t>(this)),
-		type(t),
+        id (vne::IdGenerator::Instance()->getId<this_t>(this)),
+        type(t),
         resources (_res)
 {
 }
 template<typename ... Args>
 Node<Args...>::Node(const Resources<Args...>& _res, const Entity_t& t, bool noid)
-    : type(t),
-    resources (_res)
+        : type(t),
+          resources (_res)
+{
+}
+template<typename ... Args>
+Node<Args...>::Node(const Args &... _args, const Entity_t& t)
+    : id (vne::IdGenerator::Instance()->getId<this_t>(this)),
+      type(t),
+      resources (Resources<Args...> (_args...))
+{
+}
+template<typename ... Args>
+Node<Args...>::Node(const Args &... _args, const Entity_t& t, bool noid)
+: type(t),
+resources (Resources<Args...> (_args...))
 {
 }
 template<typename ... Args>

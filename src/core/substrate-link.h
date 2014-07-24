@@ -30,13 +30,14 @@
 
 namespace vne
 {
-//template<typename...> class SubstrateLink;
+template<typename...> class VirtualLink;
     
 template<typename... LINKRES>
 class SubstrateLink: public Link<LINKRES...>
 {
 public:
     SubstrateLink(const Resources<LINKRES...>& _res, int node_from, int node_to);
+    SubstrateLink(const LINKRES &... _res, int node_from, int node_to);
     virtual ~SubstrateLink();
 	bool hasResources(const Resources<LINKRES...>& _res);
 	Embedding_Result embedLink(std::shared_ptr<VirtualLink<LINKRES...> > _l);
@@ -50,7 +51,13 @@ template<typename... LINKRES>
 SubstrateLink<LINKRES...>::SubstrateLink(const Resources<LINKRES...>& _res, int node_from, int node_to)
     : Link<LINKRES...>(_res, Entity_t::substrate, node_from, node_to, true)
 {
-    this -> id = IdGenerator::getId<this_t>(this);
+    this -> id = IdGenerator::Instance()->getId<this_t>(this);
+}
+template<typename... LINKRES>
+SubstrateLink<LINKRES...>::SubstrateLink(const LINKRES &... _res, int node_from, int node_to)
+    : Link<LINKRES...>(_res..., Entity_t::substrate, node_from, node_to, true)
+{
+    this -> id = IdGenerator::Instance()->getId<this_t>(this);
 }
 template<typename... LINKRES>
 SubstrateLink<LINKRES...>::~SubstrateLink()

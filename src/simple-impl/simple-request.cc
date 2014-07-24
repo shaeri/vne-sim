@@ -21,6 +21,7 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+/*
 #include <simple-impl/simple-request.h>
 
 namespace vne
@@ -37,4 +38,5 @@ SimpleRequest::~SimpleRequest()
 	// TODO Auto-generated destructor stub
 }
 
-} /* namespace vne */
+}*/
+/* namespace vne */

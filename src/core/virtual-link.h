@@ -38,6 +38,7 @@ class VirtualLink : public Link<LINKRES...>
 public:
 	//VirtualNode ();
 	VirtualLink (const Resources<LINKRES...>& _res, int node_from, int node_to);
+    VirtualLink (const LINKRES &... _res, int node_from, int node_to);
 	void addHostLink (SubstrateLink<LINKRES...>* _l);
 	virtual ~VirtualLink();
 protected:
@@ -52,9 +53,14 @@ template<typename ... LINKRES>
 VirtualLink<LINKRES...>::VirtualLink (const Resources<LINKRES...>& _res, int node_from, int node_to)
     : Link<LINKRES...> (_res, Entity_t::virt, node_from, node_to)
 {
-    this->id  = vne::IdGenerator::getId<this_t>(this);
+    this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
 }
-
+template<typename ... LINKRES>
+VirtualLink<LINKRES...>::VirtualLink (const LINKRES &... _res, int node_from, int node_to)
+    : Link<LINKRES...> (_res..., Entity_t::virt, node_from, node_to)
+{
+    this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
+}
 template<typename ... LINKRES>
 void VirtualLink<LINKRES...>::addHostLink (SubstrateLink<LINKRES...>* _l)
 {
@@ -64,7 +70,7 @@ void VirtualLink<LINKRES...>::addHostLink (SubstrateLink<LINKRES...>* _l)
 template<typename ... LINKRES>
 VirtualLink<LINKRES...>::~VirtualLink ()
 {
-    BOOST_LOG_TRIVIAL(debug) << "Destructing VirtualLink id : " << this->id <<endl;
+    BOOST_LOG_TRIVIAL(debug) << "Destructing VirtualLink id : " << this->id <<std::endl;
 }
 }
 #endif

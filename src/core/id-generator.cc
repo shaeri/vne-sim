@@ -25,7 +25,16 @@
 
 namespace vne
 {
-std::map<std::type_index, int> IdGenerator::m_map;
+//std::map<std::type_index, int> IdGenerator::m_map;
+std::shared_ptr<IdGenerator> IdGenerator::_instance = nullptr;
+std::shared_ptr<IdGenerator> IdGenerator::Instance()
+{
+    if (_instance==nullptr)
+    {
+        _instance = std::shared_ptr<IdGenerator> (new IdGenerator);
+    }
+    return _instance;
+}
 IdGenerator::IdGenerator()
 {
 }

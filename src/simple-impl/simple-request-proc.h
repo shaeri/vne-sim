@@ -23,15 +23,13 @@
  */
 #ifndef SIMPLE_REQUEST_PROC_H_
 #define SIMPLE_REQUEST_PROC_H_
-
+/*
 #include "core/request-processor.h"
 
 namespace vne
 {
 
 /*
- *
- */
 class SimpleRequestProcessor: public RequestProcessor<
 		Request<Node<int>, Link<int>>> {
 public:
@@ -46,6 +44,7 @@ public:
 };
 
 }
+*/
 /* namespace vne */
 
 #endif /* SIMPLE_REQUEST_PROC_H_ */

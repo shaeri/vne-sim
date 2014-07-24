@@ -21,6 +21,7 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+/*
 #include "simple-request-proc.h"
 
 namespace vne
@@ -60,4 +61,6 @@ void SimpleRequestProcessor::gc_output(adevs::Bag<ADEVS_IO_TYPE>& g)
 {
 
 }
-} /* namespace vne */
+}
+ */
+/* namespace vne */

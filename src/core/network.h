@@ -34,36 +34,55 @@
 
 namespace vne
 {
-template<typename ...> class Network;
-template<typename ... NodeT, typename ... LinkT>
-class Network<Node<NodeT...>, Link<LinkT...>>
+//class NetworkBase {};
+template<typename, typename> class Network;
+    template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+class Network<NodeC<NodeT...>, LinkC<LinkT...>>
 {
+static_assert (std::is_base_of<Node<NodeT...>, NodeC<NodeT...>>::value,
+               "First template argument must be a Node derivative.");
+static_assert (std::is_base_of<Link<LinkT...>, LinkC<LinkT...>>::value,
+               "Second template argument must be a Link derivative.");
 public:
 	Network();
-	~Network();
-	void addNode(std::shared_ptr<Node<NodeT...>> node);
-	std::shared_ptr<Node<NodeT...>> getNode(int id);
-	void addLink(std::shared_ptr<Link<LinkT...>> link);
-	std::shared_ptr<std::vector<std::shared_ptr<Link<LinkT...>>> >getLinksForNodeId (int id);
+	virtual ~Network();
+	void addNode(std::shared_ptr<NodeC<NodeT...>> node);
+	std::shared_ptr<NodeC<NodeT...>> getNode(int id);
+	void addLink(std::shared_ptr<LinkC<LinkT...>> link);
+	std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...>>> >getLinksForNodeId (int id);
+    int getId() {return this->id;};
 private:
-	typedef Network<Node<NodeT...>, Link<LinkT...>> this_t;
+	typedef Network<NodeC<NodeT...>, LinkC<LinkT...>> this_t;
 protected:
 	int id;
-	std::map<int, std::shared_ptr<Node<NodeT...>>>nodesMap;
-	std::map<int, std::shared_ptr<std::vector<std::shared_ptr<Link<LinkT...>>>>> linksMap;
+    Network (bool noid);
+	std::map<int, std::shared_ptr<NodeC<NodeT...>>>nodesMap;
+	std::map<int, std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...>>>>> linksMap;
 };
-template<typename ... NodeT, typename ... LinkT>
-Network<Node<NodeT...>, Link<LinkT...>>::Network()
-	: id(IdGenerator::getId<this_t>(this))
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+Network<NodeC<NodeT...>, LinkC<LinkT...>>::Network()
+	: id(IdGenerator::Instance()->getId<this_t>(this))
 {
 }
-template<typename ... NodeT, typename ... LinkT>
-Network<Node<NodeT...>, Link<LinkT...>>::~Network()
+//this is the protected constructor that does not assign an id to the object
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+Network<NodeC<NodeT...>, LinkC<LinkT...>>::Network(bool noid)
 {
 }
-template<typename ... NodeT, typename ... LinkT>
-void Network<Node<NodeT...>, Link<LinkT...>>::addNode(
-		std::shared_ptr<Node<NodeT...>> node)
+
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+Network<NodeC<NodeT...>, LinkC<LinkT...>>::~Network()
+{
+}
+
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+void Network<NodeC<NodeT...>, LinkC<LinkT...>>::addNode(
+		std::shared_ptr<NodeC<NodeT...>> node)
 {
 	auto it = nodesMap.find(node->getId());
 	assert(
@@ -71,9 +90,11 @@ void Network<Node<NodeT...>, Link<LinkT...>>::addNode(
 					&& "A node with the same ID exists in the network.");
 	nodesMap[node->getId()] = node;
 }
-template<typename ... NodeT, typename ... LinkT>
-std::shared_ptr<Node<NodeT...>>
-Network<Node<NodeT...>, Link<LinkT...>>::getNode(int id)
+
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+std::shared_ptr<NodeC<NodeT...>>
+Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNode(int id)
 {
 	if (nodesMap.find(id) == nodesMap.end())
 		return 0;
@@ -81,9 +102,10 @@ Network<Node<NodeT...>, Link<LinkT...>>::getNode(int id)
 		return nodesMap[id];
 }
 
-template<typename ... NodeT, typename ... LinkT>
-void Network<Node<NodeT...>, Link<LinkT...>>::addLink(
-		std::shared_ptr<Link<LinkT...>> link)
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+void Network<NodeC<NodeT...>, LinkC<LinkT...>>::addLink(
+		std::shared_ptr<LinkC<LinkT...>> link)
 {
 	assert(
 			nodesMap.find(link->getNodeFromId()) != nodesMap.end()
@@ -97,10 +119,10 @@ void Network<Node<NodeT...>, Link<LinkT...>>::addLink(
 	auto it = linksMap.find(link->getNodeFromId());
 	if (it == linksMap.end())
 	{
-		std::vector<std::shared_ptr<Link<LinkT...>>>v;
+		std::vector<std::shared_ptr<LinkC<LinkT...>>>v;
 		v.push_back(link);
 		linksMap.insert(std::make_pair(link->getNodeFromId (),
-						std::make_shared<std::vector<std::shared_ptr<Link<LinkT...>>>>(v)));
+						std::make_shared<std::vector<std::shared_ptr<LinkC<LinkT...>>>>(v)));
 	}
 	else
 	linksMap[link->getNodeFromId ()]->push_back(link);
@@ -108,17 +130,18 @@ void Network<Node<NodeT...>, Link<LinkT...>>::addLink(
 	it = linksMap.find(link->getNodeToId());
 	if (it == linksMap.end())
 	{
-		std::vector<std::shared_ptr<Link<LinkT...>>>m;
+		std::vector<std::shared_ptr<LinkC<LinkT...>>>m;
 		m.push_back(link);
 		linksMap.insert(std::make_pair(link->getNodeToId (),
-						std::make_shared<std::vector<std::shared_ptr<Link<LinkT...>>>>(m)));
+						std::make_shared<std::vector<std::shared_ptr<LinkC<LinkT...>>>>(m)));
 	}
 	else
 	linksMap[link->getNodeToId ()]->push_back(link);
 }
-template<typename ... NodeT, typename ... LinkT>
-std::shared_ptr<std::vector<std::shared_ptr<Link<LinkT...>>> >
-	Network<Node<NodeT...>, Link<LinkT...>>::getLinksForNodeId(int id)
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...>>> >
+	Network<NodeC<NodeT...>, LinkC<LinkT...>>::getLinksForNodeId(int id)
 {
 	if (linksMap.find(id) == linksMap.end())
 	return 0;

@@ -1,7 +1,7 @@
 /**
- * @file network.h
+ * @file   vy-test.cc
  * @author Soroush Haeri <soroosh.haeri@me.com>
- * @date Jun 3, 2014
+ * @date July 23, 2014
  *
  * @copyright Copyright (c) Jun 3, 2014                      SOROUSH HAERI
  *      All Rights Reserved
@@ -21,74 +21,31 @@
  *      AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *      OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#ifndef ID_GENERATOR_H_
-#define ID_GENERATOR_H_
 
-#include <typeinfo>
-#include <typeindex>
-#include <map>
+#include <boost/test/unit_test.hpp>
 
-namespace vne
+#include <math.h>
+
+#include "VineYard/vy-substrate-node.h"
+
+using namespace vne::vineyard;
+
+BOOST_AUTO_TEST_SUITE (VYTest)
+BOOST_AUTO_TEST_CASE(VYCoordTest)
 {
-//Singleton class
-class IdGenerator
-{
-public:
-    static std::shared_ptr<IdGenerator> Instance();
-	
-	virtual ~IdGenerator();
-	template<typename T>
-	int getId(T *obj);
-	template<typename T>
-	int peekId();
-	//template<typename T>
-	//static void resetTypeCounter(T obj);
-	//static void resetAllCounters();
-protected:
-    IdGenerator();
-private:
-    static std::shared_ptr<IdGenerator> _instance;
-    std::map<std::type_index, int> m_map;
-};
-/*
- IdGenerator::IdGenerator ()
- {
- }
- IdGenerator::~IdGenerator ()
- {
- }*/
-template<typename T>
-int IdGenerator::getId(T *obj)
-{
-	int ret;
-	//const char* type_name = typeid(*obj).name();
-	auto it = m_map.find(typeid(*obj));
-	if (it == m_map.end())
-	{
-		m_map[typeid(*obj)] = 0;
-		ret = 0;
-	}
-	else
-	{
-		ret = ++it->second;
-	}
-	return ret;
+    VYCoordinate c1 = VYCoordinate (10,10);
+    VYCoordinate c2 = VYCoordinate (0,0);
+    BOOST_CHECK(c1.distanceFrom(c2) == sqrt (pow(c1.first-c2.first, 2)+pow(c1.second-c2.second,2)));
 }
-template<typename T>
-int IdGenerator::peekId()
+BOOST_AUTO_TEST_CASE(VYSubstrateTest)
 {
-	int ret;
-	//const char* type_name = typeid(T).name();
-	auto it = m_map.find(typeid(T));
-	if (it == m_map.end())
-	{
-		ret = 0;
-	}
-	else
-	{
-		ret = it->second + 1;
-	}
-	return ret;
+    VYSubstrateNode sn1 = VYSubstrateNode(25, 10, 10);
+    VYSubstrateNode sn2 = VYSubstrateNode (10,0,0);
+    BOOST_CHECK(!sn1.hasResources(32));
+    std::cout << sn1.getCoordinates().distanceFrom (sn2.getCoordinates()) << std::endl;
+    std::cout<< ++sn1 << std::endl;
+    std::cout<< sn1.getCount() << std::endl;
+    std::cout<< ++sn1 << std::endl;
+    std::cout<< sn1.getCount() << std::endl;
 }
-}
-#endif
+BOOST_AUTO_TEST_SUITE_END ()

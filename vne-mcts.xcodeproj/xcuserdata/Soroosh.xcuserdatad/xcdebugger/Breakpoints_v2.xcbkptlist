@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/core/node.h"
-            timestampString = "425257736.663205"
+            timestampString = "427778986.45843"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95">
+            startingLineNumber = "110"
+            endingLineNumber = "110">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -24,13 +24,413 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/core/link.h"
-            timestampString = "426029964.206109"
+            timestampString = "427778986.45843"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "58"
             endingLineNumber = "58"
             landmarkName = "class Link"
             landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/core/node.h"
+            timestampString = "427778986.45843"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
+            landmarkName = "class Node"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;double, int&gt;::Node(vne::Resources&lt;double, int&gt; const&amp;, vne::Entity_t const&amp;)"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427155739.03931"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "75"
+                  endingLineNumber = "75"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int&gt;::Node(vne::Resources&lt;int&gt; const&amp;, vne::Entity_t const&amp;)"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427155739.039579"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "75"
+                  endingLineNumber = "75"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int, double&gt;::Node(vne::Resources&lt;int, double&gt; const&amp;, vne::Entity_t const&amp;)"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427155739.039774"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "75"
+                  endingLineNumber = "75"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int, double, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt; &gt;::Node(vne::Resources&lt;int, double, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt; &gt; const&amp;, vne::Entity_t const&amp;)"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427155739.039944"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "75"
+                  endingLineNumber = "75"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;double&gt;::Node(vne::Resources&lt;double&gt; const&amp;, vne::Entity_t const&amp;)"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427155739.04016"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "75"
+                  endingLineNumber = "75"
+                  offsetFromSymbolStart = "40">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/core/node.h"
+            timestampString = "427778986.45843"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "88"
+            endingLineNumber = "88">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int, double&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.962104"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int, double, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt; &gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.962316"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.962475"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.962633"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.962785"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;double, int&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.963"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;double, int&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.963149"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;double, int&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.963298"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int, double&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.963448"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int, double&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.963599"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int, double, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt; &gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.963754"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "29">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;int, double, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt; &gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.963905"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;double&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.964058"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;double&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.964322"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "vne::Node&lt;double&gt;::~Node()"
+                  moduleName = "vne-mcts"
+                  urlString = "file:///Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/core/node.h"
+                  timestampString = "427230469.964557"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/core/test/core-test.cc"
+            timestampString = "427778986.45843"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "311"
+            endingLineNumber = "311"
+            landmarkName = "BOOST_AUTO_TEST_CASE(VirtualNetworkTestCase)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/core/substrate-network.h"
+            timestampString = "427675682.021972"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "33"
+            endingLineNumber = "33">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/core/network.h"
+            timestampString = "427694974.468178"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "39"
+            endingLineNumber = "39">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/core/coordinate.h"
+            timestampString = "427771033.914528"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/vy-substrate-node.h"
+            timestampString = "427840937.696514"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "38"
+            endingLineNumber = "38">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/VineYard/test/vy-test.cc"
+            timestampString = "427843447.279989"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "31"
+            endingLineNumber = "31">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(IDTEST)
 	SimpleLink l2 = SimpleLink(Entity_t::virt, 2, 4, 7.5);
 	BOOST_CHECK(l2.getType() == Entity_t::virt);
 	BOOST_CHECK(l2.getNodeToId() == 4);
-	Link<double> l3 = Link<double>(Entity_t::substrate, 0, 1);
+	Link<double> l3 = Link<double>(Resources<double>(12),Entity_t::substrate, 0, 1);
 	BOOST_TEST_MESSAGE("l3.id = " << l3.getId());
 	BOOST_CHECK(l3.getId() != l1.getId());
 	BOOST_CHECK(l3.getId() != l2.getId());
