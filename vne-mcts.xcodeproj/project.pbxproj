@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		95175EC319591CBF0080AE1F /* substrate-link.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A0867E19591BBE00D00295 /* substrate-link.h */; };
 		951FC81519805D50003E052C /* vy-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 951FC81419805D50003E052C /* vy-test.cc */; };
+		9540F7AB198971F60053D1DE /* vy-substrate-link.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9540F7A9198971F60053D1DE /* vy-substrate-link.cc */; };
+		9540F7AE1989757D0053D1DE /* vy-virtual-link.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9540F7AC1989757D0053D1DE /* vy-virtual-link.cc */; };
+		954423FA1989830D00DD5675 /* vy-virtual-net-request.cc in Sources */ = {isa = PBXBuildFile; fileRef = 954423F81989830D00DD5675 /* vy-virtual-net-request.cc */; };
+		95442404198C4E4500DD5675 /* libboost_filesystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95442403198C4E4500DD5675 /* libboost_filesystem.dylib */; };
+		95442409198CA31200DD5675 /* config-manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95442407198CA31200DD5675 /* config-manager.cc */; };
+		9544240A198CA3FD00DD5675 /* configurations.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 95442406198CA2B400DD5675 /* configurations.xml */; };
+		9544240D198CB63300DD5675 /* vy-substrate-network-builder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9544240B198CB63300DD5675 /* vy-substrate-network-builder.cc */; };
 		9561A8A41958E15200BF44A6 /* libadevs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9561A6FB1958E15200BF44A6 /* libadevs.a */; };
 		9561A8AF1958E15200BF44A6 /* poly.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 9561A70A1958E15200BF44A6 /* poly.o */; };
 		9561A8B11958E15200BF44A6 /* rv.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 9561A70C1958E15200BF44A6 /* rv.o */; };
@@ -19,7 +26,6 @@
 		9561A9351958E30700BF44A6 /* link.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8061958E15200BF44A6 /* link.h */; };
 		9561A9371958E30700BF44A6 /* network.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8081958E15200BF44A6 /* network.h */; };
 		9561A9381958E30700BF44A6 /* node.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8091958E15200BF44A6 /* node.h */; };
-		9561A9391958E30700BF44A6 /* request-processor.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A80A1958E15200BF44A6 /* request-processor.h */; };
 		9561A93A1958E30700BF44A6 /* virtual-network-request.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A80B1958E15200BF44A6 /* virtual-network-request.h */; };
 		9561A93B1958E30700BF44A6 /* substrate-node.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A80C1958E15200BF44A6 /* substrate-node.h */; };
 		9561A93C1958E30700BF44A6 /* core-test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9561A80E1958E15200BF44A6 /* core-test.cc */; };
@@ -46,29 +52,55 @@
 		956A3761197712F500243FDD /* network-builder.h in Sources */ = {isa = PBXBuildFile; fileRef = 95E425F219770BA100D22767 /* network-builder.h */; };
 		956AA8791980572B00DA6619 /* vy-substrate-node.cc in Sources */ = {isa = PBXBuildFile; fileRef = 956AA8771980572B00DA6619 /* vy-substrate-node.cc */; };
 		956AA87B198058BB00DA6619 /* vy-substrate-node.h in Sources */ = {isa = PBXBuildFile; fileRef = 956AA8781980572B00DA6619 /* vy-substrate-node.h */; };
+		957577AB199D7CA9002D9B47 /* vnr-process-observer.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A7E013199D56B9009E134D /* vnr-process-observer.h */; };
+		957577AC199D7CA9002D9B47 /* vnr-process-digraph.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A7E015199D5C01009E134D /* vnr-process-digraph.h */; };
 		958AABD119805A6A00912DD9 /* vy-coordinate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 958AABD019805A6A00912DD9 /* vy-coordinate.cc */; };
+		959C06E7199D80AB00B74919 /* vy-vnr-proc-observer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 959C06E5199D80AB00B74919 /* vy-vnr-proc-observer.cc */; };
+		959C06EB199D811600B74919 /* vy-vnr-proc-digraph.cc in Sources */ = {isa = PBXBuildFile; fileRef = 959C06E9199D811600B74919 /* vy-vnr-proc-digraph.cc */; };
+		959C06EC199D87C100B74919 /* vy-vnr-embedding-proc.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A7E00D199D4118009E134D /* vy-vnr-embedding-proc.h */; };
+		95A7E006199D3FAC009E134D /* vnr-embedding-processor.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A7E005199D3F23009E134D /* vnr-embedding-processor.h */; };
+		95A7E00E199D4118009E134D /* vy-vnr-embedding-proc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95A7E00C199D4118009E134D /* vy-vnr-embedding-proc.cc */; };
+		95A7E00F199D42AA009E134D /* vnr-release-processor.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A7E008199D3FF1009E134D /* vnr-release-processor.h */; };
+		95A7E012199D42E0009E134D /* vy-vnr-release-proc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95A7E010199D42E0009E134D /* vy-vnr-release-proc.cc */; };
+		95B3737F19998D17004133B6 /* vy-vnr-generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95B3737D19998D17004133B6 /* vy-vnr-generator.cc */; };
+		95B6C2641988305D00824939 /* vy-virtual-node.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95B6C2631988305D00824939 /* vy-virtual-node.cc */; };
 		95E42C8B1958F95C0016EDBE /* libboost_log_setup.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C871958F95C0016EDBE /* libboost_log_setup.dylib */; };
 		95E42C8C1958F95C0016EDBE /* libboost_log.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C881958F95C0016EDBE /* libboost_log.dylib */; };
 		95E42C8D1958F95C0016EDBE /* libboost_system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C891958F95C0016EDBE /* libboost_system.dylib */; };
 		95E42C8E1958F95C0016EDBE /* libboost_unit_test_framework.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C8A1958F95C0016EDBE /* libboost_unit_test_framework.dylib */; };
 		95E42C901958F9910016EDBE /* libboost_log-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C8F1958F9910016EDBE /* libboost_log-mt.dylib */; };
 		95E42C921958F9B00016EDBE /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C911958F9B00016EDBE /* libboost_thread-mt.dylib */; };
+		95FBC88219999149003B8968 /* vnr-generator.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A3663819998BAC009FA327 /* vnr-generator.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		9561A5551958E0C600BF44A6 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = .;
+			dstSubfolderSpec = 16;
 			files = (
+				9544240A198CA3FD00DD5675 /* configurations.xml in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		951FC81419805D50003E052C /* vy-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "vy-test.cc"; sourceTree = "<group>"; };
+		951FC81419805D50003E052C /* vy-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-test.cc"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/test/vy-test.cc"; sourceTree = "<absolute>"; };
+		9536F4F91988221E00DC6B8C /* vy-virtual-node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-virtual-node.h"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-virtual-node.h"; sourceTree = "<absolute>"; };
+		9540F7A9198971F60053D1DE /* vy-substrate-link.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-substrate-link.cc"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-substrate-link.cc"; sourceTree = "<absolute>"; };
+		9540F7AA198971F60053D1DE /* vy-substrate-link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-substrate-link.h"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-substrate-link.h"; sourceTree = "<absolute>"; };
+		9540F7AC1989757D0053D1DE /* vy-virtual-link.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-virtual-link.cc"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-virtual-link.cc"; sourceTree = "<absolute>"; };
+		9540F7AD1989757D0053D1DE /* vy-virtual-link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-virtual-link.h"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-virtual-link.h"; sourceTree = "<absolute>"; };
+		954423F81989830D00DD5675 /* vy-virtual-net-request.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-virtual-net-request.cc"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-virtual-net-request.cc"; sourceTree = "<absolute>"; };
+		954423F91989830D00DD5675 /* vy-virtual-net-request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-virtual-net-request.h"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-virtual-net-request.h"; sourceTree = "<absolute>"; };
+		95442403198C4E4500DD5675 /* libboost_filesystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_filesystem.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_filesystem.dylib; sourceTree = "<group>"; };
+		95442406198CA2B400DD5675 /* configurations.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = configurations.xml; sourceTree = "<group>"; };
+		95442407198CA31200DD5675 /* config-manager.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "config-manager.cc"; sourceTree = "<group>"; };
+		95442408198CA31200DD5675 /* config-manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "config-manager.h"; sourceTree = "<group>"; };
+		9544240B198CB63300DD5675 /* vy-substrate-network-builder.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-substrate-network-builder.cc"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-substrate-network-builder.cc"; sourceTree = "<absolute>"; };
+		9544240C198CB63300DD5675 /* vy-substrate-network-builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-substrate-network-builder.h"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-substrate-network-builder.h"; sourceTree = "<absolute>"; };
 		9561A5571958E0C600BF44A6 /* vne-mcts */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "vne-mcts"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9561A56D1958E15100BF44A6 /* copyright.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = copyright.txt; sourceTree = "<group>"; };
 		9561A56F1958E15100BF44A6 /* doxygen.config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doxygen.config; sourceTree = "<group>"; };
@@ -675,7 +707,6 @@
 		9561A8061958E15200BF44A6 /* link.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = link.h; sourceTree = "<group>"; };
 		9561A8081958E15200BF44A6 /* network.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = network.h; sourceTree = "<group>"; };
 		9561A8091958E15200BF44A6 /* node.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = node.h; sourceTree = "<group>"; };
-		9561A80A1958E15200BF44A6 /* request-processor.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "request-processor.h"; sourceTree = "<group>"; };
 		9561A80B1958E15200BF44A6 /* virtual-network-request.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "virtual-network-request.h"; sourceTree = "<group>"; };
 		9561A80C1958E15200BF44A6 /* substrate-node.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "substrate-node.h"; sourceTree = "<group>"; };
 		9561A80E1958E15200BF44A6 /* core-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "core-test.cc"; sourceTree = "<group>"; };
@@ -699,21 +730,37 @@
 		9561A8241958E15200BF44A6 /* logger.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = logger.cc; sourceTree = "<group>"; };
 		9561A8251958E15200BF44A6 /* logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logger.h; sourceTree = "<group>"; };
 		956A3796197F39B800243FDD /* coordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = coordinate.h; sourceTree = "<group>"; };
-		956AA8771980572B00DA6619 /* vy-substrate-node.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "vy-substrate-node.cc"; sourceTree = "<group>"; };
-		956AA8781980572B00DA6619 /* vy-substrate-node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vy-substrate-node.h"; sourceTree = "<group>"; };
-		956AA87D1980590000DA6619 /* vy-coordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vy-coordinate.h"; sourceTree = "<group>"; };
+		956AA8771980572B00DA6619 /* vy-substrate-node.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-substrate-node.cc"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-substrate-node.cc"; sourceTree = "<absolute>"; };
+		956AA8781980572B00DA6619 /* vy-substrate-node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-substrate-node.h"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-substrate-node.h"; sourceTree = "<absolute>"; };
+		956AA87D1980590000DA6619 /* vy-coordinate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-coordinate.h"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-coordinate.h"; sourceTree = "<absolute>"; };
 		958705E61964A62D000A4132 /* virtual-link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "virtual-link.h"; sourceTree = "<group>"; };
 		958705E71964AB15000A4132 /* resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resources.h; sourceTree = "<group>"; };
-		958AABD019805A6A00912DD9 /* vy-coordinate.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = "vy-coordinate.cc"; sourceTree = "<group>"; };
+		958AABD019805A6A00912DD9 /* vy-coordinate.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = "vy-coordinate.cc"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-coordinate.cc"; sourceTree = "<absolute>"; };
+		959C06E5199D80AB00B74919 /* vy-vnr-proc-observer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vnr-proc-observer.cc"; path = "src/Vineyard/vy-vnr-proc-observer.cc"; sourceTree = SOURCE_ROOT; };
+		959C06E6199D80AB00B74919 /* vy-vnr-proc-observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vnr-proc-observer.h"; path = "src/Vineyard/vy-vnr-proc-observer.h"; sourceTree = SOURCE_ROOT; };
+		959C06E9199D811600B74919 /* vy-vnr-proc-digraph.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vnr-proc-digraph.cc"; path = "src/Vineyard/vy-vnr-proc-digraph.cc"; sourceTree = SOURCE_ROOT; };
+		959C06EA199D811600B74919 /* vy-vnr-proc-digraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vnr-proc-digraph.h"; path = "src/Vineyard/vy-vnr-proc-digraph.h"; sourceTree = SOURCE_ROOT; };
 		95A0867E19591BBE00D00295 /* substrate-link.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = "substrate-link.h"; sourceTree = "<group>"; };
+		95A3663819998BAC009FA327 /* vnr-generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vnr-generator.h"; sourceTree = "<group>"; };
+		95A7E005199D3F23009E134D /* vnr-embedding-processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vnr-embedding-processor.h"; sourceTree = "<group>"; };
+		95A7E008199D3FF1009E134D /* vnr-release-processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vnr-release-processor.h"; sourceTree = "<group>"; };
+		95A7E00C199D4118009E134D /* vy-vnr-embedding-proc.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vnr-embedding-proc.cc"; path = "src/Vineyard/vy-vnr-embedding-proc.cc"; sourceTree = SOURCE_ROOT; };
+		95A7E00D199D4118009E134D /* vy-vnr-embedding-proc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vnr-embedding-proc.h"; path = "src/Vineyard/vy-vnr-embedding-proc.h"; sourceTree = SOURCE_ROOT; };
+		95A7E010199D42E0009E134D /* vy-vnr-release-proc.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vnr-release-proc.cc"; path = "src/Vineyard/vy-vnr-release-proc.cc"; sourceTree = SOURCE_ROOT; };
+		95A7E011199D42E0009E134D /* vy-vnr-release-proc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vnr-release-proc.h"; path = "src/Vineyard/vy-vnr-release-proc.h"; sourceTree = SOURCE_ROOT; };
+		95A7E013199D56B9009E134D /* vnr-process-observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vnr-process-observer.h"; sourceTree = "<group>"; };
+		95A7E015199D5C01009E134D /* vnr-process-digraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vnr-process-digraph.h"; sourceTree = "<group>"; };
+		95B3737D19998D17004133B6 /* vy-vnr-generator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vnr-generator.cc"; path = "src/Vineyard/vy-vnr-generator.cc"; sourceTree = SOURCE_ROOT; };
+		95B3737E19998D17004133B6 /* vy-vnr-generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vnr-generator.h"; path = "src/Vineyard/vy-vnr-generator.h"; sourceTree = SOURCE_ROOT; };
+		95B6C2631988305D00824939 /* vy-virtual-node.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-virtual-node.cc"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-virtual-node.cc"; sourceTree = "<absolute>"; };
 		95E425EF1975C06700D22767 /* substrate-network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "substrate-network.h"; sourceTree = "<group>"; };
 		95E425F219770BA100D22767 /* network-builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "network-builder.h"; sourceTree = "<group>"; };
-		95E42C871958F95C0016EDBE /* libboost_log_setup.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_log_setup.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_log_setup.dylib; sourceTree = "<group>"; };
-		95E42C881958F95C0016EDBE /* libboost_log.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_log.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_log.dylib; sourceTree = "<group>"; };
-		95E42C891958F95C0016EDBE /* libboost_system.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_system.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_system.dylib; sourceTree = "<group>"; };
-		95E42C8A1958F95C0016EDBE /* libboost_unit_test_framework.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_unit_test_framework.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_unit_test_framework.dylib; sourceTree = "<group>"; };
-		95E42C8F1958F9910016EDBE /* libboost_log-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_log-mt.dylib"; path = "../../../../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_log-mt.dylib"; sourceTree = "<group>"; };
-		95E42C911958F9B00016EDBE /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
+		95E42C871958F95C0016EDBE /* libboost_log_setup.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_log_setup.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_log_setup.dylib; sourceTree = "<group>"; };
+		95E42C881958F95C0016EDBE /* libboost_log.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_log.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_log.dylib; sourceTree = "<group>"; };
+		95E42C891958F95C0016EDBE /* libboost_system.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_system.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_system.dylib; sourceTree = "<group>"; };
+		95E42C8A1958F95C0016EDBE /* libboost_unit_test_framework.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_unit_test_framework.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_unit_test_framework.dylib; sourceTree = "<group>"; };
+		95E42C8F1958F9910016EDBE /* libboost_log-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_log-mt.dylib"; path = "../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_log-mt.dylib"; sourceTree = "<group>"; };
+		95E42C911958F9B00016EDBE /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -721,6 +768,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95442404198C4E4500DD5675 /* libboost_filesystem.dylib in Frameworks */,
 				95E42C921958F9B00016EDBE /* libboost_thread-mt.dylib in Frameworks */,
 				95E42C901958F9910016EDBE /* libboost_log-mt.dylib in Frameworks */,
 				95E42C8B1958F95C0016EDBE /* libboost_log_setup.dylib in Frameworks */,
@@ -748,6 +796,8 @@
 		9561A54E1958E0C600BF44A6 = {
 			isa = PBXGroup;
 			children = (
+				95442406198CA2B400DD5675 /* configurations.xml */,
+				95442403198C4E4500DD5675 /* libboost_filesystem.dylib */,
 				95E42C911958F9B00016EDBE /* libboost_thread-mt.dylib */,
 				95E42C8F1958F9910016EDBE /* libboost_log-mt.dylib */,
 				95E42C871958F95C0016EDBE /* libboost_log_setup.dylib */,
@@ -1873,7 +1923,7 @@
 		9561A8011958E15200BF44A6 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				956AA8751980572B00DA6619 /* VineYard */,
+				956AA8751980572B00DA6619 /* Vineyard */,
 				9561A8021958E15200BF44A6 /* core */,
 				9561A8111958E15200BF44A6 /* simple-impl */,
 				9561A8221958E15200BF44A6 /* utilities */,
@@ -1884,24 +1934,30 @@
 		9561A8021958E15200BF44A6 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				95442407198CA31200DD5675 /* config-manager.cc */,
+				95442408198CA31200DD5675 /* config-manager.h */,
+				956A3796197F39B800243FDD /* coordinate.h */,
 				9561A8031958E15200BF44A6 /* core-types.h */,
 				9561A8041958E15200BF44A6 /* id-generator.cc */,
 				9561A8051958E15200BF44A6 /* id-generator.h */,
 				9561A8061958E15200BF44A6 /* link.h */,
+				95E425F219770BA100D22767 /* network-builder.h */,
 				9561A8081958E15200BF44A6 /* network.h */,
 				9561A8091958E15200BF44A6 /* node.h */,
-				9561A80A1958E15200BF44A6 /* request-processor.h */,
-				9561A80B1958E15200BF44A6 /* virtual-network-request.h */,
+				958705E71964AB15000A4132 /* resources.h */,
 				95A0867E19591BBE00D00295 /* substrate-link.h */,
+				95E425EF1975C06700D22767 /* substrate-network.h */,
 				9561A80C1958E15200BF44A6 /* substrate-node.h */,
 				9561A80D1958E15200BF44A6 /* test */,
+				958705E61964A62D000A4132 /* virtual-link.h */,
+				9561A80B1958E15200BF44A6 /* virtual-network-request.h */,
 				9561A80F1958E15200BF44A6 /* virtual-network.h */,
 				9561A8101958E15200BF44A6 /* virtual-node.h */,
-				958705E61964A62D000A4132 /* virtual-link.h */,
-				958705E71964AB15000A4132 /* resources.h */,
-				95E425EF1975C06700D22767 /* substrate-network.h */,
-				95E425F219770BA100D22767 /* network-builder.h */,
-				956A3796197F39B800243FDD /* coordinate.h */,
+				95A3663819998BAC009FA327 /* vnr-generator.h */,
+				95A7E005199D3F23009E134D /* vnr-embedding-processor.h */,
+				95A7E008199D3FF1009E134D /* vnr-release-processor.h */,
+				95A7E013199D56B9009E134D /* vnr-process-observer.h */,
+				95A7E015199D5C01009E134D /* vnr-process-digraph.h */,
 			);
 			path = core;
 			sourceTree = "<group>";
@@ -1953,7 +2009,7 @@
 			path = utilities;
 			sourceTree = "<group>";
 		};
-		956AA8751980572B00DA6619 /* VineYard */ = {
+		956AA8751980572B00DA6619 /* Vineyard */ = {
 			isa = PBXGroup;
 			children = (
 				951FC81319805D1D003E052C /* test */,
@@ -1961,7 +2017,28 @@
 				956AA8781980572B00DA6619 /* vy-substrate-node.h */,
 				956AA87D1980590000DA6619 /* vy-coordinate.h */,
 				958AABD019805A6A00912DD9 /* vy-coordinate.cc */,
+				9536F4F91988221E00DC6B8C /* vy-virtual-node.h */,
+				95B6C2631988305D00824939 /* vy-virtual-node.cc */,
+				9540F7A9198971F60053D1DE /* vy-substrate-link.cc */,
+				9540F7AA198971F60053D1DE /* vy-substrate-link.h */,
+				9540F7AC1989757D0053D1DE /* vy-virtual-link.cc */,
+				9540F7AD1989757D0053D1DE /* vy-virtual-link.h */,
+				954423F81989830D00DD5675 /* vy-virtual-net-request.cc */,
+				954423F91989830D00DD5675 /* vy-virtual-net-request.h */,
+				9544240B198CB63300DD5675 /* vy-substrate-network-builder.cc */,
+				9544240C198CB63300DD5675 /* vy-substrate-network-builder.h */,
+				95B3737D19998D17004133B6 /* vy-vnr-generator.cc */,
+				95B3737E19998D17004133B6 /* vy-vnr-generator.h */,
+				95A7E00C199D4118009E134D /* vy-vnr-embedding-proc.cc */,
+				95A7E00D199D4118009E134D /* vy-vnr-embedding-proc.h */,
+				95A7E010199D42E0009E134D /* vy-vnr-release-proc.cc */,
+				95A7E011199D42E0009E134D /* vy-vnr-release-proc.h */,
+				959C06E5199D80AB00B74919 /* vy-vnr-proc-observer.cc */,
+				959C06E6199D80AB00B74919 /* vy-vnr-proc-observer.h */,
+				959C06E9199D811600B74919 /* vy-vnr-proc-digraph.cc */,
+				959C06EA199D811600B74919 /* vy-vnr-proc-digraph.h */,
 			);
+			name = Vineyard;
 			path = VineYard;
 			sourceTree = "<group>";
 		};
@@ -2016,41 +2093,57 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				959C06EC199D87C100B74919 /* vy-vnr-embedding-proc.h in Sources */,
+				957577AB199D7CA9002D9B47 /* vnr-process-observer.h in Sources */,
+				957577AC199D7CA9002D9B47 /* vnr-process-digraph.h in Sources */,
+				95A7E00F199D42AA009E134D /* vnr-release-processor.h in Sources */,
+				95A7E006199D3FAC009E134D /* vnr-embedding-processor.h in Sources */,
+				95A7E00E199D4118009E134D /* vy-vnr-embedding-proc.cc in Sources */,
+				95FBC88219999149003B8968 /* vnr-generator.h in Sources */,
 				956AA87B198058BB00DA6619 /* vy-substrate-node.h in Sources */,
 				956A375F197712F500243FDD /* substrate-network.h in Sources */,
 				956A3761197712F500243FDD /* network-builder.h in Sources */,
 				956AA8791980572B00DA6619 /* vy-substrate-node.cc in Sources */,
+				9540F7AB198971F60053D1DE /* vy-substrate-link.cc in Sources */,
 				95175EC319591CBF0080AE1F /* substrate-link.h in Sources */,
 				9561A9321958E30700BF44A6 /* core-types.h in Sources */,
 				9561A9331958E30700BF44A6 /* id-generator.cc in Sources */,
+				95442409198CA31200DD5675 /* config-manager.cc in Sources */,
 				9561A9341958E30700BF44A6 /* id-generator.h in Sources */,
 				9561A9351958E30700BF44A6 /* link.h in Sources */,
 				9561A9371958E30700BF44A6 /* network.h in Sources */,
 				9561A9381958E30700BF44A6 /* node.h in Sources */,
-				9561A9391958E30700BF44A6 /* request-processor.h in Sources */,
 				9561A93A1958E30700BF44A6 /* virtual-network-request.h in Sources */,
+				95B3737F19998D17004133B6 /* vy-vnr-generator.cc in Sources */,
 				9561A93B1958E30700BF44A6 /* substrate-node.h in Sources */,
 				9561A93C1958E30700BF44A6 /* core-test.cc in Sources */,
 				9561A93D1958E30700BF44A6 /* virtual-network.h in Sources */,
 				9561A93E1958E30700BF44A6 /* virtual-node.h in Sources */,
+				959C06EB199D811600B74919 /* vy-vnr-proc-digraph.cc in Sources */,
 				9561A93F1958E30700BF44A6 /* simple-link.cc in Sources */,
 				951FC81519805D50003E052C /* vy-test.cc in Sources */,
 				9561A9401958E30700BF44A6 /* simple-link.h in Sources */,
 				9561A9411958E30700BF44A6 /* simple-network.cc in Sources */,
+				95B6C2641988305D00824939 /* vy-virtual-node.cc in Sources */,
+				9540F7AE1989757D0053D1DE /* vy-virtual-link.cc in Sources */,
 				9561A9421958E30700BF44A6 /* simple-network.h in Sources */,
 				958AABD119805A6A00912DD9 /* vy-coordinate.cc in Sources */,
 				9561A9431958E30700BF44A6 /* simple-node.cc in Sources */,
 				9561A9441958E30700BF44A6 /* simple-node.h in Sources */,
 				9561A9451958E30700BF44A6 /* simple-request-proc.cc in Sources */,
 				9561A9461958E30700BF44A6 /* simple-request-proc.h in Sources */,
+				954423FA1989830D00DD5675 /* vy-virtual-net-request.cc in Sources */,
 				9561A9471958E30700BF44A6 /* simple-request.cc in Sources */,
+				959C06E7199D80AB00B74919 /* vy-vnr-proc-observer.cc in Sources */,
 				9561A9481958E30700BF44A6 /* simple-request.h in Sources */,
 				9561A9491958E30700BF44A6 /* simple-link-test.cc in Sources */,
 				9561A94A1958E30700BF44A6 /* simple-network-test.cc in Sources */,
 				9561A94B1958E30700BF44A6 /* simple-node-test.cc in Sources */,
+				95A7E012199D42E0009E134D /* vy-vnr-release-proc.cc in Sources */,
 				9561A94C1958E30700BF44A6 /* simple-request-test.cc in Sources */,
 				9561A94E1958E30700BF44A6 /* boost-test-driver.cc in Sources */,
 				9561A94F1958E30700BF44A6 /* logger.cc in Sources */,
+				9544240D198CB63300DD5675 /* vy-substrate-network-builder.cc in Sources */,
 				9561A9501958E30700BF44A6 /* logger.h in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2093,7 +2186,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/usr/local/Cellar/boost/1.55.0_1/include/,
+					/usr/local/Cellar/boost/1.55.0_2/include/,
 					"/usr/include/**",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
@@ -2101,7 +2194,7 @@
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src/";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src/ $(PROJECT_DIR)/external-libs/";
 			};
 			name = Debug;
 		};
@@ -2135,14 +2228,14 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/usr/local/Cellar/boost/1.55.0_1/include/,
+					/usr/local/Cellar/boost/1.55.0_2/include/,
 					"/usr/include/**",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src/";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src/ $(PROJECT_DIR)/external-libs/";
 			};
 			name = Release;
 		};
@@ -2155,11 +2248,11 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/boost/1.55.0_1/lib,
+					/usr/local/Cellar/boost/1.55.0_2/lib,
 					"$(PROJECT_DIR)/external-libs/adevs/src",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src $(PROJECT_DIR)/external-libs";
 			};
 			name = Debug;
 		};
@@ -2172,11 +2265,11 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/boost/1.55.0_1/lib,
+					/usr/local/Cellar/boost/1.55.0_2/lib,
 					"$(PROJECT_DIR)/external-libs/adevs/src",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src $(PROJECT_DIR)/external-libs";
 			};
 			name = Release;
 		};

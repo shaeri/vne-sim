@@ -45,7 +45,7 @@ public:
     Node(const Resources<Args...>& _res, const Entity_t& t);
     Node(const Args &... _args, const Entity_t& t);
     virtual ~Node();
-    int getId();
+    int getId() const;
     const Entity_t& getType() const;
     const Resources<Args...>& getResources() const;
 	//void setResources(std::tuple<Args...>);
@@ -119,7 +119,7 @@ const Entity_t& Node<Args...>::getType() const
 	return type;
 }
 template<typename ... Args>
-int Node<Args...>::getId()
+int Node<Args...>::getId() const
 {
 	return id;
 }

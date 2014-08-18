@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "--log_level=test_suite --run_test=VYTest"
+            argument = "--log_level=test_suite --run_test=VYTest/VYVNRProcDigraphTest"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

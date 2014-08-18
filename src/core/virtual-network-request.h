@@ -43,30 +43,53 @@ static_assert (std::is_base_of<VirtualLink<LINKRES...>, LINKCLASS<LINKRES...>>::
                    "Second template argument must be a VirtualLink derivative.");
 public:
 	VirtualNetworkRequest(std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> _vn,
-                          long time, long duration);
+                          double time, double duration);
 	int getId () const {return id;};
-    long getDuration () const {return duration;};
-    long getTime() const {return time;};
+    double getDuration () const {return duration;};
+    double getArrivalTime() const {return arrivalTime;};
+    // Proc time is usually not known in advance so after the embedding
+    // algorithm is completed this value is set for simulation purposes
+    double getProccessingTime() const {return proc_time;};
+    void setProccessingTime (double t) {proc_time = t;}
+    double getDepartureTime() const {return arrivalTime + duration;};
+    bool successfulEmbedding () const {return successful_embedding;};
+    void setEmbeddingResult (bool arg) {successful_embedding = arg;};
+    bool operator< (VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>& rhs) const {return this->time<rhs.getTime();};
     std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> getVN () const {return vn;};
-private:
-	typedef VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> this_t;
+    
+    /*virtual double getNodeRevenue () {return 0;} const;
+    virtual double getLinkRevenue () {return 0;} const ;
+    virtual double getTotalRevenue () {return 0;} const;
+    virtual double getNodeCost ()  {return 0;} const;
+    virtual double getLinkCost () {return 0;} const;
+    virtual double getTotalCost () {return 0;} const;
+    */
 protected:
 	int id;
-    long time;
-    long duration;
+    double arrivalTime;
+    double duration;
+    double proc_time;
+    bool successful_embedding;
     std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> vn;
+    VirtualNetworkRequest(std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> _vn,
+                          double time, double duration, bool noid);
+    
+private:
+	typedef VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> this_t;
+    
 };
 template<typename ... NODERES, template <typename ...> class NODECLASS,
     typename... LINKRES, template <typename...> class LINKCLASS>
     VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>::
     VirtualNetworkRequest(std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> _vn,
-                          long _time, long _duration)
+                          double _time, double _duration)
     : id (vne::IdGenerator::Instance()->getId<this_t>(this)),
-      time (_time),
+      arrivalTime (_time),
       duration(_duration),
-      vn(std::move(_vn))
+      proc_time(0),
+      vn(std::move(_vn)),
+      successful_embedding(false)
     {}
-    
 }
 
 #endif /* REQUEST_H_ */

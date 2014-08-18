@@ -26,50 +26,64 @@
 
 namespace vne {
     namespace vineyard {
-        VYSubstrateNode::VYSubstrateNode (double cpu, const VYCoordinate& coord) :
+        template<>
+        VYSubstrateNode<>::VYSubstrateNode (double cpu, const VYCoordinate& coord) :
             SubstrateNode<double>(cpu),
             coordinate(coord),
             touched(false),
             count(0)
         {
         }
-        VYSubstrateNode::VYSubstrateNode (double cpu, int _x, int _y) :
+        template<>
+        VYSubstrateNode<>::VYSubstrateNode (double cpu, int _x, int _y) :
             SubstrateNode<double>(cpu),
             coordinate(VYCoordinate(_x, _y)),
             touched(false),
             count(0)
         {
         }
-        int VYSubstrateNode::operator++(int)
+        template<>
+        VYSubstrateNode<>::~VYSubstrateNode()
+        {
+        }
+        template<>
+        const VYCoordinate& VYSubstrateNode<>::getCoordinates() const
+        {
+            return coordinate;
+        }
+        template<>
+        double VYSubstrateNode<>::getCPU() const
+        {
+            return std::get<0>(this->resources);
+        }
+        template<>
+        int VYSubstrateNode<>::getCount() const
+        {
+            return count;
+        }
+        template<>
+        int VYSubstrateNode<>::operator++(int)
         {
             int val = count;
             count++;
             return val;
         }
-        int VYSubstrateNode::operator--(int)
+        template<>
+        int VYSubstrateNode<>::operator--(int)
         {
             int val = count;
             count--;
             return val;
         }
-        int VYSubstrateNode::operator++()
+        template<>
+        int VYSubstrateNode<>::operator++()
         {
             return ++count;
         }
-        int VYSubstrateNode::operator--()
+        template<>
+        int VYSubstrateNode<>::operator--()
         {
             return --count;
-        }
-        int VYSubstrateNode::getCount() const
-        {
-            return count;
-        }
-        const VYCoordinate& VYSubstrateNode::getCoordinates() const
-        {
-            return coordinate;
-        }
-        VYSubstrateNode::~VYSubstrateNode()
-        {
-        }
+        } 
     }
 }

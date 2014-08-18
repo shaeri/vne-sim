@@ -40,6 +40,7 @@ public:
 	VirtualLink (const Resources<LINKRES...>& _res, int node_from, int node_to);
     VirtualLink (const LINKRES &... _res, int node_from, int node_to);
 	void addHostLink (SubstrateLink<LINKRES...>* _l);
+    void removeHostLink (SubstrateLink<LINKRES...>* _l);
 	virtual ~VirtualLink();
 protected:
     std::map<int, SubstrateLink<LINKRES...>*> substrate_host_links;
@@ -66,6 +67,13 @@ void VirtualLink<LINKRES...>::addHostLink (SubstrateLink<LINKRES...>* _l)
 {
     BOOST_LOG_NAMED_SCOPE("VirtualLink::addHostLink")
     substrate_host_links.insert(std::make_pair(_l->getId(), _l));
+}
+template<typename ... LINKRES>
+void VirtualLink<LINKRES...>::removeHostLink (SubstrateLink<LINKRES...>* _l)
+{
+    BOOST_LOG_NAMED_SCOPE("VirtualLink::removeHostLink")
+    auto it = substrate_host_links.find (_l->getId());
+    substrate_host_links.erase(it);
 }
 template<typename ... LINKRES>
 VirtualLink<LINKRES...>::~VirtualLink ()

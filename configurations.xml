@@ -1,0 +1,18 @@
+<vineyard>
+    <SubstrateNetwork>
+        <path>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/substrate_network</path>
+        <filename>sub-20.txt</filename>
+    </SubstrateNetwork>
+    <VirtualNetRequest>
+        <path>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/virtual_net_requests</path>
+        <dir>r-10-50-50-20-10-10-50</dir>
+        <reqfileExtension>.txt</reqfileExtension>
+    </VirtualNetRequest>
+    <Results>
+        <path>files/results</path>
+    </Results>
+    <Constants>
+        <revenueMultiplier>1.0</revenueMultiplier>
+        <costMultiplier>1.0</costMultiplier>
+    </Constants>
+</vineyard>

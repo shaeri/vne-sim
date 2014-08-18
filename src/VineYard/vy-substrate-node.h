@@ -22,27 +22,29 @@
    *     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   **/
 
-#ifndef VINEYARD_VY_SUBSTRATE_NODE__
-#define VINEYARD_VY_SUBSTRATE_NODE__
+#ifndef VINEYARD_VY_SUBSTRATE_NODE_
+#define VINEYARD_VY_SUBSTRATE_NODE_
 
 #include "core/substrate-node.h"
 #include "vy-coordinate.h"
 
 namespace vne {
     namespace vineyard {
+    template<typename = double>
     class VYSubstrateNode : public SubstrateNode<double>
     {
     public:
         VYSubstrateNode (double cpu, const VYCoordinate& coord);
         VYSubstrateNode (double cpu, int _x, int _y);
+        ~VYSubstrateNode ();
         const VYCoordinate& getCoordinates () const;
+        double getCPU () const;
         int getCount () const;
         int operator++ (int);
-        int  operator-- (int);
+        int operator-- (int);
         int operator++ ();
-        int  operator-- ();
+        int operator-- ();
         bool touched;
-        ~VYSubstrateNode ();
     private:
         VYCoordinate coordinate;
         int count;

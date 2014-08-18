@@ -30,14 +30,14 @@ namespace vne{
 //template <typename ...> class NetworkBuilder;
 //template<typename ... NODET, typename ... LINKT>
 //class NetworkBuilder<Network<Node<NODET...>, Link <LINKT...>>>{
-template<typename T>
-class NetworkBuilder{
-    //make sure T is a subclass of Network
-    static_assert (std::is_base_of<NetworkBase,T>::value,"NetworkBuilder template argument may only be a subclass of Network");
+template<typename> class NetworkBuilder;
+template<typename... NodeT, template<typename...> class NodeC,
+typename... LinkT, template <typename...> class LinkC>
+class NetworkBuilder<Network<NodeC<NodeT...>, LinkC<LinkT...>>>{
 public:
-    virtual std::shared_ptr<T> getNetwork () {return 0;};
+    virtual std::shared_ptr<Network<NodeC<NodeT...>, LinkC<LinkT...>>> getNetwork () {return 0;};
 protected:
-    NetworkBuilder();
+    NetworkBuilder() {};
 };
 }
 #endif

@@ -40,6 +40,8 @@
 #include "core/virtual-network.h"
 #include "core/coordinate.h"
 
+#include "core/config-manager.h"
+
 using namespace vne;
 //boost::logging::core::get()->add_global_attribute("Scope", boost::make_shared< attrs::named_scope >());
 /*
@@ -116,6 +118,8 @@ BOOST_AUTO_TEST_CASE(TypeId)
 }
 BOOST_AUTO_TEST_CASE(Id)
 {
+   vne::Link<int, double, std::string> l1 = vne::Link<int, double,
+        std::string>(5,7.9,"test",vne::Entity_t::virt, 0, 0);
 	int lCount = vne::IdGenerator::Instance()->peekId<t1>();
 	for (int i = 0; i < 5; i++)
 	{
@@ -333,9 +337,11 @@ BOOST_AUTO_TEST_CASE(SubstrateNetworkTestCase)
     
     Network<SubstrateNode<int>, SubstrateLink<int>> n =
             vne::Network<SubstrateNode<int>, SubstrateLink<int>>();
+    
 	std::shared_ptr<vne::SubstrateNode<int>> node1Ptr = std::make_shared<vne::SubstrateNode<int>>(Resources<int>(5));
 	n.addNode(node1Ptr);
-	std::shared_ptr<vne::SubstrateNode<int>> anotherPtr = n.getNode(node1Ptr->getId());
+	
+    std::shared_ptr<vne::SubstrateNode<int>> anotherPtr = n.getNode(node1Ptr->getId());
 	BOOST_REQUIRE(anotherPtr->getId() == node1Ptr->getId());
 	anotherPtr.reset();
 	std::shared_ptr<vne::SubstrateNode<int>> node2Ptr = std::make_shared<vne::SubstrateNode<int>>(
@@ -344,11 +350,12 @@ BOOST_AUTO_TEST_CASE(SubstrateNetworkTestCase)
 	n.addNode(node2Ptr);
 	std::shared_ptr<vne::SubstrateLink<int>> lPtr = std::make_shared<vne::SubstrateLink<int>>(
 			12, node1Ptr->getId(), node2Ptr->getId());
+    
 	BOOST_REQUIRE(lPtr->getNodeFromId() != lPtr->getNodeToId());
 	n.addLink(lPtr);
-	BOOST_CHECK(n.getLinksForNodeId(node1Ptr->getId())->size() == 1);
+    BOOST_CHECK(n.getLinksForNodeId(node1Ptr->getId())->size() == 1);
 	BOOST_CHECK(n.getLinksForNodeId(node2Ptr->getId())->size() == 1);
-    
+    BOOST_CHECK(n.getLinksForNodeId(27) == nullptr);
 }
 BOOST_AUTO_TEST_CASE(VirtualNetworkTestCase)
 {
@@ -379,5 +386,13 @@ BOOST_AUTO_TEST_CASE(Cartesian2DTest)
     CartesianCoord2D<int,int> _1 = CartesianCoord2D<int,int> (0,0);
     CartesianCoord2D<int,int> _2 = CartesianCoord2D<int,int> (8,8);
     cout<< _2.distanceFrom (_1) << endl;
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(Config)
+BOOST_AUTO_TEST_CASE(ConfigTest)
+{
+    cout<< ConfigManager::Instance()->getConfig<string>("vineyard.SubstrateNetwork.path") << endl;
+    //std::cout << boost::filesystem::initial_path() << std::endl;
 }
 BOOST_AUTO_TEST_SUITE_END()

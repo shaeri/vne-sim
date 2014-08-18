@@ -40,6 +40,7 @@ public:
     SubstrateLink(const LINKRES &... _res, int node_from, int node_to);
     virtual ~SubstrateLink();
 	bool hasResources(const Resources<LINKRES...>& _res);
+    bool hasResources(const LINKRES &... _res);
 	Embedding_Result embedLink(std::shared_ptr<VirtualLink<LINKRES...> > _l);
 	void freeResources(int _id);
 protected:
@@ -67,6 +68,11 @@ template<typename... LINKRES>
 bool SubstrateLink<LINKRES...>::hasResources(const Resources<LINKRES...> &_res)
 {
    return this->resources.hasResources(_res);
+}
+template<typename... LINKRES>
+bool SubstrateLink<LINKRES...>::hasResources(const LINKRES &... _res)
+{
+   return this->resources.hasResources(_res...);
 }
 template<typename... LINKRES>
 Embedding_Result SubstrateLink<LINKRES...>::embedLink (std::shared_ptr<VirtualLink<LINKRES...> > _l)

@@ -78,7 +78,6 @@ template<typename T>
 int IdGenerator::peekId()
 {
 	int ret;
-	//const char* type_name = typeid(T).name();
 	auto it = m_map.find(typeid(T));
 	if (it == m_map.end())
 	{

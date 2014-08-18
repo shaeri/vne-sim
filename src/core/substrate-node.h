@@ -73,8 +73,8 @@ SubstrateNode<NODERES...>::SubstrateNode(const NODERES &... _res) :
 template<typename ... NODERES>
 SubstrateNode<NODERES...>::~SubstrateNode()
 {
-	BOOST_LOG_TRIVIAL(debug) << "Destructing SubstrateNode id :" << this->id <<
-			 std::endl;
+	//BOOST_LOG_TRIVIAL(debug) << "Destructing SubstrateNode id :" << this->id <<
+	//		 std::endl;
 }
 template<typename ... NODERES>
 bool SubstrateNode<NODERES...>::hasResources(const Resources<NODERES...>& _res)

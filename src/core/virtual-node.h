@@ -61,7 +61,7 @@ template<typename ... NODERES>
 VirtualNode<NODERES...>::VirtualNode (const NODERES &... _res)
 	: 	Node<NODERES...> (_res..., Entity_t::virt)
 {
-	this->id  = vne::IdGenerator::getId<this_t>(this);
+	this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
 }
 template<typename ... NODERES>
 void VirtualNode<NODERES...>::setHostNode (SubstrateNode<NODERES...>* _n)
