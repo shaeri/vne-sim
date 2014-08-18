@@ -86,10 +86,10 @@ namespace vne {
         this->couple (vnr_generator, vnr_generator->arrive, vnr_embedding, vnr_embedding->arrive);
         this->couple (vnr_generator, vnr_generator->arrive, vnr_observer, vnr_observer->entered_embedding_queue);
         
-        this->couple (vnr_embedding, vnr_embedding->depart_successful_mapping, vnr_release, vnr_release->arrive);
-        this->couple (vnr_embedding, vnr_embedding->depart_successful_mapping, vnr_observer, vnr_observer->embedding_successful);
+        this->couple (vnr_embedding, vnr_embedding->depart_successful_embedding, vnr_release, vnr_release->arrive);
+        this->couple (vnr_embedding, vnr_embedding->depart_successful_embedding, vnr_observer, vnr_observer->embedding_successful);
         
-        this->couple (vnr_embedding, vnr_embedding->depart_unsuccessful_mapping, vnr_observer, vnr_observer->embedding_unsuccessful);
+        this->couple (vnr_embedding, vnr_embedding->depart_unsuccessful_embedding, vnr_observer, vnr_observer->embedding_unsuccessful);
         
         this->couple (vnr_release, vnr_release->depart, vnr_observer, vnr_observer->released_resources);
     }

@@ -57,8 +57,8 @@ namespace vne
         virtual void gc_output(adevs::Bag<ADEVS_IO_TYPE>& g) {};
         
         static const int arrive;
-        static const int depart_successful_mapping;
-        static const int depart_unsuccessful_mapping;
+        static const int depart_successful_embedding;
+        static const int depart_unsuccessful_embedding;
         
         struct CompareVNRArrivalTime{
             bool operator()(const PTR_TYPE lhs, const PTR_TYPE rhs)
@@ -83,11 +83,11 @@ namespace vne
     template<template<typename> class VNR,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNREmbeddingProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::depart_successful_mapping = 1;
+    const int VNREmbeddingProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::depart_successful_embedding = 1;
     
     template<template<typename> class VNR,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNREmbeddingProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::depart_unsuccessful_mapping = 2;
+    const int VNREmbeddingProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::depart_unsuccessful_embedding = 2;
 }
 #endif /* VNR_EMBEDDING_PROCESSOR_H_ */
