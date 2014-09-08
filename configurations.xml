@@ -15,4 +15,17 @@
         <revenueMultiplier>1.0</revenueMultiplier>
         <costMultiplier>1.0</costMultiplier>
     </Constants>
+    <Configs>
+        <setAlpha>true</setAlpha> <!-- if set to false Alpha is automatically set to 1-->
+        <setBeta>true</setBeta>   <!-- if set to false Beta is automatically set to 1-->
+        <!-- "deterministic" or "randomized" (use exact words without quotes). 
+         If it is not specified deterministic approach is selected by default. -->
+        <nodeMappingType>deterministic</nodeMappingType>
+    </Configs>
+    <glpk>
+        <LPmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/CNLM-LP.mod</LPmodelFile>
+        <LPdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/CNLM-LP.dat</LPdataFile>
+        <MCFmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/MCF.mod</MCFmodelFile>
+        <MCFdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/MCF.dat</MCFdataFile>
+    </glpk>
 </vineyard>

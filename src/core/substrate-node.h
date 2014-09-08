@@ -94,15 +94,15 @@ Embedding_Result SubstrateNode<NODERES...>::embedNode(
 	auto it = embedded_nodes.find(_n->getId());
 	assert(it == embedded_nodes.end());
     Embedding_Result result = this->resources.embedResources(_n->getResources ());
-	if(result == Embedding_Result::NOT_ENOUGH_SUBSTRATE_NODE_RESOURCES)
+	if(result == Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES)
 	{
-		return Embedding_Result::NOT_ENOUGH_SUBSTRATE_NODE_RESOURCES;
+		return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
 	}
 	else
     {
         _n->setHostNode(this);
         embedded_nodes[_n->getId()] = std::move(_n);
-        return Embedding_Result::SUCCESSFUL_NODE_EMBEDDING;
+        return Embedding_Result::SUCCESSFUL_EMBEDDING;
     }
 }
 template<typename ... NODERES>

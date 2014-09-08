@@ -138,10 +138,10 @@ Embedding_Result Resources<RES...>::embedResources(const std::tuple<RES...>&  _r
 	BOOST_LOG_NAMED_SCOPE("Resources::embedResources");
 	if(!hasResources(_res))
 	{
-		return Embedding_Result::NOT_ENOUGH_SUBSTRATE_NODE_RESOURCES;
+		return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
 	}
 	embedResources(_res, int_<sizeof...(RES)>());
-	return Embedding_Result::SUCCESSFUL_NODE_EMBEDDING;
+	return Embedding_Result::SUCCESSFUL_EMBEDDING;
 }
 template<typename ... RES>
 void Resources<RES...>::freeResources(const std::tuple<RES...>& _res)

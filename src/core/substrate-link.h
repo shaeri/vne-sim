@@ -82,15 +82,15 @@ Embedding_Result SubstrateLink<LINKRES...>::embedLink (std::shared_ptr<VirtualLi
 	assert(it == embedded_links.end());
     Resources<LINKRES...> _res = _l->getResources ();
     Embedding_Result result = this->resources.embedResources(_res);
-	if(result == Embedding_Result::NOT_ENOUGH_SUBSTRATE_NODE_RESOURCES)
+	if(result == Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES)
 	{
-		return Embedding_Result::NOT_ENOUGH_SUBSTRATE_NODE_RESOURCES;
+		return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
 	}
 	else
     {
         _l-> addHostLink (this);
         embedded_links[_l->getId()] = std::move(_l);
-        return Embedding_Result::SUCCESSFUL_NODE_EMBEDDING;
+        return Embedding_Result::SUCCESSFUL_EMBEDDING;
     }
 }
 template<typename... LINKRES>

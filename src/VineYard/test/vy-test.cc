@@ -31,6 +31,9 @@
 
 #include "core/network.h"
 #include "core/config-manager.h"
+#include "core/node-embedding-algorithm.h"
+#include "core/two-stage-embedding-algo.h"
+#include "core/link-embedding-algorithm.h"
 
 #include "Vineyard/vy-substrate-node.h"
 #include "Vineyard/vy-virtual-node.h"
@@ -39,6 +42,9 @@
 #include "Vineyard/vy-virtual-net-request.h"
 #include "Vineyard/vy-substrate-network-builder.h"
 #include "Vineyard/vy-vnr-proc-digraph.h"
+#include "Vineyard/vy-vine-embedding-algo-file-based.h"
+
+#include "Vineyard/vy-vine-embedding-algo.h"
 
 
 #include <boost/log/core.hpp>
@@ -67,7 +73,7 @@ BOOST_AUTO_TEST_CASE(VYCoordTest)
 BOOST_AUTO_TEST_CASE(VYSubstrateTest)
 {
     std::shared_ptr<VYSubstrateNode<>> sn1 = std::make_shared<VYSubstrateNode<>>(VYSubstrateNode<> (25, 10, 10));
-    std::shared_ptr<VYSubstrateNode<>> sn2 = std::make_shared<VYSubstrateNode<>>(VYSubstrateNode<> (10,0,0));
+    std::shared_ptr<VYSubstrateNode<>> sn2 = std::make_shared<VYSubstrateNode<>>(VYSubstrateNode<> (15,0,0));
     std::shared_ptr<VYSubstrateNode<>> sn3 = std::make_shared<VYSubstrateNode<>>(VYSubstrateNode<> (10,-10,-10));
     std::shared_ptr<VYSubstrateLink<>> l1 = std::make_shared<VYSubstrateLink<>>(VYSubstrateLink<> (5,2,sn1->getId(),sn2->getId()));
     std::shared_ptr<VYSubstrateLink<>> l2 = std::make_shared<VYSubstrateLink<>>(VYSubstrateLink<> (1,3,sn1->getId(),sn3->getId()));
@@ -79,20 +85,11 @@ BOOST_AUTO_TEST_CASE(VYSubstrateTest)
     substrateNetwork.addLink(l1);
     substrateNetwork.addLink(l2);
     
-    std::shared_ptr<VYSubstrateLink<>> l3 = std::make_shared<VYSubstrateLink<>>(VYSubstrateLink<> (3,6,5,7));
-    std::cout<<substrateNetwork.getLinksForNodeId(0)->at(0)->getCount() << std::endl;
-    substrateNetwork.getLinksForNodeId(0)->at(0)->operator++();
-    std::cout<<substrateNetwork.getLinksForNodeId(0)->at(0)->getCount() << std::endl;
-    //substrateNetwork.getLinksForNodeId(0)->push_back(l3);
+    
+    VYVirtualNode<> vn1 (VYVirtualNode<> (10,0,0));
+    
     BOOST_CHECK (substrateNetwork.getLinksForNodeId(0)->size()==2);
     BOOST_CHECK(!sn1->hasResources(32));
-    /*
-    std::cout << sn1->getCoordinates().distanceFrom (sn2->getCoordinates()) << std::endl;
-    std::cout<< ++(*sn1) << std::endl;
-    std::cout<< sn1->getCount() << std::endl;
-    std::cout<< ++(*sn1) << std::endl;
-    std::cout<< sn1->getCount() << std::endl;
-    */
 }
 BOOST_AUTO_TEST_CASE(VYVirtualTest)
 {
@@ -195,5 +192,41 @@ BOOST_AUTO_TEST_CASE(VYVNRProcDigraphTest)
     {
         sim.execNextEvent();
     }
+}
+BOOST_AUTO_TEST_CASE(VYEmbeddingAlgoTest)
+{
+    //substrate network
+    std::shared_ptr<Network<VYSubstrateNode<>,VYSubstrateLink<>>> sn (new Network<VYSubstrateNode<>,VYSubstrateLink<>> ());
+    
+    std::shared_ptr<VYSubstrateNode<>> n1 (new VYSubstrateNode<>(3.0, 0,0));
+    std::shared_ptr<VYSubstrateNode<>> n2 (new VYSubstrateNode<>(5.0, 0,0));
+    std::shared_ptr<VYSubstrateNode<>> n3 (new VYSubstrateNode<>(2.0, 0,0));
+    
+    std::shared_ptr<VYSubstrateLink<>> l1 (new VYSubstrateLink<>(6.0, 0, n1->getId(), n2->getId()));
+    std::shared_ptr<VYSubstrateLink<>> l2 (new VYSubstrateLink<>(5.0, 0, n1->getId(), n3->getId()));
+    std::shared_ptr<VYSubstrateLink<>> l3 (new VYSubstrateLink<>(3.0, 0, n2->getId(), n3->getId()));
+    
+    sn->addNode(n1);
+    sn->addNode(n2);
+    sn->addNode(n3);
+    sn->addLink(l1);
+    sn->addLink(l2);
+    sn->addLink(l3);
+    
+    //Virtual net
+    std::shared_ptr<Network<VYVirtualNode<>, VYVirtualLink<>>> vn (new Network<VYVirtualNode<>, VYVirtualLink<>>());
+    
+    std::shared_ptr<VYVirtualNode<>> m1 (new VYVirtualNode<>(6.0, 0,0));
+    std::shared_ptr<VYVirtualNode<>> m2 (new VYVirtualNode<>(2.0, 0,0));
+    
+    std::shared_ptr<VYVirtualLink<>> k1 (new VYVirtualLink<>(4.0, 0, m1->getId(), m2->getId()));
+    vn->addNode(m1);
+    vn->addNode(m2);
+    vn->addLink(k1);
+    
+    std::shared_ptr<VYVirtualNetRequest<>> vnr (new VYVirtualNetRequest<>(vn, 15.2, 16.2, 0, 0, 2, nullptr, nullptr));
+    VYVineEmbeddingAlgoFileBased<> algo (sn);
+    //VYVineEmbeddingAlgo<> algo (sn);
+    algo.embeddVNR(vnr);
 }
 BOOST_AUTO_TEST_SUITE_END ()

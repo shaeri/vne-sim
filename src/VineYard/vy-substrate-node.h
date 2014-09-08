@@ -25,8 +25,13 @@
 #ifndef VINEYARD_VY_SUBSTRATE_NODE_
 #define VINEYARD_VY_SUBSTRATE_NODE_
 
-#include "core/substrate-node.h"
 #include "vy-coordinate.h"
+#include "vy-virtual-net-request.h"
+
+#include "core/substrate-node.h"
+#include "core/network.h"
+
+#include <vector>
 
 namespace vne {
     namespace vineyard {

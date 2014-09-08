@@ -150,28 +150,50 @@ BOOST_AUTO_TEST_SUITE(NetworkTest)
  }*/
 BOOST_AUTO_TEST_CASE(createNetwork)
 {
-	//typedef vne::Node<int> t1;
-	//int nCount = vne::IdGenerator::peekId<t1>();
-	//vne::Network<vne::Node<int>, int, vne::Link<int>, int> net = vne::Network<vne::Node<int>, int, vne::Link<int>, int> ();
 	vne::Network<vne::Node<int>, vne::Link<int>> n = vne::Network<
 			vne::Node<int>, vne::Link<int>>();
 
 	std::shared_ptr<vne::Node<int>> node1Ptr = std::make_shared<vne::Node<int>>(
 			Resources<int>(5), vne::Entity_t::substrate);
 	n.addNode(node1Ptr);
-	std::shared_ptr<vne::Node<int>> anotherPtr = n.getNode(node1Ptr->getId());
+	std::shared_ptr<const vne::Node<int>> anotherPtr = n.getNode(node1Ptr->getId());
 	BOOST_REQUIRE(anotherPtr->getId() == node1Ptr->getId());
 	anotherPtr.reset();
 	std::shared_ptr<vne::Node<int>> node2Ptr = std::make_shared<vne::Node<int>>(
 			Resources<int>(6), vne::Entity_t::substrate);
 	BOOST_REQUIRE(node1Ptr->getId() != node2Ptr->getId());
 	n.addNode(node2Ptr);
-	std::shared_ptr<vne::Link<int>> lPtr = std::make_shared<vne::Link<int>>(
+    std::shared_ptr<vne::Node<int>> node3Ptr =
+        std::make_shared<vne::Node<int>>(Resources<int>(5), vne::Entity_t::substrate);
+    n.addNode(node3Ptr);
+    
+	std::shared_ptr<vne::Link<int>> l1Ptr = std::make_shared<vne::Link<int>>(
 			5, vne::Entity_t::substrate, node1Ptr->getId(), node2Ptr->getId());
-	BOOST_REQUIRE(lPtr->getNodeFromId() != lPtr->getNodeToId());
-	n.addLink(lPtr);
-	BOOST_CHECK(n.getLinksForNodeId(node1Ptr->getId())->size() == 1);
+	BOOST_REQUIRE(l1Ptr->getNodeFromId() != l1Ptr->getNodeToId());
+	n.addLink(l1Ptr);
+
+    std::shared_ptr<vne::Link<int>> l2Ptr =
+        std::make_shared<vne::Link<int>>(5, vne::Entity_t::substrate, node1Ptr->getId(), node3Ptr->getId());
+    BOOST_REQUIRE(l2Ptr->getNodeFromId() != l1Ptr->getNodeToId());
+    n.addLink(l2Ptr);
+    
+    std::shared_ptr<const vne::Link<int>> anotherLptr = n.getLinkBetweenNodes(node2Ptr->getId(), node3Ptr->getId());
+    
+	BOOST_CHECK(n.getLinksForNodeId(node1Ptr->getId())->size() == 2);
 	BOOST_CHECK(n.getLinksForNodeId(node2Ptr->getId())->size() == 1);
+    
+    BOOST_REQUIRE(n.getLinkBetweenNodes(node1Ptr->getId(), node1Ptr->getId()) == nullptr);
+    BOOST_REQUIRE(n.getLinkBetweenNodes(node2Ptr->getId(), node2Ptr->getId()) == nullptr);
+    BOOST_REQUIRE(n.getLinkBetweenNodes(node3Ptr->getId(), node3Ptr->getId()) == nullptr);
+    
+    BOOST_REQUIRE(n.getLinkBetweenNodes(node2Ptr->getId(), node3Ptr->getId()) == nullptr);
+    BOOST_REQUIRE(n.getLinkBetweenNodes(node3Ptr->getId(), node2Ptr->getId()) == nullptr);
+
+    BOOST_REQUIRE(n.getLinkBetweenNodes(node1Ptr->getId(), node3Ptr->getId())->getId() == l2Ptr->getId());
+    BOOST_REQUIRE(n.getLinkBetweenNodes(node3Ptr->getId(), node1Ptr->getId())->getId() == l2Ptr->getId());
+    BOOST_REQUIRE(n.getLinkBetweenNodes(node1Ptr->getId(), node2Ptr->getId())->getId() == l1Ptr->getId());
+    BOOST_REQUIRE(n.getLinkBetweenNodes(node2Ptr->getId(), node1Ptr->getId())->getId() == l1Ptr->getId());
+    
 	/*std::shared_ptr<vne::Link<int>> linkPtr = std::make_shared<vne::Link<int>>(
 	 vne::Entity_t::substrate, 0, 0);
 	 net.addLink(linkPtr);
@@ -341,7 +363,7 @@ BOOST_AUTO_TEST_CASE(SubstrateNetworkTestCase)
 	std::shared_ptr<vne::SubstrateNode<int>> node1Ptr = std::make_shared<vne::SubstrateNode<int>>(Resources<int>(5));
 	n.addNode(node1Ptr);
 	
-    std::shared_ptr<vne::SubstrateNode<int>> anotherPtr = n.getNode(node1Ptr->getId());
+    std::shared_ptr<const vne::SubstrateNode<int>> anotherPtr = n.getNode(node1Ptr->getId());
 	BOOST_REQUIRE(anotherPtr->getId() == node1Ptr->getId());
 	anotherPtr.reset();
 	std::shared_ptr<vne::SubstrateNode<int>> node2Ptr = std::make_shared<vne::SubstrateNode<int>>(
@@ -364,7 +386,7 @@ BOOST_AUTO_TEST_CASE(VirtualNetworkTestCase)
 
 	std::shared_ptr<vne::VirtualNode<int>> node1Ptr = std::make_shared<vne::VirtualNode<int>>(Resources<int>(5));
 	n.addNode(node1Ptr);
-	std::shared_ptr<vne::VirtualNode<int>> anotherPtr = n.getNode(node1Ptr->getId());
+	std::shared_ptr<const vne::VirtualNode<int>> anotherPtr = n.getNode(node1Ptr->getId());
 	BOOST_REQUIRE(anotherPtr->getId() == node1Ptr->getId());
 	anotherPtr.reset();
 	std::shared_ptr<vne::VirtualNode<int>> node2Ptr = std::make_shared<vne::VirtualNode<int>>(

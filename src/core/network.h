@@ -27,7 +27,9 @@
 
 #include "node.h"
 #include "link.h"
+
 #include <vector>
+#include <set>
 #include <memory>
 #include <boost/log/trivial.hpp>
 #include <boost/log/attributes/named_scope.hpp>
@@ -48,14 +50,25 @@ public:
 	Network();
 	virtual ~Network();
 	void addNode(std::shared_ptr<NodeC<NodeT...>> node);
-	const std::shared_ptr<NodeC<NodeT...>> getNode(int id);
 	void addLink(std::shared_ptr<LinkC<LinkT...>> link);
-	const std::shared_ptr<const std::vector<std::shared_ptr<LinkC<LinkT...>>> >getLinksForNodeId (int id) const;
-    const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>>getAllNodes () const;
-    const std::shared_ptr<std::vector<std::shared_ptr<const LinkC<LinkT...>>>>getAllLinks () const;
+    
+    inline const std::shared_ptr<const NodeC<NodeT...>> getNode(int id) const;
+    inline const std::shared_ptr<const std::set<int>> getNodeIdSet () const;
+	
+    inline const std::shared_ptr<const LinkC<LinkT...>> getLink (int id) const;
+	inline const std::shared_ptr<const std::vector<std::shared_ptr< const LinkC<LinkT...>>> > getLinksForNodeId (int id) const;
+    inline const std::shared_ptr<const LinkC<LinkT...>> getLinkBetweenNodes (int nodeIdFrom, int nodeIdTo) const;
+    inline const std::shared_ptr<const std::set<int>> getLinkIdSet () const;
+    
+    inline const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>> getAllNodes () const;
+    inline const std::shared_ptr<std::vector<std::shared_ptr<const LinkC<LinkT...>>>> getAllLinks () const;
+    
+    template<typename CONDITION, typename ... T>
+    inline const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>> getNodesWithConditions (T &... args);
+    
     int getId() {return this->id;};
-    int getNumNodes () {return this->nodesMap.size();};
-    int getNumLinks () {return this->linksMap.size();};
+    int getNumNodes () {return (int) this->nodesMap.size();};
+    int getNumLinks () {return (int) this->linksMap.size();};
 private:
 	typedef Network<NodeC<NodeT...>, LinkC<LinkT...>> this_t;
 protected:
@@ -96,17 +109,6 @@ void Network<NodeC<NodeT...>, LinkC<LinkT...>>::addNode(
 			it == nodesMap.end()
 					&& "A node with the same ID exists in the network.");
 	nodesMap[node->getId()] = node;
-}
-
-template<typename... NodeT, template<typename...> class NodeC,
-    typename... LinkT, template <typename...> class LinkC>
-const std::shared_ptr<NodeC<NodeT...>>
-Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNode(int id)
-{
-	if (nodesMap.find(id) == nodesMap.end())
-		return 0;
-	else
-		return nodesMap[id];
 }
 
 template<typename... NodeT, template<typename...> class NodeC,
@@ -153,12 +155,36 @@ void Network<NodeC<NodeT...>, LinkC<LinkT...>>::addLink(
     //add the link to the linkMap
     linksMap[link->getId()]=link;
 }
+    
 template<typename... NodeT, template<typename...> class NodeC,
     typename... LinkT, template <typename...> class LinkC>
-const std::shared_ptr<const std::vector<std::shared_ptr<LinkC<LinkT...> >> >
+inline const std::shared_ptr<const NodeC<NodeT...>>
+Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNode(int id) const
+{
+    auto it = nodesMap.find(id);
+    if (it == nodesMap.end())
+        return 0;
+    return it->second;
+}
+    
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+inline const std::shared_ptr<const std::set<int>>
+    Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNodeIdSet() const
+{
+    const std::shared_ptr<std::set<int>> keySet (new std::set<int>());
+    for (auto it = nodesMap.begin(); it!=  nodesMap.end(); it++)
+    {
+        keySet->insert(it->first);
+    }
+    return keySet;
+}
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+inline const std::shared_ptr<const std::vector<std::shared_ptr<const LinkC<LinkT...> >> >
 	Network<NodeC<NodeT...>, LinkC<LinkT...>>::getLinksForNodeId(int id) const
 {
-    const std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...> >> > v (new std::vector<std::shared_ptr<LinkC<LinkT...> >>());
+    const std::shared_ptr<std::vector<std::shared_ptr<const LinkC<LinkT...> >> > v (new std::vector<std::shared_ptr<const LinkC<LinkT...> >>());
     auto it = connectionMap.find(id);
     if (it != connectionMap.end())
     {
@@ -171,9 +197,56 @@ const std::shared_ptr<const std::vector<std::shared_ptr<LinkC<LinkT...> >> >
     else
         return nullptr;
 }
+    
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+inline const std::shared_ptr<const LinkC<LinkT...>>
+    Network<NodeC<NodeT...>, LinkC<LinkT...>>::getLinkBetweenNodes (int nodeIdFrom, int nodeIdTo) const
+{
+    auto nodeFromItr = connectionMap.find (nodeIdFrom);
+    auto nodeToItr = connectionMap.find (nodeIdTo);
+    if (nodeFromItr == connectionMap.end() || nodeToItr == connectionMap.end ())
+        std::cerr << "Network::getLinkBetweenNodes : Invalid nodeIds" << std::endl;
+    // The connection map is symmetric, however, the links are not.
+    // Therefore, we need to do the loop twice once for nodeIdFrom
+    // and once for nodeIdTo.
+    for (int i : *(nodeFromItr->second))
+    {
+        auto it = linksMap.find (i);
+        if ((it->second->getNodeFromId () == nodeIdFrom && it->second->getNodeToId () == nodeIdTo) ||
+            (it->second->getNodeFromId () == nodeIdTo && it->second->getNodeToId () == nodeIdFrom))
+            return it->second;
+    }
+    return nullptr;
+}
+    
 template<typename... NodeT, template<typename...> class NodeC,
 typename... LinkT, template <typename...> class LinkC>
-const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>>
+const std::shared_ptr<const LinkC<LinkT...>>
+Network<NodeC<NodeT...>, LinkC<LinkT...>>::getLink(int id) const
+{
+    auto it = linksMap.find(id);
+    if (it == linksMap.end())
+        return 0;
+    return it->second;
+}
+    
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+inline const std::shared_ptr<const std::set<int>>
+    Network<NodeC<NodeT...>, LinkC<LinkT...>>::getLinkIdSet () const
+{
+    const std::shared_ptr<std::set<int>> keySet (new std::set<int>());
+    for (auto it = linksMap.begin(); it!=  linksMap.end(); it++)
+    {
+        keySet->insert(it->first);
+    }
+    return keySet;
+}
+
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+inline const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>>
 Network<NodeC<NodeT...>, LinkC<LinkT...>>::getAllNodes () const
 {
     const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>> vec (new std::vector<std::shared_ptr<const NodeC<NodeT...>>>());
@@ -181,14 +254,31 @@ Network<NodeC<NodeT...>, LinkC<LinkT...>>::getAllNodes () const
         vec->push_back(it->second);
     return vec;
 }
+    
 template<typename... NodeT, template<typename...> class NodeC,
-typename... LinkT, template <typename...> class LinkC>
-const std::shared_ptr<std::vector<std::shared_ptr<const LinkC<LinkT...>>>>
+    typename... LinkT, template <typename...> class LinkC>
+inline const std::shared_ptr<std::vector<std::shared_ptr<const LinkC<LinkT...>>>>
 Network<NodeC<NodeT...>, LinkC<LinkT...>>::getAllLinks () const
 {
     const std::shared_ptr<std::vector<std::shared_ptr<const LinkC<LinkT...>>>> vec (new std::vector<std::shared_ptr<const LinkC<LinkT...>>>());
     for (auto it = linksMap.begin(); it != linksMap.end(); ++it)
         vec->push_back(it->second);
+    return vec;
+}
+    
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+        template<typename CONDITION, typename... T>
+inline const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>>
+Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNodesWithConditions (T &... args)
+{
+    const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>> vec (new std::vector<std::shared_ptr<const NodeC<NodeT...>>>());
+    CONDITION cond;
+    for (auto it = nodesMap.begin(); it != nodesMap.end(); ++it)
+    {
+        if (cond(*(it->second), args...))
+            vec->push_back(it->second);
+    }
     return vec;
 }
 }

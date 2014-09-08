@@ -25,8 +25,10 @@
 #ifndef VNR_GENERATOR_H_
 #define VNR_GENERATOR_H_
 
+#include "adevs.h"
+
 #include "core/virtual-network-request.h"
-#include "adevs/include/adevs.h"
+
 
 namespace vne{
     //template <typename ...> class NetworkBuilder;

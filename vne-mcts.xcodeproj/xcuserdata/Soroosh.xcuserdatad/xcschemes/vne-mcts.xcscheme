@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "--log_level=test_suite --run_test=VYTest/VYVNRProcDigraphTest"
+            argument = "--log_level=test_suite --run_test=VYTest/VYEmbeddingAlgoTest"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

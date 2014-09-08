@@ -34,7 +34,7 @@ namespace vne{
     {
     public:
         Coordinate2D (T1 _1, T2 _2);
-        virtual inline double distanceFrom (const std::pair<T1,T2>& point) const =0;
+        virtual inline double distanceFrom (const std::pair<T1,T2>& point) const = 0;
         virtual ~Coordinate2D ();
     };
     template <typename T1, typename T2>

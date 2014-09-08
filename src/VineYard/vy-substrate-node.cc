@@ -84,6 +84,6 @@ namespace vne {
         int VYSubstrateNode<>::operator--()
         {
             return --count;
-        } 
+        }
     }
 }

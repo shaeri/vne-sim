@@ -24,7 +24,7 @@
 #ifndef VNR_RELEASE_PROCESSOR_H_
 #define VNR_RELEASE_PROCESSOR_H_
 
-#include "adevs/include/adevs.h"
+#include "adevs.h"
 #include "core/virtual-network-request.h"
 
 #include <queue>

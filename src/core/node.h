@@ -48,7 +48,7 @@ public:
     int getId() const;
     const Entity_t& getType() const;
     const Resources<Args...>& getResources() const;
-	//void setResources(std::tuple<Args...>);
+    	//void setResources(std::tuple<Args...>);
 private:
 	typedef Node<Args...> this_t;
 protected:

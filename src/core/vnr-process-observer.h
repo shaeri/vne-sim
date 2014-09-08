@@ -24,7 +24,7 @@
 #ifndef VNR_PROCESS_OBSERVER_H_
 #define VNR_PROCESS_OBSERVER_H_
 
-#include "adevs/include/adevs.h"
+#include "adevs.h"
 #include "core/virtual-network-request.h"
 
 namespace vne
