@@ -62,7 +62,7 @@ public:
 
 protected:
     EmbeddingAlgorithm (NetworkBuilder<SUBSTRATE_TYPE>& _sb) : substrate_network(_sb.getNetwork()) {};
-    EmbeddingAlgorithm (std::shared_ptr<SUBSTRATE_TYPE> _sn) : substrate_network(std::move(_sn)) {};
+    EmbeddingAlgorithm (std::shared_ptr<SUBSTRATE_TYPE> _sn) : substrate_network(_sn) {};
     std::shared_ptr<SUBSTRATE_TYPE> substrate_network;
 };
 }

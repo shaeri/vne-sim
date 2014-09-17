@@ -1,5 +1,5 @@
 /**
- * @file vy-vnr-relase-proc.h
+ * @file vy-vine-two-stage-embedding-algo.cc
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date 7/16/14
  *
@@ -22,35 +22,26 @@
  *     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  **/
 
-#ifndef VINEYARD_VY_VNR_RELEASE_PROC_
-#define VINEYARD_VY_VNR_RELEASE_PROC_
+#include "vy-vine-two-stage-embedding-algo.h"
 
-#include "core/vnr-release-processor.h"
-
-#include "Vineyard/vy-virtual-net-request.h"
-#include "Vineyard/vy-substrate-node.h"
-
-
-namespace vne {
-    namespace vineyard {
+namespace vne
+{
+    namespace vineyard
+    {
+        template<>
+        VYVineTwoStageEmbeddingAlgo<>::VYVineTwoStageEmbeddingAlgo (std::shared_ptr<SUBSTRATE_TYPE> _sn,
+                    std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
+                    std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedding_algo) :
+        TwoStageEmbeddingAlgo<Network<VYSubstrateNode<>, VYSubstrateLink<> >, VYVirtualNetRequest<> >
+            (_sn,_node_embedding_algo,_link_embedding_algo)
+        {};
         
-        template<typename = Network <VYSubstrateNode<>,VYSubstrateLink<>>, typename = VYVirtualNetRequest<>>
-        class VYVNRReleaseProc :
-                public VNRReleaseProcessor <Network <VYSubstrateNode<>,VYSubstrateLink<>>,VYVirtualNetRequest<>>
-        {
-        public:
-            VYVNRReleaseProc (std::shared_ptr<ReleaseAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> releaseAlgo);
-            ~VYVNRReleaseProc ();
-            
-            virtual void delta_int();
-            virtual void delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb);
-            virtual void delta_conf(const adevs::Bag<ADEVS_IO_TYPE>& xb);
-            virtual void output_func(adevs::Bag<ADEVS_IO_TYPE>& yb);
-            virtual double ta();
-            
-        private:
-            double last_departure_time;
-        };
+        template<>
+        VYVineTwoStageEmbeddingAlgo<>::VYVineTwoStageEmbeddingAlgo (NetworkBuilder<SUBSTRATE_TYPE>& _nb,
+                    std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
+                    std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedding_algo) :
+        TwoStageEmbeddingAlgo<Network<VYSubstrateNode<>, VYSubstrateLink<> >, VYVirtualNetRequest<> >
+            (_nb, _node_embedding_algo, _link_embedding_algo)
+        {};
     }
 }
-#endif /* defined(__vne_mcts__vy_vnr_processor__) */

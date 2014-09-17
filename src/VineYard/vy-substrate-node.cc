@@ -52,6 +52,16 @@ namespace vne {
             return coordinate;
         }
         template<>
+        Embedding_Result VYSubstrateNode<>::embedNode(std::shared_ptr<VYVirtualNode<> > _n)
+        {
+            Embedding_Result emr = SubstrateNode<double>::embedNode (_n);
+             if (  emr == Embedding_Result::SUCCESSFUL_EMBEDDING)
+             {
+                 count++;
+             }
+            return emr;
+        }
+        template<>
         double VYSubstrateNode<>::getCPU() const
         {
             return std::get<0>(this->resources);

@@ -468,11 +468,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/Vineyard/test/vy-test.cc"
-            timestampString = "431487146.098311"
+            timestampString = "431916313.977757"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "110"
-            endingLineNumber = "110">
+            startingLineNumber = "105"
+            endingLineNumber = "105">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -750,6 +750,54 @@
             startingLineNumber = "88"
             endingLineNumber = "88"
             landmarkName = "setGLPKProblemObject(std::shared_ptr&lt;VNR_TYPE&gt; vnr)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Vineyard/vy-vine-link-embedding-algo.cc"
+            timestampString = "432684812.591152"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "274"
+            endingLineNumber = "274"
+            landmarkName = "embeddVNRLinks (std::shared_ptr&lt;SUBSTRATE_TYPE&gt; substrate_network, std::shared_ptr&lt;VNR_TYPE&gt; vnr)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Vineyard/vy-vine-link-embedding-algo.cc"
+            timestampString = "432684802.41849"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "245"
+            endingLineNumber = "245"
+            landmarkName = "embeddVNRLinks (std::shared_ptr&lt;SUBSTRATE_TYPE&gt; substrate_network, std::shared_ptr&lt;VNR_TYPE&gt; vnr)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Vineyard/vy-vine-node-embedding-algo.cc"
+            timestampString = "432684878.561861"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "321"
+            endingLineNumber = "321"
+            landmarkName = "deterministicNodeMapping (std::shared_ptr&lt;SUBSTRATE_TYPE&gt; substrate_network, std::shared_ptr&lt;VNR_TYPE&gt; vnr, std::vector&lt;std::vector&lt;double&gt;&gt;&amp; xVec)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

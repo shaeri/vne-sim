@@ -36,6 +36,8 @@ namespace vne {
         std::shared_ptr<Network<VYSubstrateNode<>, VYSubstrateLink<>>>
         VYSubstrateNetworkBuilder<>::getNetwork ()
         {
+            if (_net != 0)
+                return _net;
             //get generate the path to the substrate network file
             std::stringstream snfilePath;
             snfilePath << ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.path") <<

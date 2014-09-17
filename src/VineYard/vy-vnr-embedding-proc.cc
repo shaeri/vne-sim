@@ -28,8 +28,9 @@ namespace vne {
     namespace vineyard{
         
         template<>
-        VYVNREmbeddingProc<>::VYVNREmbeddingProc ()
-        : VNREmbeddingProcessor<VYVirtualNetRequest<>>()
+        VYVNREmbeddingProc<>::VYVNREmbeddingProc
+                        (std::shared_ptr<EmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>>embeddingAlgo)
+        : VNREmbeddingProcessor<SUBSTRATE_TYPE,VNR_TYPE>(embeddingAlgo)
         {
         }
         template<>
@@ -70,19 +71,19 @@ namespace vne {
             BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC:  delta_ext(). e:"<< e << std::endl;
             time += e;
             BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC:  delta_ext(). time:"<< time << std::endl;
-            std::uniform_real_distribution<double> distribution(0.0,1.0);
             
             adevs::Bag<ADEVS_IO_TYPE>::const_iterator i = xb.begin();
             for (; i != xb.end(); i++)
             {
-                //now I am using some dummy function to "simulate" the mapping time
-                //Later on mapping function call should go here
-                double proc_time = distribution (generator) * 10;
+                //statrt the chrono
+                start = std::chrono::system_clock::now();
+                this->embeddingAlgorithm->embeddVNR((*i).value);
+                //end the chrono
+                end = std::chrono::system_clock::now();
+                elapsed_seconds = end - start;
+               ((*i).value)->setProccessingTime(elapsed_seconds.count());
                 
-                if (proc_time>1)
-                        ((*i).value)->setEmbeddingResult(true);
-                // Copy the incoming Customer and place it at the back of the line.
-                ((*i).value)->setProccessingTime(proc_time);
+                // Copy the incoming vnr and place it at the back of the line.
                 vnr_queue.push((*i).value);
             }
         }
@@ -99,12 +100,18 @@ namespace vne {
             BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func()" << std::endl;
             PTR_TYPE leaving = vnr_queue.top ();
             ADEVS_IO_TYPE y;
-            if (leaving->successfulEmbedding())
+            if (leaving->getVN()->getNumLinks() == leaving->getLinkMap()->size() &&
+                    leaving->getVN()->getNumNodes() == leaving->getNodeMap()->size())
+            {
                 y = ADEVS_IO_TYPE (depart_successful_embedding,leaving);
+                BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Successful Mapping " <<  std::endl;
+            }
             else
+            {
                 y = ADEVS_IO_TYPE (depart_unsuccessful_embedding,leaving);
+                BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Failed Mapping " <<  std::endl;
+            }
             yb.insert(y);
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Successful Mapping: " << leaving->successfulEmbedding()<< std::endl;
         }
     }
 }

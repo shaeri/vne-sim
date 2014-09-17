@@ -1,5 +1,5 @@
 /**
- * @file vy-vine-embedding-algo-file-based.h
+ * @file vy-vine-node-embedding-algo.h
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date 7/16/14
  *
@@ -21,47 +21,56 @@
  *     AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  **/
-#if 0
-#ifndef VINEYARD_VY_VINE_EMBEDDING_ALGO_FILE_BASED_
-#define VINEYARD_VY_VINE_EMBEDDING_ALGO_FILE_BASED_
 
+#ifndef VINEYARD_VY_VINE_NODE_EMBEDDING_ALGO_
+#define VINEYARD_VY_VINE_NODE_EMBEDDING_ALGO_
 
 #include "glpk.h"
 
 #include "core/network.h"
-#include "core/embedding-algorithm.h"
-#include "core/network-builder.h"
+#include "core/node-embedding-algorithm.h"
 
 #include "Vineyard/vy-substrate-node.h"
 #include "Vineyard/vy-virtual-net-request.h"
+
+#define META_EDGE_BW 1000000
 
 namespace vne {
     namespace vineyard{
         
         template<typename = Network<VYSubstrateNode<>,VYSubstrateLink<>> ,
         typename = VYVirtualNetRequest<>>
-        class VYVineEmbeddingAlgoFileBased : public EmbeddingAlgorithm <Network<VYSubstrateNode<>,VYSubstrateLink<>>,
-        VYVirtualNetRequest<>>
+        class VYVineNodeEmbeddingAlgo :
+                public NodeEmbeddingAlgorithm <Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>
         {
         public:
-            VYVineEmbeddingAlgoFileBased (NetworkBuilder<SUBSTRATE_TYPE>& _sb);
-            VYVineEmbeddingAlgoFileBased (std::shared_ptr<SUBSTRATE_TYPE> _sn);
-            ~VYVineEmbeddingAlgoFileBased ();
-            virtual Embedding_Result embeddVNR (std::shared_ptr<VNR_TYPE> vnr);
+            VYVineNodeEmbeddingAlgo ();
+            ~VYVineNodeEmbeddingAlgo ();
+            virtual Embedding_Result  embeddVNRNodes (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
             
         private:
-            glp_prob* lp_problem;
             
+            glp_prob* lp_problem;
             std::string LPmodelFile;
             std::string LPdataFile;
-            std::string MCFmodelFile;
-            std::string MCFdataFile;
+            
+            std::shared_ptr<const std::set<int>> substrateNodeIdSet;
+            std::shared_ptr<const std::set<int>> substrateLinkIdSet;
+            std::shared_ptr<const std::set<int>> virtualNodeIdSet;
+            std::shared_ptr<const std::set<int>> virtualLinkIdSet;
+
+            std::vector <int> allNodeIds;
+            //this is based on local ids (vector index)
+            std::map<int,std::vector<int>> nodesWithinReach;
             
             bool setAlpha;
             bool setBeta;
             // 0 is returned if methods are successful otherwise 1 is returned
-            inline int solveNodeMappingLP (std::shared_ptr<VNR_TYPE> vnr);
-            inline void writeDataFiles (std::shared_ptr<VNR_TYPE> vnr);
+            inline int solveNodeMappingLP (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
+            inline void writeDataFile (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
+            inline void cleanUp (std::shared_ptr<SUBSTRATE_TYPE> substrate_network);
+            inline Embedding_Result deterministicNodeMapping (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr, std::vector<std::vector<double>>& xVec);
+            inline Embedding_Result randomizedNodeMapping (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr, std::vector<std::vector<double>>& xVec);
             //inline Embedding_Result parseLPSolution ();
             
             enum {DETERMINISTIC,RANDOMIZED} nodeMappingType;
@@ -76,12 +85,11 @@ namespace vne {
                 bool operator()(const std::shared_ptr<const VYSubstrateNode<>> lhs, const std::shared_ptr<const VYVirtualNode<>> rhs, double maxD) const
                 {
                     return (lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
-                            lhs->getCPU()>=rhs->getCPU() && lhs->touched == false);
+                            lhs->getCPU()>=rhs->getCPU());
                 }
             };
         };
     }
 }
 
-#endif /* defined(__vne_mcts__vy_vine_embedding_algo_v2__) */
 #endif

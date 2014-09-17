@@ -43,6 +43,7 @@ namespace vne {
         VYSubstrateNode (double cpu, int _x, int _y);
         ~VYSubstrateNode ();
         const VYCoordinate& getCoordinates () const;
+        Embedding_Result embedNode(std::shared_ptr<VYVirtualNode<> > _n);
         double getCPU () const;
         int getCount () const;
         int operator++ (int);

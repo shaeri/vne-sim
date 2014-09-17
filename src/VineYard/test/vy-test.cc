@@ -31,9 +31,7 @@
 
 #include "core/network.h"
 #include "core/config-manager.h"
-#include "core/node-embedding-algorithm.h"
 #include "core/two-stage-embedding-algo.h"
-#include "core/link-embedding-algorithm.h"
 
 #include "Vineyard/vy-substrate-node.h"
 #include "Vineyard/vy-virtual-node.h"
@@ -42,10 +40,9 @@
 #include "Vineyard/vy-virtual-net-request.h"
 #include "Vineyard/vy-substrate-network-builder.h"
 #include "Vineyard/vy-vnr-proc-digraph.h"
-#include "Vineyard/vy-vine-embedding-algo-file-based.h"
-
-#include "Vineyard/vy-vine-embedding-algo.h"
-
+#include "Vineyard/vy-vine-node-embedding-algo.h"
+#include "Vineyard/vy-vine-link-embedding-algo.h"
+#include "Vineyard/vy-vine-two-stage-embedding-algo.h"
 
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
@@ -96,13 +93,13 @@ BOOST_AUTO_TEST_CASE(VYVirtualTest)
     std::function<std::shared_ptr<std::pair<double,double>>(VYVirtualNetRequest<>* vnr)> getRevenue  = [] (VYVirtualNetRequest<>* vnr) -> std::shared_ptr<std::pair<double,double>>
     {
         std::shared_ptr<std::pair<double,double>> rev (new std::pair<double,double>(0,0));
-        const std::shared_ptr<std::vector<std::shared_ptr<const VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
+        const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
         for (int i=0;i<n->size();++i)
         {
             rev->first += n->at(i)->getCPU ();
             
         }
-       const std::shared_ptr<std::vector<std::shared_ptr<const VYVirtualLink<>>>>  l = vnr->getVN ()->getAllLinks();
+       const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualLink<>>>>  l = vnr->getVN ()->getAllLinks();
         for (int j=0;j<l->size();++j)
         {
             rev->second += l->at(j)->getBandwidth();
@@ -113,13 +110,13 @@ BOOST_AUTO_TEST_CASE(VYVirtualTest)
     std::function<std::shared_ptr<std::pair<double,double>>(VYVirtualNetRequest<>* vnr)> getCost  = [] (VYVirtualNetRequest<>* vnr) -> std::shared_ptr<std::pair<double,double>>
     {
         std::shared_ptr<std::pair<double,double>>  cost (new std::pair<double,double>(0,0));
-        const std::shared_ptr<std::vector<std::shared_ptr<const VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
+        const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
         for (int i=0;i<n->size();++i)
         {
             cost->first += n->at(i)->getCPU ();
             
         }
-        const std::shared_ptr<std::vector<std::shared_ptr<const VYVirtualLink<>>>>  l = vnr->getVN()->getAllLinks();
+        const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualLink<>>>>  l = vnr->getVN()->getAllLinks();
         for (int j=0;j<l->size();++j)
         {
             cost->second += l->at(j)->getPathLength() * l->at(j)->getBandwidth();
@@ -162,10 +159,12 @@ BOOST_AUTO_TEST_CASE(VYNetworkBuilderTest)
     std::cout<< net->getId() << std::endl;
     
 }
+#if 0
 BOOST_AUTO_TEST_CASE(VYVNRGenProcTest)
 {
     adevs::Digraph<VYVNRGenerator<>::PTR_TYPE> vnr_embedding;
     VYVNRGenerator<>* gen = new VYVNRGenerator<> ();
+    
     VYVNREmbeddingProc<>* proc = new VYVNREmbeddingProc<> ();
     
     vnr_embedding.add(gen);
@@ -180,10 +179,23 @@ BOOST_AUTO_TEST_CASE(VYVNRGenProcTest)
         sim.execNextEvent();
     }
 }
+#endif
 BOOST_AUTO_TEST_CASE(VYVNRProcDigraphTest)
 {
-    LoggerInit();
-    VYVNRProcDigraph<> graph = VYVNRProcDigraph<>();
+    typedef ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>> RELEASE_ALGO_TYPE;
+    //LoggerInit();
+    VYSubstrateNetworkBuilder<> sb = VYSubstrateNetworkBuilder<>();
+    std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo
+        (new VYVineTwoStageEmbeddingAlgo<>
+         (sb,
+            std::make_shared<VYVineNodeEmbeddingAlgo<>>(VYVineNodeEmbeddingAlgo<>()),
+            std::make_shared<VYVineLinkEmbeddingAlgo<>>(VYVineLinkEmbeddingAlgo<>())
+          )
+         );
+    std::shared_ptr<RELEASE_ALGO_TYPE> releaseAlgo (new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>(sb));
+    VYVNREmbeddingProc<>* embeddingProc (new VYVNREmbeddingProc<>(embeddingAlgo));
+    VYVNRReleaseProc<>* releaseProc (new VYVNRReleaseProc<>(releaseAlgo));
+    VYVNRProcDigraph<> graph (embeddingProc,releaseProc);
     std::cout<< "created the graph" << std::endl;
     adevs::Simulator<VYVNRGenerator<>::ADEVS_IO_TYPE> sim(&graph);
     std::cout<< "created the simulator" << std::endl;
@@ -216,7 +228,7 @@ BOOST_AUTO_TEST_CASE(VYEmbeddingAlgoTest)
     //Virtual net
     std::shared_ptr<Network<VYVirtualNode<>, VYVirtualLink<>>> vn (new Network<VYVirtualNode<>, VYVirtualLink<>>());
     
-    std::shared_ptr<VYVirtualNode<>> m1 (new VYVirtualNode<>(6.0, 0,0));
+    std::shared_ptr<VYVirtualNode<>> m1 (new VYVirtualNode<>(2.0, 0,0));
     std::shared_ptr<VYVirtualNode<>> m2 (new VYVirtualNode<>(2.0, 0,0));
     
     std::shared_ptr<VYVirtualLink<>> k1 (new VYVirtualLink<>(4.0, 0, m1->getId(), m2->getId()));
@@ -225,8 +237,19 @@ BOOST_AUTO_TEST_CASE(VYEmbeddingAlgoTest)
     vn->addLink(k1);
     
     std::shared_ptr<VYVirtualNetRequest<>> vnr (new VYVirtualNetRequest<>(vn, 15.2, 16.2, 0, 0, 2, nullptr, nullptr));
-    VYVineEmbeddingAlgoFileBased<> algo (sn);
+    VYVineNodeEmbeddingAlgo<> nodeAlgo;
     //VYVineEmbeddingAlgo<> algo (sn);
-    algo.embeddVNR(vnr);
+    nodeAlgo.embeddVNRNodes(sn,vnr);
+}
+BOOST_AUTO_TEST_CASE(VYGLPKTest)
+{
+    glp_prob* lp1 = glp_create_prob();
+    std::cout<< lp1 << std::endl;
+    glp_prob* lp2 = glp_create_prob();
+    std::cout<< lp2 << std::endl;
+    
+    glp_erase_prob(lp1);
+    glp_erase_prob(lp2);
+    
 }
 BOOST_AUTO_TEST_SUITE_END ()

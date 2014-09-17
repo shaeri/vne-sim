@@ -26,16 +26,20 @@
 
 #include "adevs.h"
 #include "core/virtual-network-request.h"
+#include "core/release-algorithm.h"
 
 #include <queue>
 
 namespace vne
 {
-    template<typename> class VNRReleaseProcessor;
+    template<typename, typename> class VNRReleaseProcessor;
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    class VNRReleaseProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>
+    class VNRReleaseProcessor<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>
     : public adevs::Atomic<adevs::PortValue<std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>> >>
     {
     public:
@@ -66,22 +70,33 @@ namespace vne
             }
         };
     protected:
-        VNRReleaseProcessor() :
+        typedef Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>> SUBSTRATE_TYPE;
+        typedef VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> VNR_TYPE;
+        
+        VNRReleaseProcessor(std::shared_ptr<ReleaseAlgorithm<SUBSTRATE_TYPE,VNR_TYPE>> releaseAlgo) :
         adevs::Atomic<ADEVS_IO_TYPE> (),
-        time (0.0)
+        time (0.0),
+        releaseAlgorithm (std::move(releaseAlgo))
         {};
         double time;
         std::priority_queue<PTR_TYPE, vector<PTR_TYPE>,CompareVNRReleaseTime> vnr_queue;
+        std::shared_ptr<ReleaseAlgorithm<SUBSTRATE_TYPE,VNR_TYPE>> releaseAlgorithm;
     };
     
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNRReleaseProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::arrive = 0;
+    const int VNRReleaseProcessor<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::arrive = 0;
     
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNRReleaseProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::depart = 1;
+    const int VNRReleaseProcessor<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::depart = 1;
 }
 #endif /* VNR_EMBEDDING_PROCESSOR_H_ */

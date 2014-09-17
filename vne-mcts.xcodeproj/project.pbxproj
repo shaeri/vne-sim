@@ -74,6 +74,9 @@
 		95E42C8E1958F95C0016EDBE /* libboost_unit_test_framework.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C8A1958F95C0016EDBE /* libboost_unit_test_framework.dylib */; };
 		95E42C901958F9910016EDBE /* libboost_log-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C8F1958F9910016EDBE /* libboost_log-mt.dylib */; };
 		95E42C921958F9B00016EDBE /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E42C911958F9B00016EDBE /* libboost_thread-mt.dylib */; };
+		95FA35DF19BE743B00B7F416 /* vy-vine-node-embedding-algo.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95FA35DD19BE743B00B7F416 /* vy-vine-node-embedding-algo.cc */; };
+		95FA35E219BE745000B7F416 /* vy-vine-link-embedding-algo.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95FA35E019BE745000B7F416 /* vy-vine-link-embedding-algo.cc */; };
+		95FA35E519C118D000B7F416 /* vy-vine-two-stage-embedding-algo.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95FA35E319C118CF00B7F416 /* vy-vine-two-stage-embedding-algo.cc */; };
 		95FBC88219999149003B8968 /* vnr-generator.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A3663819998BAC009FA327 /* vnr-generator.h */; };
 /* End PBXBuildFile section */
 
@@ -92,6 +95,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		95127E4719C8D0CA007793FE /* release-algorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "release-algorithm.h"; sourceTree = "<group>"; };
 		951FC81419805D50003E052C /* vy-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-test.cc"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/test/vy-test.cc"; sourceTree = "<absolute>"; };
 		9536F4F91988221E00DC6B8C /* vy-virtual-node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-virtual-node.h"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-virtual-node.h"; sourceTree = "<absolute>"; };
 		953D05CF19BE59A300C3B22B /* node-embedding-algorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "node-embedding-algorithm.h"; sourceTree = "<group>"; };
@@ -12321,6 +12325,12 @@
 		95E42C8A1958F95C0016EDBE /* libboost_unit_test_framework.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_unit_test_framework.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_unit_test_framework.dylib; sourceTree = "<group>"; };
 		95E42C8F1958F9910016EDBE /* libboost_log-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_log-mt.dylib"; path = "../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_log-mt.dylib"; sourceTree = "<group>"; };
 		95E42C911958F9B00016EDBE /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
+		95FA35DD19BE743B00B7F416 /* vy-vine-node-embedding-algo.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vine-node-embedding-algo.cc"; path = "src/Vineyard/vy-vine-node-embedding-algo.cc"; sourceTree = SOURCE_ROOT; };
+		95FA35DE19BE743B00B7F416 /* vy-vine-node-embedding-algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vine-node-embedding-algo.h"; path = "src/Vineyard/vy-vine-node-embedding-algo.h"; sourceTree = SOURCE_ROOT; };
+		95FA35E019BE745000B7F416 /* vy-vine-link-embedding-algo.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vine-link-embedding-algo.cc"; path = "src/Vineyard/vy-vine-link-embedding-algo.cc"; sourceTree = SOURCE_ROOT; };
+		95FA35E119BE745000B7F416 /* vy-vine-link-embedding-algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vine-link-embedding-algo.h"; path = "src/Vineyard/vy-vine-link-embedding-algo.h"; sourceTree = SOURCE_ROOT; };
+		95FA35E319C118CF00B7F416 /* vy-vine-two-stage-embedding-algo.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vine-two-stage-embedding-algo.cc"; path = "src/Vineyard/vy-vine-two-stage-embedding-algo.cc"; sourceTree = SOURCE_ROOT; };
+		95FA35E419C118D000B7F416 /* vy-vine-two-stage-embedding-algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vine-two-stage-embedding-algo.h"; path = "src/Vineyard/vy-vine-two-stage-embedding-algo.h"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -13520,6 +13530,7 @@
 				95A7E015199D5C01009E134D /* vnr-process-digraph.h */,
 				95AC6EE219BA39B0005DE2F1 /* statistic-collector.h */,
 				9563469D19A2922700A34EC4 /* embedding-algorithm.h */,
+				95127E4719C8D0CA007793FE /* release-algorithm.h */,
 				953D05CF19BE59A300C3B22B /* node-embedding-algorithm.h */,
 				953D05D019BE59BA00C3B22B /* link-embedding-algorithm.h */,
 				953D05D119BE5DCE00C3B22B /* two-stage-embedding-algo.h */,
@@ -25495,6 +25506,12 @@
 				959C06EA199D811600B74919 /* vy-vnr-proc-digraph.h */,
 				956346A119A297A600A34EC4 /* vy-vine-embedding-algo.cc */,
 				956346A219A297A600A34EC4 /* vy-vine-embedding-algo.h */,
+				95FA35DD19BE743B00B7F416 /* vy-vine-node-embedding-algo.cc */,
+				95FA35DE19BE743B00B7F416 /* vy-vine-node-embedding-algo.h */,
+				95FA35E019BE745000B7F416 /* vy-vine-link-embedding-algo.cc */,
+				95FA35E119BE745000B7F416 /* vy-vine-link-embedding-algo.h */,
+				95FA35E319C118CF00B7F416 /* vy-vine-two-stage-embedding-algo.cc */,
+				95FA35E419C118D000B7F416 /* vy-vine-two-stage-embedding-algo.h */,
 			);
 			name = Vineyard;
 			path = VineYard;
@@ -25592,16 +25609,19 @@
 				9561A9431958E30700BF44A6 /* simple-node.cc in Sources */,
 				9561A9441958E30700BF44A6 /* simple-node.h in Sources */,
 				9561A9451958E30700BF44A6 /* simple-request-proc.cc in Sources */,
+				95FA35E519C118D000B7F416 /* vy-vine-two-stage-embedding-algo.cc in Sources */,
 				9561A9461958E30700BF44A6 /* simple-request-proc.h in Sources */,
 				954423FA1989830D00DD5675 /* vy-virtual-net-request.cc in Sources */,
 				9561A9471958E30700BF44A6 /* simple-request.cc in Sources */,
 				959C06E7199D80AB00B74919 /* vy-vnr-proc-observer.cc in Sources */,
 				9561A9481958E30700BF44A6 /* simple-request.h in Sources */,
+				95FA35E219BE745000B7F416 /* vy-vine-link-embedding-algo.cc in Sources */,
 				9561A9491958E30700BF44A6 /* simple-link-test.cc in Sources */,
 				9561A94A1958E30700BF44A6 /* simple-network-test.cc in Sources */,
 				9561A94B1958E30700BF44A6 /* simple-node-test.cc in Sources */,
 				95A7E012199D42E0009E134D /* vy-vnr-release-proc.cc in Sources */,
 				956346A319A297A600A34EC4 /* vy-vine-embedding-algo.cc in Sources */,
+				95FA35DF19BE743B00B7F416 /* vy-vine-node-embedding-algo.cc in Sources */,
 				9564E8EB19B7F24B00CC6BB2 /* vy-vine-embedding-algo-file-based.cc in Sources */,
 				9561A94C1958E30700BF44A6 /* simple-request-test.cc in Sources */,
 				9561A94E1958E30700BF44A6 /* boost-test-driver.cc in Sources */,

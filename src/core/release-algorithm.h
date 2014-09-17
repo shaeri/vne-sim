@@ -1,5 +1,5 @@
 /**
- * @file node-embedding-algorithm.h
+ * @file release-algorithm.h
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date Jun 12, 2014
  *
@@ -22,17 +22,13 @@
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef NODE_EMBEDDING_ALGORITHM_H_
-#define NODE_EMBEDDING_ALGORITHM_H_
+#ifndef RELEASE_ALGORITHM_H_
+#define RELEASE_ALGORITHM_H_
 
-#include "network.h"
-#include "substrate-link.h"
-#include "substrate-node.h"
-#include "virtual-network-request.h"
-#include "network-builder.h"
+#include "core/network-builder.h"
 
 namespace vne {
-    template<typename,typename> class NodeEmbeddingAlgorithm;
+    template<typename,typename> class ReleaseAlgorithm;
     
     template<
     typename ... SNODERES, template <typename ...> class SNODECLASS,
@@ -40,7 +36,7 @@ namespace vne {
     typename ... VNODERES, template <typename ...> class VNODECLASS,
     typename... VLINKRES, template <typename...> class VLINKCLASS,
     template<typename> class VNRCLASS>
-    class NodeEmbeddingAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
+    class ReleaseAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
     VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>
     {
         static_assert (std::is_base_of<SubstrateNode<SNODERES...>, SNODECLASS<SNODERES...>>::value,
@@ -58,11 +54,39 @@ namespace vne {
         typedef VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>> VNR_TYPE;
         typedef Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>> SUBSTRATE_TYPE;
         
-        virtual Embedding_Result embeddVNRNodes (std::shared_ptr<SUBSTRATE_TYPE> substrate_net, std::shared_ptr<VNR_TYPE> vnr) = 0;
+        ReleaseAlgorithm (NetworkBuilder<SUBSTRATE_TYPE>& _sb) : substrate_network(_sb.getNetwork()) {};
+        ReleaseAlgorithm (std::shared_ptr<SUBSTRATE_TYPE> _sn) : substrate_network(_sn) {};
+        
+        virtual void releaseVNR (std::shared_ptr<VNR_TYPE> vnr);
         
     protected:
-        NodeEmbeddingAlgorithm (){};
+        std::shared_ptr<SUBSTRATE_TYPE> substrate_network;
     };
+    
+    template<
+    typename ... SNODERES, template <typename ...> class SNODECLASS,
+    typename... SLINKRES, template <typename...> class SLINKCLASS,
+    typename ... VNODERES, template <typename ...> class VNODECLASS,
+    typename... VLINKRES, template <typename...> class VLINKCLASS,
+    template<typename> class VNRCLASS>
+    void ReleaseAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
+    VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::releaseVNR (std::shared_ptr<VNR_TYPE> vnr)
+    {
+        for (auto it = vnr->getNodeMap()->begin(); it != vnr->getNodeMap()->end(); it++)
+        {
+            substrate_network->getNode(it->second)->freeResources(it->first);
+        }
+        for(auto it1 = vnr->getLinkMap()->begin(); it1 != vnr->getLinkMap()->end(); it1++)
+        {
+            for(auto it2 = it1->second.begin(); it2 != it1->second.end() ;it2++)
+            {
+                std::cout<< "--------------------------------+++++++++++++++++++++++++++++------------------------" << std::endl;
+                std::cout<< vnr->getVN()->getLink(it1->first)->getId() << std::endl;
+                std::cout<< *it2<<std::endl;
+                std::cout<< "--------------------------------+++++++++++++++++++++++++++++------------------------" << std::endl;
+                this->substrate_network->getLink(*it2)->freeResources(it1->first);
+            }
+        }
+    }
 }
-
 #endif

@@ -35,16 +35,20 @@ namespace vne {
     template<typename,typename,typename,typename> class VNRProcessDigraph;
     template<
     template<typename> class GEN,
-    template<typename> class EMBEDDING_PROC,
-    template<typename> class RELEASE_PROC,
+    template<typename, typename> class EMBEDDING_PROC,
+    template<typename, typename> class RELEASE_PROC,
     template<typename> class OBSERVER,
     template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
     class VNRProcessDigraph<
     GEN<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
-    EMBEDDING_PROC<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
-    RELEASE_PROC<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
+    EMBEDDING_PROC<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
+    RELEASE_PROC<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
     OBSERVER<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>
     >
     : public adevs::Digraph<std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>> >
@@ -52,30 +56,36 @@ namespace vne {
     public:
         
         typedef VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> VNR_TYPE;
-        
-        VNRProcessDigraph (GEN<VNR_TYPE>* _vnr_generator = 0 ,EMBEDDING_PROC<VNR_TYPE>* _vnr_embedding=0,
-                           RELEASE_PROC<VNR_TYPE>* _vnr_release = 0, OBSERVER<VNR_TYPE>* _vnr_observer=0);
+        typedef Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>> SUBSTRATE_TYPE;
+        VNRProcessDigraph (EMBEDDING_PROC<SUBSTRATE_TYPE, VNR_TYPE>* _vnr_embedding,
+                           RELEASE_PROC<SUBSTRATE_TYPE, VNR_TYPE>* _vnr_release,
+                           GEN<VNR_TYPE>* _vnr_generator = 0 ,
+                           OBSERVER<VNR_TYPE>* _vnr_observer=0);
     private:
         inline void init ();
         GEN<VNR_TYPE>* vnr_generator;
-        EMBEDDING_PROC<VNR_TYPE>* vnr_embedding;
-        RELEASE_PROC<VNR_TYPE>* vnr_release;
+        EMBEDDING_PROC<SUBSTRATE_TYPE, VNR_TYPE>* vnr_embedding;
+        RELEASE_PROC<SUBSTRATE_TYPE, VNR_TYPE>* vnr_release;
         OBSERVER<VNR_TYPE>* vnr_observer;
         
     };
     
     template<
     template<typename> class GEN,
-    template<typename> class EMBEDDING_PROC,
-    template<typename> class RELEASE_PROC,
+    template<typename, typename> class EMBEDDING_PROC,
+    template<typename, typename> class RELEASE_PROC,
     template<typename> class OBSERVER,
     template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
     inline void VNRProcessDigraph<
     GEN<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
-    EMBEDDING_PROC<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
-    RELEASE_PROC<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
+    EMBEDDING_PROC<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
+    RELEASE_PROC<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
     OBSERVER<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>>::init ()
     {
         this->add(vnr_generator);
@@ -96,35 +106,33 @@ namespace vne {
     
     template<
     template<typename> class GEN,
-    template<typename> class EMBEDDING_PROC,
-    template<typename> class RELEASE_PROC,
+    template<typename, typename> class EMBEDDING_PROC,
+    template<typename, typename> class RELEASE_PROC,
     template<typename> class OBSERVER,
     template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
     VNRProcessDigraph<
     GEN<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
-    EMBEDDING_PROC<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
-    RELEASE_PROC<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
+    EMBEDDING_PROC<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
+    RELEASE_PROC<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>,
     OBSERVER<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>>::
-    VNRProcessDigraph (GEN<VNR_TYPE>* _vnr_generator, EMBEDDING_PROC<VNR_TYPE>* _vnr_embedding,
-                       RELEASE_PROC<VNR_TYPE>* _vnr_release, OBSERVER<VNR_TYPE>* _vnr_observer):
-    adevs::Digraph<std::shared_ptr<VNR_TYPE>> ()
+    VNRProcessDigraph (EMBEDDING_PROC<SUBSTRATE_TYPE, VNR_TYPE>* _vnr_embedding,
+                       RELEASE_PROC<SUBSTRATE_TYPE, VNR_TYPE>* _vnr_release,
+                       GEN<VNR_TYPE>* _vnr_generator,
+                       OBSERVER<VNR_TYPE>* _vnr_observer):
+    adevs::Digraph<std::shared_ptr<VNR_TYPE>> (),
+    vnr_embedding(_vnr_embedding),
+    vnr_release(_vnr_release)
     {
         if (_vnr_generator != 0)
             vnr_generator = _vnr_generator;
         else
             vnr_generator = new GEN<VNR_TYPE> ();
-        
-        if (_vnr_embedding != 0)
-            vnr_embedding = _vnr_embedding;
-        else
-            vnr_embedding = new EMBEDDING_PROC<VNR_TYPE> ();
-        
-        if (_vnr_release != 0)
-            vnr_release = _vnr_release;
-        else
-            vnr_release = new RELEASE_PROC<VNR_TYPE> ();
         
         if (_vnr_observer != 0)
             vnr_observer = _vnr_observer;

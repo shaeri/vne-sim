@@ -42,13 +42,13 @@ namespace vne {
                 revenue = [] (VYVirtualNetRequest<>* vnr) -> std::shared_ptr<std::pair<double,double>>
                 {
                     std::shared_ptr<std::pair<double,double>> rev (new std::pair<double,double>(0,0));
-                    const std::shared_ptr<std::vector<std::shared_ptr<const VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
+                    const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
                     for (int i=0;i<n->size();++i)
                     {
                         rev->first += n->at(i)->getCPU ();
                         
                     }
-                    const std::shared_ptr<std::vector<std::shared_ptr<const VYVirtualLink<>>>>  l = vnr->getVN ()->getAllLinks();
+                    const std::shared_ptr<std::vector<std::shared_ptr< VYVirtualLink<>>>>  l = vnr->getVN ()->getAllLinks();
                     for (int j=0;j<l->size();++j)
                     {
                         rev->second += l->at(j)->getBandwidth();
@@ -62,13 +62,13 @@ namespace vne {
                 cost = [] (VYVirtualNetRequest<>* vnr) -> std::shared_ptr<std::pair<double,double>>
                 {
                     std::shared_ptr<std::pair<double,double>>  cost (new std::pair<double,double>(0,0));
-                    const std::shared_ptr<std::vector<std::shared_ptr<const VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
+                    const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
                     for (int i=0;i<n->size();++i)
                     {
                         cost->first += n->at(i)->getCPU ();
                         
                     }
-                    const std::shared_ptr<std::vector<std::shared_ptr<const VYVirtualLink<>>>>  l = vnr->getVN()->getAllLinks();
+                    const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualLink<>>>>  l = vnr->getVN()->getAllLinks();
                     for (int j=0;j<l->size();++j)
                     {
                         cost->second += l->at(j)->getPathLength() * l->at(j)->getBandwidth();

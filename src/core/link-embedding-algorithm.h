@@ -25,6 +25,8 @@
 #ifndef LINK_EMBEDDING_ALGORITHM_H_
 #define LINK_EMBEDDING_ALGORITHM_H_
 
+#include <list>
+
 #include "network.h"
 #include "substrate-link.h"
 #include "substrate-node.h"
@@ -53,17 +55,18 @@ namespace vne {
                        "Template arguments are not correctly set.");
         static_assert (std::is_base_of<VirtualNetworkRequest<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>,
                        VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::value, "Template arguments are not correctly set.");
-        
+        //TwoStageEmbeddingAlgo is a friend
+        template<typename SUBNET, typename VNR>
+        friend class TwoStageEmbeddingAlgo;
     public:
         typedef VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>> VNR_TYPE;
         typedef Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>> SUBSTRATE_TYPE;
         
-        virtual Embedding_Result embeddVNRLinks (std::shared_ptr<VNR_TYPE> vnr) = 0;
+        virtual Embedding_Result embeddVNRLinks (std::shared_ptr<SUBSTRATE_TYPE> substrate_net, std::shared_ptr<VNR_TYPE> vnr) = 0;
         
     protected:
-        LinkEmbeddingAlgorithm (NetworkBuilder<SUBSTRATE_TYPE>& _sb) : substrate_network(_sb.getNetwork()) {};
-        LinkEmbeddingAlgorithm (std::shared_ptr<SUBSTRATE_TYPE> _sn) : substrate_network(std::move(_sn)) {};
-        std::shared_ptr<SUBSTRATE_TYPE> substrate_network;
+        LinkEmbeddingAlgorithm () {};
+        
     };
 }
 

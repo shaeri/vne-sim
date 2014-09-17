@@ -34,35 +34,69 @@ namespace vne {
     class TwoStageEmbeddingAlgo : public EmbeddingAlgorithm<SUBNET, VNR>
     {
     public:
-        virtual Embedding_Result embeddVNR (std::shared_ptr<typename EmbeddingAlgorithm<SUBNET, VNR>::VNR_TYPE> vnr,
-                                            std::shared_ptr<NodeEmbeddingAlgorithm<SUBNET, VNR>> node_embedding_algo,
-                                            std::shared_ptr<LinkEmbeddingAlgorithm<SUBNET, VNR>> link_embedding_algo);
+        virtual Embedding_Result embeddVNR (std::shared_ptr<typename EmbeddingAlgorithm<SUBNET, VNR>::VNR_TYPE> vnr);
         
     protected:
-        TwoStageEmbeddingAlgo (NetworkBuilder<typename EmbeddingAlgorithm<SUBNET, VNR>::SUBSTRATE_TYPE>& _sb);
-        TwoStageEmbeddingAlgo (std::shared_ptr<typename EmbeddingAlgorithm<SUBNET, VNR>::SUBSTRATE_TYPE> _sn);
+        TwoStageEmbeddingAlgo (NetworkBuilder<typename EmbeddingAlgorithm<SUBNET, VNR>::SUBSTRATE_TYPE>& _sb,
+                               std::shared_ptr<NodeEmbeddingAlgorithm<SUBNET, VNR>> _node_embedding_algo,
+                               std::shared_ptr<LinkEmbeddingAlgorithm<SUBNET, VNR>> _link_embedding_algo);
+        TwoStageEmbeddingAlgo (std::shared_ptr<typename EmbeddingAlgorithm<SUBNET, VNR>::SUBSTRATE_TYPE> _sn,
+                               std::shared_ptr<NodeEmbeddingAlgorithm<SUBNET, VNR>> _node_embedding_algo,
+                               std::shared_ptr<LinkEmbeddingAlgorithm<SUBNET, VNR>> _link_embedding_algo);
+        std::shared_ptr<NodeEmbeddingAlgorithm<SUBNET, VNR>> node_embedding_algo;
+        std::shared_ptr<LinkEmbeddingAlgorithm<SUBNET, VNR>> link_embedding_algo;
         
     };
     template<typename SUBNET, typename VNR>
-    TwoStageEmbeddingAlgo<SUBNET,VNR>::TwoStageEmbeddingAlgo (NetworkBuilder<typename EmbeddingAlgorithm<SUBNET, VNR>::SUBSTRATE_TYPE>& _sb):
-    EmbeddingAlgorithm<SUBNET, VNR>::EmbeddingAlgorithm(_sb)
+    TwoStageEmbeddingAlgo<SUBNET,VNR>::TwoStageEmbeddingAlgo (NetworkBuilder<typename EmbeddingAlgorithm<SUBNET, VNR>::SUBSTRATE_TYPE>& _sb,
+        std::shared_ptr<NodeEmbeddingAlgorithm<SUBNET, VNR>> _node_embedding_algo,
+        std::shared_ptr<LinkEmbeddingAlgorithm<SUBNET, VNR>> _link_embedding_algo):
+    EmbeddingAlgorithm<SUBNET, VNR>::EmbeddingAlgorithm(_sb),
+    node_embedding_algo(_node_embedding_algo),
+    link_embedding_algo(_link_embedding_algo)
     {
     }
     template<typename SUBNET, typename VNR>
-    TwoStageEmbeddingAlgo<SUBNET,VNR>::TwoStageEmbeddingAlgo (std::shared_ptr<typename EmbeddingAlgorithm<SUBNET, VNR>::SUBSTRATE_TYPE> _sn):
-    EmbeddingAlgorithm<SUBNET, VNR>::EmbeddingAlgorithm(_sn)
+    TwoStageEmbeddingAlgo<SUBNET,VNR>::TwoStageEmbeddingAlgo (std::shared_ptr<typename EmbeddingAlgorithm<SUBNET, VNR>::SUBSTRATE_TYPE> _sn,
+        std::shared_ptr<NodeEmbeddingAlgorithm<SUBNET, VNR>> _node_embedding_algo,
+        std::shared_ptr<LinkEmbeddingAlgorithm<SUBNET, VNR>> _link_embedding_algo):
+    EmbeddingAlgorithm<SUBNET, VNR>::EmbeddingAlgorithm(_sn),
+    node_embedding_algo(_node_embedding_algo),
+    link_embedding_algo(_link_embedding_algo)
     {
     }
     template<typename SUBNET, typename VNR>
     Embedding_Result TwoStageEmbeddingAlgo<SUBNET,VNR>
-    ::embeddVNR(std::shared_ptr<typename EmbeddingAlgorithm<SUBNET, VNR>::VNR_TYPE> vnr,
-                                            std::shared_ptr<NodeEmbeddingAlgorithm<SUBNET, VNR>> node_embedding_algo,
-                                            std::shared_ptr<LinkEmbeddingAlgorithm<SUBNET, VNR>> link_embedding_algo)
+    ::embeddVNR(std::shared_ptr<typename EmbeddingAlgorithm<SUBNET, VNR>::VNR_TYPE> vnr)
     {
-        node_embedding_algo->embeddVNRNode (vnr);
-        link_embedding_algo->embeddVNRLink (vnr);
+        if (node_embedding_algo->embeddVNRNodes (this->substrate_network, vnr) == Embedding_Result::SUCCESSFUL_EMBEDDING
+            &&
+           link_embedding_algo->embeddVNRLinks (this->substrate_network, vnr) == Embedding_Result::SUCCESSFUL_EMBEDDING)
+        {
+            //finalize the node mappings
+            for (auto it = vnr->getNodeMap()->begin(); it !=  vnr->getNodeMap()->end(); it++)
+            {
+                this->substrate_network->getNode (it->second)->embedNode(vnr->getVN()->getNode(it->first));
+            }
+            //finalize the link mappings
+            for(auto it1 = vnr->getLinkMap()->begin(); it1 != vnr->getLinkMap()->end(); it1++)
+            {
+                for(auto it2 = it1->second.begin(); it2 != it1->second.end() ;it2++)
+                {
+                    std::cout<< "--------------------------------+++++++++++++++++++++++++++++------------------------" << std::endl;
+                    std::cout<< vnr->getVN()->getLink(it1->first)->getId() << std::endl;
+                    std::cout<< *it2 <<std::endl;
+                    
+                    if(this->substrate_network->getLink(*it2)->embedLink (vnr->getVN()->getLink(it1->first)) == Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES)
+                    {
+                        std::cout << "FUUUCKKK" << std::endl;
+                    }
+                    std::cout<< "--------------------------------+++++++++++++++++++++++++++++------------------------" << std::endl;
+                }
+            }
+            return Embedding_Result::SUCCESSFUL_EMBEDDING;
+        }
+        return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
     }
-    
-    
 }
 #endif

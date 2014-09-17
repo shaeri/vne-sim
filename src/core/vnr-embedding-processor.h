@@ -26,16 +26,20 @@
 
 #include "adevs.h"
 #include "core/virtual-network-request.h"
+#include "core/embedding-algorithm.h"
 
 #include <queue>
 
 namespace vne
 {
-    template<typename> class VNREmbeddingProcessor;
+    template<typename, typename> class VNREmbeddingProcessor;
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    class VNREmbeddingProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>
+    class VNREmbeddingProcessor<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>
     : public adevs::Atomic<adevs::PortValue<std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>> >>
     {
     public:
@@ -67,27 +71,42 @@ namespace vne
             }
          };
     protected:
-        VNREmbeddingProcessor() :
-        adevs::Atomic<ADEVS_IO_TYPE> (),
-        time (0.0)
-        {};
+        typedef Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>> SUBSTRATE_TYPE;
+        typedef VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> VNR_TYPE;
+        
         double time;
         std::priority_queue<PTR_TYPE, vector<PTR_TYPE>,CompareVNRArrivalTime> vnr_queue;
+        std::shared_ptr<EmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> embeddingAlgorithm;
+        
+        VNREmbeddingProcessor(std::shared_ptr<EmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> embeddingAlgo) :
+        adevs::Atomic<ADEVS_IO_TYPE> (),
+        embeddingAlgorithm(std::move(embeddingAlgo)),
+        time (0.0)
+        {};
     };
     
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNREmbeddingProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::arrive = 0;
+    const int VNREmbeddingProcessor<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::arrive = 0;
     
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNREmbeddingProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::depart_successful_embedding = 1;
+    const int VNREmbeddingProcessor<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::depart_successful_embedding = 1;
     
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNREmbeddingProcessor<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::depart_unsuccessful_embedding = 2;
+    const int VNREmbeddingProcessor<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::depart_unsuccessful_embedding = 2;
 }
 #endif /* VNR_EMBEDDING_PROCESSOR_H_ */

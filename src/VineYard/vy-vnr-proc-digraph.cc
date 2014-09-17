@@ -28,8 +28,8 @@
 namespace vne {
     namespace vineyard {
        template<>
-        VYVNRProcDigraph<>::VYVNRProcDigraph(VYVNRGenerator<>* gen, VYVNREmbeddingProc<>* embed, VYVNRReleaseProc<>* release, VYVNRProcObserver<>* obs) :
-        VNRProcessDigraph<VYVNRGenerator<>, VYVNREmbeddingProc<>, VYVNRReleaseProc<>, VYVNRProcObserver<> >(gen,embed,release,obs)
+        VYVNRProcDigraph<>::VYVNRProcDigraph(VYVNREmbeddingProc<>* embed, VYVNRReleaseProc<>* release, VYVNRGenerator<>* gen, VYVNRProcObserver<>* obs) :
+        VNRProcessDigraph<VYVNRGenerator<>, VYVNREmbeddingProc<>, VYVNRReleaseProc<>, VYVNRProcObserver<> >(embed,release,gen,obs)
         {
         }
     }

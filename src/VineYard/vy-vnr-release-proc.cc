@@ -28,8 +28,8 @@ namespace vne {
     namespace vineyard{
         
         template<>
-        VYVNRReleaseProc<>::VYVNRReleaseProc ()
-        : VNRReleaseProcessor<VYVirtualNetRequest<>>(),
+        VYVNRReleaseProc<>::VYVNRReleaseProc (std::shared_ptr<ReleaseAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> releaseAlgo)
+        : VNRReleaseProcessor<SUBSTRATE_TYPE, VNR_TYPE>(releaseAlgo),
         last_departure_time(0.0)
         {
         }
@@ -66,7 +66,7 @@ namespace vne {
             adevs::Bag<ADEVS_IO_TYPE>::const_iterator i = xb.begin();
             for (; i != xb.end(); i++)
             {
-                //Copy the incoming Customer and place it at the back of the line.
+                //Copy the embedded VNR and place it at the back of the queue.
                 vnr_queue.push((*i).value);
             }
         }
@@ -85,6 +85,7 @@ namespace vne {
             //The release logic should be added here.
             //////////////////
             PTR_TYPE leaving = vnr_queue.top ();
+            this->releaseAlgorithm->releaseVNR(leaving);
             last_departure_time = leaving->getDepartureTime();
             ADEVS_IO_TYPE y (depart, leaving);
             yb.insert(y);

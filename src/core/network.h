@@ -52,19 +52,19 @@ public:
 	void addNode(std::shared_ptr<NodeC<NodeT...>> node);
 	void addLink(std::shared_ptr<LinkC<LinkT...>> link);
     
-    inline const std::shared_ptr<const NodeC<NodeT...>> getNode(int id) const;
+    inline const std::shared_ptr<NodeC<NodeT...>> getNode(int id) const;
     inline const std::shared_ptr<const std::set<int>> getNodeIdSet () const;
 	
-    inline const std::shared_ptr<const LinkC<LinkT...>> getLink (int id) const;
-	inline const std::shared_ptr<const std::vector<std::shared_ptr< const LinkC<LinkT...>>> > getLinksForNodeId (int id) const;
-    inline const std::shared_ptr<const LinkC<LinkT...>> getLinkBetweenNodes (int nodeIdFrom, int nodeIdTo) const;
+    inline const std::shared_ptr<LinkC<LinkT...>> getLink (int id) const;
+    inline const std::shared_ptr<const std::vector<std::shared_ptr<LinkC<LinkT...>>> > getLinksForNodeId (int id) const;
+    inline const std::shared_ptr<LinkC<LinkT...>> getLinkBetweenNodes (int nodeIdFrom, int nodeIdTo) const;
     inline const std::shared_ptr<const std::set<int>> getLinkIdSet () const;
     
-    inline const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>> getAllNodes () const;
-    inline const std::shared_ptr<std::vector<std::shared_ptr<const LinkC<LinkT...>>>> getAllLinks () const;
+    inline const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>> getAllNodes () const;
+    inline const std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...>>>> getAllLinks () const;
     
     template<typename CONDITION, typename ... T>
-    inline const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>> getNodesWithConditions (T &... args);
+    inline const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>> getNodesWithConditions (T &... args);
     
     int getId() {return this->id;};
     int getNumNodes () {return (int) this->nodesMap.size();};
@@ -158,7 +158,7 @@ void Network<NodeC<NodeT...>, LinkC<LinkT...>>::addLink(
     
 template<typename... NodeT, template<typename...> class NodeC,
     typename... LinkT, template <typename...> class LinkC>
-inline const std::shared_ptr<const NodeC<NodeT...>>
+inline const std::shared_ptr<NodeC<NodeT...>>
 Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNode(int id) const
 {
     auto it = nodesMap.find(id);
@@ -181,10 +181,10 @@ inline const std::shared_ptr<const std::set<int>>
 }
 template<typename... NodeT, template<typename...> class NodeC,
     typename... LinkT, template <typename...> class LinkC>
-inline const std::shared_ptr<const std::vector<std::shared_ptr<const LinkC<LinkT...> >> >
+inline const std::shared_ptr<const std::vector<std::shared_ptr<LinkC<LinkT...> >> >
 	Network<NodeC<NodeT...>, LinkC<LinkT...>>::getLinksForNodeId(int id) const
 {
-    const std::shared_ptr<std::vector<std::shared_ptr<const LinkC<LinkT...> >> > v (new std::vector<std::shared_ptr<const LinkC<LinkT...> >>());
+    const std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...> >> > v (new std::vector<std::shared_ptr<LinkC<LinkT...> >>());
     auto it = connectionMap.find(id);
     if (it != connectionMap.end())
     {
@@ -200,7 +200,7 @@ inline const std::shared_ptr<const std::vector<std::shared_ptr<const LinkC<LinkT
     
 template<typename... NodeT, template<typename...> class NodeC,
     typename... LinkT, template <typename...> class LinkC>
-inline const std::shared_ptr<const LinkC<LinkT...>>
+inline const std::shared_ptr<LinkC<LinkT...>>
     Network<NodeC<NodeT...>, LinkC<LinkT...>>::getLinkBetweenNodes (int nodeIdFrom, int nodeIdTo) const
 {
     auto nodeFromItr = connectionMap.find (nodeIdFrom);
@@ -222,7 +222,7 @@ inline const std::shared_ptr<const LinkC<LinkT...>>
     
 template<typename... NodeT, template<typename...> class NodeC,
 typename... LinkT, template <typename...> class LinkC>
-const std::shared_ptr<const LinkC<LinkT...>>
+const std::shared_ptr<LinkC<LinkT...>>
 Network<NodeC<NodeT...>, LinkC<LinkT...>>::getLink(int id) const
 {
     auto it = linksMap.find(id);
@@ -246,10 +246,10 @@ inline const std::shared_ptr<const std::set<int>>
 
 template<typename... NodeT, template<typename...> class NodeC,
     typename... LinkT, template <typename...> class LinkC>
-inline const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>>
+inline const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>>
 Network<NodeC<NodeT...>, LinkC<LinkT...>>::getAllNodes () const
 {
-    const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>> vec (new std::vector<std::shared_ptr<const NodeC<NodeT...>>>());
+    const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>> vec (new std::vector<std::shared_ptr<NodeC<NodeT...>>>());
     for (auto it = nodesMap.begin(); it != nodesMap.end(); ++it)
         vec->push_back(it->second);
     return vec;
@@ -257,10 +257,10 @@ Network<NodeC<NodeT...>, LinkC<LinkT...>>::getAllNodes () const
     
 template<typename... NodeT, template<typename...> class NodeC,
     typename... LinkT, template <typename...> class LinkC>
-inline const std::shared_ptr<std::vector<std::shared_ptr<const LinkC<LinkT...>>>>
+inline const std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...>>>>
 Network<NodeC<NodeT...>, LinkC<LinkT...>>::getAllLinks () const
 {
-    const std::shared_ptr<std::vector<std::shared_ptr<const LinkC<LinkT...>>>> vec (new std::vector<std::shared_ptr<const LinkC<LinkT...>>>());
+    const std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...>>>> vec (new std::vector<std::shared_ptr<LinkC<LinkT...>>>());
     for (auto it = linksMap.begin(); it != linksMap.end(); ++it)
         vec->push_back(it->second);
     return vec;
@@ -269,7 +269,7 @@ Network<NodeC<NodeT...>, LinkC<LinkT...>>::getAllLinks () const
 template<typename... NodeT, template<typename...> class NodeC,
     typename... LinkT, template <typename...> class LinkC>
         template<typename CONDITION, typename... T>
-inline const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>>
+inline const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>>
 Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNodesWithConditions (T &... args)
 {
     const std::shared_ptr<std::vector<std::shared_ptr<const NodeC<NodeT...>>>> vec (new std::vector<std::shared_ptr<const NodeC<NodeT...>>>());

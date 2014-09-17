@@ -25,8 +25,10 @@
 #ifndef VINEYARD_VY_VNR_EMBEDDING_PROC_
 #define VINEYARD_VY_VNR_EMBEDDING_PROC_
 
-#include "vy-virtual-net-request.h"
 #include "core/vnr-embedding-processor.h"
+
+#include "Vineyard/vy-virtual-net-request.h"
+#include "Vineyard/vy-substrate-node.h"
 
 #include <chrono>
 #include <random>
@@ -34,11 +36,12 @@
 namespace vne {
     namespace vineyard {
         
-        template<typename = VYVirtualNetRequest<>>
-        class VYVNREmbeddingProc : public VNREmbeddingProcessor <VYVirtualNetRequest<>>
+        template<typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,typename = VYVirtualNetRequest<>>
+        class VYVNREmbeddingProc :
+                public VNREmbeddingProcessor <Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>
         {
         public:
-            VYVNREmbeddingProc ();
+            VYVNREmbeddingProc (std::shared_ptr<EmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>> embeddingAlgo);
             ~VYVNREmbeddingProc ();
             
             virtual void delta_int();
@@ -48,11 +51,9 @@ namespace vne {
             virtual double ta();
             
         private:
-            std::default_random_engine generator;
             std::chrono::time_point<std::chrono::system_clock> start, end;
             std::chrono::duration<double> elapsed_seconds;
         };
     }
 }
-
 #endif /* defined(__vne_mcts__vy_vnr_processor__) */

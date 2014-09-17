@@ -1,7 +1,7 @@
 <vineyard>
     <SubstrateNetwork>
         <path>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/substrate_network</path>
-        <filename>sub-20.txt</filename>
+        <filename>sub-50.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
         <path>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/virtual_net_requests</path>
@@ -14,6 +14,7 @@
     <Constants>
         <revenueMultiplier>1.0</revenueMultiplier>
         <costMultiplier>1.0</costMultiplier>
+        <epsilon>1E-6</epsilon>
     </Constants>
     <Configs>
         <setAlpha>true</setAlpha> <!-- if set to false Alpha is automatically set to 1-->
