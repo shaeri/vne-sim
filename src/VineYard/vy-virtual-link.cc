@@ -28,24 +28,35 @@ namespace vne {
     namespace vineyard {
         template<>
         VYVirtualLink<>::VYVirtualLink (double _bw, double _delay, int _from, int _to):
-            VirtualLink<double,double> (_bw, _delay,_from,_to),
+            VirtualLink<double> (_bw, _from, _to),
             pathLength (0),
-            pathDelay(0)
+            pathDelay(0),
+            delay(_delay)
         {
         }
         template<>
-        void VYVirtualLink<>::addHostLink (VYSubstrateLink<>* _l)
+        VYVirtualLink<>::~VYVirtualLink(){}
+        
+        template<>
+        void VYVirtualLink<>::addHostLink (SubstrateLink<double>* _l)
         {
-            VirtualLink<double,double>::addHostLink(_l);
+            VirtualLink<double>::addHostLink(_l);
             pathLength++;
-            pathDelay += _l->getDelay();
+            pathDelay += dynamic_cast<VYSubstrateLink<>*>(_l)->getDelay();
         }
         template<>
-        void VYVirtualLink<>::removeHostLink (VYSubstrateLink<>* _l)
+        void VYVirtualLink<>::addHostLink (SubstrateLink<double>* _l, std::shared_ptr<Resources<double>> _res)
         {
-            VirtualLink<double,double>::removeHostLink(_l);
+            VirtualLink<double>::addHostLink(_l,_res);
+            pathLength++;
+            pathDelay += dynamic_cast<VYSubstrateLink<>*>(_l)->getDelay();
+        }
+        template<>
+        void VYVirtualLink<>::removeHostLink (SubstrateLink<double>* _l)
+        {
+            VirtualLink<double>::removeHostLink(_l);
             pathLength--;
-            pathDelay -= _l->getDelay();
+            pathDelay -= dynamic_cast<VYSubstrateLink<>*>(_l)->getDelay();
         }
         template<>
         double VYVirtualLink<>::getBandwidth() const
@@ -55,7 +66,7 @@ namespace vne {
         template<>
         double VYVirtualLink<>::getDelay() const
         {
-            return std::get<1>(this->resources);
+            return delay;
         }
     }
 }

@@ -79,14 +79,17 @@ namespace vne {
                 }
                 //close the request file
                 vnFile.close();
-                vnr = std::make_shared<VYVirtualNetRequest<>>(VYVirtualNetRequest<>(vn,time,duration,split,topo,maxd,revenue,cost));
+                //There is a problem with make_shared (using libc++) it first creates the object and then copies the object and then destroys the
+                //original object. As a result the address of this pointer in the constructor and other function calls are different.
+                //vnr = std::make_shared<VYVirtualNetRequest<>>(VYVirtualNetRequest<>(vn,time,duration,split,topo,maxd,revenue,cost));
+                vnr = std::shared_ptr<VYVirtualNetRequest<>> (new VYVirtualNetRequest<>(vn,time,duration,split,topo,maxd,revenue,cost));
             }
             catch (std::ifstream::failure& e) {
-                std::cerr << ">>>>Exception in reading substrate network creation file.<<< \n" <<
-                "File: " << ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.filename")
-                << " does not exist in: " <<
-                ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.path")
-                << std::endl;
+                std::cerr << ">>>>Exception in reading a request file.<<< \n" <<
+                "File: " << _reqFiles.top().second.string().c_str()
+                << " does not exist. ";
+                // << ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.path")
+                //<< std::endl;
                 throw e;
             }
         }
@@ -97,8 +100,8 @@ namespace vne {
         
         template<>
         VYVNRGenerator<>::VYVNRGenerator (
-            std::function<std::shared_ptr<std::pair<double,double>> (VYVirtualNetRequest<>* vnr)> calcRevenue,
-            std::function<std::shared_ptr<std::pair<double,double>> (VYVirtualNetRequest<>* vnr)> calcCost
+            std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)> calcRevenue,
+            std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)> calcCost
                                           ) :
         VNRGenerator<VYVirtualNetRequest<> >(),
         revenue(calcRevenue),
@@ -199,7 +202,7 @@ namespace vne {
             }
             if (vnr == nullptr) setVNR();
             BOOST_LOG_TRIVIAL(info) << "---> Next arrival at: " << vnr->getArrivalTime() << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "---> This arrival happens in : " << vnr->getArrivalTime()-last_vnr_arrival << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "---> Next arrival is in : " << vnr->getArrivalTime()-last_vnr_arrival << std::endl;
             return vnr->getArrivalTime()-last_vnr_arrival;
         }
     }

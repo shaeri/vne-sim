@@ -26,6 +26,7 @@
 #define RESOURCES_H_
 #define BOOST_LOG_DYN_LINK
 
+#include <stdio.h>
 #include "core/core-types.h"
 
 #include <boost/log/trivial.hpp>
@@ -44,6 +45,7 @@ public:
     bool hasResources(const RES &... _res);
 	Embedding_Result embedResources(const std::tuple<RES...>&  _res);
     void freeResources(const std::tuple<RES...>& _res);
+    
 private:
     template<std::size_t> struct int_
 	{
@@ -53,9 +55,15 @@ private:
 	bool hasResources(const std::tuple<RES...>& t, int_<Pos>, bool previousResult)
 	{
 		bool retVal;
-		if (std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(t)>
-            std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(*this))
+        
+        if (std::get<std::tuple_size<std::tuple<RES...>>::value - Pos> (t) >
+                      std::get<std::tuple_size<std::tuple<RES...>>::value - Pos> (*this))
 		{
+            if (abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t) -
+                    std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this)) < 1E-6)
+            {
+                return hasResources(t, int_<Pos - 1>(), previousResult && true);
+            }
 			retVal = previousResult && false;
 		}
 		else
@@ -66,13 +74,18 @@ private:
 	bool hasResources(const std::tuple<RES...>& t, int_<1>, bool previousResult = true)
 	{
 		bool retVal;
-		if (std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t)>
-            std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this))
+        if (std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (t) >
+            std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this))
 		{
-			retVal = false;
+            if (abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (t) -
+                    std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this)) < 1E-6)
+            {
+                return previousResult && true;
+            }
+			retVal = previousResult && false;
 		}
 		else
-			retVal = true;
+			retVal = previousResult && true;
 		return retVal;
 	}
     

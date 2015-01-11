@@ -35,6 +35,7 @@ namespace vne {
     {
     public:
         virtual Embedding_Result embeddVNR (std::shared_ptr<typename EmbeddingAlgorithm<SUBNET, VNR>::VNR_TYPE> vnr);
+        virtual ~TwoStageEmbeddingAlgo () {};
         
     protected:
         TwoStageEmbeddingAlgo (NetworkBuilder<typename EmbeddingAlgorithm<SUBNET, VNR>::SUBSTRATE_TYPE>& _sb,
@@ -74,24 +75,17 @@ namespace vne {
            link_embedding_algo->embeddVNRLinks (this->substrate_network, vnr) == Embedding_Result::SUCCESSFUL_EMBEDDING)
         {
             //finalize the node mappings
+            
             for (auto it = vnr->getNodeMap()->begin(); it !=  vnr->getNodeMap()->end(); it++)
             {
-                this->substrate_network->getNode (it->second)->embedNode(vnr->getVN()->getNode(it->first));
+                assert(this->substrate_network->getNode (it->second)->embedNode(vnr->getVN()->getNode(it->first)) == Embedding_Result::SUCCESSFUL_EMBEDDING && "Trying to map to a more than you have resources!!");
             }
             //finalize the link mappings
             for(auto it1 = vnr->getLinkMap()->begin(); it1 != vnr->getLinkMap()->end(); it1++)
             {
                 for(auto it2 = it1->second.begin(); it2 != it1->second.end() ;it2++)
                 {
-                    std::cout<< "--------------------------------+++++++++++++++++++++++++++++------------------------" << std::endl;
-                    std::cout<< vnr->getVN()->getLink(it1->first)->getId() << std::endl;
-                    std::cout<< *it2 <<std::endl;
-                    
-                    if(this->substrate_network->getLink(*it2)->embedLink (vnr->getVN()->getLink(it1->first)) == Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES)
-                    {
-                        std::cout << "FUUUCKKK" << std::endl;
-                    }
-                    std::cout<< "--------------------------------+++++++++++++++++++++++++++++------------------------" << std::endl;
+                    assert(this->substrate_network->getLink(it2->first)->embedLink (vnr->getVN()->getLink(it1->first), it2->second)== Embedding_Result::SUCCESSFUL_EMBEDDING && "Trying to map to a link more than you have resources!!");
                 }
             }
             return Embedding_Result::SUCCESSFUL_EMBEDDING;

@@ -48,6 +48,7 @@ namespace vne
             VYVineTwoStageEmbeddingAlgo (NetworkBuilder<SUBSTRATE_TYPE>&  _nb,
                 std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
                 std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedding_algo);
+            virtual ~VYVineTwoStageEmbeddingAlgo();
             
         };
     }

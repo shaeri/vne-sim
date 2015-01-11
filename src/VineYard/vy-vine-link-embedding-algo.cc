@@ -34,6 +34,8 @@ namespace vne {
         substrateLinkIdSet(nullptr),
         substrateNodeIdSet(nullptr)
         {
+            glp_term_out(ConfigManager::Instance()->getConfig<int>("vineyard.glpk.terminalEnabled"));
+            
             MCFdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFdataFile");
             MCFmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFmodelFile");
             
@@ -55,7 +57,7 @@ namespace vne {
         
         template<>
         inline void VYVineLinkEmbeddingAlgo<>::writeDataFile
-        (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr)
+        (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr, const std::map<int,int>* nodeIdMap)
         {
             int substrateNodesNum = substrate_network->getNumNodes();
             int virtualNodeNum =vnr->getVN()->getNumNodes();
@@ -89,7 +91,6 @@ namespace vne {
                 fprintf(mcfFpDat, "%d ", i);
             }
             fprintf(mcfFpDat, ":=\n");
-            
             for (int i = 0; i < substrateNodesNum; i++)
             {
                 fprintf(mcfFpDat, "%d ", i);
@@ -109,7 +110,6 @@ namespace vne {
                 }
                 fprintf(mcfFpDat, "\n");
             }
-            
             fprintf(mcfFpDat, ";\n\n");
             
             fprintf(mcfFpDat, "param alpha:\n");
@@ -145,7 +145,13 @@ namespace vne {
             
             for (auto it = virtualLinkIdSet->begin(); it != virtualLinkIdSet->end() ; it++)
             {
-                auto flowSource = std::distance(virtualNodeIdSet->begin(), virtualNodeIdSet->find(vnr->getVN()->getLink(*it)->getNodeFromId()));
+                int vNodeFromId = vnr->getVN()->getLink(*it)->getNodeFromId();
+                int sNodeFromId;
+                if(nodeIdMap == nullptr)
+                    sNodeFromId = vnr->getNodeMap()->find(vNodeFromId)->second;
+                else
+                    sNodeFromId = nodeIdMap->find(vNodeFromId)->second;
+                auto flowSource = std::distance(substrateNodeIdSet->begin(), substrateNodeIdSet->find(sNodeFromId));
                 fprintf(mcfFpDat, "f%d %d\n", count, (int)flowSource);
                 count++;
             }
@@ -155,8 +161,14 @@ namespace vne {
             count=0;
             fprintf(mcfFpDat, "param fe:=\n");
             for (auto it = virtualLinkIdSet->begin(); it != virtualLinkIdSet->end() ; it++) {
-                auto flowDestination =
-                std::distance(virtualNodeIdSet->begin(), virtualNodeIdSet->find(vnr->getVN()->getLink(*it)->getNodeToId()));
+                int vNodeToId = vnr->getVN()->getLink(*it)->getNodeToId();
+                int sNodeToId;
+                if (nodeIdMap == nullptr)
+                    sNodeToId = vnr->getNodeMap()->find(vNodeToId)->second;
+                else
+                    sNodeToId = nodeIdMap->find(vNodeToId)->second;
+                
+                auto flowDestination = std::distance(substrateNodeIdSet->begin(), substrateNodeIdSet->find(sNodeToId));
                 fprintf(mcfFpDat, "f%d %d\n", count, (int)flowDestination);
                 count++;
             }
@@ -238,10 +250,12 @@ namespace vne {
             virtualLinkIdSet.reset();
         }
         template<>
-        Embedding_Result VYVineLinkEmbeddingAlgo<>::embeddVNRLinks
-        (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr)
+        inline Embedding_Result VYVineLinkEmbeddingAlgo<>::embeddLinks (
+                                 std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
+                                 const std::map<int,int>* nodeIdMap,
+                                 std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap)
         {
-            int substrateNodesNum = substrate_network->getNumNodes();
+           int substrateNodesNum = substrate_network->getNumNodes();
             int virtualNodeNum =vnr->getVN()->getNumNodes();
             
             substrateNodeIdSet = substrate_network->getNodeIdSet();
@@ -252,7 +266,7 @@ namespace vne {
             allNodeIds  = std::vector<int>(substrateNodesNum + virtualNodeNum);
             std::copy(substrateNodeIdSet->begin(), substrateNodeIdSet->end(), allNodeIds.begin());
             
-            writeDataFile (substrate_network, vnr);
+            writeDataFile (substrate_network, vnr, nodeIdMap);
             if(solveLinkMappingLP (substrate_network, vnr)==1)
             {
                 cleanUp();
@@ -269,7 +283,7 @@ namespace vne {
              *         an statistic collector needs to record
              *         glp_get_obj_val
              */
-            
+            vnr->linkMappingObjectiveVal = glp_get_obj_val(lp_problem);
             
             int numVariables = glp_get_num_cols(lp_problem);
             int flowId, from, to;
@@ -280,14 +294,19 @@ namespace vne {
                 double varVal = glp_get_col_prim(lp_problem, i);
                 if (varVal>0)
                 {
-                    int substrateLinkId = substrate_network->getLinkBetweenNodes(from, to)->getId();
+                    int substrateLinkId = substrate_network->getLinkBetweenNodes(allNodeIds[from], allNodeIds[to])->getId();
                     auto it = virtualLinkIdSet->begin();
                     for (int i = 0; i<flowId; i++)
                         it++;
                     int virtualLinkId = *it;
-                    vnr->addLinkMapping(substrateLinkId, virtualLinkId);
+                    std::shared_ptr<Resources<double>> _res (new Resources<double>(varVal));
+                    if (linkMap == nullptr)
+                        vnr->addLinkMapping(substrateLinkId, virtualLinkId, _res);
+                    else
+                        (*linkMap)[virtualLinkId].push_back(std::make_pair(substrateLinkId, _res));;
                 }
-                if (vnr->getLinkMap()->size() == virtualLinkIdSet->size())
+                if ((vnr->getLinkMap()->size() == virtualLinkIdSet->size()
+                    || (linkMap != nullptr && (linkMap->size() ==  virtualLinkIdSet->size()))))
                 {
                     cleanUp();
                     return Embedding_Result::SUCCESSFUL_EMBEDDING;
@@ -295,6 +314,22 @@ namespace vne {
             }
             cleanUp();
             return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
+        }
+        
+        template<>
+        Embedding_Result VYVineLinkEmbeddingAlgo<>::embeddVNRLinks
+        (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr)
+        {
+            return (embeddLinks (substrate_network,vnr));
+        }
+        
+        template<>
+        Embedding_Result  VYVineLinkEmbeddingAlgo<>::embeddVNRLinksForIdSets
+        (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
+         const std::map<int,int>* nodeIdMap,
+         std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap)
+        {
+            return (embeddLinks (substrate_network,vnr,nodeIdMap,linkMap));
         }
     }
 }

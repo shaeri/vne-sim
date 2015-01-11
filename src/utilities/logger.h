@@ -45,30 +45,31 @@ namespace keywords = boost::log::keywords;
 using namespace logging::trivial;
 
 namespace vne {
-class Logger {
+    namespace utilities{
+        class Logger {
 
-public:
-    static Logger* getInstance(std::string logFile = "default.log");
+        public:
+            static Logger* Instance();
+            
+            void logTrace(std::string message);
+            void logInfo(std::string message);
+            void logDebug(std::string message);
+            void logWarn(std::string message);
+            void logError(std::string message);
+            void logFatal(std::string message);
 
-    void logInfo(std::string message);
-    void logDebug(std::string message);
-    void logWarn(std::string message);
-    void logError(std::string message);
-    void logFatal(std::string message);
 
+        private:
+            Logger();
+            Logger(Logger const&);
+            Logger& operator=(Logger const&);
+            virtual ~Logger();
 
-private:
-    Logger(std::string fileName);
-    Logger(Logger const&);
-    Logger& operator=(Logger const&);
-    virtual ~Logger();
+            src::severity_logger<severity_level> log_;
 
-    void initialize(std::string fileName);
-
-    src::severity_logger< severity_level > log_;
-
-    static Logger* logger_; // singleton instance
-};
+            static Logger* logger_; // singleton instance
+        };
+    }
 }
 
 #endif /* LOGGER_H_ */

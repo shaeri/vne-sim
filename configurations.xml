@@ -1,11 +1,28 @@
+<utilities>
+    <!--if the path does not exist, no log file will be set.-->
+    <logFile></logFile>
+    <!-- log level can be set using the environment variable LOG_LEVEL. If LOG_LEVEL is not set this variable will be used.-->
+    <logLevel></logLevel>
+</utilities>
+
+<core>
+    <!--The result database file-->
+    <dbPath>/Users/Soroosh/Desktop/test.db</dbPath>
+    <!-- 0 uses the libraries standard seed -->
+    <rngSeed>0</rngSeed>
+    <!--Verious random number generator types that gsl_rng library implements may be found at: -->
+    <!--https://www.gnu.org/software/gsl/manual/html_node/Random-number-generator-algorithms.html#Random-number-generator-algorithms -->
+    <rngType>gsl_rng_mt19937</rngType>
+</core>
+
 <vineyard>
     <SubstrateNetwork>
         <path>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/substrate_network</path>
-        <filename>sub-50.txt</filename>
+        <filename>sub.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
         <path>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/virtual_net_requests</path>
-        <dir>r-10-50-50-20-10-10-50</dir>
+        <dir>r-2000-50-50-20-10-10-50</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>
     <Results>
@@ -17,8 +34,8 @@
         <epsilon>1E-6</epsilon>
     </Constants>
     <Configs>
-        <setAlpha>true</setAlpha> <!-- if set to false Alpha is automatically set to 1-->
-        <setBeta>true</setBeta>   <!-- if set to false Beta is automatically set to 1-->
+        <setAlpha>false</setAlpha> <!-- if set to false Alpha is automatically set to 1-->
+        <setBeta>false</setBeta>   <!-- if set to false Beta is automatically set to 1-->
         <!-- "deterministic" or "randomized" (use exact words without quotes). 
          If it is not specified deterministic approach is selected by default. -->
         <nodeMappingType>deterministic</nodeMappingType>
@@ -28,5 +45,51 @@
         <LPdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/CNLM-LP.dat</LPdataFile>
         <MCFmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/MCF.mod</MCFmodelFile>
         <MCFdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/MCF.dat</MCFdataFile>
+        <!-- 0 disabled, 1 enabled -->
+        <terminalEnabled>0</terminalEnabled>
     </glpk>
 </vineyard>
+<MCTS>
+    <Simulator>
+        <Knowledge>
+           <!-- 0:PURE 1:LEGAL 2:SMART -->
+           <TreeLevel>1</TreeLevel>
+           <!-- 0:PURE 1:LEGAL 2:SMART -->
+           <RolloutLevel>0</RolloutLevel>
+           <SmartTreeCount>10</SmartTreeCount>
+           <SmartTreeValue>1.0</SmartTreeValue>
+        </Knowledge>
+        <!-- Discount in (0,1] -->
+        <discount>1</discount>
+        <rewardRange>100000000</rewardRange>
+    </Simulator>
+    
+    <MCTSParameters>
+        <MaxDepth>5</MaxDepth>
+        <NumSimulations>10</NumSimulations>
+        <!-- How many nodes to add at each expansion step -->
+        <ExpandCount>1</ExpandCount>
+        <!-- if this is set to false Exploration constant will be used otherwise Exploration constant will be set to 0 if UseRave flag is set or Exploration constant will be set to rewardRange.-->
+        <AutoExploration>false</AutoExploration>
+        <!-- One option is to set Exploration Constant c = R_{hi}-R_{lo} -->
+        <ExplorationConstant>100000000.0</ExplorationConstant>
+        <!-- Rave Parameters: 0 -> rave is not set -->
+        <UseRave>false</UseRave>
+        <RaveDiscount>1.0</RaveDiscount>
+        <RaveConstant>0.01</RaveConstant>
+        <!-- When set, the baseline rollout algorithm is run. -->
+        <DisableTree>0</DisableTree>
+    </MCTSParameters>
+</MCTS>
+        
+<MCVNE>
+    <VNEMCTSSimulator>
+        <!-- alpha is the substrate liks weight and beta is the substrate node weight -->
+        <!-- if set to false the weights are 1 -->
+        <setAlpha>false</setAlpha>
+        <setBeta>false</setBeta>
+    </VNEMCTSSimulator>
+    <NodeEmbeddingAlgo>
+        <LinkEmbedder>MCF</LinkEmbedder>
+    </NodeEmbeddingAlgo>
+</MCVNE>

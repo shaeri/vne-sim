@@ -32,5 +32,10 @@ namespace vne {
         VNRProcessDigraph<VYVNRGenerator<>, VYVNREmbeddingProc<>, VYVNRReleaseProc<>, VYVNRProcObserver<> >(embed,release,gen,obs)
         {
         }
+        template<>
+        VYVNRProcDigraph<>::~VYVNRProcDigraph ()
+        {
+            std::cout << "DESTROYING VYVNRProcDigraph" << std::endl;
+        }
     }
 }

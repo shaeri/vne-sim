@@ -47,8 +47,10 @@ public:
     bool hasResources (const NODERES &... _res);
 	Embedding_Result embedNode(std::shared_ptr<VirtualNode<NODERES...> > _n);
 	void freeResources(int _id);
+    const Resources<NODERES...>& getMaxResources () const;
 private:
 	typedef SubstrateNode<NODERES...> this_t;
+    Resources<NODERES...> max_resources;
 	std::map<int, std::shared_ptr<VirtualNode<NODERES...> >> embedded_nodes;
 };
 /*
@@ -62,12 +64,14 @@ template<typename ... NODERES>
 SubstrateNode<NODERES...>::SubstrateNode(const Resources<NODERES...>& _res) :
 		Node<NODERES...>(_res, Entity_t::substrate, true)
 {
+    max_resources = _res;
 	this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
 }
 template<typename ... NODERES>
 SubstrateNode<NODERES...>::SubstrateNode(const NODERES &... _res) :
 		Node<NODERES...>(_res..., Entity_t::substrate, true)
 {
+    max_resources = Resources<NODERES...>(_res...);
 	this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
 }
 template<typename ... NODERES>
@@ -114,6 +118,11 @@ void SubstrateNode<NODERES...>::freeResources(int _id)
 	this->resources.freeResources(_res);
 	embedded_nodes[_id].reset();
 	embedded_nodes.erase(it);
+}
+template<typename ... NODERES>
+const Resources<NODERES...>& SubstrateNode<NODERES...>::getMaxResources () const
+{
+    return max_resources;
 }
 }
 #endif /* SUBSTRATE_NODE_H_ */

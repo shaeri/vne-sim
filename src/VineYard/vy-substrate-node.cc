@@ -67,6 +67,11 @@ namespace vne {
             return std::get<0>(this->resources);
         }
         template<>
+        double VYSubstrateNode<>::getMaxCPU() const
+        {
+           return std::get<0>(this->getMaxResources());
+        }
+        template<>
         int VYSubstrateNode<>::getCount() const
         {
             return count;

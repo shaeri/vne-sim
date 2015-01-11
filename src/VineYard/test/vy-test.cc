@@ -32,6 +32,8 @@
 #include "core/network.h"
 #include "core/config-manager.h"
 #include "core/two-stage-embedding-algo.h"
+#include "core/db-manager.h"
+#include "core/experiment.h"
 
 #include "Vineyard/vy-substrate-node.h"
 #include "Vineyard/vy-virtual-node.h"
@@ -43,6 +45,9 @@
 #include "Vineyard/vy-vine-node-embedding-algo.h"
 #include "Vineyard/vy-vine-link-embedding-algo.h"
 #include "Vineyard/vy-vine-two-stage-embedding-algo.h"
+#include "Vineyard/vy-statistics.h"
+
+#include "experiments/vineyard-experiments.h"
 
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
@@ -51,14 +56,22 @@
 using namespace vne;
 using namespace vne::vineyard;
 
-void LoggerInit()
+/*void LoggerInit()
 {
     boost::log::core::get()->set_filter
     (
-     boost::log::trivial::severity >= boost::log::trivial::info
+     boost::log::trivial::severity >= boost::log::trivial::error
     );
 }
-
+*/
+struct ReachabilityCondition
+{
+    bool operator()(const std::shared_ptr<VYVirtualNode<double>> lhs,  const std::shared_ptr<const std::vector<std::shared_ptr<VYVirtualLink<>>> > lhsLinks, const std::shared_ptr<VYVirtualNode<double>> rhs, double maxD) const
+    {
+        return (lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
+                lhs->getCPU()>=rhs->getCPU());
+    }
+};
 BOOST_AUTO_TEST_SUITE (VYTest)
 BOOST_AUTO_TEST_CASE(VYCoordTest)
 {
@@ -135,7 +148,16 @@ BOOST_AUTO_TEST_CASE(VYVirtualTest)
     Vnet1->addNode(vn13);
     Vnet1->addLink(l11);
     Vnet1->addLink(l12);
-
+    
+    
+    //const std::shared_ptr<std::set<int>> setT =
+    double d = 3.0;
+    ReachabilityCondition cond;
+    cond (vn11,Vnet1->getLinksForNodeId(vn11->getId()), vn12, d);
+    Vnet1->getNodesIDsWithConditions<ReachabilityCondition>(vn11, d);
+    
+    std::cout << Vnet1->getNodesIDsWithConditions<ReachabilityCondition>(vn11, d)->size() << std::endl;
+    
     std::cout << "Revenue:  " << &getRevenue << std::endl;
     std::shared_ptr<VYVirtualNetRequest<>> vnr1  (new VYVirtualNetRequest<>(Vnet1, 0,100,1,5,20,0,0));
     std::cout << "getting revenues" << std::endl;
@@ -195,7 +217,8 @@ BOOST_AUTO_TEST_CASE(VYVNRProcDigraphTest)
     std::shared_ptr<RELEASE_ALGO_TYPE> releaseAlgo (new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>(sb));
     VYVNREmbeddingProc<>* embeddingProc (new VYVNREmbeddingProc<>(embeddingAlgo));
     VYVNRReleaseProc<>* releaseProc (new VYVNRReleaseProc<>(releaseAlgo));
-    VYVNRProcDigraph<> graph (embeddingProc,releaseProc);
+    VYVNRProcObserver<>* observer (new VYVNRProcObserver<> (sb.getNetwork()));
+    VYVNRProcDigraph<> graph (embeddingProc,releaseProc,new VYVNRGenerator<>(), observer);
     std::cout<< "created the graph" << std::endl;
     adevs::Simulator<VYVNRGenerator<>::ADEVS_IO_TYPE> sim(&graph);
     std::cout<< "created the simulator" << std::endl;
@@ -240,6 +263,27 @@ BOOST_AUTO_TEST_CASE(VYEmbeddingAlgoTest)
     VYVineNodeEmbeddingAlgo<> nodeAlgo;
     //VYVineEmbeddingAlgo<> algo (sn);
     nodeAlgo.embeddVNRNodes(sn,vnr);
+}
+BOOST_AUTO_TEST_CASE(VYDBTes)
+{
+    //VYStatistics st;
+    //st.processing_time = 0.01;
+    //st.std_dev_link_stress = 1.75;
+    //LoggerInit();
+    vne::experiments::VineNodeMCFLinkExp<> exp = vne::experiments::VineNodeMCFLinkExp<> ();
+    
+    //exp.statisticsGenerated(st);
+    exp.run();
+    
+    //std::shared_ptr<hiberlite::Database>
+    std::string dbName ("/Users/Soroosh/Desktop/test.db");
+    std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(dbName);
+    //db->registerBeanClass<VYStatistics>();
+    typedef vne::experiments::VineNodeMCFLinkExp<> experimentBean;
+    db->registerBeanClass<vne::experiments::VineNodeMCFLinkExp<>>();
+    db->dropModel();
+    db->createModel();
+    db->copyBean(exp);
 }
 BOOST_AUTO_TEST_CASE(VYGLPKTest)
 {

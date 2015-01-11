@@ -43,8 +43,9 @@ namespace vne {
         public:
             VYVNRProcDigraph (VYVNREmbeddingProc<>* embed,
                               VYVNRReleaseProc<>* release,
-                              VYVNRGenerator<>* gen=0,
-                              VYVNRProcObserver<>* obs=0);
+                              VYVNRGenerator<>* gen,
+                              VYVNRProcObserver<>* obs);
+            ~VYVNRProcDigraph ();
         };
     }
 }

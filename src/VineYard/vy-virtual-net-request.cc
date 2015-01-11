@@ -29,17 +29,16 @@ namespace vne {
         template<>
         VYVirtualNetRequest<>::VYVirtualNetRequest (std::shared_ptr<Network<VYVirtualNode<>,VYVirtualLink<>>> _vn,
                                                         double _time, double _duration, int _split, int _topology, int _maxD,
-                                                    std::function<std::shared_ptr<std::pair<double,double>>(VYVirtualNetRequest<>* vnr)> calcRevenue,
-                                                    std::function<std::shared_ptr<std::pair<double,double>>(VYVirtualNetRequest<>* vnr)> calcCost) :
+                                                    std::function<std::shared_ptr<std::pair<double,double>>(const VYVirtualNetRequest<>* vnr)> calcRevenue,
+                                                    std::function<std::shared_ptr<std::pair<double,double>>(const VYVirtualNetRequest<>* vnr)> calcCost) :
         VirtualNetworkRequest<Network<VYVirtualNode<>, VYVirtualLink<> > >(_vn, _time, _duration),
         split(_split),
         topology(_topology),
-        maxDistance(_maxD),
-        pThis (this)
+        maxDistance(_maxD)
         {
             if (calcRevenue == nullptr)
             {
-                revenue = [] (VYVirtualNetRequest<>* vnr) -> std::shared_ptr<std::pair<double,double>>
+                revenue = [] (const VYVirtualNetRequest<>* vnr) -> std::shared_ptr<std::pair<double,double>>
                 {
                     std::shared_ptr<std::pair<double,double>> rev (new std::pair<double,double>(0,0));
                     const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
@@ -59,7 +58,7 @@ namespace vne {
             else revenue = calcRevenue;
             if (calcCost == nullptr)
             {
-                cost = [] (VYVirtualNetRequest<>* vnr) -> std::shared_ptr<std::pair<double,double>>
+                cost = [] (const VYVirtualNetRequest<>* vnr) -> std::shared_ptr<std::pair<double,double>>
                 {
                     std::shared_ptr<std::pair<double,double>>  cost (new std::pair<double,double>(0,0));
                     const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
@@ -68,24 +67,31 @@ namespace vne {
                         cost->first += n->at(i)->getCPU ();
                         
                     }
-                    const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualLink<>>>>  l = vnr->getVN()->getAllLinks();
-                    for (int j=0;j<l->size();++j)
+                    int count = 0;
+                    std::cout<< "----------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!------------------------" << std::endl;
+                    for (auto it1 = vnr->getLinkMap()->begin(); it1 != vnr->getLinkMap()->end(); it1++)
                     {
-                        cost->second += l->at(j)->getPathLength() * l->at(j)->getBandwidth();
+                        for (auto it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
+                        {
+                            //I think this calculation is not correct
+                            //cost->second += (l->at(j)->getPathLength() * l->at(j)->getBandwidth());
+                            
+                            std::cout<< "vnr link ID: " << count << " SUB BW: " << std::get<0>(*it2->second) << std::endl;
+                            cost->second += std::get<0>(*it2->second);
+                        }
+                        count++;
                     }
                     return cost;
                 };
             }
             else cost = calcCost;
-            std::shared_ptr<std::pair<double, double>> revPair = revenue(pThis);
+            std::shared_ptr<std::pair<double, double>> revPair = revenue(this);
             nodeRevenue = revPair->first;
             linkRevenue = revPair->second;
         }
         template<>
         VYVirtualNetRequest<>::~VYVirtualNetRequest()
         {
-            //delete revenue;
-            //delete cost;
         }
         template<>
         int VYVirtualNetRequest<>::getSplit() const
@@ -121,18 +127,18 @@ namespace vne {
         template<>
         double VYVirtualNetRequest<>::getNodeCost() const
         {
-            return  cost(pThis)->first;
+            return  cost(this)->first;
         }
         template<>
         double VYVirtualNetRequest<>::getLinkCost() const
         {
-            return cost(pThis)->second;
+            return cost(this)->second;
         }
         template<>
         double VYVirtualNetRequest<>::getTotalCost() const
         {
             float mult = ConfigManager::Instance()->getConfig<float>("vineyard.Constants.costMultiplier");
-            return cost(pThis)->first + mult * cost(pThis)->second;
+            return cost(this)->first + mult * cost(this)->second;
         }
         template<>
         bool VYVirtualNetRequest<>::operator> (const VYVirtualNetRequest<>& rhs)

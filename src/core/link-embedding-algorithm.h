@@ -63,6 +63,12 @@ namespace vne {
         typedef Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>> SUBSTRATE_TYPE;
         
         virtual Embedding_Result embeddVNRLinks (std::shared_ptr<SUBSTRATE_TYPE> substrate_net, std::shared_ptr<VNR_TYPE> vnr) = 0;
+        //implementing this funciton is optional. However, for using MCTS this function must be implemented.
+        //This function works on the given id sets insetad of the vnr default id sets.
+        virtual Embedding_Result embeddVNRLinksForIdSets (std::shared_ptr<SUBSTRATE_TYPE> substrate_net, std::shared_ptr<VNR_TYPE> vnr,
+            const std::map<int,int>* nodeIdMap,
+            std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<SLINKRES...>>>>>* linkMap)
+        {return embeddVNRLinks (substrate_net,vnr);};
         
     protected:
         LinkEmbeddingAlgorithm () {};

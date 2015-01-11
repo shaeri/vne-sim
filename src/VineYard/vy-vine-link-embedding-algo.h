@@ -45,6 +45,8 @@ namespace vne {
             VYVineLinkEmbeddingAlgo ();
             ~VYVineLinkEmbeddingAlgo ();
             virtual Embedding_Result  embeddVNRLinks (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
+            virtual Embedding_Result  embeddVNRLinksForIdSets (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr, const std::map<int,int>* nodeIdMap,
+                std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap) override;
             
         private:
             glp_prob* lp_problem;
@@ -63,9 +65,15 @@ namespace vne {
             bool setBeta;
             // 0 is returned if methods are successful otherwise 1 is returned
             inline int solveLinkMappingLP (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
-            inline void writeDataFile (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
+            inline void writeDataFile (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
+                                       const std::map<int,int>* nodeIdMap);
+            
             inline void cleanUp ();
             //inline Embedding_Result parseLPSolution ();
+            inline Embedding_Result embeddLinks (
+                std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
+                const std::map<int,int>* nodeIdMap = nullptr,
+                std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap = nullptr);
             
             enum {DETERMINISTIC,RANDOMIZED} nodeMappingType;
         };

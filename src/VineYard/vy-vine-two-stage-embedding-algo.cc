@@ -43,5 +43,10 @@ namespace vne
         TwoStageEmbeddingAlgo<Network<VYSubstrateNode<>, VYSubstrateLink<> >, VYVirtualNetRequest<> >
             (_nb, _node_embedding_algo, _link_embedding_algo)
         {};
+        
+        template<>
+        VYVineTwoStageEmbeddingAlgo<>::~VYVineTwoStageEmbeddingAlgo()
+        {
+        }
     }
 }

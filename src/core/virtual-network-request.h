@@ -56,22 +56,27 @@ public:
     // algorithm is completed this value is set for simulation purposes
     double getProccessingTime() const {return proc_time;};
     void setProccessingTime (double t) {proc_time = t;}
-    double getDepartureTime() const {return arrivalTime + duration;};
+    double getQueuingTime() const {return queuing_time;};
+    void setQueuingTime (double t) {queuing_time = t;}
+    double getDepartureTime() const {return arrivalTime + duration + proc_time + queuing_time;};
     //bool successfulEmbedding () const {return successful_embedding;};
     //void setEmbeddingResult (bool arg) {successful_embedding = arg;};
     bool operator< (VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>& rhs) const {return this->time<rhs.getTime();};
     std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> getVN () const {return vn;};
     
-    const std::map<int,std::list<int>>* getLinkMap () const {return &linkMap;};
+    const std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<LINKRES...>>>>>* getLinkMap () const {return &linkMap;};
     const std::map<int,int>* getNodeMap () const {return &nodeMap;};
     void addNodeMapping (int sNodeId, int vNodeId);
-    void addLinkMapping (int sLinkId, int vLinkId);
+    void addLinkMapping (int sLinkId, int vLinkId, std::shared_ptr<Resources<LINKRES...>> _res);
     
 protected:
 	int id;
     double arrivalTime;
     double duration;
     double proc_time;
+    //time that a request waits in a queue to be processed
+    double queuing_time;
+    
     //bool successful_embedding;
     std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> vn;
     VirtualNetworkRequest(std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> _vn,
@@ -79,8 +84,8 @@ protected:
     ///These two maps hold the temporary mappings based on node and link IDs
     //nodeMap<VirtualnodeId, SubstrateNodeId>;
     std::map<int, int> nodeMap;
-    //linkMap<virtualLinkId, list<substrateNodeIds>>
-    std::map<int,std::list<int>> linkMap;
+    //linkMap<virtualLinkId, list<substrateLinkIds>>
+    std::map<int,std::list<std::pair<int,std::shared_ptr<Resources<LINKRES...>>>>> linkMap;
     
 private:
 	typedef VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> this_t;
@@ -95,9 +100,10 @@ template<typename ... NODERES, template <typename ...> class NODECLASS,
       arrivalTime (_time),
       duration(_duration),
       proc_time(0),
+      queuing_time(0),
       vn(std::move(_vn)),
       //successful_embedding(false),
-      linkMap (std::map<int,std::list<int>>()),
+      linkMap (std::map<int,std::list<std::pair<int,std::shared_ptr<Resources<LINKRES...>>>>>()),
       nodeMap (std::map<int,int>())
     {}
 template<typename ... NODERES, template <typename ...> class NODECLASS,
@@ -105,15 +111,18 @@ template<typename ... NODERES, template <typename ...> class NODECLASS,
     void VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>::
             addNodeMapping (int sNodeId, int vNodeId)
     {
+        std::cout << "vnodeId: " << vNodeId << std::endl;
+        std::cout << "snodeId: " << sNodeId << std::endl;
+        std::cout << "-------------------------" << std::endl;
        nodeMap.insert(std::make_pair(vNodeId, sNodeId));
     }
 
 template<typename ... NODERES, template <typename ...> class NODECLASS,
     typename... LINKRES, template <typename...> class LINKCLASS>
     void VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>::
-            addLinkMapping (int sLinkId, int vLinkId)
+            addLinkMapping (int sLinkId, int vLinkId, std::shared_ptr<Resources<LINKRES...>> _res)
     {
-        linkMap[vLinkId].push_back(sLinkId);
+        linkMap[vLinkId].push_back(std::make_pair(sLinkId,_res));
     }
 }
 

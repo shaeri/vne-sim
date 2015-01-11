@@ -25,11 +25,17 @@
 #ifndef CORE_TYPES_H_
 #define CORE_TYPES_H_
 
+#include <string>
+
 namespace vne
 {
+    
+#define LargeInteger 100000000
+#define Infinity 1e+10
+    
 /*
  * type of an entity either virtual or substrate (real)
- */
+*/
 enum class Entity_t
 {
 	virt = 0, substrate
@@ -39,7 +45,33 @@ enum class Embedding_Result
 	SUCCESSFUL_EMBEDDING = 0, NOT_ENOUGH_SUBSTRATE_RESOURCES,
     ERROR_IN_SOLUTION
 };
-    
+enum class Embedding_Algorithm_Types
+{
+    TWO_STAGE = 0, SINGLE_STAGE
+};
+static std::string get_Embedding_Algorithm_Type_Str (Embedding_Algorithm_Types t)
+{
+    if (t == Embedding_Algorithm_Types::TWO_STAGE)
+        return std::string ("TWO_STAGE");
+    return std::string ("SINGLE_STAGE");
+};
+enum class Event_Types
+{
+    EVENT_TYPE_ARRIVAL = 0,
+    EVENT_TYPE_SUCCESSFUL_EMBEDDING,
+    EVENT_TYPE_FAIL_EMBEDDING,
+    EVENT_TYPE_DEPARTURE
+};
+static std::string get_Evenet_Type_Str (Event_Types t)
+{
+    if (t == Event_Types::EVENT_TYPE_ARRIVAL)
+        return std::string ("VNR_ARRIVAL");
+    if (t == Event_Types::EVENT_TYPE_SUCCESSFUL_EMBEDDING)
+        return std::string ("EMBD_SUCCESS");
+    if (t == Event_Types::EVENT_TYPE_FAIL_EMBEDDING)
+        return std::string ("EMBD_FAIL");
+    return std::string ("VNR_DEPARTURE");
+};
 }
 
 #endif

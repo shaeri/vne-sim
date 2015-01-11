@@ -23,12 +23,13 @@
  **/
 
 #include "vy-vnr-proc-observer.h"
+
 namespace vne {
     namespace vineyard{
         
         template<>
-        VYVNRProcObserver<>::VYVNRProcObserver ()
-        : VNRProcessObserver<VYVirtualNetRequest<>>  ()
+        VYVNRProcObserver<>::VYVNRProcObserver (std::shared_ptr<SUBSTRATE_TYPE> _sn)
+        : VNRProcessObserver<SUBSTRATE_TYPE, VNR_TYPE>  (_sn)
         {
         }
         template<>
@@ -46,32 +47,101 @@ namespace vne {
         {
             BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: delta_int()" << std::endl;
         }
+        
+        template<>
+        inline void VYVNRProcObserver<>::setStatistics (VYStatistics& stat, std::shared_ptr<VYVirtualNetRequest<>> req)
+        {
+            stat.vnr_id = req->getId();
+            double stress;
+            std::shared_ptr<const std::set<int> > nodeIdSet = substrate_network->getNodeIdSet();
+            std::shared_ptr<const std::set<int>> linkIdSet = substrate_network->getLinkIdSet();
+            
+            for (auto it = nodeIdSet->begin(); it != nodeIdSet->end(); it++)
+            {
+                std::shared_ptr<const VYSubstrateNode<>> n = substrate_network->getNode(*it);
+                stress = (n->getMaxCPU() - n->getCPU())/ n->getMaxCPU();
+                if (stress > stat.max_node_stress)
+                    stat.max_node_stress = stress;
+                stat.avg_node_stress += stress;
+            }
+            stat.avg_node_stress /= nodeIdSet->size();
+            
+            for (auto it = nodeIdSet->begin(); it != nodeIdSet->end(); it++)
+            {
+                std::shared_ptr<const VYSubstrateNode<>> n = substrate_network->getNode(*it);
+                stress = (n->getMaxCPU() - n->getCPU())/ n->getMaxCPU();
+                stat.std_dev_node_stress += ((stat.avg_node_stress - stress) * (stat.avg_node_stress - stress));
+            }
+            stat.std_dev_node_stress = sqrt((stat.std_dev_node_stress/nodeIdSet->size()));
+            
+            for (auto it = linkIdSet->begin(); it != linkIdSet->end(); it++)
+            {
+                std::shared_ptr<const VYSubstrateLink<>> l = substrate_network->getLink(*it);
+                stress = ((l->getMaxBandwidth() - l->getBandwidth()) / l->getMaxBandwidth());
+                if (stress > stat.max_link_stress)
+                    stat.max_link_stress = stress;
+                stat.avg_link_stress += stress;
+            }
+            stat.avg_link_stress /= linkIdSet->size();
+            
+            for (auto it = linkIdSet->begin(); it != linkIdSet->end(); it++)
+            {
+                std::shared_ptr<const VYSubstrateLink<>> l = substrate_network->getLink(*it);
+                stress = (l->getMaxBandwidth() - l->getBandwidth())/ l->getMaxBandwidth();
+                stat.std_dev_link_stress += ((stat.avg_link_stress - stress) * (stat.avg_link_stress - stress));
+            }
+            stat.std_dev_link_stress = sqrt((stat.std_dev_link_stress/linkIdSet->size()));
+            stat.node_revenue = req->getNodeRevenue();
+            stat.node_cost = req->getNodeCost();
+            stat.link_revenue = req->getLinkRevenue();
+            stat.link_cost = req->getLinkCost();
+            stat.processing_time = req->getProccessingTime();
+            stat.node_mapping_objective_val = req->nodeMappingObjectiveVal;
+            stat.link_mapping_objective_val = req->linkMappingObjectiveVal;
+        }
         template<>
         void VYVNRProcObserver<>::delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb)
         {
             BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: delta_ext()" << std::endl;
             adevs::Bag<ADEVS_IO_TYPE>::const_iterator i = xb.begin();
+            
             for (; i != xb.end (); i++)
             {
+                VYStatistics stat;
                 if ((*i).port == entered_embedding_queue)
                 {
-                   BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< entered_embedding_queue << ". A VNR has entered embedding queue."  << std::endl;
+                    stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_ARRIVAL);
+                    stat.vnr_id = (*i).value->getId();
+                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< entered_embedding_queue << ". A VNR has entered embedding queue."  << std::endl;
                 }
                 else if ((*i).port == embedding_successful)
                 {
-                   BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< embedding_successful << ". A VNR has been successfully embedded."  << std::endl;
+                    stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_SUCCESSFUL_EMBEDDING);
+                    setStatistics(stat, (*i).value);
+                    
+                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< embedding_successful << ". A VNR has been successfully embedded."  << std::endl;
                 }
                 else if ((*i).port == embedding_unsuccessful)
                 {
-                   BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< embedding_unsuccessful << ". A VNR embedding was unsuccessful."  << std::endl;
+                    stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_FAIL_EMBEDDING);
+                    stat.vnr_id = (*i).value->getId();
+                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< embedding_unsuccessful << ". A VNR embedding was unsuccessful."  << std::endl;
+                    
                 }
                 else if ((*i).port ==released_resources)
                 {
-                   BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< released_resources << ". A VNR left the substrate network."  << std::endl;
+                    stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_DEPARTURE);
+                    setStatistics(stat, (*i).value);
+                    
+                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< released_resources << ". A VNR left the substrate network."  << std::endl;
                 }
                 else
                 {
                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on an unknown port: " << (*i).port << ". A VNR left the substrate network."  << std::endl;
+                }
+                for (auto it = subscribers.begin (); it != subscribers.end(); it++)
+                {
+                    (*it)->statisticsGenerated(stat);
                 }
             }
         }

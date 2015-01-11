@@ -31,14 +31,15 @@
 
 namespace vne {
     namespace vineyard {
+        
         template<typename = Network<VYVirtualNode<>, VYVirtualLink<>>>
         class VYVirtualNetRequest : public VirtualNetworkRequest<Network<VYVirtualNode<>, VYVirtualLink<>>>
         {
         public:
             VYVirtualNetRequest(std::shared_ptr<Network<VYVirtualNode<>,VYVirtualLink<>>> _vn,
                                 double _time, double _duration, int _split, int _topology, int _maxD,
-                                std::function<std::shared_ptr<std::pair<double,double>>(VYVirtualNetRequest<>* vnr)> calcRevenue = nullptr,
-                                std::function<std::shared_ptr<std::pair<double,double>>(VYVirtualNetRequest<>* vnr)> calcCost = nullptr);
+                                std::function<std::shared_ptr<std::pair<double,double>>(const VYVirtualNetRequest<>* vnr)> calcRevenue = nullptr,
+                                std::function<std::shared_ptr<std::pair<double,double>>(const VYVirtualNetRequest<>* vnr)> calcCost = nullptr);
             ~VYVirtualNetRequest ();
             int getSplit () const;
             int getTopology () const;
@@ -56,16 +57,18 @@ namespace vne {
             bool operator> (const double& rhs);
             bool operator< (const double& rhs);
             
+            //Values of objective function for link and node mappings.
+            double linkMappingObjectiveVal;
+            double nodeMappingObjectiveVal;
+            
         private:
             int split;
             int topology;
             int maxDistance;
             double nodeRevenue;
             double linkRevenue;
-            //a self pointer that maybe used for calling the revnue and cost functions;
-            VYVirtualNetRequest<>* pThis;
-            std::function<std::shared_ptr<std::pair<double,double>> (VYVirtualNetRequest<>* vnr)>  revenue;
-            std::function<std::shared_ptr<std::pair<double,double>> (VYVirtualNetRequest<>* vnr)>  cost;
+            std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)> revenue;
+            std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)> cost;
         };
     }
 }

@@ -52,19 +52,27 @@ public:
 	void addNode(std::shared_ptr<NodeC<NodeT...>> node);
 	void addLink(std::shared_ptr<LinkC<LinkT...>> link);
     
-    inline const std::shared_ptr<NodeC<NodeT...>> getNode(int id) const;
-    inline const std::shared_ptr<const std::set<int>> getNodeIdSet () const;
+    const std::shared_ptr<NodeC<NodeT...>> getNode(int id) const;
+    const std::shared_ptr<std::set<int>> getNodeIdSet () const;
 	
-    inline const std::shared_ptr<LinkC<LinkT...>> getLink (int id) const;
-    inline const std::shared_ptr<const std::vector<std::shared_ptr<LinkC<LinkT...>>> > getLinksForNodeId (int id) const;
-    inline const std::shared_ptr<LinkC<LinkT...>> getLinkBetweenNodes (int nodeIdFrom, int nodeIdTo) const;
-    inline const std::shared_ptr<const std::set<int>> getLinkIdSet () const;
+    const std::shared_ptr<LinkC<LinkT...>> getLink (int id) const;
+    const std::shared_ptr<const std::vector<std::shared_ptr<LinkC<LinkT...>>> > getLinksForNodeId (int id) const;
+    const std::shared_ptr<LinkC<LinkT...>> getLinkBetweenNodes (int nodeIdFrom, int nodeIdTo) const;
+    const std::shared_ptr<std::set<int>> getLinkIdSet () const;
     
-    inline const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>> getAllNodes () const;
-    inline const std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...>>>> getAllLinks () const;
+    const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>> getAllNodes () const;
+    const std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...>>>> getAllLinks () const;
     
     template<typename CONDITION, typename ... T>
-    inline const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>> getNodesWithConditions (T &... args);
+    const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>> getNodesWithConditions (T &... args);
+    //template<typename CONDITION, typename ... T>
+    //inline const std::shared_ptr<std::vector<int>> getNodesIDsWithConditions (T &... args);
+    template<typename CONDITION, typename ... T>
+    const std::shared_ptr<std::set<int>> getNodesIDsWithConditions (T &... args);
+    //runs the BFS algorithm from a given nodeId
+    //This functinos stops visiting nodes when the condition is not met.
+    //template<typename CONDITION, typename ... T>
+    //inline const std::shared_ptr<std::vector<int>> BFSwithCondition (int nodeId, T &... args);
     
     int getId() {return this->id;};
     int getNumNodes () {return (int) this->nodesMap.size();};
@@ -169,7 +177,7 @@ Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNode(int id) const
     
 template<typename... NodeT, template<typename...> class NodeC,
     typename... LinkT, template <typename...> class LinkC>
-inline const std::shared_ptr<const std::set<int>>
+inline const std::shared_ptr<std::set<int>>
     Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNodeIdSet() const
 {
     const std::shared_ptr<std::set<int>> keySet (new std::set<int>());
@@ -233,7 +241,7 @@ Network<NodeC<NodeT...>, LinkC<LinkT...>>::getLink(int id) const
     
 template<typename... NodeT, template<typename...> class NodeC,
     typename... LinkT, template <typename...> class LinkC>
-inline const std::shared_ptr<const std::set<int>>
+inline const std::shared_ptr<std::set<int>>
     Network<NodeC<NodeT...>, LinkC<LinkT...>>::getLinkIdSet () const
 {
     const std::shared_ptr<std::set<int>> keySet (new std::set<int>());
@@ -276,10 +284,42 @@ Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNodesWithConditions (T &... args)
     CONDITION cond;
     for (auto it = nodesMap.begin(); it != nodesMap.end(); ++it)
     {
-        if (cond(*(it->second), args...))
+        if (cond(*(it->second), getLinksForNodeId(it->first),args...))
             vec->push_back(it->second);
     }
     return vec;
+}
+    
+/*template<typename... NodeT, template<typename...> class NodeC,
+typename... LinkT, template <typename...> class LinkC>
+template<typename CONDITION, typename... T>
+inline const std::shared_ptr<std::vector<int>>
+Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNodesIDsWithConditions (T &... args)
+{
+    const std::shared_ptr<std::vector<int>> vec (new std::vector<int>());
+    CONDITION cond;
+    for (auto it = nodesMap.begin(); it != nodesMap.end(); ++it)
+    {
+        if (cond(*(it->second), args...))
+            vec->push_back(it->second->getId());
+    }
+    return vec;
+}
+*/
+template<typename... NodeT, template<typename...> class NodeC,
+typename... LinkT, template <typename...> class LinkC>
+template<typename CONDITION, typename... T>
+inline const std::shared_ptr<std::set<int>>
+Network<NodeC<NodeT...>, LinkC<LinkT...>>::getNodesIDsWithConditions (T &... args)
+{
+    const std::shared_ptr<std::set<int>> idSet (new std::set<int>());
+    CONDITION cond;
+    for (auto it = nodesMap.begin(); it != nodesMap.end(); ++it)
+    {
+        if (cond(it->second, getLinksForNodeId(it->first), args...))
+            idSet->insert(it->second->getId());
+    }
+    return idSet;
 }
 }
 #endif /* NETWORK_H_ */

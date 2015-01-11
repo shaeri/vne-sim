@@ -28,14 +28,30 @@ namespace vne {
     namespace vineyard {
         template<>
         VYSubstrateLink<>::VYSubstrateLink (double _bw, double _delay, int _from, int _to) :
-        SubstrateLink<double,double>(_bw,_delay,_from,_to),
-        count(0)
+        SubstrateLink<double>(_bw,_from,_to),
+        count(0),
+        delay(_delay)
         {
         }
         template<>
         VYSubstrateLink<>::~VYSubstrateLink()
         {
         }
+/*
+        template<>
+        Embedding_Result VYSubstrateLink<>::embedLink(std::shared_ptr<VYVirtualLink<> > _l)
+        {
+            Embedding_Result r = SubstrateLink<double>::embedLink(_l);
+            if (r== Embedding_Result::SUCCESSFUL_EMBEDDING)
+                _l->addHostLink(this);
+            return r;
+        }
+        template<>
+        Embedding_Result VYSubstrateLink<>::embedLink(std::shared_ptr<VYVirtualLink<> > _l, std::shared_ptr<Resources<double>> _res)
+        {
+            return Embedding_Result::SUCCESSFUL_EMBEDDING;
+        }
+*/ 
         template<>
         int VYSubstrateLink<>::getCount() const
         {
@@ -47,9 +63,14 @@ namespace vne {
             return std::get<0>(this->resources);
         }
         template<>
+        double VYSubstrateLink<>::getMaxBandwidth() const
+        {
+            return std::get<0>(this->getMaxResources());
+        }
+        template<>
         double VYSubstrateLink<>::getDelay() const
         {
-           return std::get<1>(this->resources);
+            return delay;
         }
         template<>
         int VYSubstrateLink<>::operator++(int)

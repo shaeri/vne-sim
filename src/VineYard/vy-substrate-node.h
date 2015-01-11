@@ -45,12 +45,14 @@ namespace vne {
         const VYCoordinate& getCoordinates () const;
         Embedding_Result embedNode(std::shared_ptr<VYVirtualNode<> > _n);
         double getCPU () const;
+        double getMaxCPU () const;
         int getCount () const;
         int operator++ (int);
         int operator-- (int);
         int operator++ ();
         int operator-- ();
         bool touched;
+        
     private:
         VYCoordinate coordinate;
         int count;

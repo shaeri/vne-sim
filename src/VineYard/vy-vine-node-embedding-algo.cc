@@ -36,6 +36,8 @@ namespace vne {
         virtualLinkIdSet(nullptr),
         virtualNodeIdSet(nullptr)
         {
+            glp_term_out(ConfigManager::Instance()->getConfig<int>("vineyard.glpk.terminalEnabled"));
+            
             LPdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.LPdataFile");
             LPmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.LPmodelFile");
             
@@ -120,13 +122,13 @@ namespace vne {
                     {
                         if (i==j || substrate_network->getLinkBetweenNodes(allNodeIds[i], allNodeIds[j])==nullptr)
                         {
-                            fprintf(fpDat, "%4lf ", 0.0);
+                            fprintf(fpDat, "%.4lf ", 0.0);
                             bVec[i][j] = 0.0;
                         }
                         else
                         {
                             double bw = substrate_network->getLinkBetweenNodes(allNodeIds[i], allNodeIds[j])->getBandwidth();
-                            fprintf(fpDat, "%4lf ", bw);
+                            fprintf(fpDat, "%.4lf ", bw);
                             bVec[i][j] = bw;
                         }
                     }
@@ -142,7 +144,7 @@ namespace vne {
                             }
                             else
                             {
-                                fprintf(fpDat, "%4lf ", 0.0);
+                                fprintf(fpDat, "%.4lf ", 0.0);
                                 bVec[i][j] = 0.0;
                             }
                         }
@@ -152,16 +154,17 @@ namespace vne {
                             {
                                 fprintf(fpDat, "%d ", META_EDGE_BW);
                                 bVec[i][j] = META_EDGE_BW;
+                                nodesWithinReach[j].push_back(i);
                             }
                             else
                             {
-                                fprintf(fpDat, "%4lf ", 0.0);
+                                fprintf(fpDat, "%.4lf ", 0.0);
                                 bVec[i][j] = 0.0;
                             }
                         }
                         else // if i>n && j>n
                         {
-                            fprintf(fpDat, "%4lf ", 0.0);
+                            fprintf(fpDat, "%.4lf ", 0.0);
                             bVec[i][j] = 0.0;
                         }
                     }
@@ -227,7 +230,7 @@ namespace vne {
             for (auto it = virtualLinkIdSet->begin(); it != virtualLinkIdSet->end() ; it++)
             {
                 auto flowSource = std::distance(virtualNodeIdSet->begin(), virtualNodeIdSet->find(vnr->getVN()->getLink(*it)->getNodeFromId()));
-                fprintf(fpDat, "f%d %d\n", count, (int)flowSource);
+                fprintf(fpDat, "f%d %d\n", count, substrateNodesNum + (int)flowSource);
                 count++;
             }
             fprintf(fpDat, ";\n\n");
@@ -238,7 +241,7 @@ namespace vne {
             for (auto it = virtualLinkIdSet->begin(); it != virtualLinkIdSet->end() ; it++) {
                 auto flowDestination =
                 std::distance(virtualNodeIdSet->begin(), virtualNodeIdSet->find(vnr->getVN()->getLink(*it)->getNodeToId()));
-                fprintf(fpDat, "f%d %d\n", count, (int)flowDestination);
+                fprintf(fpDat, "f%d %d\n", count, substrateNodesNum + (int)flowDestination);
                 count++;
             }
             fprintf(fpDat, ";\n\n");
@@ -266,7 +269,7 @@ namespace vne {
             }
             else
                 glp_erase_prob(lp_problem);
-                        
+            
             int ret;
             glp_smcp param;
             glp_init_smcp(&param);
@@ -394,7 +397,8 @@ namespace vne {
              *         an statistic collector needs to record
              *         glp_get_obj_val
              */
-        
+            vnr->nodeMappingObjectiveVal = glp_get_obj_val(lp_problem);
+            
             std::vector<std::vector<double>> flowVec (substrateNodesNum + virtualNodeNum, std::vector<double> (substrateNodesNum + virtualNodeNum, 0));
             std::vector<std::vector<double>> xVec (substrateNodesNum + virtualNodeNum, std::vector<double> (substrateNodesNum + virtualNodeNum, 0));
             char varName[50];
@@ -410,7 +414,8 @@ namespace vne {
                 if (varName[0]=='f')
                 {
                     sscanf(varName, "f[f%d,%d,%d]", &flowId,&from,&to);
-                    //std::cout << varVal << std::endl;
+                    if (varVal>0.00001)
+                    std::cout << from << " " << to << " " <<varVal << std::endl;
                     flowVec[from][to] += varVal;
                     
                 }
@@ -426,9 +431,10 @@ namespace vne {
                 //std::cout<< glp_get_col_name(lp_problem, i) << std::endl;
             }
             //normalize xVec
-            double tot = 0;
+            
             for (int i = 0; i < virtualNodeNum; i++)
             {
+                double tot = 0;
                 for (int j = 0; j< nodesWithinReach[substrateNodesNum + i].size(); j++)
                 {
                     {
@@ -437,7 +443,7 @@ namespace vne {
                 }
                 if (tot < Ep)
                     tot = 1.0;
-                for (int j=0 ; j< nodesWithinReach[i].size(); j++)
+                for (int j=0 ; j< nodesWithinReach[substrateNodesNum + i].size(); j++)
                     xVec[substrateNodesNum+i][nodesWithinReach[substrateNodesNum + i].at(j)] /= tot;
             }
 

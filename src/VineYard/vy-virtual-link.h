@@ -30,13 +30,15 @@
 
 namespace vne {
     namespace vineyard {
-        template<typename = double, typename = double>
-        class VYVirtualLink : public VirtualLink<double,double>
+        template<typename = double>
+        class VYVirtualLink : public VirtualLink<double>
         {
         public:
             VYVirtualLink (double _bw, double _delay, int _from, int _to);
-            void addHostLink (VYSubstrateLink<>* _l);
-            void removeHostLink (VYSubstrateLink<>* _l);
+            virtual ~VYVirtualLink();
+            virtual void addHostLink (SubstrateLink<double>* _l) override;
+            virtual void addHostLink (SubstrateLink<double>* _l, std::shared_ptr<Resources<double>> _res) override;
+            virtual void removeHostLink (SubstrateLink<double>* _l) override ;
             double getBandwidth () const;
             double getDelay () const;
             int getPathLength () const {return pathLength;};
@@ -44,6 +46,7 @@ namespace vne {
         private:
             int pathLength;
             double pathDelay;
+            double delay;
         };
     }
 }

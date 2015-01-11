@@ -80,11 +80,7 @@ namespace vne {
         {
             for(auto it2 = it1->second.begin(); it2 != it1->second.end() ;it2++)
             {
-                std::cout<< "--------------------------------+++++++++++++++++++++++++++++------------------------" << std::endl;
-                std::cout<< vnr->getVN()->getLink(it1->first)->getId() << std::endl;
-                std::cout<< *it2<<std::endl;
-                std::cout<< "--------------------------------+++++++++++++++++++++++++++++------------------------" << std::endl;
-                this->substrate_network->getLink(*it2)->freeResources(it1->first);
+                this->substrate_network->getLink(it2->first)->freeResources(it1->first);
             }
         }
     }

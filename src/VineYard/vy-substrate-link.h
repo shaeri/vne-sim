@@ -26,15 +26,17 @@
 #define VINEYARD_VY_SUBSTRATE_LINK_
 
 #include "core/substrate-link.h"
+
 namespace vne {
     namespace vineyard{
-        template<typename = double, typename = double>
-        class VYSubstrateLink : public SubstrateLink<double,double>
+        template<typename = double>
+        class VYSubstrateLink : public SubstrateLink<double>
         {
         public:
             VYSubstrateLink (double _bw, double _delay, int _from, int _to);
             virtual ~VYSubstrateLink();
             double getBandwidth () const;
+            double getMaxBandwidth () const;
             double getDelay () const;
             int getCount () const;
             int operator++ (int);
@@ -43,8 +45,8 @@ namespace vne {
             int operator-- ();
         private:
             int count;
+            double delay;
         };
     }
 }
-
 #endif /* defined(__vne_mcts__vy_substrate_link__) */

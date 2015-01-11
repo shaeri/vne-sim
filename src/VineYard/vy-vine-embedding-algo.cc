@@ -96,9 +96,6 @@ namespace vne {
             auto it = std::copy(substrateNodeIdSet->begin(), substrateNodeIdSet->end(), ++allNodeIds.begin());
             std::copy(virtualNodeIdSet->begin(), virtualNodeIdSet->end(), it);
             
-            for (int i=1; i< allNodeIds.size(); i++)
-                std::cout<< allNodeIds[i];
-            std::cout << std::endl;
             //configs
             bool setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard.Constants.setAlpha");
             bool setBeta = ConfigManager::Instance()->getConfig<bool>("vineyard.Constants.setBeta");

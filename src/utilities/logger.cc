@@ -21,7 +21,13 @@
  *            AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-#include <utilities/logger.h>
+#include "utilities/logger.h"
+#include "core/config-manager.h"
+
+#include <boost/filesystem.hpp>
+
+#include <cstring>
+
 
 namespace logging = boost::log;
 namespace sinks = boost::log::sinks;
@@ -29,12 +35,11 @@ namespace src = boost::log::sources;
 namespace expr = boost::log::expressions;
 namespace attrs = boost::log::attributes;
 namespace keywords = boost::log::keywords;
-namespace vne
-{
 
-Logger::Logger(std::string fileName)
+namespace vne {
+namespace utilities {
+Logger::Logger()
 {
-    initialize(fileName);
 }
 
 Logger::Logger(Logger const&)
@@ -43,31 +48,58 @@ Logger::Logger(Logger const&)
 
 Logger::~Logger()
 {
-
+    delete logger_;
 }
 
 Logger* Logger::logger_ = nullptr;
-Logger* Logger::getInstance(std::string logFile)
+Logger* Logger::Instance()
 {
+    
     if ( Logger::logger_ == nullptr ) {
-        logging::add_file_log( logFile );
+        std::string logFile = ConfigManager::Instance()->getConfig<std::string>("utilities.logFile");
+        if (boost::filesystem::exists(logFile))
+            logging::add_file_log(logFile);
 
-        logging::core::get()->set_filter
-        (
-            logging::trivial::severity >= logging::trivial::info
-        );
-
+        const char* env_p = std::getenv("LOG_LEVEL");
+        if (strcmp(env_p,"trace")==0)
+            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::trace);
+        else if (strcmp(env_p,"debug")==0)
+            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::debug);
+        else if (strcmp(env_p,"info")==0)
+            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::info);
+        else if (strcmp(env_p,"warning")==0)
+            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::warning);
+        else if (strcmp(env_p,"error")==0)
+            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::error);
+        else if (strcmp(env_p,"fatal")==0)
+            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::fatal);
+        else
+        {
+            std::string log_level = ConfigManager::Instance()->getConfig<std::string>("utilities.logLevel");
+            if (strcmp(log_level.c_str(),"trace")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::trace);
+            else if (strcmp(log_level.c_str(),"debug")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::debug);
+            else if (strcmp(log_level.c_str(),"info")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::info);
+            else if (strcmp(log_level.c_str(),"warning")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::warning);
+            else if (strcmp(log_level.c_str(),"error")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::error);
+            else if (strcmp(log_level.c_str(),"fatal")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::fatal);
+        }
+        
         logging::add_common_attributes();
-        Logger::logger_ = new Logger(logFile);
+        Logger::logger_ = new Logger();
     }
 
     return Logger::logger_;
 }
 
-void Logger::initialize(std::string fileName)
+void Logger::logTrace(std::string message)
 {
-    BOOST_LOG(log_) << "Hello, World!";
-    BOOST_LOG_SEV(log_, info) << "Hello, World2!";
+    BOOST_LOG_SEV(log_, trace) << message;
 }
 
 void Logger::logInfo(std::string message)
@@ -93,18 +125,6 @@ void Logger::logError(std::string message)
 void Logger::logFatal(std::string message)
 {
     BOOST_LOG_SEV(log_, fatal) << message;
-}
-
+    }
+    }
 }/* namespace vne */
-/*
-int main(int, char*[])
-{
-    logging::add_common_attributes();
-
-    using namespace logging::trivial;
-
-    vne::Logger::getInstance()->logInfo("himom");
-
-    return 0;
-}
-*/

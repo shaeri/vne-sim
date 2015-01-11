@@ -26,14 +26,18 @@
 
 #include "adevs.h"
 #include "core/virtual-network-request.h"
+#include "core/statistics-subscriber.h"
 
 namespace vne
 {
-    template<typename> class VNRProcessObserver;
+    template<typename,typename> class VNRProcessObserver;
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    class VNRProcessObserver<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>
+    class VNRProcessObserver<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+                VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>
     : public adevs::Atomic<adevs::PortValue<std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>> >>
     {
     public:
@@ -54,35 +58,57 @@ namespace vne
         virtual double ta() {return DBL_MAX;};
         virtual void gc_output(adevs::Bag<ADEVS_IO_TYPE>& g) {};
         
+        void registerSubscriber (StatisticsSubscriber* subscriber) {subscribers.push_back(subscriber);};
+        
         static const int entered_embedding_queue;
         static const int embedding_successful;
         static const int embedding_unsuccessful;
         static const int released_resources;
         
     protected:
-        VNRProcessObserver() :
+        typedef Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>> SUBSTRATE_TYPE;
+        typedef VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> VNR_TYPE;
+        
+        std::shared_ptr<SUBSTRATE_TYPE> substrate_network;
+        
+        std::list<StatisticsSubscriber*> subscribers;
+        
+        VNRProcessObserver(std::shared_ptr<SUBSTRATE_TYPE> _sn) :
+        substrate_network(std::move(_sn)),
         adevs::Atomic<ADEVS_IO_TYPE> ()
         {};
     };
     
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNRProcessObserver<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::entered_embedding_queue = 0;
+    const int VNRProcessObserver<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::entered_embedding_queue = 0;
     
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNRProcessObserver<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::embedding_successful = 1;
+    const int VNRProcessObserver<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::embedding_successful = 1;
     
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNRProcessObserver<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::embedding_unsuccessful = 2;
+    const int VNRProcessObserver<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::embedding_unsuccessful = 2;
     
     template<template<typename> class VNR,
+    typename ... SUBNODERES, template <typename ...> class SUBNODECLASS,
+    typename ... SUBLINKRES, template <typename ...> class SUBLINKCLASS,
     typename ... NODERES, template <typename ...> class NODECLASS,
     typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNRProcessObserver<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::released_resources = 3;
+    const int VNRProcessObserver<Network<SUBNODECLASS<SUBNODERES...>, SUBLINKCLASS<SUBLINKRES...>>,
+    VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::released_resources = 3;
 }
 #endif /* VNR_EMBEDDING_PROCESSOR_H_ */

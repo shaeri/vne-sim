@@ -53,8 +53,8 @@ namespace vne {
         {
         public:
             VYVNRGenerator (
-        std::function<std::shared_ptr<std::pair<double,double>>(VYVirtualNetRequest<>* vnr)> calcRevenue = nullptr,
-        std::function<std::shared_ptr<std::pair<double,double>>(VYVirtualNetRequest<>* vnr)> calcCost =nullptr);
+        std::function<std::shared_ptr<std::pair<double,double>>(const VYVirtualNetRequest<>* vnr)> calcRevenue = nullptr,
+        std::function<std::shared_ptr<std::pair<double,double>>(const VYVirtualNetRequest<>* vnr)> calcCost =nullptr);
             
             virtual ~VYVNRGenerator ();
             virtual void delta_int();
@@ -63,8 +63,8 @@ namespace vne {
             
         private:
             std::shared_ptr<VYVirtualNetRequest<>> vnr;
-            std::function<std::shared_ptr<std::pair<double,double>> (VYVirtualNetRequest<>* vnr)>  revenue;
-            std::function<std::shared_ptr<std::pair<double,double>> (VYVirtualNetRequest<>* vnr)>  cost;
+            std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)>  revenue;
+            std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)>  cost;
             std::priority_queue<std::pair<int, path>, std::vector<std::pair<int, path>>, CompareRequestPaths> _reqFiles;
             inline void setVNR ();
             double last_vnr_arrival;

@@ -66,7 +66,7 @@ namespace vne
         struct CompareVNRReleaseTime{
             bool operator()(const PTR_TYPE lhs, PTR_TYPE rhs)
             {
-                return lhs->getDepartureTime() > rhs->getDepartureTime();
+                return lhs->getDepartureTime()> rhs->getDepartureTime();
             }
         };
     protected:

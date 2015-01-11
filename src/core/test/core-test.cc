@@ -41,6 +41,7 @@
 #include "core/coordinate.h"
 
 #include "core/config-manager.h"
+#include "core/rng.h"
 
 using namespace vne;
 //boost::logging::core::get()->add_global_attribute("Scope", boost::make_shared< attrs::named_scope >());
@@ -416,5 +417,21 @@ BOOST_AUTO_TEST_CASE(ConfigTest)
 {
     cout<< ConfigManager::Instance()->getConfig<string>("vineyard.SubstrateNetwork.path") << endl;
     //std::cout << boost::filesystem::initial_path() << std::endl;
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(RNG)
+BOOST_AUTO_TEST_CASE(RNGTest)
+{
+    class TestObj : public RNGSubscriber
+    {
+    };
+    TestObj t1;
+    const gsl_rng* r = vne::RNG::Instance()->getMyRNG(&t1);
+    std::cout << gsl_rng_min(r) << std::endl;
+    std::cout << gsl_rng_max(r) << std::endl;
+    std::cout << gsl_rng_uniform(r) << std::endl;
+    std::cout << gsl_rng_name(r) << std::endl;
+    vne::RNG::Instance()->unsubscribe(&t1);
 }
 BOOST_AUTO_TEST_SUITE_END()
