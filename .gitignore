@@ -7,6 +7,9 @@
 *.o
 *.so
 *.a
+*.lo
+*.Plo
+*.la
 
 # Packages #
 ############
@@ -40,7 +43,7 @@ ehthumbs.db
 Thumbs.db
 
 # vim swap files #
-#################
+##################
 *.swp
 
 # Latex compile files #
@@ -51,7 +54,9 @@ Thumbs.db
 # PDFs #
 ########
 
-
+# gsl specific #
+################
+*.libs/*
 # Dropbox file #
 .dropbox
 
@@ -325,3 +330,4 @@ external-libs/glpk-4.54/src/.deps/libglpk_la-wclique.Plo
 external-libs/glpk-4.54/src/.deps/libglpk_la-wclique1.Plo
 external-libs/glpk-4.54/src/.deps/libglpk_la-zio.Plo
 external-libs/glpk-4.54/src/.deps/libglpk_la-zutil.Plo
+external-libs/hiberlite/Build

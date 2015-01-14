@@ -1,9 +1,0 @@
-glpsol.o: glpsol.c ../src/glpk.h \
-  /Library/Developer/CommandLineTools/usr/bin/../lib/clang/6.0/include/stdarg.h \
-  /Library/Developer/CommandLineTools/usr/bin/../lib/clang/6.0/include/stddef.h
-
-../src/glpk.h:
-
-/Library/Developer/CommandLineTools/usr/bin/../lib/clang/6.0/include/stdarg.h:
-
-/Library/Developer/CommandLineTools/usr/bin/../lib/clang/6.0/include/stddef.h:

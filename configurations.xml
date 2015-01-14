@@ -55,7 +55,7 @@
            <!-- 0:PURE 1:LEGAL 2:SMART -->
            <TreeLevel>1</TreeLevel>
            <!-- 0:PURE 1:LEGAL 2:SMART -->
-           <RolloutLevel>0</RolloutLevel>
+           <RolloutLevel>1</RolloutLevel>
            <SmartTreeCount>10</SmartTreeCount>
            <SmartTreeValue>1.0</SmartTreeValue>
         </Knowledge>
@@ -66,7 +66,7 @@
     
     <MCTSParameters>
         <MaxDepth>5</MaxDepth>
-        <NumSimulations>10</NumSimulations>
+        <NumSimulations>20</NumSimulations>
         <!-- How many nodes to add at each expansion step -->
         <ExpandCount>1</ExpandCount>
         <!-- if this is set to false Exploration constant will be used otherwise Exploration constant will be set to 0 if UseRave flag is set or Exploration constant will be set to rewardRange.-->
@@ -74,7 +74,7 @@
         <!-- One option is to set Exploration Constant c = R_{hi}-R_{lo} -->
         <ExplorationConstant>100000000.0</ExplorationConstant>
         <!-- Rave Parameters: 0 -> rave is not set -->
-        <UseRave>false</UseRave>
+        <UseRave>true</UseRave>
         <RaveDiscount>1.0</RaveDiscount>
         <RaveConstant>0.01</RaveConstant>
         <!-- When set, the baseline rollout algorithm is run. -->
