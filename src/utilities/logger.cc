@@ -56,23 +56,29 @@ Logger* Logger::Instance()
 {
     
     if ( Logger::logger_ == nullptr ) {
+        
         std::string logFile = ConfigManager::Instance()->getConfig<std::string>("utilities.logFile");
+        
         if (boost::filesystem::exists(logFile))
             logging::add_file_log(logFile);
-
+        
         const char* env_p = std::getenv("LOG_LEVEL");
-        if (strcmp(env_p,"trace")==0)
-            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::trace);
-        else if (strcmp(env_p,"debug")==0)
-            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::debug);
-        else if (strcmp(env_p,"info")==0)
-            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::info);
-        else if (strcmp(env_p,"warning")==0)
-            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::warning);
-        else if (strcmp(env_p,"error")==0)
-            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::error);
-        else if (strcmp(env_p,"fatal")==0)
-            logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::fatal);
+        
+        if (env_p != nullptr)
+        {
+            if (strcmp(env_p,"trace")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::trace);
+            else if (strcmp(env_p,"debug")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::debug);
+            else if (strcmp(env_p,"info")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::info);
+            else if (strcmp(env_p,"warning")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::warning);
+            else if (strcmp(env_p,"error")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::error);
+            else if (strcmp(env_p,"fatal")==0)
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::fatal);
+        }
         else
         {
             std::string log_level = ConfigManager::Instance()->getConfig<std::string>("utilities.logLevel");
@@ -88,6 +94,8 @@ Logger* Logger::Instance()
                 logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::error);
             else if (strcmp(log_level.c_str(),"fatal")==0)
                 logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::fatal);
+            else
+                logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::debug);
         }
         
         logging::add_common_attributes();

@@ -33,7 +33,6 @@
 #include "core/config-manager.h"
 #include "core/two-stage-embedding-algo.h"
 #include "core/db-manager.h"
-#include "core/experiment.h"
 
 #include "Vineyard/vy-substrate-node.h"
 #include "Vineyard/vy-virtual-node.h"
@@ -47,7 +46,6 @@
 #include "Vineyard/vy-vine-two-stage-embedding-algo.h"
 #include "Vineyard/vy-statistics.h"
 
-#include "experiments/vineyard-experiments.h"
 
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
@@ -264,6 +262,9 @@ BOOST_AUTO_TEST_CASE(VYEmbeddingAlgoTest)
     //VYVineEmbeddingAlgo<> algo (sn);
     nodeAlgo.embeddVNRNodes(sn,vnr);
 }
+    
+/*
+This test has been moved to experiments/tests/experiments-test
 BOOST_AUTO_TEST_CASE(VYDBTes)
 {
     //VYStatistics st;
@@ -285,6 +286,7 @@ BOOST_AUTO_TEST_CASE(VYDBTes)
     db->createModel();
     db->copyBean(exp);
 }
+ */
 BOOST_AUTO_TEST_CASE(VYGLPKTest)
 {
     glp_prob* lp1 = glp_create_prob();

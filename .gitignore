@@ -57,6 +57,9 @@ build/
 #adevs library
 external-libs/adevs/
 
+# Vineyard .dat files
+src/Vineyard/files/lp/*.dat
+
 # Xcode user data
 vne-mcts.xcodeproj/xcuserdata/
 vne-mcts.xcodeproj/project.xcworkspace/xcuserdata

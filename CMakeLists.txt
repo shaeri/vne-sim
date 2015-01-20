@@ -9,6 +9,15 @@ set (vne-mcts_VERSION_MINOR 0)
 # Enable C++11 compilation
 list(APPEND CMAKE_CXX_FLAGS "-std=c++0x")
 
+# Set the build directory
+SET(PROJECT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build)
+
+# Set library path
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+
+# Set executable path
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+
 # Enable include external libraries (adevs and hiberlite)
 include (ExternalProject) 
 

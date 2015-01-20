@@ -30,7 +30,6 @@
 		9555D90E19D231C8009E0C08 /* db-manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9555D90C19D231C8009E0C08 /* db-manager.cc */; };
 		9555D91119D249BF009E0C08 /* vy-statistics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9555D90F19D249BF009E0C08 /* vy-statistics.cc */; };
 		9556634B1A3F7B6500235882 /* mcts.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9556634A1A3F7B6500235882 /* mcts.cc */; };
-		9561A8A41958E15200BF44A6 /* libadevs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9561A6FB1958E15200BF44A6 /* libadevs.a */; };
 		9561A9321958E30700BF44A6 /* core-types.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8031958E15200BF44A6 /* core-types.h */; };
 		9561A9331958E30700BF44A6 /* id-generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8041958E15200BF44A6 /* id-generator.cc */; };
 		9561A9341958E30700BF44A6 /* id-generator.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8051958E15200BF44A6 /* id-generator.h */; };
@@ -556,7 +555,6 @@
 		9561A6E11958E15200BF44A6 /* adevs_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = adevs_time.h; sourceTree = "<group>"; };
 		9561A6E21958E15200BF44A6 /* adevs_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = adevs_wrapper.h; sourceTree = "<group>"; };
 		9561A6E31958E15200BF44A6 /* object_pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = object_pool.h; sourceTree = "<group>"; };
-		9561A6E41958E15200BF44A6 /* manual.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = manual.pdf; sourceTree = "<group>"; };
 		9561A6E51958E15200BF44A6 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		9561A6E91958E15200BF44A6 /* Atomic.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Atomic.java; sourceTree = "<group>"; };
 		9561A6EA1958E15200BF44A6 /* Devs.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Devs.java; sourceTree = "<group>"; };
@@ -12012,6 +12010,14 @@
 		95C13BEE1A2D48DD00B4BC05 /* rng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rng.h; sourceTree = "<group>"; };
 		95CC8DEE1A663D4500E104EA /* libglpk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglpk.a; path = ../../../../../../../../usr/local/Cellar/glpk/4.52/lib/libglpk.a; sourceTree = "<group>"; };
 		95CC8DF01A663D6500E104EA /* libgsl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgsl.a; path = ../../../../../../../../usr/local/Cellar/gsl/1.16/lib/libgsl.a; sourceTree = "<group>"; };
+		95D8FBDD1A6F0633006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		95D8FBDE1A6F0633006B3CED /* path-config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "path-config.h.in"; sourceTree = "<group>"; };
+		95D8FBE41A6F06A3006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		95D8FBE51A6F06BD006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = src/Vineyard/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		95D8FBE61A6F06CE006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = src/Vineyard/test/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		95D8FBE71A6F06E4006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		95D8FBE81A6F06FB006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		95D8FBE91A6F0709006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		95E425EF1975C06700D22767 /* substrate-network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "substrate-network.h"; sourceTree = "<group>"; };
 		95E425F219770BA100D22767 /* network-builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "network-builder.h"; sourceTree = "<group>"; };
 		95E42C871958F95C0016EDBE /* libboost_log_setup.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_log_setup.dylib; path = ../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_log_setup.dylib; sourceTree = "<group>"; };
@@ -12043,7 +12049,6 @@
 				95E42C8C1958F95C0016EDBE /* libboost_log.dylib in Frameworks */,
 				95E42C8D1958F95C0016EDBE /* libboost_system.dylib in Frameworks */,
 				95E42C8E1958F95C0016EDBE /* libboost_unit_test_framework.dylib in Frameworks */,
-				9561A8A41958E15200BF44A6 /* libadevs.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12090,6 +12095,7 @@
 		951FC81319805D1D003E052C /* test */ = {
 			isa = PBXGroup;
 			children = (
+				95D8FBE61A6F06CE006B3CED /* CMakeLists.txt */,
 				951FC81419805D50003E052C /* vy-test.cc */,
 			);
 			path = test;
@@ -12212,6 +12218,7 @@
 		9561A54E1958E0C600BF44A6 = {
 			isa = PBXGroup;
 			children = (
+				95D8FBE71A6F06E4006B3CED /* CMakeLists.txt */,
 				95CC8DF01A663D6500E104EA /* libgsl.a */,
 				95CC8DEE1A663D4500E104EA /* libglpk.a */,
 				95677D8C19D62D9E00A89AC8 /* libhiberlite.a */,
@@ -12253,7 +12260,6 @@
 				9561A56E1958E15100BF44A6 /* docs */,
 				9561A5AC1958E15100BF44A6 /* examples */,
 				9561A6C51958E15200BF44A6 /* include */,
-				9561A6E41958E15200BF44A6 /* manual.pdf */,
 				9561A6E51958E15200BF44A6 /* README */,
 				9561A6E61958E15200BF44A6 /* src */,
 				9561A70F1958E15200BF44A6 /* test */,
@@ -13343,6 +13349,7 @@
 		9561A8011958E15200BF44A6 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				95D8FBE41A6F06A3006B3CED /* CMakeLists.txt */,
 				950353011A5C9632003A3BB4 /* mcvne */,
 				951C326C1A2E8BEB00433CA7 /* mcts */,
 				9584A0E619D37F2D00FF1A70 /* experiments */,
@@ -13357,6 +13364,8 @@
 		9561A8021958E15200BF44A6 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				95D8FBDD1A6F0633006B3CED /* CMakeLists.txt */,
+				95D8FBDE1A6F0633006B3CED /* path-config.h.in */,
 				95442407198CA31200DD5675 /* config-manager.cc */,
 				95442408198CA31200DD5675 /* config-manager.h */,
 				956A3796197F39B800243FDD /* coordinate.h */,
@@ -13400,6 +13409,7 @@
 		9561A80D1958E15200BF44A6 /* test */ = {
 			isa = PBXGroup;
 			children = (
+				95D8FBE81A6F06FB006B3CED /* CMakeLists.txt */,
 				9561A80E1958E15200BF44A6 /* core-test.cc */,
 			);
 			path = test;
@@ -13437,6 +13447,7 @@
 		9561A8221958E15200BF44A6 /* utilities */ = {
 			isa = PBXGroup;
 			children = (
+				95D8FBE91A6F0709006B3CED /* CMakeLists.txt */,
 				9561A8231958E15200BF44A6 /* boost-test-driver.cc */,
 				9561A8241958E15200BF44A6 /* logger.cc */,
 				9561A8251958E15200BF44A6 /* logger.h */,
@@ -24733,6 +24744,7 @@
 		956AA8751980572B00DA6619 /* Vineyard */ = {
 			isa = PBXGroup;
 			children = (
+				95D8FBE51A6F06BD006B3CED /* CMakeLists.txt */,
 				9564BD5F19B7DBE600CC6BB2 /* files */,
 				951FC81319805D1D003E052C /* test */,
 				956AA8781980572B00DA6619 /* vy-substrate-node.h */,

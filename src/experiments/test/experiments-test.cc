@@ -26,7 +26,7 @@
 #include "experiments/mcvne-experiments.h"
 
 #include "core/db-manager.h"
-#include "config-manager.h"
+#include "core/config-manager.h"
 #include "utilities/logger.h"
 
 #include <boost/test/unit_test.hpp>
