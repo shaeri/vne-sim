@@ -178,7 +178,7 @@ namespace vne{
             
             if (!isActionLegal(action,st))
             {
-                reward += -LargeInteger;
+                reward = -Infinity;
                 return true;
             }
             
@@ -189,9 +189,9 @@ namespace vne{
                 std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<SLINKRES...>>>>> linkMap;
                 Embedding_Result result = link_embedder->embeddVNRLinksForIdSets(substrate_net,vnr,st->getNodeMap(),&linkMap);
                 if (result != Embedding_Result::SUCCESSFUL_EMBEDDING)
-                    reward += -LargeInteger;
+                    reward = -Infinity;
                 else
-                    reward += calculateFinalReward (st, &linkMap);
+                    reward = calculateFinalReward (st, &linkMap);
                 return true;
             }
             else

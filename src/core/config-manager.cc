@@ -35,7 +35,7 @@ namespace vne {
     }
     ConfigManager::ConfigManager ()
     {
-        read_xml ("configurations.xml", _pt);
+        read_xml (Config_File_Path, _pt);
     }
     ConfigManager::~ConfigManager()
     {

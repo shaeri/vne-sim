@@ -28,6 +28,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "path-config.h"
+
 namespace vne {
     using boost::property_tree::ptree;
     class ConfigManager {

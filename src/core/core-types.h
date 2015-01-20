@@ -30,7 +30,7 @@
 namespace vne
 {
     
-#define LargeInteger 100000000
+#define LargeInteger 100000
 #define Infinity 1e+10
     
 /*

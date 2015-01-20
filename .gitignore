@@ -46,23 +46,19 @@ Thumbs.db
 ##################
 *.swp
 
-# Latex compile files #
-#######################
-*.aux
-*.bbl
 
-# PDFs #
-########
+#generated config file
+src/core/path-config.h
 
-# gsl specific #
-################
-*.libs/*
-# Dropbox file #
-.dropbox
-
+#Debug and build directories
 Debug/
+build/
+
+#adevs library
+external-libs/adevs/
 
 # Xcode user data
+vne-mcts.xcodeproj/xcuserdata/
 vne-mcts.xcodeproj/project.xcworkspace/xcuserdata
 DerivedData/vne-mcts/Logs/Build/0026E06C-7040-4223-96F5-9BBC9CFBFA1B.xcactivitylog
 DerivedData/vne-mcts/Logs/Build/02993546-7A84-4C76-AFF8-2F2697AE7546.xcactivitylog

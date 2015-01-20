@@ -23,7 +23,7 @@
  **/
 
 #include "vy-vine-node-embedding-algo.h"
-#include "config-manager.h"
+#include "core/config-manager.h"
 
 namespace vne {
     namespace vineyard{

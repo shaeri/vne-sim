@@ -65,8 +65,8 @@
     </Simulator>
     
     <MCTSParameters>
-        <MaxDepth>5</MaxDepth>
-        <NumSimulations>20</NumSimulations>
+        <MaxDepth>10</MaxDepth>
+        <NumSimulations>10</NumSimulations>
         <!-- How many nodes to add at each expansion step -->
         <ExpandCount>1</ExpandCount>
         <!-- if this is set to false Exploration constant will be used otherwise Exploration constant will be set to 0 if UseRave flag is set or Exploration constant will be set to rewardRange.-->

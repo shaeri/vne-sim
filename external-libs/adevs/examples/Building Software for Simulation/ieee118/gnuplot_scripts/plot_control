@@ -1,5 +1,0 @@
-set xlabel 'time (seconds)'
-set ylabel 'requested change in load (%)'
-unset key
-plot '../control.dat' using 1:($2*100) with steps
-
