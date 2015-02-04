@@ -1,6 +1,6 @@
 project (vne-mcts CXX)
 
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 2.8)
 
 # The version number.
 set (vne-mcts_VERSION_MAJOR 1.0)
