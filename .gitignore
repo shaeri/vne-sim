@@ -60,6 +60,10 @@ external-libs/adevs/
 # Vineyard .dat files
 src/Vineyard/files/lp/*.dat
 
+# Hiberlite executables
+external-libs/hiberlite/sample
+external-libs/hiberlite/tests
+
 # Xcode user data
 vne-mcts.xcodeproj/xcuserdata/
 vne-mcts.xcodeproj/project.xcworkspace/xcuserdata
