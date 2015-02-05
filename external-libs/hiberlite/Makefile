@@ -7,8 +7,8 @@ all : libhiberlite.a sqlite3.o tests sample
 
 OBJS=BeanLoader.o BeanUpdater.o ChildKiller.o CppModel.o Database.o ModelExtractor.o Registry.o SQLiteStmt.o Visitor.o shared_res.o sqlite3.o
 
-CXXFLAGS=-std=c++0x -Iinclude/ -Wall -Isqlite-amalgamation
-LDFLAGS=-lpthread -ldl
+CXXFLAGS=-std=c++0x -fPIC -Iinclude/ -Wall -Isqlite-amalgamation
+LDFLAGS=-lpthread -ldl -fPIC
 
 libhiberlite.a : $(OBJS)
 	ar -r -s libhiberlite.a $(OBJS)
@@ -22,7 +22,7 @@ install :
 	cp libhiberlite.a $(INSTALL_LIB)/
 
 sqlite3.o :
-	gcc -c sqlite-amalgamation/sqlite3.c -o sqlite3.o
+	gcc -c -fPIC sqlite-amalgamation/sqlite3.c -o sqlite3.o
 
 %.o : src/%.cpp include/*
 	g++ -c $(CXXFLAGS) $< -o $@

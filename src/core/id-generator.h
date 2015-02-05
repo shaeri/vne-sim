@@ -27,6 +27,7 @@
 #include <typeinfo>
 #include <typeindex>
 #include <map>
+#include <memory>
 
 namespace vne
 {

@@ -1,6 +1,6 @@
 project (vne-mcts CXX)
 
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
 # The version number.
 set (vne-mcts_VERSION_MAJOR 1.0)
@@ -8,6 +8,8 @@ set (vne-mcts_VERSION_MINOR 0)
 
 # Enable C++11 compilation
 list(APPEND CMAKE_CXX_FLAGS "-std=c++0x")
+
+SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl")
 
 # Set the build directory
 SET(PROJECT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build)
@@ -24,13 +26,15 @@ include (ExternalProject)
 # ADEVS does not require building. We just make sure it exists in the external-libs dir.
 # Otherwise, download it from the URL.
 if (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/adevs)
+MESSAGE (STATUS "ADEVS DOES NOT EXIST")
 	ExternalProject_Add (adevs
-			     DOWNLOAD_DIR /tmp/
+			     #DOWNLOAD_DIR /tmp/
   			     URL http://web.ornl.gov/~1qn/adevs/adevs.tar.gz  
 			     SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/adevs
 			     CONFIGURE_COMMAND ""
 			     BUILD_COMMAND ""
 			     INSTALL_COMMAND ""
+			     LOG_DOWNLOAD ON
                             )
 endif()
 
@@ -74,6 +78,7 @@ find_package(Boost
              REQUIRED)
 find_package(GSL REQUIRED)
 find_package(GLPK REQUIRED)		
+find_package(SQLITE3 REQUIRED)
 
 add_subdirectory(src)
 

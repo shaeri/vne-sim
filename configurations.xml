@@ -7,7 +7,7 @@
 
 <core>
     <!--The result database file-->
-    <dbPath>/Users/Soroosh/Desktop/test.db</dbPath>
+    <dbPath>/home/soroosh/Desktop/test.db</dbPath>
     <!-- 0 uses the libraries standard seed -->
     <rngSeed>0</rngSeed>
     <!--Verious random number generator types that gsl_rng library implements may be found at: -->
@@ -17,11 +17,11 @@
 
 <vineyard>
     <SubstrateNetwork>
-        <path>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/substrate_network</path>
+        <path>/home/soroosh/src/vne-mcts/src/Vineyard/files/substrate_network</path>
         <filename>sub.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
-        <path>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/virtual_net_requests</path>
+        <path>/home/soroosh/src/vne-mcts/src/Vineyard/files/virtual_net_requests</path>
         <dir>r-2000-50-50-20-10-10-50</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>
@@ -41,10 +41,10 @@
         <nodeMappingType>deterministic</nodeMappingType>
     </Configs>
     <glpk>
-        <LPmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/CNLM-LP.mod</LPmodelFile>
-        <LPdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/CNLM-LP.dat</LPdataFile>
-        <MCFmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/MCF.mod</MCFmodelFile>
-        <MCFdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/VineYard/files/lp/MCF.dat</MCFdataFile>
+        <LPmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
+        <LPdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
+        <MCFmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
+        <MCFdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
         <!-- 0 disabled, 1 enabled -->
         <terminalEnabled>0</terminalEnabled>
     </glpk>
@@ -66,15 +66,15 @@
     
     <MCTSParameters>
         <MaxDepth>10</MaxDepth>
-        <NumSimulations>10</NumSimulations>
+        <NumSimulations>20</NumSimulations>
         <!-- How many nodes to add at each expansion step -->
-        <ExpandCount>1</ExpandCount>
+        <ExpandCount>2</ExpandCount>
         <!-- if this is set to false Exploration constant will be used otherwise Exploration constant will be set to 0 if UseRave flag is set or Exploration constant will be set to rewardRange.-->
         <AutoExploration>false</AutoExploration>
         <!-- One option is to set Exploration Constant c = R_{hi}-R_{lo} -->
         <ExplorationConstant>100000000.0</ExplorationConstant>
         <!-- Rave Parameters: 0 -> rave is not set -->
-        <UseRave>true</UseRave>
+        <UseRave>false</UseRave>
         <RaveDiscount>1.0</RaveDiscount>
         <RaveConstant>0.01</RaveConstant>
         <!-- When set, the baseline rollout algorithm is run. -->

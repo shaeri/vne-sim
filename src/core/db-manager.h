@@ -27,7 +27,7 @@
 
 #include "hiberlite.h"
 
-#include <initializer_list>
+#include <memory>
 
 namespace vne {
     class DBManager {
