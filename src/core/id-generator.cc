@@ -35,6 +35,15 @@ std::shared_ptr<IdGenerator> IdGenerator::Instance()
     }
     return _instance;
 }
+void
+IdGenerator::Destroy()
+{
+	if (_instance==nullptr)
+		return;
+	_instance.reset();
+	_instance = nullptr;
+	return;
+}
 IdGenerator::IdGenerator()
 {
 }

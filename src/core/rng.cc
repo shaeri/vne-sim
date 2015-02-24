@@ -37,6 +37,17 @@ namespace vne
         }
         return _instance;
     }
+
+    void
+    RNG::Destroy()
+    {
+    	if (_instance==nullptr)
+    		return;
+    	_instance.reset();
+    	_instance = nullptr;
+    	return;
+    }
+
     RNG::RNG(unsigned long int _seed)
     : seed(_seed)
     {

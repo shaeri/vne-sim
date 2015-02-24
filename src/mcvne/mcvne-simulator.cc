@@ -46,7 +46,7 @@ namespace vne {
             
             return substrate_net->getNodesIDsWithConditions<ReachabilityCondition> (vnr->getVN()->getNode(vn_id), vnr->getVN()->getLinksForNodeId(vn_id), distance, used_sn_ids);
         }
-        
+ /*
         template<>
         double
         MCVNESimulator<>::calculateImmediateReward (std::shared_ptr<VNENMState> st, int action) const
@@ -56,7 +56,7 @@ namespace vne {
             double vn_cpu = vnr->getVN()->getNode(st->getPreviousVNId())->getCPU();
             if(setBeta)
                 beta = sn_cpu;
-            return (-(beta/(sn_cpu*1E-6)*vn_cpu));
+            return (-(beta/(sn_cpu+1E-6)*vn_cpu));
         }
         
         template<>
@@ -70,7 +70,6 @@ namespace vne {
                 for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
                 {
                     double alpha = 1.0;
-                    ;
                     double sl_bw = substrate_net->getLink(it2->first)->getBandwidth();
                     double flow_bw = std::get<0>(*(it2->second));
                     if (setAlpha)
@@ -86,9 +85,50 @@ namespace vne {
                 double vn_cpu = vnr->getVN()->getNode(it->first)->getCPU();
                 if(setBeta)
                     beta = sn_cpu;
-                finalReward += (beta/(sn_cpu*1E-6))*vn_cpu;
+                finalReward += (beta/(sn_cpu+1E-6))*vn_cpu;
             }
             return -finalReward;
         }
+        */
+        template<>
+		double
+		MCVNESimulator<>::calculateImmediateReward (std::shared_ptr<VNENMState> st, int action) const
+		{
+        	return 0;
+		}
+
+		template<>
+		double
+		MCVNESimulator<>::calculateFinalReward (std::shared_ptr<VNENMState> st,
+		const std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap) const
+		{
+
+			double revenue = 0.0;
+			const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> vnr_node_vec = vnr->getVN()->getAllNodes();
+			const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualLink<>>>> vnr_link_vec = vnr->getVN()->getAllLinks();
+			for (int i = 0; i< vnr_node_vec->size(); i++)
+			{
+				revenue += vnr_node_vec->at(i)->getCPU();
+			}
+			for (int i = 0; i< vnr_link_vec->size(); i++)
+			{
+				revenue += vnr_link_vec->at(i)->getBandwidth();
+			}
+			double cost = 0.0;
+			for (auto it = linkMap->begin(); it != linkMap->end(); it++)
+			{
+				for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
+				{
+					double flow_bw = std::get<0>(*(it2->second));
+					cost+= flow_bw;
+				}
+			}
+			for (auto it = st->getNodeMap()->begin(); it != st->getNodeMap()->end(); it++)
+			{
+				double vn_cpu = vnr->getVN()->getNode(it->first)->getCPU();
+				cost += vn_cpu;
+			}
+			return revenue-cost;
+		}
     }
 }

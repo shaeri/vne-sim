@@ -71,6 +71,7 @@ namespace vne {
 
         bool MCTS::update(int action, double reward)
         {
+        	history.push_back(action);
             // Find matching vnode from the rest of the tree
             std::shared_ptr<TreeNode> child_node = root->child(action);
             
@@ -120,7 +121,7 @@ namespace vne {
                
                 history.push_back(action);
                 delayedReward = rollout(st);
-                totalReward = immediateReward + simulator->getDiscount() * delayedReward;
+                totalReward = immediateReward + (simulator->getDiscount() * delayedReward);
                 root->child(action)->value.add(totalReward);
                 
                 st.reset();
@@ -204,7 +205,6 @@ namespace vne {
             std::shared_ptr<TreeNode> node (new TreeNode(state));
             node->value.set(0,0);
             simulator->prior(node, history, status);
-            
             return node;
         }
 
@@ -278,7 +278,6 @@ namespace vne {
 
         void MCTS::initFastUCB(double exploration)
         {
-            cout << "Initialising fast UCB table... ";
             for (int N = 0; N < UCB_N; ++N)
                 for (int n = 0; n < UCB_n; ++n)
                     if (n == 0)

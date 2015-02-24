@@ -116,7 +116,6 @@ namespace vne {
         (std::shared_ptr<TreeNode> node, const std::vector<int>& history, const Status& status) const
         {
             static std::vector<int> actions;
-            
             if (knowledge.TreeLevel == Knowledge::PURE || node->getState() == nullptr)
             {
                 node->setChildren(0, 0);

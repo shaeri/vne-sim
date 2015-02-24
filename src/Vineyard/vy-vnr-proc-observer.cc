@@ -96,6 +96,7 @@ namespace vne {
             stat.link_revenue = req->getLinkRevenue();
             stat.link_cost = req->getLinkCost();
             stat.processing_time = req->getProccessingTime();
+            stat.actual_proccessing_time = req->getActualProccessingTime();
             stat.node_mapping_objective_val = req->nodeMappingObjectiveVal;
             stat.link_mapping_objective_val = req->linkMappingObjectiveVal;
         }

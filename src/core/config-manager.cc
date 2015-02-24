@@ -33,11 +33,26 @@ namespace vne {
         }
         return _instance;
     }
-    ConfigManager::ConfigManager ()
+    void
+    ConfigManager::Destroy()
     {
-        read_xml (Config_File_Path, _pt);
+    	if (_instance==nullptr)
+    		return;
+    	_instance.reset();
+    	_instance = nullptr;
+    	return;
+    }
+    ConfigManager::ConfigManager () :
+    		lock_configs (false)
+    {
+    	read_xml (Config_File_Path, _pt);
     }
     ConfigManager::~ConfigManager()
     {
+    }
+    void
+    ConfigManager::saveConfigFile()
+    {
+    	write_xml (Config_File_Path, _pt);
     }
 }

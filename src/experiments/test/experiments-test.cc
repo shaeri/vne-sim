@@ -40,6 +40,73 @@ using namespace vne::utilities;
 
 BOOST_AUTO_TEST_SUITE (AlgorithmExperiments)
 
+BOOST_AUTO_TEST_CASE(MCVNE_MCF_VNR_TESTS)
+{
+    //std::string vnr_dirs[] =
+    //	{"r-2000-50-20-10-10-10-50", "r-2000-50-50-20-10-10-50", "r-2000-50-50-20-10-15-50","r-2000-50-50-20-10-5-25"};
+    std::string vnr_dirs[] =
+        	{"r-2000-50-50-20-10-5-25"};
+    int num_sims[] = {75, 100, 250, 500, 1000};
+	for (int i=0; i<5; i++)
+	{
+		bool ret = ConfigManager::Instance()->setConfig("MCTS.MCTSParameters.NumSimulations", num_sims[i]);
+		assert (ret);
+		for (int j = 0; j < 1; j++)
+		{
+			ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dirs[j]);
+			assert(ret);
+			Logger::Instance()->logInfo("Running MCVNE_MCF_NUMSIMS Experiment");
+			vne::experiments::MCVNENodeMCFLinkExp<> exp = vne::experiments::MCVNENodeMCFLinkExp<> ();
+
+			std::string dbPath;
+			std::stringstream dbName;
+			dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+			dbName << dbPath <<"mcvne_mcf_VNRs_" <<  vnr_dirs[j] << "_numSims_"<< num_sims[i] <<".db";
+			std::string str = dbName.str();
+			std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
+
+			exp.run();
+
+			db->registerBeanClass<vne::experiments::MCVNENodeMCFLinkExp<>>();
+			db->dropModel();
+			db->createModel();
+			db->copyBean(exp);
+
+			//destroy all singleton classes to start fresh for next simulations
+			ConfigManager::Destroy();
+			IdGenerator::Destroy();
+			RNG::Destroy();
+		}
+	}
+}
+
+BOOST_AUTO_TEST_CASE(MCVNE_MCF_NUMSIMS_TEST)
+{
+    for (int i = 30; i>=5; i-=5)
+    {
+    	bool ret = ConfigManager::Instance()->setConfig("MCTS.MCTSParameters.NumSimulations", i);
+    	assert (ret);
+    	Logger::Instance()->logInfo("Running MCVNE_MCF_NUMSIMS Experiment");
+    	vne::experiments::MCVNENodeMCFLinkExp<> exp = vne::experiments::MCVNENodeMCFLinkExp<> ();
+
+    	std::string dbPath;
+    	std::stringstream dbName;
+    	dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+    	dbName << dbPath <<"mcvne_mcf_numsims_" << i << ".db";
+    	std::string str = dbName.str();
+    	std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
+
+    	exp.run();
+
+    	db->registerBeanClass<vne::experiments::MCVNENodeMCFLinkExp<>>();
+    	db->dropModel();
+    	db->createModel();
+    	db->copyBean(exp);
+
+    	ConfigManager::Destroy();
+    }
+}
+
 BOOST_AUTO_TEST_CASE(MCVNE_MCF)
 {
     Logger::Instance()->logInfo("Running MCVNE_MCF Experiment");
@@ -59,12 +126,18 @@ BOOST_AUTO_TEST_CASE(MCVNE_MCF)
 
 BOOST_AUTO_TEST_CASE(DeterministicVine_MCF)
 {
+	std::string vnr_dir = "r-2000-50-50-20-10-5-25";
+	bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dir);
+	assert(ret);
     Logger::Instance()->logInfo("Running DeterministicVine_MCF Experiment");
     vne::experiments::VineNodeMCFLinkExp<> exp = vne::experiments::VineNodeMCFLinkExp<> ();
     
-    std::string dbName;
-    dbName = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
-    std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(dbName);
+    std::string dbPath;
+	std::stringstream dbName;
+    dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+    dbName << dbPath <<"Deterministic_Vine_VNRs_" << vnr_dir  << ".db";
+    std::string str = dbName.str();
+    std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
     
     exp.run();
     

@@ -18,7 +18,7 @@
 <vineyard>
     <SubstrateNetwork>
         <path>/home/soroosh/src/vne-mcts/src/Vineyard/files/substrate_network</path>
-        <filename>sub-50-2.txt</filename>
+        <filename>sub.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
         <path>/home/soroosh/src/vne-mcts/src/Vineyard/files/virtual_net_requests</path>
@@ -68,13 +68,13 @@
         <MaxDepth>10</MaxDepth>
         <NumSimulations>20</NumSimulations>
         <!-- How many nodes to add at each expansion step -->
-        <ExpandCount>1</ExpandCount>
+        <ExpandCount>2</ExpandCount>
         <!-- if this is set to false Exploration constant will be used otherwise Exploration constant will be set to 0 if UseRave flag is set or Exploration constant will be set to rewardRange.-->
         <AutoExploration>false</AutoExploration>
         <!-- One option is to set Exploration Constant c = R_{hi}-R_{lo} -->
-        <ExplorationConstant>0.5</ExplorationConstant>
+        <ExplorationConstant>100000000.0</ExplorationConstant>
         <!-- Rave Parameters: 0 -> rave is not set -->
-        <UseRave>true</UseRave>
+        <UseRave>false</UseRave>
         <RaveDiscount>1.0</RaveDiscount>
         <RaveConstant>0.01</RaveConstant>
         <!-- When set, the baseline rollout algorithm is run. -->

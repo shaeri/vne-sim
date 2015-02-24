@@ -49,6 +49,7 @@ namespace vne {
                 ar & HIBERLITE_NVP(link_mapping_objective_val);
                 ar & HIBERLITE_NVP(node_mapping_objective_val);
                 ar & HIBERLITE_NVP(processing_time);
+                ar & HIBERLITE_NVP(actual_proccessing_time);
                 ar & HIBERLITE_NVP(node_revenue);
                 ar & HIBERLITE_NVP(link_revenue);
                 ar & HIBERLITE_NVP(node_cost);
@@ -66,6 +67,7 @@ namespace vne {
             double link_mapping_objective_val = 0.0;
             double node_mapping_objective_val = 0.0;
             double processing_time = 0.0;
+            double actual_proccessing_time = 0.0;
             double node_revenue = 0.0;
             double link_revenue = 0.0;
             double total_revenue = 0.0;

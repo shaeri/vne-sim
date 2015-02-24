@@ -36,6 +36,7 @@ class IdGenerator
 {
 public:
     static std::shared_ptr<IdGenerator> Instance();
+    static void Destroy ();
 	
 	virtual ~IdGenerator();
 	template<typename T>

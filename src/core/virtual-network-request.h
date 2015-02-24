@@ -55,7 +55,9 @@ public:
     // Proc time is usually not known in advance so after the embedding
     // algorithm is completed this value is set for simulation purposes
     double getProccessingTime() const {return proc_time;};
+    double getActualProccessingTime() const {return actual_proc_time;};
     void setProccessingTime (double t) {proc_time = t;}
+    void setActualProcessingTime (double t) {actual_proc_time = t;};
     double getQueuingTime() const {return queuing_time;};
     void setQueuingTime (double t) {queuing_time = t;}
     double getDepartureTime() const {return arrivalTime + duration + proc_time + queuing_time;};
@@ -74,6 +76,7 @@ protected:
     double arrivalTime;
     double duration;
     double proc_time;
+    double actual_proc_time;
     //time that a request waits in a queue to be processed
     double queuing_time;
     

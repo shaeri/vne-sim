@@ -104,8 +104,8 @@ namespace vne {
                 end = std::chrono::system_clock::now();
                 elapsed_seconds = end - start;
                 //Would be intersting to see various processing time distributions.
-               //((*i).value)->setProccessingTime(elapsed_seconds.count());
-                ((*i).value)->setProccessingTime(1);
+                ((*i).value)->setActualProcessingTime(elapsed_seconds.count());
+                ((*i).value)->setProccessingTime(0);
                 // Copy the incoming vnr and place it at the back of the line.
                 vnr_queue.push((*i).value);
             }

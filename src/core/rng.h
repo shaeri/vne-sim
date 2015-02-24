@@ -35,6 +35,8 @@ namespace vne {
         
     public:
         static std::shared_ptr<RNG> Instance ();
+        static void Destroy ();
+
         const gsl_rng* getMyRNG (RNGSubscriber* objectPtr);
         const gsl_rng* getGeneralRNG ();
         void unsubscribe (RNGSubscriber* objectPtr);

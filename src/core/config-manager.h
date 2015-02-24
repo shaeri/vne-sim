@@ -35,19 +35,48 @@ namespace vne {
     class ConfigManager {
     public:
         static std::shared_ptr<ConfigManager> Instance();
+        static void Destroy();
+        void saveConfigFile ();
         template<typename T>
         const T getConfig (const std::string& conf) const;
+        template<typename T>
+        bool setConfig (const std::string& conf, T &val);
         ~ConfigManager ();
     protected:
          ConfigManager ();
     private:
+        mutable bool lock_configs;
         static std::shared_ptr<ConfigManager> _instance;
         ptree _pt;
     };
     template<typename T>
     const T ConfigManager::getConfig (const std::string& conf) const
     {
+    	//if its the first time that a config being read write and reload the config file.
+    	if (!lock_configs)
+    		lock_configs = true;
+
         return _pt.get<T> (conf);
+    }
+    template<typename T>
+    bool ConfigManager::setConfig (const std::string& conf, T& val)
+    {
+    	if (lock_configs)
+    	{
+    		std::cerr << "Error in ConfigManager!!!" << std::endl;
+    		std::cerr << "The configuration file has already been loaded! "
+    				<< "\n You can nor write on the configuration file anymore."
+    				<< " setConfig can only be called before any calls to getConfig." << std::endl;
+    		return false;
+    	}
+    	boost::optional<T> property = _pt.get_optional<T>(conf);
+    	if (!property)
+    	{
+    		std::cerr << "The configuration that you want to modify does not exist." << std::endl;
+    		return false;
+    	}
+    	_pt.put (conf, val);
+    	return true;
     }
 }
 

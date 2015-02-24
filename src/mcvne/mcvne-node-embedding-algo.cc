@@ -67,11 +67,15 @@ namespace vne {
                 action = mcts.selectAction();
                 int vnId = st->getCurrentVNId();
                 terminate = sim->step (st, action, reward);
-                vnr->addNodeMapping(action, vnId);
-                
-                if (vnr->getNodeMap()->size() < vnr->getVN()->getNumNodes())
-                    mcts.update(action, reward);
-                
+                if (reward <= -Infinity)
+                {
+                	terminate = true;
+                }
+                else {
+                	vnr->addNodeMapping(action, vnId);
+                	if (vnr->getNodeMap()->size() < vnr->getVN()->getNumNodes())
+                		mcts.update(action, reward);
+                }
             } while (!terminate);
             
             //assert(vnr->getNodeMap()->size() == vnr->getVN()->getNumNodes());
