@@ -334,3 +334,5 @@ external-libs/glpk-4.54/src/.deps/libglpk_la-wclique1.Plo
 external-libs/glpk-4.54/src/.deps/libglpk_la-zio.Plo
 external-libs/glpk-4.54/src/.deps/libglpk_la-zutil.Plo
 external-libs/hiberlite/Build
+out.txt
+vne-mcts.xccheckout
