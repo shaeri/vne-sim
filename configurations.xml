@@ -7,7 +7,7 @@
 
 <core>
     <!--The result database file-->
-    <dbPath>/home/soroosh/Desktop/</dbPath>
+    <dbPath>/Users/soroosh/Desktop/t1.db</dbPath>
     <!-- 0 uses the libraries standard seed -->
     <rngSeed>0</rngSeed>
     <!--Verious random number generator types that gsl_rng library implements may be found at: -->
@@ -15,14 +15,105 @@
     <rngType>gsl_rng_mt19937</rngType>
 </core>
 
+<NetworkFileGenerator>
+    <BriteHandler>
+        <BriteSeedFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
+        <!-- Random = 1, Heavy Tailed = 2 -->
+        <nodePlacement>1</nodePlacement>
+        <!-- Number of neighboring node each new node connects to. -->
+        <numNeighbors>2</numNeighbors>
+        <!-- We assume the same grid size for SN and VNRs-->
+        <innerGridSize>25</innerGridSize>
+        <outerGridSize>25</outerGridSize>
+        
+        <RTWaxman>
+            <!-- 1 = incremental, 2 = all -->
+            <growthType>1</growthType>
+            <alpha>0.5</alpha>
+            <beta>0.2</beta>
+        </RTWaxman>
+    </BriteHandler>
+    
+    <DirToSaveFiles>/Users/Soroosh/Desktop/Network_Files/</DirToSaveFiles>
+    
+    <TotalTime>50000</TotalTime>
+    
+    <SubstrateNodeNum>50</SubstrateNodeNum>
+    
+    <!-- between 0-1 -->
+    <VNRLinkSplittingRate>.1</VNRLinkSplittingRate>
+    
+    <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
+    <VNRNumNodesDist>0</VNRNumNodesDist>
+    <VNRNumNodesDistParam1>2</VNRNumNodesDistParam1>
+    <VNRNumNodesDistParam2>10</VNRNumNodesDistparam2>
+    <VNRNumNodesDistParam3>-1</VNRNumNodesDistParam3>
+
+    
+    <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
+    <VNRDurationDist>1</VNRDurationDist>
+    <VNRDurationDistParam1>1000</VNRDurationDistParam1>
+    <VNRDurationDistParam2>-1</VNRDurationDistParam2>
+    <VNRDurationDistParam3>-1</VNRDurationDistParam3>
+    
+    <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
+    <VNRArrivalDist>2</VNRArrivalDist>
+    <VNRArrivalDistParam1>10000</VNRArrivalDistParam1>
+    <VNRArrivalDistParam2>-1</VNRArrivalDistParam2>
+    <VNRArrivalDistParam3>-1</VNRArrivalDistParam3>
+    
+    <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
+    <VNRMaxDistanceDist>0</VNRMaxDistanceDist>
+    <VNRMaxDistanceDistParam1>5</VNRMaxDistanceDistParam1>
+    <VNRMaxDistanceDistParam2>25</VNRMaxDistanceDistParam2>
+    <VNRMaxDistanceDistParam3>-1</VNRMaxDistanceDistParam3>
+    
+    <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
+    <SNCPUDist>0</SNCPUDist>
+    <SNCPUDistParam1>50</SNCPUDistParam1>
+    <SNCPUDistParam2>100</SNCPUDistParam2>
+    <SNCPUDistParam3>-1</SNCPUDistParam3>
+    
+    <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
+    <SLBWDist>0</SLBWDist>
+    <SLBWDistParam1>50</SLBWDistParam1>
+    <SLBWDistParam2>100</SLBWDistParam2>
+    <SLBWDistParam3>-1</SLBWDistParam3>
+    
+    <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
+    <SLDelayDist>0</SLDelayDist>
+    <SLDelayDistParam1>50</SLDelayDistParam1>
+    <SLDelayDistParam2>100</SLDelayDistParam2>
+    <SLDelayDistParam3>-1</SLDelayDistParam3>
+    
+    <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
+    <VNCPUDist>0</VNCPUDist>
+    <VNCPUDistParam1>0</VNCPUDistParam1>
+    <VNCPUDistParam2>50</VNCPUDistParam2>
+    <VNCPUDistParam3>-1</VNCPUDistParam3>
+    
+    <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
+    <VLBWDist>0</VLBWDist>
+    <VLBWDistParam1>0</VLBWDistParam1>
+    <VLBWDistParam2>50</VLBWDistParam2>
+    <VLBWDistParam3>-1</VLBWDistParam3>
+    
+    <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
+    <VLDelayDist>0</VLDelayDist>
+    <VLDelayDistParam1>50</VLDelayDistParam1>
+    <VLDelayDistParam2>100</VLDelayDistParam2>
+    <VLDelayDistParam3>-1</VLDelayDistParam3>
+    
+</NetworkFileGenerator>
+
 <vineyard>
     <SubstrateNetwork>
-        <path>/home/soroosh/src/vne-mcts/src/Vineyard/files/substrate_network</path>
+        <path>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/substrate_network</path>
         <filename>sub-50-2.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
-        <path>/home/soroosh/src/vne-mcts/src/Vineyard/files/virtual_net_requests</path>
-        <dir>r-2000-50-50-20-10-10-50</dir>
+        <path>/Users/Soroosh/Desktop</path>
+        <dir>reqs</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>
     <Results>
@@ -38,17 +129,18 @@
         <setBeta>false</setBeta>   <!-- if set to false Beta is automatically set to 1-->
         <!-- "deterministic" or "randomized" (use exact words without quotes). 
          If it is not specified deterministic approach is selected by default. -->
-        <nodeMappingType>deterministic</nodeMappingType>
+        <nodeMappingType>randomized</nodeMappingType>
     </Configs>
     <glpk>
-        <LPmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
-        <LPdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
-        <MCFmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
-        <MCFdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
+        <LPmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
+        <LPdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
+        <MCFmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
+        <MCFdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
         <!-- 0 disabled, 1 enabled -->
         <terminalEnabled>0</terminalEnabled>
     </glpk>
 </vineyard>
+
 <MCTS>
     <Simulator>
         <Knowledge>
@@ -61,12 +153,12 @@
         </Knowledge>
         <!-- Discount in (0,1] -->
         <discount>1</discount>
-        <rewardRange>100000000</rewardRange>
+        <rewardRange>1000</rewardRange>
     </Simulator>
     
     <MCTSParameters>
         <MaxDepth>10</MaxDepth>
-        <NumSimulations>20</NumSimulations>
+        <NumSimulations>50</NumSimulations>
         <!-- How many nodes to add at each expansion step -->
         <ExpandCount>1</ExpandCount>
         <!-- if this is set to false Exploration constant will be used otherwise Exploration constant will be set to 0 if UseRave flag is set or Exploration constant will be set to rewardRange.-->
@@ -74,11 +166,13 @@
         <!-- One option is to set Exploration Constant c = R_{hi}-R_{lo} -->
         <ExplorationConstant>0.5</ExplorationConstant>
         <!-- Rave Parameters: 0 -> rave is not set -->
-        <UseRave>true</UseRave>
-        <RaveDiscount>1.0</RaveDiscount>
-        <RaveConstant>0.01</RaveConstant>
+        <UseRave>false</UseRave>
+        <RaveDiscount>1</RaveDiscount>
+        <RaveConstant>0.05</RaveConstant>
         <!-- When set, the baseline rollout algorithm is run. -->
         <DisableTree>0</DisableTree>
+        <UseSinglePlayerMCTS>false</UseSinglePlayerMCTS>
+        <SPMCTSConstant>10000</SPMCTSConstant>
     </MCTSParameters>
 </MCTS>
         
@@ -93,3 +187,15 @@
         <LinkEmbedder>MCF</LinkEmbedder>
     </NodeEmbeddingAlgo>
 </MCVNE>
+
+<GRC>
+    <!--unit price charged for computing resources-->
+    <alpha>1</alpha>
+    <!--unit price charged for bandwidth resources-->
+    <beta>1</beta>
+    <!--It is a positive small threshold defining the convergence of node mapping algorithm-->
+    <!--Refer to: 
+     L. Gong, Y. Wen, Z. Zhu, and T. Lee, “Toward profit-seeking virtual network embedding algorithm via global resource capacity.,” INFOCOM, pp. 1–9, 2014.-->
+    <sigma>0.00001</sigma>
+    <dampingFactor>0.85</dampingFactor>
+</GRC>

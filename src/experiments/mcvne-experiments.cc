@@ -24,7 +24,10 @@
 
 #include "mcvne-experiments.h"
 #include "mcvne/mcvne-node-embedding-algo.h"
+#include "mcvne/mcvne-bfs-link-embedding-algo.h"
+
 #include "Vineyard/vy-vine-link-embedding-algo.h"
+
 
 #include <cstring>
 
@@ -37,8 +40,8 @@ namespace vne {
             
             std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo (new VYVineTwoStageEmbeddingAlgo<>
                                                                           (*sb,
-                                                                           std::make_shared<MCVNENodeEmbeddingAlgo<>>(MCVNENodeEmbeddingAlgo<>()),
-                                                                           std::make_shared<VYVineLinkEmbeddingAlgo<>>(VYVineLinkEmbeddingAlgo<>())
+                                                                           std::shared_ptr<MCVNENodeEmbeddingAlgo<>> (new MCVNENodeEmbeddingAlgo<> ()),
+                                                                           std::shared_ptr<VYVineLinkEmbeddingAlgo<>> (new VYVineLinkEmbeddingAlgo<> ())
                                                                            )
                                                                           );
             
@@ -86,8 +89,70 @@ namespace vne {
         {
             statistics.push_back(*static_cast<VYStatistics*> (&stat));
         }
+        
+        
+        
+        
+        
+        
+        template<>
+        MCVNENodeBFSLinkExp<>::MCVNENodeBFSLinkExp ()
+        {
+            sb  = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
+            
+            std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo (new VYVineTwoStageEmbeddingAlgo<>
+                                                                          (*sb,
+                                                                           std::shared_ptr<MCVNENodeEmbeddingAlgo<>>(new MCVNENodeEmbeddingAlgo<>()),
+                                                                           std::shared_ptr<MCVNEBFSLinkEmbeddingAlgo<>>(new MCVNEBFSLinkEmbeddingAlgo<>())
+                                                                           )
+                                                                          );
+            
+            std::shared_ptr<ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>> releaseAlgo (new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>(*sb));
+            
+            VYVNREmbeddingProc<>* embeddingProc (new VYVNREmbeddingProc<>(embeddingAlgo));
+            VYVNRReleaseProc<>* releaseProc (new VYVNRReleaseProc<>(releaseAlgo));
+            VYVNRProcObserver<>* observer (new VYVNRProcObserver<> (sb->getNetwork()));
+            VYVNRGenerator<>* gen (new VYVNRGenerator<>());
+            observer->registerSubscriber(this);
+            
+            graph = new VYVNRProcDigraph<> (embeddingProc, releaseProc, gen, observer);
+            
+            std::string dirName = ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.dir");
+            
+            
+            vector<int> tokens (8);
+            tokens[0] = -1;
+            for (int i = 0; i<8 ;i++)
+            {
+                int pos = (int) dirName.find_first_of("-");
+                std::string tok = dirName.substr(0,pos);
+                if (i != 0)
+                    tokens[i] = atoi(tok.c_str());
+                dirName = dirName.substr(pos+1,dirName.length());
+            }
+            
+            
+            std::string link_algo ("BFS-SP Link Mapping");
+            std::string node_algo ("MCVNE Node Mapping");
+            
+            Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
+            this->initialize (graph, algo_type, node_algo, link_algo, tokens[2],tokens[1],tokens[3],tokens[4],0,tokens[7],tokens[6],tokens[5]);
+        }
+        
+        template<>
+        MCVNENodeBFSLinkExp<>::~MCVNENodeBFSLinkExp()
+        {};
+        
+        template<>
+        void MCVNENodeBFSLinkExp<>::statisticsGenerated (Statistics& stat)
+        {
+            statistics.push_back(*static_cast<VYStatistics*> (&stat));
+        }
+        
     }
 }
 using namespace vne::experiments;
 using namespace vne;
 HIBERLITE_EXPORT_CLASS_WITH_NAME(MCVNENodeMCFLinkExp<>, MCVNENodeMCFLink)
+HIBERLITE_EXPORT_CLASS_WITH_NAME(MCVNENodeBFSLinkExp<>, MCVNENodeBFSLink)
+

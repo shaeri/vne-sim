@@ -35,7 +35,7 @@ namespace vne {
         template<>
         VYVNRProcDigraph<>::~VYVNRProcDigraph ()
         {
-            std::cout << "DESTROYING VYVNRProcDigraph" << std::endl;
+            BOOST_LOG_TRIVIAL(debug) << "DESTROYING VYVNRProcDigraph" << std::endl;
         }
     }
 }

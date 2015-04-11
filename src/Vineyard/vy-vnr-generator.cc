@@ -42,7 +42,7 @@ namespace vne {
                 
                 //we need to have the offset of the node ids because the VirtualNode Ids will be generated
                 //in increasing order irrespective of the number of request.
-                int nodeID_offset = IdGenerator::Instance()->peekId<VirtualNode<double>>();
+                int nodeID_offset = IdGenerator::Instance()->peekId<VYVirtualNode<>>();
                 
                 //Read the first line that includes number of nodes, number of edges, split,
                 //arrival time, duration, topology, and maximum distance

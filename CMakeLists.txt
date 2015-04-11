@@ -9,7 +9,11 @@ set (vne-mcts_VERSION_MINOR 0)
 # Enable C++11 compilation
 list(APPEND CMAKE_CXX_FLAGS "-std=c++0x")
 
-SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl")
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	SET(CMAKE_SHARED_LINKER_FLAGS " -ldl")
+ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl")
+ENDIF()
 
 # Set the build directory
 SET(PROJECT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build)
@@ -50,12 +54,12 @@ ExternalProject_Add (hiberlite_project
                              INSTALL_COMMAND ""
                             )
 
-# add_library(hiberlite STATIC IMPORTED)
 
-# Add the include directories of ADEVS and hiberlite
+# Add the include directories of ADEVS and hiberlite and BRITE
 include_directories(${PROJECT_SOURCE_DIR}/external-libs/adevs/include)
-
 include_directories(${PROJECT_SOURCE_DIR}/external-libs/hiberlite/include)
+include_directories(${PROJECT_SOURCE_DIR}/external-libs/BRITE/C++)
+
 set(HIBERLITE_LIBRARY hiberlite)
 add_library(${HIBERLITE_LIBRARY} STATIC IMPORTED)
 set_property(TARGET ${HIBERLITE_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/external-libs/hiberlite/libhiberlite.a)
@@ -80,8 +84,9 @@ find_package(GSL REQUIRED)
 find_package(GLPK REQUIRED)		
 find_package(SQLITE3 REQUIRED)
 
+#add subdirectories that need to be compiled
 add_subdirectory(src)
-
+add_subdirectory(external-libs/BRITE)
 
 # add_executable (	 )
 

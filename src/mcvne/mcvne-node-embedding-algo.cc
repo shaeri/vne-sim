@@ -23,6 +23,7 @@
  **/
 
 #include "mcvne-node-embedding-algo.h"
+#include "mcvne-bfs-link-embedding-algo.h"
 
 #include "mcts/mcts.h"
 #include "Vineyard/vy-vine-link-embedding-algo.h"
@@ -37,14 +38,13 @@ namespace vne {
         NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<> >, VYVirtualNetRequest<> > ()
         {
             std::string linkEmbedderName = ConfigManager::Instance()->getConfig<std::string>("MCVNE.NodeEmbeddingAlgo.LinkEmbedder");
-            // For now this if statement is useless later if I add more link embedding algorithms this
-            // if statement will come in handy.
-            if (linkEmbedderName.compare("MCF") == 0)
-                link_embedder = std::make_shared<VYVineLinkEmbeddingAlgo<>>();
             
+            if (linkEmbedderName.compare("MCF") == 0)
+                link_embedder = std::shared_ptr<VYVineLinkEmbeddingAlgo<>>(new VYVineLinkEmbeddingAlgo<> ());
+            else if (linkEmbedderName.compare("BFS-SP") == 0)
+                link_embedder = std::shared_ptr<MCVNEBFSLinkEmbeddingAlgo<>>(new MCVNEBFSLinkEmbeddingAlgo<> ());
             else
-                link_embedder = std::make_shared<VYVineLinkEmbeddingAlgo<>>();
-
+                link_embedder = std::shared_ptr<VYVineLinkEmbeddingAlgo<>>(new VYVineLinkEmbeddingAlgo<> ());
         };
         
         template<>

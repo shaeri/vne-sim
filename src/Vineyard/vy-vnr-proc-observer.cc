@@ -96,9 +96,11 @@ namespace vne {
             stat.link_revenue = req->getLinkRevenue();
             stat.link_cost = req->getLinkCost();
             stat.processing_time = req->getProccessingTime();
-            stat.actual_proccessing_time = req->getActualProccessingTime();
+            stat.actual_processing_time = req->getActualProccessingTime();
             stat.node_mapping_objective_val = req->nodeMappingObjectiveVal;
             stat.link_mapping_objective_val = req->linkMappingObjectiveVal;
+            stat.vnr_arrival_time = req->getArrivalTime();
+            stat.vnr_duration = req->getDuration();
         }
         template<>
         void VYVNRProcObserver<>::delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb)

@@ -31,6 +31,8 @@
 #include <vector>
 #include <set>
 #include <memory>
+#include <fstream>
+
 #include <boost/log/trivial.hpp>
 #include <boost/log/attributes/named_scope.hpp>
 
@@ -62,6 +64,8 @@ public:
     
     const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>> getAllNodes () const;
     const std::shared_ptr<std::vector<std::shared_ptr<LinkC<LinkT...>>>> getAllLinks () const;
+    
+    void writeNetworkToFile (std::ofstream& ofstrm, bool writeNetworkSize);
     
     template<typename CONDITION, typename ... T>
     const std::shared_ptr<std::vector<std::shared_ptr<NodeC<NodeT...>>>> getNodesWithConditions (T &... args);
@@ -117,6 +121,7 @@ void Network<NodeC<NodeT...>, LinkC<LinkT...>>::addNode(
 			it == nodesMap.end()
 					&& "A node with the same ID exists in the network.");
 	nodesMap[node->getId()] = node;
+    node->local_id  = (int) nodesMap.size()-1;
 }
 
 template<typename... NodeT, template<typename...> class NodeC,
@@ -143,13 +148,19 @@ void Network<NodeC<NodeT...>, LinkC<LinkT...>>::addLink(
 		v.push_back(link->getId());
 		connectionMap.insert(std::make_pair(link->getNodeFromId (),
 						std::make_shared<std::vector<int>>(v)));
+        
 	}
 	else
     {
         connectionMap[link->getNodeFromId ()]->push_back(link->getId());
+        
     }
     
-	//add an element for nodeTo
+    //set the link's nodes to and from local ids
+    link->node_from_local_id = nodesMap[link->getNodeFromId()]->getLocalId ();
+    link->node_to_local_id = nodesMap[link->getNodeToId()]->getLocalId ();
+	
+    //add an element for nodeTo
 	it = connectionMap.find(link->getNodeToId());
 	if (it == connectionMap.end())
 	{
@@ -272,6 +283,23 @@ Network<NodeC<NodeT...>, LinkC<LinkT...>>::getAllLinks () const
     for (auto it = linksMap.begin(); it != linksMap.end(); ++it)
         vec->push_back(it->second);
     return vec;
+}
+template<typename... NodeT, template<typename...> class NodeC,
+    typename... LinkT, template <typename...> class LinkC>
+inline void Network<NodeC<NodeT...>, LinkC<LinkT...>>::writeNetworkToFile (std::ofstream& ofstrm, bool writeNetworkSize)
+{
+    if (ofstrm.is_open())
+    {
+        if (writeNetworkSize)
+            ofstrm << getNumNodes() << " " << getNumLinks() << std::endl;
+    
+        for (auto it = nodesMap.begin(); it != nodesMap.end(); ++it)
+            it->second-> writeNodeToFile (ofstrm);
+        for (auto it = linksMap.begin(); it != linksMap.end(); ++it)
+            it->second-> writeLinkToFile (ofstrm);
+    }
+    else
+        BOOST_LOG_TRIVIAL(error) << "Network::writeVNRToFile: VYThe file is not open for writing. " << std::endl;
 }
     
 template<typename... NodeT, template<typename...> class NodeC,

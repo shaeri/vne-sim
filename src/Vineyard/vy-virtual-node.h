@@ -38,8 +38,10 @@ namespace vne {
             VYVirtualNode (double cpu, int _x, int _y);
             const VYCoordinate& getCoordinates () const;
             double getCPU () const;
+            void writeNodeToFile (std::ofstream& ofstrm);
             ~VYVirtualNode ();
         private:
+            typedef VYVirtualNode<> this_t;
             VYCoordinate coordinate;
         };
     }

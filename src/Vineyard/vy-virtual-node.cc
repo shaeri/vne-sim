@@ -23,20 +23,23 @@
  **/
 
 #include "vy-virtual-node.h"
+#include <fstream>
 
 namespace vne {
     namespace vineyard {
         template<>
         VYVirtualNode<>::VYVirtualNode (double cpu, const VYCoordinate& coord) :
-        VirtualNode<double>(cpu),
+        VirtualNode<double>(cpu,true),
         coordinate(coord)
         {
+           this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
         }
         template<>
         VYVirtualNode<>::VYVirtualNode (double cpu, int _x, int _y) :
-        VirtualNode<double>(cpu),
+        VirtualNode<double>(cpu,true),
         coordinate(VYCoordinate(_x, _y))
         {
+             this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
         }
         template<>
         VYVirtualNode<>::~VYVirtualNode()
@@ -51,6 +54,15 @@ namespace vne {
         double VYVirtualNode<>::getCPU() const
         {
             return std::get<0>(this->resources);
+        }
+                template<>
+        void VYVirtualNode<>::writeNodeToFile (std::ofstream& ofstrm)
+        {
+            if (ofstrm.is_open()) {
+                ofstrm << getCoordinates().first << " " << getCoordinates().second << " " << getCPU() <<  std::endl;
+            }
+            else
+                BOOST_LOG_TRIVIAL(error) << "VYVirtualNode<>::writeNodeToFile: VYThe file is not open for writing. " << std::endl;
         }
     }
 }

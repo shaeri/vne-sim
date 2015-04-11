@@ -31,6 +31,8 @@
 #include <memory>
 #include <vector>
 
+#include "core/core-types.h"
+
 #include <mcts/state.h>
 
 namespace vne{
@@ -43,23 +45,37 @@ namespace vne{
             {
                 Count = count;
                 Total = value * count;
+                //Total = value;
+                SumSquaredValue = count * value * value;
             }
             
             void add(double totalReward)
             {
                 Count += 1.0;
                 Total += totalReward;
+                //if (Total == 0)
+                //    Total = totalReward;
+                //else if (totalReward > Total)
+                //    Total = totalReward;
+                SumSquaredValue += totalReward * totalReward;
             }
             
             void add(double totalReward, COUNT weight)
             {
                 Count += weight;
                 Total += totalReward * weight;
+                SumSquaredValue += totalReward * totalReward * weight;
             }
             
             double getValue() const
             {
                 return Count == 0 ? Total : Total / Count;
+                //return Total;
+            }
+            
+            double getSumSquaredValue () const
+            {
+                return SumSquaredValue;
             }
             
             COUNT getCount() const
@@ -71,6 +87,7 @@ namespace vne{
             
             COUNT Count;
             double Total;
+            long double SumSquaredValue;
         };
         
         class TreeNode {

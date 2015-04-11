@@ -29,7 +29,7 @@
 namespace vne{
     namespace mcts{
         int TreeNode::NumChildren = 0;
-        TreeNode::TreeNode(std::shared_ptr<State> st) : state(st)
+        TreeNode::TreeNode(std::shared_ptr<State> st) : state(std::move(st))
         {
             assert(NumChildren);
             Children.resize(TreeNode::NumChildren);
@@ -46,21 +46,13 @@ namespace vne{
         {
             for (int action = 0; action < Children.size(); action++)
             {
-                Children[action]  = std::shared_ptr<TreeNode> (new TreeNode());
+                    Children[action]  = std::shared_ptr<TreeNode> (new TreeNode());
             }
         }
         
         TreeNode::~TreeNode()
         {
         }
-        
-        /*std::shared_ptr<TreeNode> TreeNode::Create()
-        {
-            std::shared_ptr<TreeNode> node (new TreeNode ());
-            node->Initialize();
-            return (node);
-        }
-        */
         
         const std::shared_ptr<State> TreeNode::getState () const
         {

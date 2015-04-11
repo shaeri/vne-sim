@@ -41,6 +41,9 @@ using namespace vne::mcvne;
 
 namespace vne {
     namespace experiments {
+        /**************************************************************
+         * This is MCVNE with MCF link embedding
+         ***************************************************************/
         template<typename = VYVNRProcDigraph<>>
         class MCVNENodeMCFLinkExp : public Experiment<VYVNRProcDigraph<>>
         {
@@ -63,6 +66,30 @@ namespace vne {
             int setAlpha;
             //setBeta
             int setBeta;
+        private:
+            VYVNRProcDigraph<>* graph;
+            std::shared_ptr<VYSubstrateNetworkBuilder<>> sb;
+            std::list<VYStatistics> statistics;
+        };
+        
+        /**************************************************************
+        * This is MCVNE with BFS based shortest path link embedding
+        ***************************************************************/
+        template<typename = VYVNRProcDigraph<>>
+        class MCVNENodeBFSLinkExp : public Experiment<VYVNRProcDigraph<>>
+        {
+            friend class hiberlite::access;
+            template<class Archive>
+            void hibernate(Archive & ar)
+            {
+                ar & HIBERLITE_BASE_CLASS_WITH_NAME(vne::Experiment<VYVNRProcDigraph<>>,Experiment);
+                ar & HIBERLITE_NVP(statistics);
+            }
+        public:
+            MCVNENodeBFSLinkExp ();
+            virtual void statisticsGenerated (Statistics& stat);
+            virtual ~MCVNENodeBFSLinkExp ();
+            
         private:
             VYVNRProcDigraph<>* graph;
             std::shared_ptr<VYSubstrateNetworkBuilder<>> sb;

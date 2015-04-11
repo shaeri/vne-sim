@@ -40,27 +40,43 @@ enum class Entity_t
 {
 	virt = 0, substrate
 };
+    
 enum class Embedding_Result
 {
 	SUCCESSFUL_EMBEDDING = 0, NOT_ENOUGH_SUBSTRATE_RESOURCES,
     ERROR_IN_SOLUTION
 };
+    
 enum class Embedding_Algorithm_Types
 {
     TWO_STAGE = 0, SINGLE_STAGE
 };
-static std::string get_Embedding_Algorithm_Type_Str (Embedding_Algorithm_Types t)
+    
+enum class Link_Embedding_Algo_Types
 {
-    if (t == Embedding_Algorithm_Types::TWO_STAGE)
-        return std::string ("TWO_STAGE");
-    return std::string ("SINGLE_STAGE");
+    WITH_PATH_SPLITTING = 0, NO_PATH_SPLITTING
 };
+    
 enum class Event_Types
 {
     EVENT_TYPE_ARRIVAL = 0,
     EVENT_TYPE_SUCCESSFUL_EMBEDDING,
     EVENT_TYPE_FAIL_EMBEDDING,
     EVENT_TYPE_DEPARTURE
+};
+    
+enum class Distribution
+{
+    UNIFORM = 0,
+    EXPONENTIAL,
+    POISSON
+};
+    
+static std::string get_Embedding_Algorithm_Type_Str (Embedding_Algorithm_Types t)
+{
+    if (t == Embedding_Algorithm_Types::TWO_STAGE)
+        return std::string ("TWO_STAGE");
+    return std::string ("SINGLE_STAGE");
 };
 static std::string get_Evenet_Type_Str (Event_Types t)
 {

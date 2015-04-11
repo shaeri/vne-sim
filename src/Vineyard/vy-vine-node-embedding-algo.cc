@@ -24,6 +24,7 @@
 
 #include "vy-vine-node-embedding-algo.h"
 #include "core/config-manager.h"
+#include "core/rng.h"
 
 namespace vne {
     namespace vineyard{
@@ -349,6 +350,50 @@ namespace vne {
         inline Embedding_Result VYVineNodeEmbeddingAlgo<>::randomizedNodeMapping
             (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr, std::vector<std::vector<double>>& xVec)
         {
+            
+            int substrateNodeNum = substrate_network->getNumNodes();
+            for (int i = 0; i<vnr->getVN()->getNumNodes(); i++)
+            {
+                int randTry = 0;
+                int randIndex = -1;
+                while (randTry < 16) {
+                    double randValue = gsl_rng_uniform (RNG::Instance()->getGeneralRNG());
+                    for (int j=0; j < nodesWithinReach[substrateNodeNum + i].size(); j++)
+                    {
+                        int current_substrate_node_local_id = nodesWithinReach[substrateNodeNum + i].at(j);
+                        randValue -= xVec[substrateNodeNum + i][current_substrate_node_local_id];
+                        if (randValue <=0.0 &&
+                            !(substrate_network->getNode(allNodeIds[current_substrate_node_local_id])->touched))
+                        {
+                            randIndex = current_substrate_node_local_id;
+                            break;
+                        }
+                    }
+                    if (randIndex != -1)
+                            break;
+                    randTry++;
+                }
+                randTry = 0;
+                if (randIndex == -1) {
+                    while (randTry < 16) {
+                        int randValue = (int) gsl_rng_uniform_int (RNG::Instance()->getGeneralRNG(),  nodesWithinReach[substrateNodeNum + i].size());
+                        int current_substrate_node_local_id = nodesWithinReach[substrateNodeNum + i].at(randValue);
+                        if (!(substrate_network->getNode(allNodeIds[current_substrate_node_local_id])->touched))
+                        {
+                            randIndex = current_substrate_node_local_id;
+                            break;
+                        }
+                        randTry ++;
+                    }
+                }
+                if (randIndex == -1)
+                    return Embedding_Result::ERROR_IN_SOLUTION;
+                vnr->addNodeMapping(allNodeIds[randIndex], allNodeIds[substrateNodeNum + i]);
+                substrate_network->getNode(allNodeIds[randIndex])->touched = true;
+                
+            }
+            if (vnr->getNodeMap()->size() == vnr->getVN()->getNumNodes())
+                return Embedding_Result::SUCCESSFUL_EMBEDDING;
             return Embedding_Result::ERROR_IN_SOLUTION;
         }
         
@@ -415,7 +460,7 @@ namespace vne {
                 {
                     sscanf(varName, "f[f%d,%d,%d]", &flowId,&from,&to);
                     if (varVal>0.00001)
-                    std::cout << from << " " << to << " " <<varVal << std::endl;
+                    BOOST_LOG_TRIVIAL(debug) << from << " " << to << " " <<varVal << std::endl;
                     flowVec[from][to] += varVal;
                     
                 }

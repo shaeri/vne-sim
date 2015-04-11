@@ -24,6 +24,7 @@
 
 #include "mcts.h"
 #include "core/config-manager.h"
+#include "utilities/logger.h"
 
 #include <math.h>
 #include <algorithm>
@@ -42,7 +43,9 @@ namespace vne {
         UseRave(ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.UseRave")),
         RaveDiscount(ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.RaveDiscount")),
         RaveConstant(ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.RaveConstant")),
-        DisableTree(ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.DisableTree"))
+        DisableTree(ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.DisableTree")),
+        UseSinglePlayerMCTS(ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.UseSinglePlayerMCTS")),
+        SPMCTSConstant(ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.SPMCTSConstant"))
         {
         }
         MCTS::MCTS(const std::shared_ptr<MCTSSimulator> sim)
@@ -71,18 +74,17 @@ namespace vne {
 
         bool MCTS::update(int action, double reward)
         {
+            BOOST_LOG_TRIVIAL(debug) << "Roots value: " << root->value.getValue() << std::endl;
         	history.push_back(action);
             // Find matching vnode from the rest of the tree
             std::shared_ptr<TreeNode> child_node = root->child(action);
-            
+            BOOST_LOG_TRIVIAL(debug) << "Child's node value: " << child_node->value.getValue() <<std::endl;
             // Delete old tree and create new root
-            const std::shared_ptr<State> st = root->getState()->getCopy();
-            double dummyReward;
-            simulator->step(st, action, dummyReward);
-            
-            std::shared_ptr<TreeNode> newRoot = expandNode(st);
-            root.reset();
-            root = newRoot;
+            //const std::shared_ptr<State> st = root->getState()->getCopy();
+            //double dummyReward;
+            //simulator->step(st, action, dummyReward);
+            //std::shared_ptr<TreeNode> newRoot = expandNode(st);
+            *root = *child_node;
             return true;
         }
 
@@ -97,7 +99,7 @@ namespace vne {
 
         void MCTS::rolloutSearch()
         {
-            std::vector<double> totals(simulator->getNumActions(), 0.0);
+            //std::vector<double> totals(simulator->getNumActions(), 0.0);
             int historyDepth = (int) history.size();
             std::vector<int> legal;
             assert(root->getState() != nullptr);
@@ -114,16 +116,15 @@ namespace vne {
                 bool terminal = simulator->step(st, action, immediateReward);
                 
                 std::shared_ptr<TreeNode> node = root->child(action);
-                if (!node && !terminal)
+                if (node->getState()==nullptr && !terminal)
                 {
-                    node = expandNode(st);
+                    *node = *(expandNode(st));
                 }
                
                 history.push_back(action);
-                delayedReward = rollout(st);
+                delayedReward = rollout(st->getCopy());
                 totalReward = immediateReward + (simulator->getDiscount() * delayedReward);
                 root->child(action)->value.add(totalReward);
-                
                 st.reset();
                 history.resize(historyDepth);
             }
@@ -143,14 +144,15 @@ namespace vne {
                 peakTreeDepth = 0;
                 
                 double totalReward = simulateNode(root);
-
+                root->value.add(totalReward);
+                //addRave(root, totalReward);
                 statTotalReward.Add(totalReward);
                 statTreeDepth.Add(peakTreeDepth);
                 
                 history.resize(historyDepth);
             }
         }
-
+        
         double MCTS::simulateNode(std::shared_ptr<TreeNode> node)
         {
             double immediateReward, delayedReward = 0;
@@ -169,8 +171,8 @@ namespace vne {
             
             std::shared_ptr<TreeNode> child_node = node->child(action);
             
-            if (child_node->getState()==nullptr && !terminal && node->value.getCount() >= params.ExpandCount)
-                child_node = expandNode(st);
+            if (child_node->getState()==nullptr && !terminal && child_node->value.getCount() >= params.ExpandCount)
+                *child_node = *(expandNode(st));
             
             if (!terminal)
             {
@@ -178,17 +180,17 @@ namespace vne {
                 if (!(child_node->getState()==nullptr))
                     delayedReward = simulateNode(child_node);
                 else
-                    delayedReward = rollout(st);
+                    delayedReward = rollout(st->getCopy());
                 treeDepth--;
             }
             
             double totalReward = immediateReward + simulator->getDiscount() * delayedReward;
             
-            node->value.add(totalReward);
+            child_node->value.add(totalReward);
             addRave(node, totalReward);
             return totalReward;
         }
-
+        
         void MCTS::addRave(std::shared_ptr<TreeNode> node, double totalReward)
         {
             double totalDiscount = 1.0;
@@ -235,6 +237,10 @@ namespace vne {
                 if (ucb)
                     q += fastUCB(N, n, logN);
                 
+                if (params.UseSinglePlayerMCTS && child_node->value.getCount() > 0
+                     && child_node->value.getValue()> -Infinity)
+                    q += sqrt( (child_node->value.getSumSquaredValue() - n * child_node->value.getValue() * child_node->value.getValue() + params.SPMCTSConstant) / n );
+                
                 if (q >= bestq)
                 {
                     if (q > bestq)
@@ -273,6 +279,30 @@ namespace vne {
             return totalReward;
         }
 
+       /*double MCTS::rollout(std::shared_ptr<TreeNode> node, std::shared_ptr<State> state)
+        {
+            status.Phase = MCTSSimulator::Status::ROLLOUT;
+            
+            double totalReward = 0.0;
+            double discount = 1.0;
+            bool terminal = false;
+            int numSteps;
+            for (numSteps = 0; numSteps + treeDepth < params.MaxDepth && !terminal; ++numSteps)
+            {
+                double reward;
+                
+                int action = simulator->selectRandom(state, history, status);
+                terminal = simulator->step(state, action, reward);
+                node->state = state;
+                totalReward += reward * discount;
+                discount *= simulator->getDiscount();
+            }
+            
+            statRolloutDepth.Add(numSteps);
+            
+            return totalReward;
+        }
+        */
         double MCTS::UCB[UCB_N][UCB_n];
         bool MCTS::initialisedFastUCB = false;
 

@@ -43,8 +43,10 @@ namespace vne {
         MCVNESimulator<>::getValidSubstrateNodeIdSetForVNNodeId (int vn_id, std::shared_ptr<std::set<int>> used_sn_ids) const
         {
             double distance = vnr->getMaxDistance();
+            if (link_embedder->getType() == Link_Embedding_Algo_Types::WITH_PATH_SPLITTING)
+                return substrate_net->getNodesIDsWithConditions<ReachabilityConditionWithPathSpliting> (vnr->getVN()->getNode(vn_id), vnr->getVN()->getLinksForNodeId(vn_id), distance, used_sn_ids);
+            return substrate_net->getNodesIDsWithConditions<ReachabilityConditionNoPathSpliting> (vnr->getVN()->getNode(vn_id), vnr->getVN()->getLinksForNodeId(vn_id), distance, used_sn_ids);
             
-            return substrate_net->getNodesIDsWithConditions<ReachabilityCondition> (vnr->getVN()->getNode(vn_id), vnr->getVN()->getLinksForNodeId(vn_id), distance, used_sn_ids);
         }
  /*
         template<>
@@ -114,21 +116,30 @@ namespace vne {
 			{
 				revenue += vnr_link_vec->at(i)->getBandwidth();
 			}
+            BOOST_LOG_TRIVIAL(debug) <<  " ============= in calculateFinalReward ==================" << std::endl;
 			double cost = 0.0;
+            int count = 0;
 			for (auto it = linkMap->begin(); it != linkMap->end(); it++)
 			{
 				for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
 				{
 					double flow_bw = std::get<0>(*(it2->second));
 					cost+= flow_bw;
+                    BOOST_LOG_TRIVIAL(debug) << "vnr link ID: " << count << " SUB BW: " << std::get<0>(*it2->second) <<
+                    " using substrate link ID: "<< it2->first <<std::endl;
 				}
+                count++;
 			}
+            BOOST_LOG_TRIVIAL(debug) << "total link cost: " <<  cost << std::endl;
+            
 			for (auto it = st->getNodeMap()->begin(); it != st->getNodeMap()->end(); it++)
 			{
 				double vn_cpu = vnr->getVN()->getNode(it->first)->getCPU();
 				cost += vn_cpu;
 			}
-			return revenue-cost;
+            BOOST_LOG_TRIVIAL(debug) << "total cost: " << cost << std::endl;
+            BOOST_LOG_TRIVIAL(debug) << "total reward: " << revenue - cost << std::endl;
+			return (1000+revenue-cost);
 		}
     }
 }

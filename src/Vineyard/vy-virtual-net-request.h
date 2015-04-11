@@ -61,6 +61,8 @@ namespace vne {
             double linkMappingObjectiveVal;
             double nodeMappingObjectiveVal;
             
+            virtual void writeVNRToFile (std::ofstream& ofstrm);
+            
         private:
             int split;
             int topology;

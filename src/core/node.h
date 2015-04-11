@@ -39,6 +39,8 @@ namespace vne
 template<typename ... Args>
 class Node 
 {
+template<typename, typename> friend class Network;
+    
 public:
 	//Node();
 	//Node(Entity_t t);
@@ -46,15 +48,20 @@ public:
     Node(const Args &... _args, const Entity_t& t);
     virtual ~Node();
     int getId() const;
+    int getLocalId() const {return local_id;};
     const Entity_t& getType() const;
     const Resources<Args...>& getResources() const;
+    virtual void writeNodeToFile (std::ofstream& ofstrm) {};
     	//void setResources(std::tuple<Args...>);
 private:
 	typedef Node<Args...> this_t;
 protected:
     Node(const Resources<Args...>& _res, const Entity_t& t, bool noid);
     Node(const Args &... _args, const Entity_t& t, bool noid);
+    // id is a unique id assigned by IdGenerator
     int id;
+    //local_id is a number strating from 0 it is local to the node.
+    int local_id;
     Entity_t type;
     Resources<Args...> resources;
 };

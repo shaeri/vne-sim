@@ -23,6 +23,7 @@
  **/
 
 #include "vy-substrate-link.h"
+#include <fstream>
 
 namespace vne {
     namespace vineyard {
@@ -95,6 +96,16 @@ namespace vne {
         int VYSubstrateLink<>::operator--()
         {
             return --count;
+        }
+        template<>
+        void VYSubstrateLink<>::writeLinkToFile (std::ofstream& ofstrm)
+        {
+            if (ofstrm.is_open())
+            {
+                ofstrm <<  node_from_local_id << " " << node_to_local_id << " " << getBandwidth() << " " << getDelay() << std::endl;
+            }
+            else
+                BOOST_LOG_TRIVIAL(error) << "VYSubstrateLink<>::writeLinkToFile: VYThe file is not open for writing. " << std::endl;
         }
     }
 }

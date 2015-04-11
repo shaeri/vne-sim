@@ -43,6 +43,7 @@ namespace vne {
             int operator-- (int);
             int operator++ ();
             int operator-- ();
+            virtual void writeLinkToFile (std::ofstream& ofstrm);
         private:
             int count;
             double delay;

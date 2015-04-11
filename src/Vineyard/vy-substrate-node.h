@@ -44,6 +44,7 @@ namespace vne {
         ~VYSubstrateNode ();
         const VYCoordinate& getCoordinates () const;
         Embedding_Result embedNode(std::shared_ptr<VYVirtualNode<> > _n);
+        virtual void writeNodeToFile (std::ofstream& ofstrm);
         double getCPU () const;
         double getMaxCPU () const;
         int getCount () const;

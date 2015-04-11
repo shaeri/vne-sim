@@ -109,7 +109,6 @@ void Logger::logTrace(std::string message)
 {
     BOOST_LOG_SEV(log_, trace) << message;
 }
-
 void Logger::logInfo(std::string message)
 {
     BOOST_LOG_SEV(log_, info) << message;

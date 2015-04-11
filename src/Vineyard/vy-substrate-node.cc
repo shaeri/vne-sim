@@ -23,6 +23,7 @@
   **/
 
 #include "vy-substrate-node.h"
+#include <fstream>
 
 namespace vne {
     namespace vineyard {
@@ -99,6 +100,15 @@ namespace vne {
         int VYSubstrateNode<>::operator--()
         {
             return --count;
+        }
+        template<>
+        void VYSubstrateNode<>::writeNodeToFile (std::ofstream& ofstrm)
+        {
+            if (ofstrm.is_open()) {
+                ofstrm << getCoordinates().first << " " << getCoordinates().second << " " << getCPU() <<  std::endl;
+            }
+            else
+                BOOST_LOG_TRIVIAL(error) << "VYSubstrateNode<>::writeNodeToFile: VYThe file is not open for writing. " << std::endl;
         }
     }
 }

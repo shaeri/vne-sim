@@ -70,8 +70,11 @@ namespace vne {
             std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<SLINKRES...>>>>>* linkMap)
         {return embeddVNRLinks (substrate_net,vnr);};
         
+        Link_Embedding_Algo_Types getType () const {return type;};
+        
     protected:
-        LinkEmbeddingAlgorithm () {};
+        LinkEmbeddingAlgorithm (Link_Embedding_Algo_Types t) : type (t) {};
+        Link_Embedding_Algo_Types type;
         
     };
 }

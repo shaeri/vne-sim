@@ -27,12 +27,10 @@
 #include <string>
 #include <typeinfo>
 
-//#include "simple-impl/simple-network.h"
 #include "core/core-types.h"
 #include "core/link.h"
 #include "core/network.h"
 #include "core/virtual-network-request.h"
-#include "simple-impl/simple-request-proc.h"
 #include "core/substrate-node.h"
 #include "core/substrate-link.h"
 #include "adevs.h"

@@ -26,8 +26,13 @@
 #define RNG_H_
 
 #include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
+
 #include <memory>
 #include <map>
+#include <limits.h>
+
+#include "core/core-types.h"
 
 namespace vne {
     struct RNGSubscriber {};
@@ -40,6 +45,25 @@ namespace vne {
         const gsl_rng* getMyRNG (RNGSubscriber* objectPtr);
         const gsl_rng* getGeneralRNG ();
         void unsubscribe (RNGSubscriber* objectPtr);
+        
+        template<typename RetVAL, typename... PARAMS>
+        RetVAL sampleDistribution (Distribution d, std::tuple<PARAMS...> p, const gsl_rng* r = nullptr)
+        {
+            if (r == nullptr)
+            {
+                r = getGeneralRNG ();
+            }
+            switch (d) {
+                case Distribution::UNIFORM :
+                    return gsl_ran_flat (r, std::get<0> (p), std::get<1> (p));
+                case Distribution::EXPONENTIAL :
+                    return gsl_ran_exponential (r, std::get<0> (p));
+                case Distribution::POISSON :
+                    return gsl_ran_poisson (r, std::get<0> (p));
+                default:
+                    return INT_MAX;
+            }
+        }
         ~RNG ();
     protected:
         RNG(unsigned long int _seed);

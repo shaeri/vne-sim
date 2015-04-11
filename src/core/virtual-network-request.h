@@ -70,6 +70,7 @@ public:
     const std::map<int,int>* getNodeMap () const {return &nodeMap;};
     void addNodeMapping (int sNodeId, int vNodeId);
     void addLinkMapping (int sLinkId, int vLinkId, std::shared_ptr<Resources<LINKRES...>> _res);
+    virtual void writeVNRToFile (std::ofstream& ofstrm) {};
     
 protected:
 	int id;
@@ -114,9 +115,9 @@ template<typename ... NODERES, template <typename ...> class NODECLASS,
     void VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>::
             addNodeMapping (int sNodeId, int vNodeId)
     {
-        std::cout << "vnodeId: " << vNodeId << std::endl;
-        std::cout << "snodeId: " << sNodeId << std::endl;
-        std::cout << "-------------------------" << std::endl;
+        BOOST_LOG_TRIVIAL(debug) << "vnodeId: " << vNodeId << std::endl;
+        BOOST_LOG_TRIVIAL(debug) << "snodeId: " << sNodeId << std::endl;
+        BOOST_LOG_TRIVIAL(debug) << "-------------------------" << std::endl;
        nodeMap.insert(std::make_pair(vNodeId, sNodeId));
     }
 

@@ -39,6 +39,9 @@ public:
     VirtualNode (const NODERES &... _res);
 	void setHostNode (SubstrateNode<NODERES...>* _n);
 	virtual ~VirtualNode();
+protected:
+    VirtualNode (const Resources<NODERES...>& _res, bool noid);
+    VirtualNode (const NODERES &... _args, bool noid);
 private:
 	typedef VirtualNode<NODERES...> this_t;
 	//the substrate node that is hosting the virtual node
@@ -62,6 +65,16 @@ VirtualNode<NODERES...>::VirtualNode (const NODERES &... _res)
 	: 	Node<NODERES...> (_res..., Entity_t::virt)
 {
 	this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
+}
+template<typename ... NODERES>
+VirtualNode<NODERES...>::VirtualNode (const Resources<NODERES...>& _res, bool noid)
+: 	Node<NODERES...> (_res, Entity_t::virt, noid)
+{
+}
+template<typename ... NODERES>
+VirtualNode<NODERES...>::VirtualNode (const NODERES &... _res, bool noid)
+: 	Node<NODERES...> (_res..., Entity_t::virt, noid)
+{
 }
 template<typename ... NODERES>
 void VirtualNode<NODERES...>::setHostNode (SubstrateNode<NODERES...>* _n)

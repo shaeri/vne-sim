@@ -56,6 +56,8 @@ namespace vne{
                 double RaveConstant;
                 /** When set, the baseline rollout algorithm is run. */
                 bool DisableTree;
+                bool UseSinglePlayerMCTS;
+                double SPMCTSConstant;
             };
             
             MCTS(std::shared_ptr<MCTSSimulator> sim);

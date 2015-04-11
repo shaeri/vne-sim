@@ -74,8 +74,6 @@ namespace vne {
                 std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
                 const std::map<int,int>* nodeIdMap = nullptr,
                 std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap = nullptr);
-            
-            enum {DETERMINISTIC,RANDOMIZED} nodeMappingType;
         };
     }
 }

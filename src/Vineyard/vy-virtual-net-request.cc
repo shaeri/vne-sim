@@ -68,15 +68,14 @@ namespace vne {
                         
                     }
                     int count = 0;
-                    std::cout<< "----------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!------------------------" << std::endl;
+                    BOOST_LOG_TRIVIAL(debug) << "---!!!!!!!!!!!!!!!!!!!!!!!!!!---" << std::endl;
                     for (auto it1 = vnr->getLinkMap()->begin(); it1 != vnr->getLinkMap()->end(); it1++)
                     {
                         for (auto it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
                         {
                             //I think this calculation is not correct
                             //cost->second += (l->at(j)->getPathLength() * l->at(j)->getBandwidth());
-                            
-                            std::cout<< "vnr link ID: " << count << " SUB BW: " << std::get<0>(*it2->second) << std::endl;
+                            BOOST_LOG_TRIVIAL(debug) << "vnr link ID: " << count << " SUB BW: " << std::get<0>(*it2->second) << std::endl;
                             cost->second += std::get<0>(*it2->second);
                         }
                         count++;
@@ -159,6 +158,16 @@ namespace vne {
         bool VYVirtualNetRequest<>::operator< (const double& rhs)
         {
             return maxDistance<rhs;
+        }
+        template<>
+        void VYVirtualNetRequest<>::writeVNRToFile (std::ofstream& ofstrm)
+        {
+            if (ofstrm.is_open()) {
+                ofstrm << vn->getNumNodes() << " " << vn->getNumLinks() << " " << split << " " << "  " << arrivalTime << " " << duration << " " << topology << " " << maxDistance << std::endl;
+                vn->writeNetworkToFile(ofstrm,false);
+            }
+            else
+                BOOST_LOG_TRIVIAL(error) << "VYVirtualNetRequest<>::writeVNRToFile: VYThe file is not open for writing. " << std::endl;
         }
     }
 }

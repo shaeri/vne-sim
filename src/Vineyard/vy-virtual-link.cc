@@ -23,6 +23,7 @@
  **/
 
 #include "vy-virtual-link.h"
+#include <fstream>
 
 namespace vne {
     namespace vineyard {
@@ -67,6 +68,15 @@ namespace vne {
         double VYVirtualLink<>::getDelay() const
         {
             return delay;
+        }
+        template<>
+        void VYVirtualLink<>::writeLinkToFile (std::ofstream& ofstrm)
+        {
+            if (ofstrm.is_open()) {
+                ofstrm <<  node_from_local_id << " " << node_to_local_id << " " << getBandwidth() << " " << getDelay() << std::endl;
+            }
+            else
+                BOOST_LOG_TRIVIAL(error) << "VYVirtualLink<>::writeLinkToFile: VYThe file is not open for writing. " << std::endl;
         }
     }
 }

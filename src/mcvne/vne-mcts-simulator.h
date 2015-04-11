@@ -156,12 +156,9 @@ namespace vne{
         VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>
         ::createStartState () const
         {
-        	std::cout << "In create start state" << std::endl;
             const std::shared_ptr<std::set<int>> VNNodeIdSet = vnr->getVN()->getNodeIdSet();
-            std::cout << "TEST 1 .." << std::endl;
             std::shared_ptr<VNENMState> st (new VNENMState
                                             (VNNodeIdSet, vnr->getId(), vnr->getNodeMap()));
-            std::cout << "Out of create start state" << std::endl;
             return st;
         }
         

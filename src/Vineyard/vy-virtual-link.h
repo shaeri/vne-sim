@@ -43,6 +43,7 @@ namespace vne {
             double getDelay () const;
             int getPathLength () const {return pathLength;};
             double getPathDelay () {return pathDelay;};
+            virtual void writeLinkToFile (std::ofstream& ofstrm);
         private:
             int pathLength;
             double pathDelay;

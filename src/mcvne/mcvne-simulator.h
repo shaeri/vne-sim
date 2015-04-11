@@ -53,7 +53,7 @@ namespace vne {
             virtual double calculateFinalReward (std::shared_ptr<VNENMState> st,
                                                  const std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap) const override;
         private:
-            struct ReachabilityCondition
+            struct ReachabilityConditionWithPathSpliting
             {
                 bool operator()(const std::shared_ptr<const VYSubstrateNode<>> lhs, const std::shared_ptr<const std::vector<std::shared_ptr<VYSubstrateLink<>>> > linksConnectedToLhs, const std::shared_ptr<const VYVirtualNode<>> rhs, const std::shared_ptr<const std::vector<std::shared_ptr<VYVirtualLink<>>> > linksConnectedToRhs, double maxD, std::shared_ptr<std::set<int>> used_sn_ids) const
                 {
@@ -68,6 +68,30 @@ namespace vne {
                         sum_vn_link_bw += (*it)->getBandwidth();
                     }
                     return (sum_sn_link_bw >= sum_vn_link_bw && used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
+                            lhs->getCPU()>=rhs->getCPU() );
+                }
+            };
+            struct ReachabilityConditionNoPathSpliting
+            {
+                bool operator()(const std::shared_ptr<const VYSubstrateNode<>> lhs, const std::shared_ptr<const std::vector<std::shared_ptr<VYSubstrateLink<>>> > linksConnectedToLhs, const std::shared_ptr<const VYVirtualNode<>> rhs, const std::shared_ptr<const std::vector<std::shared_ptr<VYVirtualLink<>>> > linksConnectedToRhs, double maxD, std::shared_ptr<std::set<int>> used_sn_ids) const
+                {
+                    std::map<int,double> usedSLBW;
+                    for (auto itr = linksConnectedToRhs->begin(); itr != linksConnectedToRhs->end(); itr++)
+                    {
+                        int count = 0;
+                        for (auto itl = linksConnectedToLhs->begin(); itl != linksConnectedToLhs->end(); itl++)
+                        {
+                            if ((*itr)->getBandwidth() <= ((*itl)->getBandwidth() - usedSLBW[(*itl)->getId()]))
+                            {
+                                count++;
+                                usedSLBW[(*itl)->getId()] += (*itr)->getBandwidth();
+                                break;
+                            }
+                        }
+                        if (count == 0)
+                            return false;
+                    }
+                    return (used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
                             lhs->getCPU()>=rhs->getCPU() );
                 }
             };
