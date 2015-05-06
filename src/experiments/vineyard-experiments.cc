@@ -52,26 +52,40 @@ namespace vne {
             
             graph = new VYVNRProcDigraph<> (embeddingProc, releaseProc, gen, observer);
             
-            std::string dirName = ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.dir");
+            std::stringstream vnrDir;
+            vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.path") << "/"
+            << ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.dir");
             
+            std::stringstream snDir (ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.path"));
             
-            vector<int> tokens (8);
-            tokens[0] = -1;
-            for (int i = 0; i<8 ;i++)
-            {
-                int pos = (int) dirName.find_first_of("-");
-                std::string tok = dirName.substr(0,pos);
-                if (i != 0)
-                    tokens[i] = atoi(tok.c_str());
-                dirName = dirName.substr(pos+1,dirName.length());
-            }
+            std::stringstream ConfigFile;
+            ConfigFile << vnrDir.str() << "/vnr_params.xml";
             
+            boost::property_tree::ptree VNParams;
+            boost::property_tree::read_xml(ConfigFile.str(), VNParams);
+            
+            ConfigFile.str(std::string());
+            ConfigFile << vnrDir.str() <<"/vnr_brite_params.xml";
+            boost::property_tree::ptree VNBriteParams;
+            boost::property_tree::read_xml(ConfigFile.str(), VNBriteParams);
+            
+            ConfigFile.str (std::string());
+            ConfigFile << snDir.str() << "/substrate_net_params.xml";
+            boost::property_tree::ptree SNParams;
+            boost::property_tree::read_xml(ConfigFile.str(), SNParams);
+            
+            ConfigFile.str (std::string());
+            ConfigFile << snDir.str() << "/substrate_net_brite_params.xml";
+            boost::property_tree::ptree SNBriteParams;
+            boost::property_tree::read_xml(ConfigFile.str(), SNBriteParams);
+            
+            params.setAllParams(SNParams, SNBriteParams, VNParams, VNBriteParams);
             
             std::string link_algo ("Vine MCF Link Mapping");
             std::string node_algo ("Vine Node Mapping");
             
             Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
-            this->initialize (graph, algo_type, node_algo, link_algo, tokens[2],tokens[1],tokens[3],tokens[4],0,tokens[7],tokens[6],tokens[5]);
+            this->initialize (graph, algo_type, node_algo, link_algo);
             
             setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setAlpha");
             setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setBeta");

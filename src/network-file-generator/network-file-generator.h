@@ -30,6 +30,7 @@
 #include "brite-handler.h"
 
 #include "core/core-types.h"
+#include "core/config-manager.h"
 
 #include "Vineyard/vy-substrate-link.h"
 #include "Vineyard/vy-substrate-node.h"
@@ -102,7 +103,8 @@ namespace vne {
                 double VLDelayDistParam2;
                 double VLDelayDistParam3;
                 
-
+                boost::property_tree::ptree vnrpt;
+                boost::property_tree::ptree snpt;
             };
             
             NetworkFileGenerator ();

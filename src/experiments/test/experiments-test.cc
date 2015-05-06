@@ -162,6 +162,39 @@ BOOST_AUTO_TEST_CASE(MCVNE_MCF)
     db->copyBean(exp);
 }
 
+BOOST_AUTO_TEST_CASE(MCVNE_BFS)
+{
+    Logger::Instance()->logInfo("Running MCVNE_BFS Experiment");
+    vne::experiments::MCVNENodeBFSLinkExp<> exp = vne::experiments::MCVNENodeBFSLinkExp<> ();
+                
+    std::string dbName;
+    dbName = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+    std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(dbName);
+                
+    exp.run();
+                
+    db->registerBeanClass<vne::experiments::MCVNENodeBFSLinkExp<>>();
+    db->dropModel();
+    db->createModel();
+    db->copyBean(exp);
+}
+BOOST_AUTO_TEST_CASE(Vine_MCF)
+{
+    Logger::Instance()->logInfo("Running MCVNE_BFS Experiment");
+    vne::experiments::VineNodeMCFLinkExp<> exp = vne::experiments::VineNodeMCFLinkExp<> ();
+                
+    std::string dbName;
+    dbName = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+    std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(dbName);
+                
+    exp.run();
+                
+    db->registerBeanClass<vne::experiments::MCVNENodeBFSLinkExp<>>();
+    db->dropModel();
+    db->createModel();
+    db->copyBean(exp);
+}
+/*
 BOOST_AUTO_TEST_CASE(Vine_MCF)
 {
 	std::string vnr_dir = "r-2000-50-50-20-10-5-25";
@@ -184,4 +217,5 @@ BOOST_AUTO_TEST_CASE(Vine_MCF)
     db->createModel();
     db->copyBean(exp);
 }
+*/
 BOOST_AUTO_TEST_SUITE_END ()

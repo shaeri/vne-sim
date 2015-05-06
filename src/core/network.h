@@ -224,7 +224,7 @@ inline const std::shared_ptr<LinkC<LinkT...>>
 {
     auto nodeFromItr = connectionMap.find (nodeIdFrom);
     auto nodeToItr = connectionMap.find (nodeIdTo);
-    if (nodeFromItr == connectionMap.end() || nodeToItr == connectionMap.end ())
+    if (connectionMap.size() > 0 && (nodeFromItr == connectionMap.end() || nodeToItr == connectionMap.end ()))
         std::cerr << "Network::getLinkBetweenNodes : Invalid nodeIds" << std::endl;
     // The connection map is symmetric, however, the links are not.
     // Therefore, we need to do the loop twice once for nodeIdFrom

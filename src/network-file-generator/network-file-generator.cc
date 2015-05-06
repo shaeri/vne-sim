@@ -23,7 +23,6 @@
  **/
 
 #include "network-file-generator.h"
-#include "core/config-manager.h"
 
 #include <boost/filesystem.hpp>
 
@@ -41,7 +40,7 @@ namespace vne {
         VNRNumNodesDistParam2(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator.VNRNumNodesDistParam2")),
         VNRNumNodesDistParam3(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator.VNRNumNodesDistParam3")),
         
-       VNRDurationDist((Distribution)ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.VNRDurationDist")),
+        VNRDurationDist((Distribution)ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.VNRDurationDist")),
         VNRDurationDistParam1(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator.VNRDurationDistParam1")),
         VNRDurationDistParam2(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator.VNRDurationDistParam2")),
         VNRDurationDistParam3(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator.VNRDurationDistParam3")),
@@ -87,6 +86,60 @@ namespace vne {
         VLDelayDistParam3(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator.VLDelayDistParam3"))
         
         {
+            
+            snpt.put ("SubstrateNodeNum", SubstrateNodeNum);
+            snpt.put ("SNCPUDist",  (int) SNCPUDist);
+            snpt.put ("SNCPUDistParam1",  SNCPUDistParam1);
+            snpt.put ("SNCPUDistParam2",  SNCPUDistParam2);
+            snpt.put ("SNCPUDistParam3",  SNCPUDistParam3);
+            
+            snpt.put ("SLBWDist",  (int) SLBWDist);
+            snpt.put ("SLBWDistParam1",  SLBWDistParam1);
+            snpt.put ("SLBWDistParam2",  SLBWDistParam2);
+            snpt.put ("SLBWDistParam3",  SLBWDistParam3);
+            
+            snpt.put ("SLDelayDist",  (int) SLDelayDist);
+            snpt.put ("SLDelayDistParam1",  SLDelayDistParam1);
+            snpt.put ("SLDelayDistParam2",  SLDelayDistParam2);
+            snpt.put ("SLDelayDistParam3",  SLDelayDistParam3);
+            
+            vnrpt.put ("TotalTime", totalTime);
+            vnrpt.put ("VNRLinkSplittingRate", VNRLinkSplittingRate);
+            
+            vnrpt.put ("VNRNumNodesDist", (int) VNRNumNodesDist);
+            vnrpt.put ("VNRNumNodesDistParam1", VNRNumNodesDistParam1);
+            vnrpt.put ("VNRNumNodesDistParam2", VNRNumNodesDistParam2);
+            vnrpt.put ("VNRNumNodesDistParam3", VNRNumNodesDistParam3);
+            
+            vnrpt.put ("VNRDurationDist",  (int) VNRDurationDist);
+            vnrpt.put ("VNRDurationDistParam1",  VNRDurationDistParam1);
+            vnrpt.put ("VNRDurationDistParam2",  VNRDurationDistParam2);
+            vnrpt.put ("VNRDurationDistParam3",  VNRDurationDistParam3);
+            
+            vnrpt.put ("VNRArrivalDist",  (int) VNRArrivalDist);
+            vnrpt.put ("VNRArrivalDistParam1",  VNRArrivalDistParam1);
+            vnrpt.put ("VNRArrivalDistParam2",  VNRArrivalDistParam2);
+            vnrpt.put ("VNRArrivalDistParam3",  VNRArrivalDistParam3);
+            
+            vnrpt.put ("VNRMaxDistanceDist",  (int) VNRMaxDistanceDist);
+            vnrpt.put ("VNRMaxDistanceDistParam1",  VNRMaxDistanceDistParam1);
+            vnrpt.put ("VNRMaxDistanceDistParam2",  VNRMaxDistanceDistParam2);
+            vnrpt.put ("VNRMaxDistanceDistParam3",  VNRMaxDistanceDistParam3);
+            
+            vnrpt.put ("VNCPUDist",  (int) VNCPUDist);
+            vnrpt.put ("VNCPUDistParam1",  VNCPUDistParam1);
+            vnrpt.put ("VNCPUDistParam2",  VNCPUDistParam2);
+            vnrpt.put ("VNCPUDistParam3",  VNCPUDistParam3);
+            
+            vnrpt.put ("VLBWDist",  (int) VLBWDist);
+            vnrpt.put ("VLBWDistParam1",  VLBWDistParam1);
+            vnrpt.put ("VLBWDistParam2",  VLBWDistParam2);
+            vnrpt.put ("VLBWDistParam3",  VLBWDistParam3);
+            
+            vnrpt.put ("VLDelayDist",  (int) VLDelayDist);
+            vnrpt.put ("VLDelayDistParam1",  VLDelayDistParam1);
+            vnrpt.put ("VLDelayDistParam2",  VLDelayDistParam2);
+            vnrpt.put ("VLDelayDistParam3",  VLDelayDistParam3);
         }
         
         NetworkFileGenerator::NetworkFileGenerator () :
@@ -116,6 +169,17 @@ namespace vne {
                 {
                     if ( exists(p) && is_directory(p))
                     {
+                        std::stringstream snConfigFiles;
+                        snConfigFiles << strstrm.str();
+                        snConfigFiles << "/substrate_net_params.xml";
+                        boost::property_tree::xml_writer_settings<char> w(' ', 4);
+                        boost::property_tree::write_xml(snConfigFiles.str(), params.snpt, std::locale(), w);
+                        
+                        snConfigFiles.str(std::string());
+                        snConfigFiles << strstrm.str();
+                        snConfigFiles << "/substrate_net_brite_params.xml";
+                        boost::property_tree::write_xml(snConfigFiles.str(), BriteHandler::Instance()->getParams().pt, std::locale(), w);
+                        
                         strstrm << "/vy_substrate_net_n_" << params.SubstrateNodeNum <<
                         "_outergrid_" << ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.outerGridSize") << "_inner_grid_" << ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.innerGridSize")<<".txt";
                         ofstrm.open(strstrm.str().c_str());
@@ -165,13 +229,21 @@ namespace vne {
                         "-grid-" << ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.outerGridSize");
                     boost::filesystem::path p (strstrm.str());
                     vnrDirectoryPath = strstrm.str();
-                
-                    if ( exists(p)|| !boost::filesystem::create_directory(p))
+                    
+                    if ( exists(p) || !boost::filesystem::create_directory(p))
                     {
                         cerr << "Cannot create a directory to save virtual netwrok request files." << std::endl;
                         cerr << "Directory: " << vnrDirectoryPath << std::endl;
                         throw;
                     }
+                    std::stringstream configFile;
+                    configFile << vnrDirectoryPath << "/vnr_params.xml";
+                    boost::property_tree::xml_writer_settings<char> w(' ', 4);
+                    boost::property_tree::write_xml(configFile.str(), params.vnrpt, std::locale(), w);
+                    
+                    configFile.str(std::string());
+                    configFile << vnrDirectoryPath << "/vnr_brite_params.xml";
+                    boost::property_tree::write_xml(configFile.str(), BriteHandler::Instance()->getParams().pt, std::locale(), w);
                 }
                 catch (...)
                 {
@@ -191,6 +263,7 @@ namespace vne {
                 unsigned int interArrivalTime;
                 do {
                      interArrivalTime = (unsigned int) RNG::Instance()->sampleDistribution<double>(params.VNRArrivalDist, std::tuple<double,double,double>(params.VNRArrivalDistParam1,params.VNRArrivalDistParam2,params.VNRArrivalDistParam3));
+                    //BOOST_LOG_TRIVIAL(debug) << time+ interArrivalTime;
                 }
                 while (time + interArrivalTime > params.totalTime);
                 time += interArrivalTime;
@@ -207,7 +280,7 @@ namespace vne {
                 {
                     std::ofstream ofstrm;
                     std::stringstream strstrm;
-                    std::cout << "Directory Path: " << vnrDirectoryPath << std::endl;
+                    BOOST_LOG_TRIVIAL(debug) << "Directory Path: " << vnrDirectoryPath << std::endl;
                     strstrm << vnrDirectoryPath;
                     boost::filesystem::path p (vnrDirectoryPath);
                     

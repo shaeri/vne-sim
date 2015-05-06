@@ -151,6 +151,14 @@ namespace vne {
         outerGridSize(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.outerGridSize")),
         rtWaxman (RTWaxman())
         {
+            pt.put ("nodePlacement", nodePlacement);
+            pt.put ("numNeighbors", numNeighbors);
+            pt.put ("innerGridSize", innerGridSize);
+            pt.put ("outerGridSize", outerGridSize);
+            pt.put ("nodePlacement", nodePlacement);
+            pt.put ("RTWaxman.growthType", rtWaxman.growthType);
+            pt.put ("RTWaxman.alpha", rtWaxman.alpha);
+            pt.put ("RTWaxman.beta", rtWaxman.beta);
         }
         
         BriteHandler::Parameters::RTWaxman::RTWaxman () :
@@ -165,6 +173,12 @@ namespace vne {
         {
             InitSeeds();
         }
+        const BriteHandler::Parameters&
+        BriteHandler::getParams() const
+        {
+            return params;
+        }
+        
 /*
         void BriteHandler::ParseModel()
         {

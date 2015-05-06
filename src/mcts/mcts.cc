@@ -79,11 +79,19 @@ namespace vne {
             // Find matching vnode from the rest of the tree
             std::shared_ptr<TreeNode> child_node = root->child(action);
             BOOST_LOG_TRIVIAL(debug) << "Child's node value: " << child_node->value.getValue() <<std::endl;
+            
             // Delete old tree and create new root
-            //const std::shared_ptr<State> st = root->getState()->getCopy();
-            //double dummyReward;
-            //simulator->step(st, action, dummyReward);
-            //std::shared_ptr<TreeNode> newRoot = expandNode(st);
+            if (child_node->getState() == nullptr)
+            {
+               
+                const std::shared_ptr<State> st = root->getState()->getCopy();
+                double dummyReward;
+                bool terminal = simulator->step(st, action, dummyReward);
+                if (!terminal) {
+                     *child_node = *(expandNode(st));
+                }
+            }
+            
             *root = *child_node;
             return true;
         }
@@ -171,7 +179,7 @@ namespace vne {
             
             std::shared_ptr<TreeNode> child_node = node->child(action);
             
-            if (child_node->getState()==nullptr && !terminal && child_node->value.getCount() >= params.ExpandCount)
+            if (child_node->getState()==nullptr && !terminal && node->value.getCount() >= params.ExpandCount)
                 *child_node = *(expandNode(st));
             
             if (!terminal)

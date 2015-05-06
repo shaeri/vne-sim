@@ -55,6 +55,15 @@ namespace vne {
                 ar & HIBERLITE_NVP(setAlpha);
                 ar & HIBERLITE_NVP(setBeta);
                 ar & HIBERLITE_NVP(statistics);
+                ar & HIBERLITE_NVP (mcts_num_simulations);
+                ar & HIBERLITE_NVP (mcts_max_depth);
+                ar & HIBERLITE_NVP (mcts_use_rave);
+                ar & HIBERLITE_NVP (mcts_use_sp_mcts);
+                ar & HIBERLITE_NVP (mcts_expand_count);
+                ar & HIBERLITE_NVP (mcts_exploration_constant);
+                ar & HIBERLITE_NVP (mcts_rave_constant);
+                ar & HIBERLITE_NVP (mcts_rave_discount);
+                ar & HIBERLITE_NVP (mcts_discount);
             }
         public:
             MCVNENodeMCFLinkExp ();
@@ -66,6 +75,17 @@ namespace vne {
             int setAlpha;
             //setBeta
             int setBeta;
+            int mcts_num_simulations;
+            int mcts_max_depth;
+            int mcts_use_rave;
+            int mcts_use_sp_mcts;
+            int mcts_expand_count;
+            double mcts_exploration_constant;
+            double mcts_rave_constant;
+            double mcts_rave_discount;
+            double mcts_discount;
+            double mcts_sp_constant;
+            
         private:
             VYVNRProcDigraph<>* graph;
             std::shared_ptr<VYSubstrateNetworkBuilder<>> sb;
@@ -83,13 +103,35 @@ namespace vne {
             void hibernate(Archive & ar)
             {
                 ar & HIBERLITE_BASE_CLASS_WITH_NAME(vne::Experiment<VYVNRProcDigraph<>>,Experiment);
-                ar & HIBERLITE_NVP(statistics);
+                ar & HIBERLITE_NVP (statistics);
+                ar & HIBERLITE_NVP (mcts_num_simulations);
+                ar & HIBERLITE_NVP (mcts_max_depth);
+                ar & HIBERLITE_NVP (mcts_use_rave);
+                ar & HIBERLITE_NVP (mcts_use_sp_mcts);
+                ar & HIBERLITE_NVP (mcts_expand_count);
+                ar & HIBERLITE_NVP (mcts_exploration_constant);
+                ar & HIBERLITE_NVP (mcts_rave_constant);
+                ar & HIBERLITE_NVP (mcts_rave_discount);
+                ar & HIBERLITE_NVP (mcts_discount);
+                                   
             }
         public:
             MCVNENodeBFSLinkExp ();
             virtual void statisticsGenerated (Statistics& stat);
             virtual ~MCVNENodeBFSLinkExp ();
             
+        protected:
+            int mcts_num_simulations;
+            int mcts_max_depth;
+            int mcts_use_rave;
+            int mcts_use_sp_mcts;
+            int mcts_expand_count;
+            double mcts_exploration_constant;
+            double mcts_rave_constant;
+            double mcts_rave_discount;
+            double mcts_discount;
+            double mcts_sp_constant;
+        
         private:
             VYVNRProcDigraph<>* graph;
             std::shared_ptr<VYSubstrateNetworkBuilder<>> sb;

@@ -70,7 +70,6 @@ namespace vne{
         class BriteHandler
         {
         public:
-            
             struct Parameters {
                 Parameters ();
                 std::string BriteSeedFile;
@@ -85,7 +84,11 @@ namespace vne{
                     double alpha;
                     double beta;
                 } rtWaxman;
+                
+                boost::property_tree::ptree pt;
             };
+            
+            const Parameters& getParams () const;
             
             static std::shared_ptr<BriteHandler> Instance();
             

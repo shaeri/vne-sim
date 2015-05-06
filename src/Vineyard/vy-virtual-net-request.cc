@@ -163,7 +163,7 @@ namespace vne {
         void VYVirtualNetRequest<>::writeVNRToFile (std::ofstream& ofstrm)
         {
             if (ofstrm.is_open()) {
-                ofstrm << vn->getNumNodes() << " " << vn->getNumLinks() << " " << split << " " << "  " << arrivalTime << " " << duration << " " << topology << " " << maxDistance << std::endl;
+                ofstrm << vn->getNumNodes() << " " << vn->getNumLinks() << " " << split << " " << " " << arrivalTime << " " << duration << " " << topology << " " << maxDistance << std::endl;
                 vn->writeNetworkToFile(ofstrm,false);
             }
             else

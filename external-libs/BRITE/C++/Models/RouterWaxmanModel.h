@@ -60,5 +60,3 @@ class RouterWaxman : public RouterModel {
 };
 
 #endif /* RT_WAX_MODEL_H */
-
-

@@ -72,13 +72,25 @@ enum class Distribution
     POISSON
 };
     
-static std::string get_Embedding_Algorithm_Type_Str (Embedding_Algorithm_Types t)
+static inline std::string get_Distribution_Str (Distribution d)
+{
+    if (d == Distribution::UNIFORM)
+        return std::string ("Uniform");
+    if (d == Distribution::EXPONENTIAL)
+        return std::string ("Exponential");
+    if (d == Distribution::POISSON)
+        return std::string ("Poisson");
+    return std::string ("Uniform");
+};
+    
+static inline std::string get_Embedding_Algorithm_Type_Str (Embedding_Algorithm_Types t)
 {
     if (t == Embedding_Algorithm_Types::TWO_STAGE)
         return std::string ("TWO_STAGE");
     return std::string ("SINGLE_STAGE");
 };
-static std::string get_Evenet_Type_Str (Event_Types t)
+    
+static inline std::string get_Evenet_Type_Str (Event_Types t)
 {
     if (t == Event_Types::EVENT_TYPE_ARRIVAL)
         return std::string ("VNR_ARRIVAL");

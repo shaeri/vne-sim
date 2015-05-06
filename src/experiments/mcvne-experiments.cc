@@ -55,29 +55,55 @@ namespace vne {
             
             graph = new VYVNRProcDigraph<> (embeddingProc, releaseProc, gen, observer);
             
-            std::string dirName = ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.dir");
+            std::stringstream vnrDir;
+            vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.path") << "/"
+            << ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.dir");
             
+            std::stringstream snDir (ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.path"));
             
-            vector<int> tokens (8);
-            tokens[0] = -1;
-            for (int i = 0; i<8 ;i++)
-            {
-                int pos = (int) dirName.find_first_of("-");
-                std::string tok = dirName.substr(0,pos);
-                if (i != 0)
-                    tokens[i] = atoi(tok.c_str());
-                dirName = dirName.substr(pos+1,dirName.length());
-            }
+            std::stringstream ConfigFile;
+            ConfigFile << vnrDir.str() << "/vnr_params.xml";
+            
+            boost::property_tree::ptree VNParams;
+            boost::property_tree::read_xml(ConfigFile.str(), VNParams);
+            
+            ConfigFile.str(std::string());
+            ConfigFile << vnrDir.str() <<"/vnr_brite_params.xml";
+            boost::property_tree::ptree VNBriteParams;
+            boost::property_tree::read_xml(ConfigFile.str(), VNBriteParams);
+            
+            ConfigFile.str (std::string());
+            ConfigFile << snDir.str() << "/substrate_net_params.xml";
+            boost::property_tree::ptree SNParams;
+            boost::property_tree::read_xml(ConfigFile.str(), SNParams);
+            
+            ConfigFile.str (std::string());
+            ConfigFile << snDir.str() << "/substrate_net_brite_params.xml";
+            boost::property_tree::ptree SNBriteParams;
+            boost::property_tree::read_xml(ConfigFile.str(), SNBriteParams);
+            
+            params.setAllParams(SNParams, SNBriteParams, VNParams, VNBriteParams);
             
             
             std::string link_algo ("MCF Link Mapping");
             std::string node_algo ("MCVNE Node Mapping");
             
             Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
-            this->initialize (graph, algo_type, node_algo, link_algo, tokens[2],tokens[1],tokens[3],tokens[4],0,tokens[7],tokens[6],tokens[5]);
+            this->initialize (graph, algo_type, node_algo, link_algo);
             
             setAlpha = ConfigManager::Instance()->getConfig<bool>("MCVNE.VNEMCTSSimulator.setAlpha");
             setBeta  = ConfigManager::Instance()->getConfig<bool>("MCVNE.VNEMCTSSimulator.setBeta");
+            mcts_max_depth = ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.MaxDepth");
+            mcts_num_simulations = ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.NumSimulations");
+            mcts_expand_count = ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.ExpandCount");
+            mcts_exploration_constant = ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.ExplorationConstant");
+            mcts_use_rave = (int) ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.UseRave");
+            mcts_rave_discount = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.RaveDiscount") : -1.0;
+            mcts_rave_constant = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.RaveConstant") : -1.0;
+            mcts_use_sp_mcts  = (int) ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.UseSinglePlayerMCTS");
+            mcts_sp_constant =  (mcts_use_sp_mcts > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.SPMCTSConstant") : -1.0;
+            mcts_discount = ConfigManager::Instance()->getConfig<double>("MCTS.Simulator.discount");
+            
         }
         
         template<>
@@ -117,26 +143,51 @@ namespace vne {
             
             graph = new VYVNRProcDigraph<> (embeddingProc, releaseProc, gen, observer);
             
-            std::string dirName = ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.dir");
+            std::stringstream vnrDir;
+            vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.path") << "/"
+            << ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.dir");
             
+            std::stringstream snDir (ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.path"));
             
-            vector<int> tokens (8);
-            tokens[0] = -1;
-            for (int i = 0; i<8 ;i++)
-            {
-                int pos = (int) dirName.find_first_of("-");
-                std::string tok = dirName.substr(0,pos);
-                if (i != 0)
-                    tokens[i] = atoi(tok.c_str());
-                dirName = dirName.substr(pos+1,dirName.length());
-            }
+            std::stringstream ConfigFile;
+            ConfigFile << vnrDir.str() << "/vnr_params.xml";
             
+            boost::property_tree::ptree VNParams;
+            boost::property_tree::read_xml(ConfigFile.str(), VNParams);
+            
+            ConfigFile.str(std::string());
+            ConfigFile << vnrDir.str() << "/vnr_brite_params.xml";
+            boost::property_tree::ptree VNBriteParams;
+            boost::property_tree::read_xml(ConfigFile.str(), VNBriteParams);
+            
+            ConfigFile.str (std::string());
+            ConfigFile << snDir.str() << "/substrate_net_params.xml";
+            boost::property_tree::ptree SNParams;
+            boost::property_tree::read_xml(ConfigFile.str(), SNParams);
+            
+            ConfigFile.str (std::string());
+            ConfigFile << snDir.str() << "/substrate_net_brite_params.xml";
+            boost::property_tree::ptree SNBriteParams;
+            boost::property_tree::read_xml(ConfigFile.str(), SNBriteParams);
+            
+            params.setAllParams(SNParams, SNBriteParams, VNParams, VNBriteParams);
             
             std::string link_algo ("BFS-SP Link Mapping");
             std::string node_algo ("MCVNE Node Mapping");
             
             Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
-            this->initialize (graph, algo_type, node_algo, link_algo, tokens[2],tokens[1],tokens[3],tokens[4],0,tokens[7],tokens[6],tokens[5]);
+            this->initialize (graph, algo_type, node_algo, link_algo);
+            
+            mcts_max_depth = ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.MaxDepth");
+            mcts_num_simulations = ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.NumSimulations");
+            mcts_expand_count = ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.ExpandCount");
+            mcts_exploration_constant = ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.ExplorationConstant");
+            mcts_use_rave = (int) ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.UseRave");
+            mcts_rave_discount = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.RaveDiscount") : -1.0;
+            mcts_rave_constant = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.RaveConstant") : -1.0;
+            mcts_use_sp_mcts  = (int) ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.UseSinglePlayerMCTS");
+            mcts_sp_constant =  (mcts_use_sp_mcts > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.SPMCTSConstant") : -1.0;
+            mcts_discount = ConfigManager::Instance()->getConfig<double>("MCTS.Simulator.discount");
         }
         
         template<>

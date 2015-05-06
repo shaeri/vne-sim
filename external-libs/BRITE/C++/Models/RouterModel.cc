@@ -81,20 +81,20 @@ void RouterModel::PlaceNodes(Graph* g) {
     cout << "random placement...\n" << flush;
     for (int i = 0; i < n; i++) {
       
-      bool found = true;
-      do {
+      //bool found = true;
+      //do {
 	/* Pick random location */
 	x = floor(U.GetValUniform((double) Scale_1));
 	y = floor(U.GetValUniform((double) Scale_1));
 	/* 3rd dimension disabled for now */
 	z = 0.0; 
 	/* Check for Placement Collision */       
-	int tx = (int)x;
-	int ty = (int)y;
+	//int tx = (int)x;
+	//int ty = (int)y;
 
-	found = PlaneCollision(tx, ty);
+	//found = PlaneCollision(tx, ty);
 
-      }while(found);
+      //}while(found);
       
       try {
 

@@ -7,7 +7,7 @@
 
 <core>
     <!--The result database file-->
-    <dbPath>/Users/soroosh/Desktop/t1.db</dbPath>
+    <dbPath>/Users/soroosh/Desktop/t2.db</dbPath>
     <!-- 0 uses the libraries standard seed -->
     <rngSeed>0</rngSeed>
     <!--Verious random number generator types that gsl_rng library implements may be found at: -->
@@ -21,7 +21,7 @@
         <!-- Random = 1, Heavy Tailed = 2 -->
         <nodePlacement>1</nodePlacement>
         <!-- Number of neighboring node each new node connects to. -->
-        <numNeighbors>2</numNeighbors>
+        <numNeighbors>5</numNeighbors>
         <!-- We assume the same grid size for SN and VNRs-->
         <innerGridSize>25</innerGridSize>
         <outerGridSize>25</outerGridSize>
@@ -45,7 +45,7 @@
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNRNumNodesDist>0</VNRNumNodesDist>
-    <VNRNumNodesDistParam1>2</VNRNumNodesDistParam1>
+    <VNRNumNodesDistParam1>3</VNRNumNodesDistParam1>
     <VNRNumNodesDistParam2>10</VNRNumNodesDistparam2>
     <VNRNumNodesDistParam3>-1</VNRNumNodesDistParam3>
 
@@ -58,13 +58,14 @@
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNRArrivalDist>2</VNRArrivalDist>
-    <VNRArrivalDistParam1>10000</VNRArrivalDistParam1>
+    <!-- 1/ArrivalRate => for example for arrival rate of 8 per 100 unit time param = 100/8 = 12.5 -->
+    <VNRArrivalDistParam1>12.5</VNRArrivalDistParam1>
     <VNRArrivalDistParam2>-1</VNRArrivalDistParam2>
     <VNRArrivalDistParam3>-1</VNRArrivalDistParam3>
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNRMaxDistanceDist>0</VNRMaxDistanceDist>
-    <VNRMaxDistanceDistParam1>5</VNRMaxDistanceDistParam1>
+    <VNRMaxDistanceDistParam1>10</VNRMaxDistanceDistParam1>
     <VNRMaxDistanceDistParam2>25</VNRMaxDistanceDistParam2>
     <VNRMaxDistanceDistParam3>-1</VNRMaxDistanceDistParam3>
     
@@ -108,12 +109,12 @@
 
 <vineyard>
     <SubstrateNetwork>
-        <path>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/substrate_network</path>
-        <filename>sub-50-2.txt</filename>
+        <path>/Users/Soroosh/Desktop/Network_Files/substrate_nets</path>
+        <filename>vy_substrate_net_n_50_outergrid_25_inner_grid_25.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
-        <path>/Users/Soroosh/Desktop</path>
-        <dir>reqs</dir>
+        <path>/Users/Soroosh/Desktop/Network_Files</path>
+        <dir>reqs-12-1000-nodesMin-3-nodesMax-10-grid-25</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>
     <Results>
@@ -129,7 +130,7 @@
         <setBeta>false</setBeta>   <!-- if set to false Beta is automatically set to 1-->
         <!-- "deterministic" or "randomized" (use exact words without quotes). 
          If it is not specified deterministic approach is selected by default. -->
-        <nodeMappingType>randomized</nodeMappingType>
+        <nodeMappingType>deterministic</nodeMappingType>
     </Configs>
     <glpk>
         <LPmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
@@ -158,7 +159,7 @@
     
     <MCTSParameters>
         <MaxDepth>10</MaxDepth>
-        <NumSimulations>50</NumSimulations>
+        <NumSimulations>40</NumSimulations>
         <!-- How many nodes to add at each expansion step -->
         <ExpandCount>1</ExpandCount>
         <!-- if this is set to false Exploration constant will be used otherwise Exploration constant will be set to 0 if UseRave flag is set or Exploration constant will be set to rewardRange.-->
@@ -184,7 +185,8 @@
         <setBeta>false</setBeta>
     </VNEMCTSSimulator>
     <NodeEmbeddingAlgo>
-        <LinkEmbedder>MCF</LinkEmbedder>
+        <!-- MCF of BFS-SP -->
+        <LinkEmbedder>BFS-SP</LinkEmbedder>
     </NodeEmbeddingAlgo>
 </MCVNE>
 

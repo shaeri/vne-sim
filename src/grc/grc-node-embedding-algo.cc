@@ -180,6 +180,7 @@ namespace vne {
                 for (auto it2 = vnIdSet->begin(); it2 != vnIdSet->end(); it2++)
                 {
                     std::shared_ptr<VYVirtualLink<>> linkBetweenVNs = vnr->getVN()->getLinkBetweenNodes(*it1, *it2);
+                    
                     if (linkBetweenVNs == nullptr)
                     {
                         mMat[*it1][*it2] = 0.0;

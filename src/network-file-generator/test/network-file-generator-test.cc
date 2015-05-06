@@ -38,7 +38,6 @@ BOOST_AUTO_TEST_CASE(SubstrateNetworkGenerator)
 {
     NetworkFileGenerator nfg;
     nfg.VYSubstrateNetFileGenerator(true);
-    nfg.VYVirtualNetRequestGenerator(true);
 }
 BOOST_AUTO_TEST_CASE(VNRGenerator)
 {

@@ -31,6 +31,7 @@
 #include "vnr-process-digraph.h"
 #include "network-builder.h"
 #include "statistics-subscriber.h"
+#include "experiment-parameters.h"
 
 #include "hiberlite.h"
 
@@ -62,13 +63,7 @@ namespace vne {
             ar & HIBERLITE_NVP(algo_type);
             ar & HIBERLITE_NVP(node_mapping_algo);
             ar & HIBERLITE_NVP(link_mapping_algo);
-            ar & HIBERLITE_NVP(vnr_count);
-            ar & HIBERLITE_NVP(link_res);
-            ar & HIBERLITE_NVP(cpu_res);
-            ar & HIBERLITE_NVP(split);
-            ar & HIBERLITE_NVP(scale);
-            ar & HIBERLITE_NVP(maxD);
-            ar & HIBERLITE_NVP(topo_res);
+            ar & HIBERLITE_NVP(params);
         }
 
     public:
@@ -97,35 +92,19 @@ namespace vne {
         std::string algo_type;
         std::string node_mapping_algo;
         std::string link_mapping_algo;
-        int substrate_net_node_count;
-        int vnr_count;
-        int link_res;
-        int cpu_res;
-        int split;
-        int scale;
-        int maxD;
-        int topo_res;
+        
+        ExperimentParameters params;
+        
         
         void initialize (DIGRAPH_TYPE* _proc_digraph, Embedding_Algorithm_Types _algo_t, std::string _node_mapping_algo,
-                    std::string _link_mapping_algo, int _substrate_net_node_count,
-                    int _vnr_count, int _link_res, int _cpu_res, int _split,
-                    int _scale, int _maxD, int _topo_res)
-        
+                    std::string _link_mapping_algo)
         {
             algo_type = get_Embedding_Algorithm_Type_Str(_algo_t);
             node_mapping_algo = _node_mapping_algo;
             link_mapping_algo = _link_mapping_algo;
-            substrate_net_node_count = _substrate_net_node_count;
-            vnr_count = _vnr_count;
-            link_res = _link_res;
-            cpu_res = _cpu_res;
-            split = _split;
-            scale = _scale;
-            maxD = _maxD;
-            topo_res = _topo_res;
             sim =  new adevs::Simulator<typename GEN<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::ADEVS_IO_TYPE> (_proc_digraph);
         };
-        
+         
         adevs::Simulator<typename GEN<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::ADEVS_IO_TYPE>* sim;
     };
 }

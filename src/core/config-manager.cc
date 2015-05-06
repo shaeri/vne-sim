@@ -53,6 +53,7 @@ namespace vne {
     void
     ConfigManager::saveConfigFile()
     {
-    	write_xml (Config_File_Path, _pt);
+        boost::property_tree::xml_writer_settings<char> w(' ', 4);
+        write_xml (Config_File_Path ,_pt, std::locale(), w);
     }
 }

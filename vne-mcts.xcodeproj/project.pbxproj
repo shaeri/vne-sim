@@ -69,6 +69,7 @@
 		957577AC199D7CA9002D9B47 /* vnr-process-digraph.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A7E015199D5C01009E134D /* vnr-process-digraph.h */; };
 		9584A0E919D37F7900FF1A70 /* vineyard-experiments.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9584A0E719D37F7900FF1A70 /* vineyard-experiments.cc */; };
 		958AABD119805A6A00912DD9 /* vy-coordinate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 958AABD019805A6A00912DD9 /* vy-coordinate.cc */; };
+		959C05011AEEDFDF0004C1C0 /* experiment-parameters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 959C04FF1AEEDFDF0004C1C0 /* experiment-parameters.cc */; };
 		959C06E7199D80AB00B74919 /* vy-vnr-proc-observer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 959C06E5199D80AB00B74919 /* vy-vnr-proc-observer.cc */; };
 		959C06EB199D811600B74919 /* vy-vnr-proc-digraph.cc in Sources */ = {isa = PBXBuildFile; fileRef = 959C06E9199D811600B74919 /* vy-vnr-proc-digraph.cc */; };
 		959C06EC199D87C100B74919 /* vy-vnr-embedding-proc.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A7E00D199D4118009E134D /* vy-vnr-embedding-proc.h */; };
@@ -124,7 +125,6 @@
 		95FA35E519C118D000B7F416 /* vy-vine-two-stage-embedding-algo.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95FA35E319C118CF00B7F416 /* vy-vine-two-stage-embedding-algo.cc */; };
 		95FBC88219999149003B8968 /* vnr-generator.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A3663819998BAC009FA327 /* vnr-generator.h */; };
 		95FDC4401AC9F5E900222717 /* network-file-generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95FDC43E1AC9F5E900222717 /* network-file-generator.cc */; };
-		95FDC4431AC9F73200222717 /* network-file-generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95FDC4411AC9F73200222717 /* network-file-generator.cc */; };
 		95FDC4521AC9FD7A00222717 /* brite-handler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95FDC4501AC9FD7A00222717 /* brite-handler.cc */; };
 /* End PBXBuildFile section */
 
@@ -12017,6 +12017,8 @@
 		958705E61964A62D000A4132 /* virtual-link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "virtual-link.h"; sourceTree = "<group>"; };
 		958705E71964AB15000A4132 /* resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resources.h; sourceTree = "<group>"; };
 		958AABD019805A6A00912DD9 /* vy-coordinate.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = "vy-coordinate.cc"; path = "/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/vy-coordinate.cc"; sourceTree = "<absolute>"; };
+		959C04FF1AEEDFDF0004C1C0 /* experiment-parameters.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "experiment-parameters.cc"; sourceTree = "<group>"; };
+		959C05001AEEDFDF0004C1C0 /* experiment-parameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "experiment-parameters.h"; sourceTree = "<group>"; };
 		959C06E5199D80AB00B74919 /* vy-vnr-proc-observer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vnr-proc-observer.cc"; path = "src/Vineyard/vy-vnr-proc-observer.cc"; sourceTree = SOURCE_ROOT; };
 		959C06E6199D80AB00B74919 /* vy-vnr-proc-observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vnr-proc-observer.h"; path = "src/Vineyard/vy-vnr-proc-observer.h"; sourceTree = SOURCE_ROOT; };
 		959C06E9199D811600B74919 /* vy-vnr-proc-digraph.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vnr-proc-digraph.cc"; path = "src/Vineyard/vy-vnr-proc-digraph.cc"; sourceTree = SOURCE_ROOT; };
@@ -12035,7 +12037,6 @@
 		95A7E011199D42E0009E134D /* vy-vnr-release-proc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vnr-release-proc.h"; path = "src/Vineyard/vy-vnr-release-proc.h"; sourceTree = SOURCE_ROOT; };
 		95A7E013199D56B9009E134D /* vnr-process-observer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vnr-process-observer.h"; sourceTree = "<group>"; };
 		95A7E015199D5C01009E134D /* vnr-process-digraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "vnr-process-digraph.h"; sourceTree = "<group>"; };
-		95AC6EE219BA39B0005DE2F1 /* statistic-collector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "statistic-collector.h"; sourceTree = "<group>"; };
 		95AE5AAD1ACCCEBA0048DFA2 /* network-file-generator-test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "network-file-generator-test.cc"; sourceTree = "<group>"; };
 		95B3737D19998D17004133B6 /* vy-vnr-generator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vnr-generator.cc"; path = "src/Vineyard/vy-vnr-generator.cc"; sourceTree = SOURCE_ROOT; };
 		95B3737E19998D17004133B6 /* vy-vnr-generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vnr-generator.h"; path = "src/Vineyard/vy-vnr-generator.h"; sourceTree = SOURCE_ROOT; };
@@ -12158,8 +12159,6 @@
 		95FDC43C1AC9EBA300222717 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		95FDC43E1AC9F5E900222717 /* network-file-generator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "network-file-generator.cc"; sourceTree = "<group>"; };
 		95FDC43F1AC9F5E900222717 /* network-file-generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "network-file-generator.h"; sourceTree = "<group>"; };
-		95FDC4411AC9F73200222717 /* network-file-generator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "network-file-generator.cc"; sourceTree = "<group>"; };
-		95FDC4421AC9F73200222717 /* network-file-generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "network-file-generator.h"; sourceTree = "<group>"; };
 		95FDC4501AC9FD7A00222717 /* brite-handler.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "brite-handler.cc"; sourceTree = "<group>"; };
 		95FDC4511AC9FD7A00222717 /* brite-handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "brite-handler.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -13536,7 +13535,6 @@
 				95A7E008199D3FF1009E134D /* vnr-release-processor.h */,
 				95A7E013199D56B9009E134D /* vnr-process-observer.h */,
 				95A7E015199D5C01009E134D /* vnr-process-digraph.h */,
-				95AC6EE219BA39B0005DE2F1 /* statistic-collector.h */,
 				9563469D19A2922700A34EC4 /* embedding-algorithm.h */,
 				95127E4719C8D0CA007793FE /* release-algorithm.h */,
 				953D05CF19BE59A300C3B22B /* node-embedding-algorithm.h */,
@@ -13548,8 +13546,8 @@
 				9584A0EB19D39C9600FF1A70 /* statistics-subscriber.h */,
 				95C13BED1A2D48DD00B4BC05 /* rng.cc */,
 				95C13BEE1A2D48DD00B4BC05 /* rng.h */,
-				95FDC4411AC9F73200222717 /* network-file-generator.cc */,
-				95FDC4421AC9F73200222717 /* network-file-generator.h */,
+				959C04FF1AEEDFDF0004C1C0 /* experiment-parameters.cc */,
+				959C05001AEEDFDF0004C1C0 /* experiment-parameters.h */,
 			);
 			path = core;
 			sourceTree = "<group>";
@@ -25187,7 +25185,6 @@
 				9561A93E1958E30700BF44A6 /* virtual-node.h in Sources */,
 				95FDC4401AC9F5E900222717 /* network-file-generator.cc in Sources */,
 				95D3E4CC1ACB8CAD000F7372 /* RouterBarabasiAlbertModel-2.cc in Sources */,
-				95FDC4431AC9F73200222717 /* network-file-generator.cc in Sources */,
 				959C06EB199D811600B74919 /* vy-vnr-proc-digraph.cc in Sources */,
 				950353081A5C9B3D003A3BB4 /* vne-nm-state.cc in Sources */,
 				9561A93F1958E30700BF44A6 /* simple-link.cc in Sources */,
@@ -25209,6 +25206,7 @@
 				9561A9441958E30700BF44A6 /* simple-node.h in Sources */,
 				95D3E4CE1ACB8CAD000F7372 /* RouterGLPModel.cc in Sources */,
 				95D3E4C41ACB8CAD000F7372 /* ASBarabasiAlbertModel.cc in Sources */,
+				959C05011AEEDFDF0004C1C0 /* experiment-parameters.cc in Sources */,
 				9561A9451958E30700BF44A6 /* simple-request-proc.cc in Sources */,
 				95D3E4CF1ACB8CAD000F7372 /* RouterModel.cc in Sources */,
 				95D3E4C11ACB8CAD000F7372 /* Makefile in Sources */,
