@@ -246,7 +246,7 @@ namespace vne {
                     q += fastUCB(N, n, logN);
                 
                 if (params.UseSinglePlayerMCTS && child_node->value.getCount() > 0
-                     && child_node->value.getValue()> -Infinity)
+                     && child_node->value.getValue() > -Infinity)
                     q += sqrt( (child_node->value.getSumSquaredValue() - n * child_node->value.getValue() * child_node->value.getValue() + params.SPMCTSConstant) / n );
                 
                 if (q >= bestq)

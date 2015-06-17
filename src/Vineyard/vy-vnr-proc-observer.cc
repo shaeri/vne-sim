@@ -114,7 +114,7 @@ namespace vne {
                 if ((*i).port == entered_embedding_queue)
                 {
                     stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_ARRIVAL);
-                    stat.vnr_id = (*i).value->getId();
+                    setStatistics(stat, (*i).value);
                     BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< entered_embedding_queue << ". A VNR has entered embedding queue."  << std::endl;
                 }
                 else if ((*i).port == embedding_successful)
@@ -127,11 +127,11 @@ namespace vne {
                 else if ((*i).port == embedding_unsuccessful)
                 {
                     stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_FAIL_EMBEDDING);
-                    stat.vnr_id = (*i).value->getId();
+                    setStatistics(stat, (*i).value);
                     BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< embedding_unsuccessful << ". A VNR embedding was unsuccessful."  << std::endl;
                     
                 }
-                else if ((*i).port ==released_resources)
+                else if ((*i).port == released_resources)
                 {
                     stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_DEPARTURE);
                     setStatistics(stat, (*i).value);

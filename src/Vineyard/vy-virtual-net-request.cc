@@ -38,9 +38,14 @@ namespace vne {
         {
             if (calcRevenue == nullptr)
             {
+
                 revenue = [] (const VYVirtualNetRequest<>* vnr) -> std::shared_ptr<std::pair<double,double>>
                 {
                     std::shared_ptr<std::pair<double,double>> rev (new std::pair<double,double>(0,0));
+                    if (vnr->getLinkMap()->size() != vnr->getVN()->getNumLinks () || vnr->getNodeMap()->size() != vnr->getVN()->getNumNodes())
+                    {
+                        return rev;
+                    }
                     const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
                     for (int i=0;i<n->size();++i)
                     {
@@ -61,6 +66,10 @@ namespace vne {
                 cost = [] (const VYVirtualNetRequest<>* vnr) -> std::shared_ptr<std::pair<double,double>>
                 {
                     std::shared_ptr<std::pair<double,double>>  cost (new std::pair<double,double>(0,0));
+                    if (vnr->getLinkMap()->size() != vnr->getVN()->getNumLinks () || vnr->getNodeMap()->size() != vnr->getVN()->getNumNodes())
+                    {
+                        return cost;
+                    }
                     const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> n = vnr->getVN()->getAllNodes();
                     for (int i=0;i<n->size();++i)
                     {
@@ -84,9 +93,6 @@ namespace vne {
                 };
             }
             else cost = calcCost;
-            std::shared_ptr<std::pair<double, double>> revPair = revenue(this);
-            nodeRevenue = revPair->first;
-            linkRevenue = revPair->second;
         }
         template<>
         VYVirtualNetRequest<>::~VYVirtualNetRequest()
@@ -110,18 +116,18 @@ namespace vne {
         template<>
         double VYVirtualNetRequest<>::getNodeRevenue() const
         {
-            return nodeRevenue;
+            return revenue(this)->first;
         }
         template<>
         double VYVirtualNetRequest<>::getLinkRevenue() const
         {
-            return linkRevenue;
+            return revenue(this)->second;
         }
         template<>
         double VYVirtualNetRequest<>::getTotalRevenue() const
         {
             float mult = ConfigManager::Instance()->getConfig<float>("vineyard.Constants.revenueMultiplier");
-            return nodeRevenue +  mult * linkRevenue;
+            return revenue(this)->first + mult * revenue(this)->second;
         }
         template<>
         double VYVirtualNetRequest<>::getNodeCost() const

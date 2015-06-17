@@ -67,8 +67,6 @@ namespace vne {
             int split;
             int topology;
             int maxDistance;
-            double nodeRevenue;
-            double linkRevenue;
             std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)> revenue;
             std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)> cost;
         };
