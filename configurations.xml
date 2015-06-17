@@ -2,12 +2,12 @@
     <!--if the path does not exist, no log file will be set.-->
     <logFile></logFile>
     <!-- log level can be set using the environment variable LOG_LEVEL. If LOG_LEVEL is not set this variable will be used.-->
-    <logLevel></logLevel>
+    <logLevel>error</logLevel>
 </utilities>
 
 <core>
     <!--The result database file-->
-    <dbPath>/Users/soroosh/Desktop/t2.db</dbPath>
+    <dbPath>/home/soroosh/Dropbox/vne-mcts-simulations/num-simulations-test/</dbPath>
     <!-- 0 uses the libraries standard seed -->
     <rngSeed>0</rngSeed>
     <!--Verious random number generator types that gsl_rng library implements may be found at: -->
@@ -17,7 +17,7 @@
 
 <NetworkFileGenerator>
     <BriteHandler>
-        <BriteSeedFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
+        <BriteSeedFile>/home/soroosh/src/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
         <!-- Random = 1, Heavy Tailed = 2 -->
         <nodePlacement>1</nodePlacement>
         <!-- Number of neighboring node each new node connects to. -->
@@ -28,13 +28,13 @@
         
         <RTWaxman>
             <!-- 1 = incremental, 2 = all -->
-            <growthType>1</growthType>
+            <growthType>2</growthType>
             <alpha>0.5</alpha>
-            <beta>0.2</beta>
+            <beta>.2</beta>
         </RTWaxman>
     </BriteHandler>
     
-    <DirToSaveFiles>/Users/Soroosh/Desktop/Network_Files/</DirToSaveFiles>
+    <DirToSaveFiles>/home/soroosh/Desktop/Network_Files/</DirToSaveFiles>
     
     <TotalTime>50000</TotalTime>
     
@@ -65,7 +65,7 @@
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNRMaxDistanceDist>0</VNRMaxDistanceDist>
-    <VNRMaxDistanceDistParam1>10</VNRMaxDistanceDistParam1>
+    <VNRMaxDistanceDistParam1>15</VNRMaxDistanceDistParam1>
     <VNRMaxDistanceDistParam2>25</VNRMaxDistanceDistParam2>
     <VNRMaxDistanceDistParam3>-1</VNRMaxDistanceDistParam3>
     
@@ -89,8 +89,8 @@
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNCPUDist>0</VNCPUDist>
-    <VNCPUDistParam1>0</VNCPUDistParam1>
-    <VNCPUDistParam2>50</VNCPUDistParam2>
+    <VNCPUDistParam1>2</VNCPUDistParam1>
+    <VNCPUDistParam2>20</VNCPUDistParam2>
     <VNCPUDistParam3>-1</VNCPUDistParam3>
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
@@ -109,11 +109,11 @@
 
 <vineyard>
     <SubstrateNetwork>
-        <path>/Users/Soroosh/Desktop/Network_Files/substrate_nets</path>
+        <path>/home/soroosh/Desktop/Network_Files/substrate_nets</path>
         <filename>vy_substrate_net_n_50_outergrid_25_inner_grid_25.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
-        <path>/Users/Soroosh/Desktop/Network_Files</path>
+        <path>/home/soroosh/Desktop/Network_Files</path>
         <dir>reqs-12-1000-nodesMin-3-nodesMax-10-grid-25</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>
@@ -133,10 +133,10 @@
         <nodeMappingType>deterministic</nodeMappingType>
     </Configs>
     <glpk>
-        <LPmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
-        <LPdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
-        <MCFmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
-        <MCFdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
+	<LPmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
+        <LPdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
+        <MCFmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
+        <MCFdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
         <!-- 0 disabled, 1 enabled -->
         <terminalEnabled>0</terminalEnabled>
     </glpk>

@@ -10,6 +10,7 @@ add_library (core SHARED
 		db-manager.cc
 		id-generator.cc
 		rng.cc
+		experiment-parameters.cc
 	    )
 
 target_link_libraries (core ${GSL_LIBRARIES} ${HIBERLITE_LIBRARY})
