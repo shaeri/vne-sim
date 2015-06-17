@@ -122,7 +122,7 @@ namespace vne{
         {
             std::shared_ptr<RouterWaxPar> par = std::shared_ptr<RouterWaxPar> (
                         new RouterWaxPar(n, params.outerGridSize , params.innerGridSize, params.nodePlacement, params.rtWaxman.growthType,
-                                        params.numNeighbors, params.rtWaxman.alpha, params.rtWaxman.beta, 1, 10, 1024));
+                                        min (params.numNeighbors, n), params.rtWaxman.alpha, params.rtWaxman.beta, 1, 10, 1024));
             std::shared_ptr<RouterWaxman> rt_wax_model =  std::shared_ptr<RouterWaxman> (new RouterWaxman(par.get()));
             std::shared_ptr<Topology> t = std::shared_ptr<Topology> (new Topology(rt_wax_model.get()));
             return createNetFromBRITETopo<A,B> (t, cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist, bw_param1, bw_param2, bw_param3,

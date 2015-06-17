@@ -243,7 +243,7 @@ namespace vne {
                        substrate_network->getNode(its->first)->getCoordinates()) <= vnr->getMaxDistance())
                    {
                        vnr->addNodeMapping(its->first, itv->first);
-                       itv = virtualRmat.erase(itv);
+                       //itv = virtualRmat.erase(itv);
                        its = substrateRmat.erase(its);
                        break;
                    }
