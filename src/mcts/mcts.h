@@ -34,6 +34,10 @@
 #include "mcts/mcts-simulator.h"
 #include "mcts/mcts-statistics.h"
 
+#if ENABLE_MPI
+#include <mpi.h>
+#endif
+
 namespace vne{
     namespace mcts{
 
@@ -58,6 +62,10 @@ namespace vne{
                 bool DisableTree;
                 bool UseSinglePlayerMCTS;
                 double SPMCTSConstant;
+                
+                // 0: Root Parallelization with synchronizaiton after each action
+                // 1: Root Parallelization without synch
+                int ParalleizationType;
             };
             
             MCTS(std::shared_ptr<MCTSSimulator> sim);
@@ -104,4 +112,7 @@ namespace vne{
         };
     }
 }
+#if ENABLE_MPI
+void sumFunction (const void* input, void* inoutput, int len, const MPI::Datatype& datatype);
+#endif
 #endif

@@ -45,7 +45,8 @@ namespace vne {
         RaveConstant(ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.RaveConstant")),
         DisableTree(ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.DisableTree")),
         UseSinglePlayerMCTS(ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.UseSinglePlayerMCTS")),
-        SPMCTSConstant(ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.SPMCTSConstant"))
+        SPMCTSConstant(ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.SPMCTSConstant")),
+        ParalleizationType(ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.ParallelizationType"))
         {
         }
         MCTS::MCTS(const std::shared_ptr<MCTSSimulator> sim)
@@ -83,7 +84,6 @@ namespace vne {
             // Delete old tree and create new root
             if (child_node->getState() == nullptr)
             {
-               
                 const std::shared_ptr<State> st = root->getState()->getCopy();
                 double dummyReward;
                 bool terminal = simulator->step(st, action, dummyReward);
@@ -91,7 +91,6 @@ namespace vne {
                      *child_node = *(expandNode(st));
                 }
             }
-            
             *root = *child_node;
             return true;
         }
@@ -101,13 +100,69 @@ namespace vne {
             if (params.DisableTree)
                 rolloutSearch();
             else
+            {
                 UCTSearch();
+#ifdef ENABLE_MPI
+                if (params.ParalleizationType == 0)
+                {
+                    int numChildren = (int) simulator->getNumActions();
+                    int childrenCounts[numChildren];
+                    double childrenValues[numChildren];
+                    int childrenCountsGlobal[numChildren];
+                    double childrenValuesGlobal[numChildren];
+
+                    for (int i = 0; i < numChildren; i++)
+                    {
+                        childrenCounts[i] = root->child(i)->value.getCount();
+                        childrenValues[i] = root->child(i)->value.getValue();
+                    }
+
+                    MPI::Op customSumOp;
+                    customSumOp.Init(&sumFunction, true);
+                
+                    MPI::COMM_WORLD.Allreduce(childrenCounts, childrenCountsGlobal, numChildren, MPI::INT, customSumOp);
+                    MPI::COMM_WORLD.Allreduce(childrenValues, childrenValuesGlobal, numChildren, MPI::DOUBLE, customSumOp);
+                
+/*                double maxVal = -Infinity;
+                for (int i = 0; i<numChildren; i++)
+                {
+                    if (childrenValuesGlobal[i]/(double)childrenCountsGlobal[i] > maxVal)
+                    {
+                        maxVal = childrenValuesGlobal[i]/(double)childrenCountsGlobal[i];
+                        action = i;
+                    }
+                }
+ */
+                    for (int i = 0; i < numChildren; i++)
+                    {
+                        root->child(i)->value.set(childrenCountsGlobal[i], childrenValuesGlobal[i]/(double)childrenCountsGlobal[i]);
+                    }
+                }
+#endif
+            }
+#ifdef ENABLE_MPI
+            //this is to make sure all processes are on the same page
+            //because sometimes UCB might return different values if there are more
+            //than one actions with maximum average value
+            if (params.ParalleizationType == 0)
+            {
+                int action = -1;
+                int rank = MPI::COMM_WORLD.Get_rank();
+                if (rank ==0)
+                    action = greedyUCB(root, false);
+                MPI::COMM_WORLD.Bcast(&action, 1, MPI::INT, 0);
+                assert (action != -1);
+                return action;
+            }
+            else return greedyUCB(root, false);
+#else
             return greedyUCB(root, false);
+#endif
+            
         }
 
         void MCTS::rolloutSearch()
         {
-            //std::vector<double> totals(simulator->getNumActions(), 0.0);
             int historyDepth = (int) history.size();
             std::vector<int> legal;
             assert(root->getState() != nullptr);
@@ -144,15 +199,17 @@ namespace vne {
             
             int historyDepth = (int) history.size();
             
+            
             for (int n = 0; n < params.NumSimulations; n++)
             {
                 status.Phase = MCTSSimulator::Status::TREE;
                 
                 treeDepth = 0;
                 peakTreeDepth = 0;
-                
+
                 double totalReward = simulateNode(root);
                 root->value.add(totalReward);
+                
                 //addRave(root, totalReward);
                 statTotalReward.Add(totalReward);
                 statTreeDepth.Add(peakTreeDepth);
@@ -174,9 +231,7 @@ namespace vne {
             
             std::shared_ptr<State> st = node->getState()->getCopy();
             bool terminal = simulator->step(st, action, immediateReward);
-            
             history.push_back(action);
-            
             std::shared_ptr<TreeNode> child_node = node->child(action);
             
             if (child_node->getState()==nullptr && !terminal && node->value.getCount() >= params.ExpandCount)
@@ -191,7 +246,6 @@ namespace vne {
                     delayedReward = rollout(st->getCopy());
                 treeDepth--;
             }
-            
             double totalReward = immediateReward + simulator->getDiscount() * delayedReward;
             
             child_node->value.add(totalReward);
@@ -226,7 +280,26 @@ namespace vne {
             int N = node->value.getCount();
             double logN = log(N + 1);
             
-            for (int action = 0; action < simulator->getNumActions(); action++)
+            //these values will only change if partitioning is enabled;
+            int mystart = 0;
+            int myend = simulator->getNumActions();
+/*
+#ifdef ENABLE_MPI
+
+            //only partition if we are at the root of the tree
+            if (node == root && ucb && params.ParalleizationType == 1)
+            {
+                int my_rank = MPI::COMM_WORLD.Get_rank();
+                int numproc = MPI::COMM_WORLD.Get_size();
+                //int myWorkShare = my_rank * (simulator->getNumActions()/world_size);
+                mystart = (simulator->getNumActions() / numproc) * my_rank + ((simulator->getNumActions() % numproc) < my_rank ? (simulator->getNumActions() % numproc) : my_rank);
+                myend = mystart + (simulator->getNumActions() / numproc) + ((simulator->getNumActions() % numproc) > my_rank);
+                
+                //BOOST_LOG_TRIVIAL(debug) << "Process: " << my_rank << " In partitioned UCB. MyStart: " << mystart << " MyEnd: " << myend;
+            }
+#endif
+*/
+            for (int action = mystart; action < myend; action++)
             {
                 double q;
                 int n;
@@ -286,31 +359,7 @@ namespace vne {
             
             return totalReward;
         }
-
-       /*double MCTS::rollout(std::shared_ptr<TreeNode> node, std::shared_ptr<State> state)
-        {
-            status.Phase = MCTSSimulator::Status::ROLLOUT;
-            
-            double totalReward = 0.0;
-            double discount = 1.0;
-            bool terminal = false;
-            int numSteps;
-            for (numSteps = 0; numSteps + treeDepth < params.MaxDepth && !terminal; ++numSteps)
-            {
-                double reward;
-                
-                int action = simulator->selectRandom(state, history, status);
-                terminal = simulator->step(state, action, reward);
-                node->state = state;
-                totalReward += reward * discount;
-                discount *= simulator->getDiscount();
-            }
-            
-            statRolloutDepth.Add(numSteps);
-            
-            return totalReward;
-        }
-        */
+        
         double MCTS::UCB[UCB_N][UCB_n];
         bool MCTS::initialisedFastUCB = false;
 
@@ -344,3 +393,54 @@ namespace vne {
         }
     }
 }
+#if ENABLE_MPI
+void sumFunction (const void* input, void* inoutput, int len, const MPI::Datatype& datatype)
+{
+    for (int i=0; i < len; i++)
+    {
+        if (datatype == MPI::INT)
+        {
+        
+            int* currentInPtr = (int*) input;
+            currentInPtr += i;
+            int* currentOutPtr = (int*) inoutput;
+            currentOutPtr +=i;
+            if ((*currentInPtr < LargeInteger) && (*currentOutPtr < LargeInteger))
+            {
+                //int inoutputInt = * currentOutPtr;
+                *(currentOutPtr) = *currentInPtr + (*currentOutPtr);
+                //std::cout << "In sumFunc Int: " << " My rank: " << MPI::COMM_WORLD.Get_rank() << " input1: " << *currentInPtr
+                //<< " input2: " << inoutputInt << " output: " << *(currentOutPtr) << std::endl;
+            }
+            else if (*currentInPtr < LargeInteger && (*currentOutPtr >= LargeInteger))
+            {
+                //int inoutputInt = * currentOutPtr;
+                *(currentOutPtr) = *(currentInPtr);
+                //std::cout << "In sumFunc Int: " << " My rank: " << MPI::COMM_WORLD.Get_rank() << " input1: " << *currentInPtr
+                //<< " input2: " << inoutputInt << " output: " << *(currentOutPtr) << std::endl;
+            }
+        }
+        else if (datatype == MPI::DOUBLE)
+        {
+            double* currentInPtr = (double*) input;
+            currentInPtr += i;
+            double* currentOutPtr = (double*) inoutput;
+            currentOutPtr +=i;
+            if ((*currentInPtr > -Infinity) && (*currentOutPtr > -Infinity))
+            {
+                //double inoutputInt = * currentOutPtr;
+                *(currentOutPtr) = *currentInPtr + (*currentOutPtr);
+                //std::cout << "In sumFunc Double: " << " My rank: " << MPI::COMM_WORLD.Get_rank() << " input1: " << *currentInPtr
+                //<< " input2: " << inoutputInt << " output: " << *(currentOutPtr) << std::endl;
+            }
+            else if (*currentInPtr > -Infinity && (*currentOutPtr <= -Infinity))
+            {
+                //double inoutputInt = * currentOutPtr;
+                *(currentOutPtr) = *(currentInPtr);
+                //std::cout << "In sumFunc Double: " << " My rank: " << MPI::COMM_WORLD.Get_rank() << " input1: " << *currentInPtr
+                //<< " input2: " << inoutputInt << " output: " << *(currentOutPtr) << std::endl;
+            }
+        }
+    }
+};
+#endif

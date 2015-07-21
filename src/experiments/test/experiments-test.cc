@@ -35,6 +35,10 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
 
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 using namespace vne;
 using namespace vne::vineyard;
 using namespace vne::utilities;
@@ -388,6 +392,23 @@ BOOST_AUTO_TEST_CASE(MCVNE_MCF)
     db->copyBean(exp);
 }
 
+        BOOST_AUTO_TEST_CASE(MCVNE_MCF_NO_DISK_IO)
+        {
+            Logger::Instance()->logInfo("Running MCVNE_MCF Experiment");
+            vne::experiments::MCVNENodeMCFNoDiskIOLinkExp<> exp = vne::experiments::MCVNENodeMCFNoDiskIOLinkExp<> ();
+            
+            std::string dbName;
+            dbName = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+            std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(dbName);
+            
+            exp.run();
+            
+            db->registerBeanClass<vne::experiments::MCVNENodeMCFNoDiskIOLinkExp<>>();
+            db->dropModel();
+            db->createModel();
+            db->copyBean(exp);
+        }
+        
 BOOST_AUTO_TEST_CASE(MCVNE_BFS)
 {
     Logger::Instance()->logInfo("Running MCVNE_BFS Experiment");
@@ -420,6 +441,39 @@ BOOST_AUTO_TEST_CASE(Vine_MCF)
     db->createModel();
     db->copyBean(exp);
 }
+#ifdef ENABLE_MPI
+BOOST_AUTO_TEST_CASE(MCVNE_BFS_MPI)
+{
+    Logger::Instance()->logInfo("Running MCVNE_BFS Experiment");
+    
+    
+    MPI::Init();
+    int rank = -1;
+    rank = MPI::COMM_WORLD.Get_rank();
+    std::cout << "%%%%%%%%%%%%%%%%%%%%%%%%%" << std::endl;
+    std::cout << "My rank is: " << rank << " World Size: " << MPI::COMM_WORLD.Get_size() << std::endl;
+    std::cout << "%%%%%%%%%%%%%%%%%%%%%%%%%" << std::endl;
+    vne::experiments::MCVNENodeBFSLinkExp<> exp = vne::experiments::MCVNENodeBFSLinkExp<> ();
+    exp.run();
+    if (rank ==0)
+    {
+        std::cout << "%%%%%%%%%%%%%% WE ARE HERE %%%%%%%%%% T1" << std::endl;
+        std::string dbName;
+         std::cout << "%%%%%%%%%%%%%% WE ARE HERE %%%%%%%%%% T2" << std::endl;
+        dbName = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+         std::cout << "%%%%%%%%%%%%%% WE ARE HERE %%%%%%%%%% T3" << std::endl;
+        std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(dbName);
+         std::cout << "%%%%%%%%%%%%%% WE ARE HERE %%%%%%%%%% T4" << std::endl;
+        db->registerBeanClass<vne::experiments::MCVNENodeBFSLinkExp<>>();
+         std::cout << "%%%%%%%%%%%%%% WE ARE HERE %%%%%%%%%% T5" << std::endl;
+        db->dropModel();
+        db->createModel();
+        db->copyBean(exp);
+    }
+    MPI::Finalize();
+    
+}
+#endif
 /*
 BOOST_AUTO_TEST_CASE(Vine_MCF)
 {

@@ -41,7 +41,7 @@ namespace vne{
         class Value
         {
         public:
-            void set(double count, double value)
+            void set(COUNT count, double value)
             {
                 Count = count;
                 Total = value * count;

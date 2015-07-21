@@ -65,23 +65,80 @@ namespace vne {
             do
             {
                 action = mcts.selectAction();
-                int vnId = st->getCurrentVNId();
                 terminate = sim->step (st, action, reward);
                 if (reward <= -Infinity)
-                {
                 	terminate = true;
-                }
                 else {
-                	vnr->addNodeMapping(action, vnId);
-                	if (vnr->getNodeMap()->size() < vnr->getVN()->getNumNodes())
+                	if (st->getNodeMap()->size() < vnr->getVN()->getNumNodes())
                 		mcts.update(action, reward);
                 }
             } while (!terminate);
             
-            //assert(vnr->getNodeMap()->size() == vnr->getVN()->getNumNodes());
-            if (vnr->getNodeMap()->size() != vnr->getVN()->getNumNodes())
-                return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
-            return Embedding_Result::SUCCESSFUL_EMBEDDING;
-        }
+#ifdef ENABLE_MPI
+                if (ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.ParallelizationType") == 1)
+                {
+                    struct
+                    {
+                        double val;
+                        int   rank;
+                    } ObjectiveValueIn, ObjectiveValueOut ;
+                    ObjectiveValueIn.val = reward;
+                    ObjectiveValueIn.rank = MPI::COMM_WORLD.Get_rank();
+                    MPI::COMM_WORLD.Allreduce(&ObjectiveValueIn, &ObjectiveValueOut, 1, MPI::DOUBLE_INT, MPI::MAXLOC);
+                    
+                    int nodeMapSize;
+                    if (ObjectiveValueOut.rank == ObjectiveValueIn.rank)
+                    {
+                        nodeMapSize = (int) st->getNodeMap()->size();
+                    }
+                    
+                    MPI::COMM_WORLD.Bcast(&nodeMapSize, 1, MPI::INT, ObjectiveValueOut.rank);
+                    
+                    if (nodeMapSize != vnr->getVN()->getNumNodes())
+                        return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
+                    
+                    struct
+                    {
+                        int sNodeId;
+                        int vNodeId;
+                    } nodeMap[nodeMapSize];
+                
+                    if (ObjectiveValueOut.rank == ObjectiveValueIn.rank)
+                    {
+                        int count = 0;
+                        for (auto it = st->getNodeMap()->begin(); it != st->getNodeMap()->end(); it++)
+                        {
+                            nodeMap[count].sNodeId = it->second;
+                            nodeMap[count].vNodeId = it->first;
+                            count++;
+                        }
+                    }
+                    
+                    MPI::COMM_WORLD.Bcast(nodeMap, nodeMapSize, MPI_2INT, ObjectiveValueOut.rank);
+
+                    for (int i = 0; i < nodeMapSize; i++)
+                    {
+                        vnr->addNodeMapping(nodeMap[i].sNodeId, nodeMap[i].vNodeId);
+                    }
+                }
+            else
+            {
+                if (st->getNodeMap()->size() != vnr->getVN()->getNumNodes())
+                    return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
+                for (auto it = st->getNodeMap()->begin(); it != st->getNodeMap()->end(); it++)
+                {
+                    vnr->addNodeMapping(it->second, it->first);
+                }
+            }
+#else
+                if (st->getNodeMap()->size() != vnr->getVN()->getNumNodes())
+                    return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
+                for (auto it = st->getNodeMap()->begin(); it != st->getNodeMap()->end(); it++)
+                {
+                    vnr->addNodeMapping(it->second, it->first);
+                }
+#endif
+                    return Embedding_Result::SUCCESSFUL_EMBEDDING;
+            }
     }
 }

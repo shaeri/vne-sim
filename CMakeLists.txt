@@ -84,6 +84,25 @@ find_package(GSL REQUIRED)
 find_package(GLPK REQUIRED)		
 find_package(SQLITE3 REQUIRED)
 
+#MPI Support
+option (ENABLE_MPI "ENABLE_MPI" OFF)
+IF (${ENABLE_MPI})
+	MESSAGE (STATUS "Trying to compile with MPI. Searching for MPI Libraries...")
+	find_package(MPI)
+	IF (${MPI_FOUND})
+		MESSAGE (STATUS "Compiling with MPI support.") 
+		add_definitions (-DENABLE_MPI)
+		set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+		# set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+		include_directories(MPI_INCLUDE_PATH)
+	ELSE()
+		MESSAGE (STATUS "Could not find the MPI Libraries...")
+		 
+	ENDIF()
+ELSE()
+MESSAGE (STATUS "Compiling without MPI support. Use option -DENABLE_MPI=ON to compile with MPI support.") 
+ENDIF()
+
 #add subdirectories that need to be compiled
 add_subdirectory(src)
 add_subdirectory(external-libs/BRITE)

@@ -24,6 +24,9 @@
 #include "rng.h"
 #include "core/config-manager.h"
 
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
 
 namespace vne
 {
@@ -48,9 +51,21 @@ namespace vne
     	return;
     }
 
+#ifdef ENABLE_MPI
     RNG::RNG(unsigned long int _seed)
-    : seed(_seed)
+
     {
+        useSameSeedForParallelRuns = ConfigManager::Instance()->getConfig<bool>("core.rngUseSameSeedForParallelRuns");
+        if (useSameSeedForParallelRuns)
+            seed = _seed;
+        else
+            seed  = _seed + MPI::COMM_WORLD.Get_rank();
+#else
+        RNG::RNG(unsigned long int _seed)
+        : seed(_seed)
+        {
+#endif
+        
         std::string type = ConfigManager::Instance()->getConfig<std::string>("core.rngType");
 
         if (type.compare("gsl_rng_mt19937")==0)
@@ -78,6 +93,7 @@ namespace vne
             rng_type = *gsl_rng_ranlux;
         
         generalRNG = gsl_rng_alloc (&rng_type);
+        gsl_rng_set(generalRNG, seed);
     }
     RNG::~RNG()
     {

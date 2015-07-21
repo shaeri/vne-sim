@@ -17,6 +17,7 @@ add_library (vineyard SHARED
 			vy-vnr-proc-digraph.cc
 			vy-vnr-proc-observer.cc
 			vy-vnr-release-proc.cc
+			vy-vine-link-embedding-algo-no-disk-io.cc
 			    )
 
 target_link_libraries (vineyard core ${Boost_LIBRARIES} ${GLPK_LIBRARIES})

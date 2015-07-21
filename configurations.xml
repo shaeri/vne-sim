@@ -2,14 +2,15 @@
     <!--if the path does not exist, no log file will be set.-->
     <logFile></logFile>
     <!-- log level can be set using the environment variable LOG_LEVEL. If LOG_LEVEL is not set this variable will be used.-->
-    <logLevel>error</logLevel>
+    <logLevel></logLevel>
 </utilities>
 
 <core>
     <!--The result database file-->
-    <dbPath>/home/soroosh/Dropbox/vne-mcts-simulations/num-simulations-test/</dbPath>
+    <dbPath>/Users/soroosh/Desktop/t2.db</dbPath>
     <!-- 0 uses the libraries standard seed -->
     <rngSeed>0</rngSeed>
+    <rngUseSameSeedForParallelRuns>false</rngUseSameSeedForParallelRuns>
     <!--Verious random number generator types that gsl_rng library implements may be found at: -->
     <!--https://www.gnu.org/software/gsl/manual/html_node/Random-number-generator-algorithms.html#Random-number-generator-algorithms -->
     <rngType>gsl_rng_mt19937</rngType>
@@ -17,24 +18,24 @@
 
 <NetworkFileGenerator>
     <BriteHandler>
-        <BriteSeedFile>/home/soroosh/src/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
+        <BriteSeedFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
         <!-- Random = 1, Heavy Tailed = 2 -->
         <nodePlacement>1</nodePlacement>
         <!-- Number of neighboring node each new node connects to. -->
-        <numNeighbors>5</numNeighbors>
+        <numNeighbors>2</numNeighbors>
         <!-- We assume the same grid size for SN and VNRs-->
         <innerGridSize>25</innerGridSize>
         <outerGridSize>25</outerGridSize>
         
         <RTWaxman>
             <!-- 1 = incremental, 2 = all -->
-            <growthType>2</growthType>
+            <growthType>1</growthType>
             <alpha>0.5</alpha>
-            <beta>.2</beta>
+            <beta>0.2</beta>
         </RTWaxman>
     </BriteHandler>
     
-    <DirToSaveFiles>/home/soroosh/Desktop/Network_Files/</DirToSaveFiles>
+    <DirToSaveFiles>/Users/Soroosh/Desktop/Network_Files/</DirToSaveFiles>
     
     <TotalTime>50000</TotalTime>
     
@@ -48,7 +49,7 @@
     <VNRNumNodesDistParam1>3</VNRNumNodesDistParam1>
     <VNRNumNodesDistParam2>10</VNRNumNodesDistparam2>
     <VNRNumNodesDistParam3>-1</VNRNumNodesDistParam3>
-
+    
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNRDurationDist>1</VNRDurationDist>
@@ -59,7 +60,7 @@
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNRArrivalDist>2</VNRArrivalDist>
     <!-- 1/ArrivalRate => for example for arrival rate of 8 per 100 unit time param = 100/8 = 12.5 -->
-    <VNRArrivalDistParam1>12.5</VNRArrivalDistParam1>
+    <VNRArrivalDistParam1>50</VNRArrivalDistParam1>
     <VNRArrivalDistParam2>-1</VNRArrivalDistParam2>
     <VNRArrivalDistParam3>-1</VNRArrivalDistParam3>
     
@@ -89,7 +90,7 @@
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNCPUDist>0</VNCPUDist>
-    <VNCPUDistParam1>2</VNCPUDistParam1>
+    <VNCPUDistParam1>0</VNCPUDistParam1>
     <VNCPUDistParam2>20</VNCPUDistParam2>
     <VNCPUDistParam3>-1</VNCPUDistParam3>
     
@@ -109,12 +110,12 @@
 
 <vineyard>
     <SubstrateNetwork>
-        <path>/home/soroosh/Desktop/Network_Files/substrate_nets</path>
+        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/substrate_nets/</path>
         <filename>vy_substrate_net_n_50_outergrid_25_inner_grid_25.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
-        <path>/home/soroosh/Desktop/Network_Files</path>
-        <dir>reqs-12-1000-nodesMin-3-nodesMax-10-grid-25</dir>
+        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/</path>
+        <dir>reqs-50-1000-nodesMin-3-nodesMax-10-grid-25</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>
     <Results>
@@ -128,15 +129,15 @@
     <Configs>
         <setAlpha>false</setAlpha> <!-- if set to false Alpha is automatically set to 1-->
         <setBeta>false</setBeta>   <!-- if set to false Beta is automatically set to 1-->
-        <!-- "deterministic" or "randomized" (use exact words without quotes). 
+        <!-- "deterministic" or "randomized" (use exact words without quotes).
          If it is not specified deterministic approach is selected by default. -->
         <nodeMappingType>deterministic</nodeMappingType>
     </Configs>
     <glpk>
-	<LPmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
-        <LPdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
-        <MCFmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
-        <MCFdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
+        <LPmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
+        <LPdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
+        <MCFmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
+        <MCFdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
         <!-- 0 disabled, 1 enabled -->
         <terminalEnabled>0</terminalEnabled>
     </glpk>
@@ -145,12 +146,12 @@
 <MCTS>
     <Simulator>
         <Knowledge>
-           <!-- 0:PURE 1:LEGAL 2:SMART -->
-           <TreeLevel>1</TreeLevel>
-           <!-- 0:PURE 1:LEGAL 2:SMART -->
-           <RolloutLevel>1</RolloutLevel>
-           <SmartTreeCount>10</SmartTreeCount>
-           <SmartTreeValue>1.0</SmartTreeValue>
+            <!-- 0:PURE 1:LEGAL 2:SMART -->
+            <TreeLevel>1</TreeLevel>
+            <!-- 0:PURE 1:LEGAL 2:SMART -->
+            <RolloutLevel>1</RolloutLevel>
+            <SmartTreeCount>10</SmartTreeCount>
+            <SmartTreeValue>1.0</SmartTreeValue>
         </Knowledge>
         <!-- Discount in (0,1] -->
         <discount>1</discount>
@@ -159,7 +160,7 @@
     
     <MCTSParameters>
         <MaxDepth>10</MaxDepth>
-        <NumSimulations>40</NumSimulations>
+        <NumSimulations>5</NumSimulations>
         <!-- How many nodes to add at each expansion step -->
         <ExpandCount>1</ExpandCount>
         <!-- if this is set to false Exploration constant will be used otherwise Exploration constant will be set to 0 if UseRave flag is set or Exploration constant will be set to rewardRange.-->
@@ -169,14 +170,19 @@
         <!-- Rave Parameters: 0 -> rave is not set -->
         <UseRave>false</UseRave>
         <RaveDiscount>1</RaveDiscount>
-        <RaveConstant>0.05</RaveConstant>
+        <RaveConstant>0.01</RaveConstant>
         <!-- When set, the baseline rollout algorithm is run. -->
         <DisableTree>0</DisableTree>
         <UseSinglePlayerMCTS>false</UseSinglePlayerMCTS>
         <SPMCTSConstant>10000</SPMCTSConstant>
+        
+        <!--0: Action Root Parallelization, 1: Full Tree parallelization -->
+        <!-- Setting this parameter does not enable parallelism. You need to compile the code with option -DENABLE_MPI=on
+                to enable parallelism.-->
+        <ParallelizationType>1</ParallelizationType>
     </MCTSParameters>
 </MCTS>
-        
+
 <MCVNE>
     <VNEMCTSSimulator>
         <!-- alpha is the substrate liks weight and beta is the substrate node weight -->
@@ -196,7 +202,7 @@
     <!--unit price charged for bandwidth resources-->
     <beta>1</beta>
     <!--It is a positive small threshold defining the convergence of node mapping algorithm-->
-    <!--Refer to: 
+    <!--Refer to:
      L. Gong, Y. Wen, Z. Zhu, and T. Lee, “Toward profit-seeking virtual network embedding algorithm via global resource capacity.,” INFOCOM, pp. 1–9, 2014.-->
     <sigma>0.00001</sigma>
     <dampingFactor>0.85</dampingFactor>

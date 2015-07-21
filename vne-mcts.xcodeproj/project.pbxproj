@@ -30,6 +30,7 @@
 		9555D8FE19D2314F009E0C08 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 9555D8EA19D2314F009E0C08 /* sqlite3.c */; };
 		9555D90E19D231C8009E0C08 /* db-manager.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9555D90C19D231C8009E0C08 /* db-manager.cc */; };
 		9555D91119D249BF009E0C08 /* vy-statistics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9555D90F19D249BF009E0C08 /* vy-statistics.cc */; };
+		9556337D1B55A5E200EE0E71 /* vy-vine-link-embedding-algo-no-disk-io.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9556337B1B55A5E200EE0E71 /* vy-vine-link-embedding-algo-no-disk-io.cc */; };
 		9556634B1A3F7B6500235882 /* mcts.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9556634A1A3F7B6500235882 /* mcts.cc */; };
 		9561A9321958E30700BF44A6 /* core-types.h in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8031958E15200BF44A6 /* core-types.h */; };
 		9561A9331958E30700BF44A6 /* id-generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9561A8041958E15200BF44A6 /* id-generator.cc */; };
@@ -246,6 +247,8 @@
 		9555D90D19D231C8009E0C08 /* db-manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "db-manager.h"; sourceTree = "<group>"; };
 		9555D90F19D249BF009E0C08 /* vy-statistics.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-statistics.cc"; path = "src/Vineyard/vy-statistics.cc"; sourceTree = SOURCE_ROOT; };
 		9555D91019D249BF009E0C08 /* vy-statistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-statistics.h"; path = "src/Vineyard/vy-statistics.h"; sourceTree = SOURCE_ROOT; };
+		9556337B1B55A5E200EE0E71 /* vy-vine-link-embedding-algo-no-disk-io.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vine-link-embedding-algo-no-disk-io.cc"; path = "src/Vineyard/vy-vine-link-embedding-algo-no-disk-io.cc"; sourceTree = SOURCE_ROOT; };
+		9556337C1B55A5E200EE0E71 /* vy-vine-link-embedding-algo-no-disk-io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vine-link-embedding-algo-no-disk-io.h"; path = "src/Vineyard/vy-vine-link-embedding-algo-no-disk-io.h"; sourceTree = SOURCE_ROOT; };
 		9556634A1A3F7B6500235882 /* mcts.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mcts.cc; sourceTree = "<group>"; };
 		9556634D1A3F7D1800235882 /* mcts-statistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "mcts-statistics.h"; sourceTree = "<group>"; };
 		9561A5571958E0C600BF44A6 /* vne-mcts */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "vne-mcts"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -12134,7 +12137,6 @@
 		95D3E4BC1ACB8CAD000F7372 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		95D3E4BD1ACB8CAD000F7372 /* seed_file */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = seed_file; sourceTree = "<group>"; };
 		95D8FBDD1A6F0633006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		95D8FBDE1A6F0633006B3CED /* path-config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "path-config.h.in"; sourceTree = "<group>"; };
 		95D8FBE41A6F06A3006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		95D8FBE51A6F06BD006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = src/Vineyard/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		95D8FBE61A6F06CE006B3CED /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = src/Vineyard/test/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
@@ -12150,6 +12152,7 @@
 		95E42C8F1958F9910016EDBE /* libboost_log-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_log-mt.dylib"; path = "../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_log-mt.dylib"; sourceTree = "<group>"; };
 		95E42C911958F9B00016EDBE /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
 		95ED2A8B1AA7C312004D1385 /* libhiberlite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhiberlite.a; path = "external-libs/hiberlite/libhiberlite.a"; sourceTree = "<group>"; };
+		95EE63391B4ECACC000AC4C9 /* config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.h.in; sourceTree = "<group>"; };
 		95FA35DD19BE743B00B7F416 /* vy-vine-node-embedding-algo.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vine-node-embedding-algo.cc"; path = "src/Vineyard/vy-vine-node-embedding-algo.cc"; sourceTree = SOURCE_ROOT; };
 		95FA35DE19BE743B00B7F416 /* vy-vine-node-embedding-algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vine-node-embedding-algo.h"; path = "src/Vineyard/vy-vine-node-embedding-algo.h"; sourceTree = SOURCE_ROOT; };
 		95FA35E019BE745000B7F416 /* vy-vine-link-embedding-algo.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vine-link-embedding-algo.cc"; path = "src/Vineyard/vy-vine-link-embedding-algo.cc"; sourceTree = SOURCE_ROOT; };
@@ -13509,8 +13512,8 @@
 		9561A8021958E15200BF44A6 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				95EE63391B4ECACC000AC4C9 /* config.h.in */,
 				95D8FBDD1A6F0633006B3CED /* CMakeLists.txt */,
-				95D8FBDE1A6F0633006B3CED /* path-config.h.in */,
 				95442407198CA31200DD5675 /* config-manager.cc */,
 				95442408198CA31200DD5675 /* config-manager.h */,
 				956A3796197F39B800243FDD /* coordinate.h */,
@@ -24929,6 +24932,8 @@
 				95FA35E419C118D000B7F416 /* vy-vine-two-stage-embedding-algo.h */,
 				9555D90F19D249BF009E0C08 /* vy-statistics.cc */,
 				9555D91019D249BF009E0C08 /* vy-statistics.h */,
+				9556337B1B55A5E200EE0E71 /* vy-vine-link-embedding-algo-no-disk-io.cc */,
+				9556337C1B55A5E200EE0E71 /* vy-vine-link-embedding-algo-no-disk-io.h */,
 			);
 			name = Vineyard;
 			path = VineYard;
@@ -25176,6 +25181,7 @@
 				9561A9371958E30700BF44A6 /* network.h in Sources */,
 				9561A9381958E30700BF44A6 /* node.h in Sources */,
 				9561A93A1958E30700BF44A6 /* virtual-network-request.h in Sources */,
+				9556337D1B55A5E200EE0E71 /* vy-vine-link-embedding-algo-no-disk-io.cc in Sources */,
 				950353041A5C9669003A3BB4 /* mcvne-simulator.cc in Sources */,
 				95B3737F19998D17004133B6 /* vy-vnr-generator.cc in Sources */,
 				9561A93B1958E30700BF44A6 /* substrate-node.h in Sources */,
@@ -25339,6 +25345,10 @@
 		9561A5611958E0C600BF44A6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					ENABLE_MPI,
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)/**",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -25356,15 +25366,17 @@
 					"$(PROJECT_DIR)/external-libs/gsl-1.16/lib",
 					/usr/local/Cellar/glpk/4.52/lib,
 					/usr/local/Cellar/gsl/1.16/lib,
+					"/usr/local/Cellar/open-mpi/1.8.5/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src $(PROJECT_DIR)/external-libs/adevs/include /usr/local/include /usr/local/include/gsl/ $(PROJECT_DIR)/external-libs/BRITE/C++";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src $(PROJECT_DIR)/external-libs/adevs/include /usr/local/include /usr/local/include/gsl/ $(PROJECT_DIR)/external-libs/BRITE/C++ /usr/local/include";
 			};
 			name = Debug;
 		};
 		9561A5621958E0C600BF44A6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)/**",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -25382,9 +25394,10 @@
 					"$(PROJECT_DIR)/external-libs/gsl-1.16/lib",
 					/usr/local/Cellar/glpk/4.52/lib,
 					/usr/local/Cellar/gsl/1.16/lib,
+					"/usr/local/Cellar/open-mpi/1.8.5/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src $(PROJECT_DIR)/external-libs/adevs/include /usr/local/include /usr/local/include/gsl/ $(PROJECT_DIR)/external-libs/BRITE/C++";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src $(PROJECT_DIR)/external-libs/adevs/include /usr/local/include /usr/local/include/gsl/ $(PROJECT_DIR)/external-libs/BRITE/C++ /usr/local/include";
 			};
 			name = Release;
 		};

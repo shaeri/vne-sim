@@ -74,6 +74,8 @@ namespace vne {
         gsl_rng* generalRNG;
         gsl_rng_type rng_type;
         unsigned long int seed;
+        
+        bool useSameSeedForParallelRuns;
     };
 }
 
