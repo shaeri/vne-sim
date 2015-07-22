@@ -35,6 +35,10 @@
 
 #include "hiberlite.h"
 
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 namespace vne {
     template<typename> class Experiment;
     template<
@@ -64,6 +68,9 @@ namespace vne {
             ar & HIBERLITE_NVP(node_mapping_algo);
             ar & HIBERLITE_NVP(link_mapping_algo);
             ar & HIBERLITE_NVP(params);
+#ifdef ENABLE_MPI
+            ar & HIBERLITE_NVP (num_mpi_proc);
+#endif
         }
 
     public:
@@ -92,9 +99,12 @@ namespace vne {
         std::string algo_type;
         std::string node_mapping_algo;
         std::string link_mapping_algo;
+
+#ifdef ENABLE_MPI
+        int num_mpi_proc;
+#endif
         
         ExperimentParameters params;
-        
         
         void initialize (DIGRAPH_TYPE* _proc_digraph, Embedding_Algorithm_Types _algo_t, std::string _node_mapping_algo,
                     std::string _link_mapping_algo)
@@ -102,6 +112,9 @@ namespace vne {
             algo_type = get_Embedding_Algorithm_Type_Str(_algo_t);
             node_mapping_algo = _node_mapping_algo;
             link_mapping_algo = _link_mapping_algo;
+#ifdef ENABLE_MPI
+            num_mpi_proc = MPI::COMM_WORLD.Get_size();
+#endif
             sim =  new adevs::Simulator<typename GEN<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::ADEVS_IO_TYPE> (_proc_digraph);
         };
          
