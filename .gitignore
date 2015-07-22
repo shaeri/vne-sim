@@ -48,7 +48,7 @@ Thumbs.db
 
 
 #generated config file
-src/core/path-config.h
+src/core/config.h
 
 #Debug and build directories
 Debug/
