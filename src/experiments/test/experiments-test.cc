@@ -473,6 +473,58 @@ BOOST_AUTO_TEST_CASE(MCVNE_BFS_MPI)
     MPI::Finalize();
     
 }
+
+
+BOOST_AUTO_TEST_CASE(MCVNE_MPI_ARRIVALS)
+{
+
+    MPI::Init();
+    std::string vnr_dirs[] =
+            	{"reqs-12-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-14-1000-nodesMin-3-nodesMax-10-grid-25"
+          	, "reqs-16-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-20-1000-nodesMin-3-nodesMax-10-grid-25",
+    			"reqs-25-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-33-1000-nodesMin-3-nodesMax-10-grid-25",
+            	"reqs-50-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-100-1000-nodesMin-3-nodesMax-10-grid-25"};
+    //MCVNE BFS - BFS simulator
+    	for (int j = 0; j < 8; j++)
+    	{
+    	    int rank = -1;
+    	    rank = MPI::COMM_WORLD.Get_rank();
+
+    		bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dirs[j]);
+    		assert(ret);
+    		std::string str1 = "BFS-SP";
+    		ret = ConfigManager::Instance()->setConfig("MCVNE.NodeEmbeddingAlgo.LinkEmbedder", str1);
+
+    		Logger::Instance()->logInfo("Running MCVNE_BFS Experiment");
+    		vne::experiments::MCVNENodeBFSLinkExp<> exp = vne::experiments::MCVNENodeBFSLinkExp<> ();
+
+    		exp.run();
+
+    		if (rank ==0)
+    		{
+    			int num_processes = MPI::COMM_WORLD.Get_size();
+    			std::string dbPath;
+    			std::stringstream dbName;
+    			dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+    			dbName << dbPath <<"mcvne_bfs_bfs_parallel_" << num_processes << "_" << vnr_dirs[j] << ".db";
+    			std::string str = dbName.str();
+    			std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
+				db->registerBeanClass<vne::experiments::MCVNENodeBFSLinkExp<>>();
+				db->dropModel();
+				db->createModel();
+				db->copyBean(exp);
+    		 }
+
+    		//destroy all singleton classes to start fresh for next simulations
+			ConfigManager::Destroy();
+			IdGenerator::Destroy();
+			RNG::Destroy();
+    	}
+
+    MPI::Finalize();
+
+}
+
 #endif
 /*
 BOOST_AUTO_TEST_CASE(Vine_MCF)
