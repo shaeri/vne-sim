@@ -58,7 +58,7 @@ build/
 external-libs/adevs/
 
 # Vineyard .dat files
-src/Vineyard/files/lp/*.dat
+src/Vineyard/files/lp/*.dat*
 
 # Hiberlite executables
 external-libs/hiberlite/sample

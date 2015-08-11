@@ -25,6 +25,10 @@
 #include "vy-vine-link-embedding-algo.h"
 #include "core/config-manager.h"
 
+#ifdef ENABLE_MPI
+#include <mpi.h>
+#endif
+
 namespace vne {
     namespace vineyard{
         template<>
@@ -38,7 +42,12 @@ namespace vne {
             
             MCFdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFdataFile");
             MCFmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFmodelFile");
-            
+#ifdef ENABLE_MPI
+            int my_rank = MPI::COMM_WORLD.Get_rank();
+            std::stringstream strm;
+            strm << "-" << my_rank;
+            MCFdataFile.append(strm.str());
+#endif
             setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setAlpha");
             setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setBeta");
         }

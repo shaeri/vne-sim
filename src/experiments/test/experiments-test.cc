@@ -474,8 +474,7 @@ BOOST_AUTO_TEST_CASE(MCVNE_BFS_MPI)
     
 }
 
-
-BOOST_AUTO_TEST_CASE(MCVNE_MPI_ARRIVALS)
+BOOST_AUTO_TEST_CASE(MCVNE_BFS_BFS_MPI_ARRIVALS)
 {
 
     MPI::Init();
@@ -523,6 +522,57 @@ BOOST_AUTO_TEST_CASE(MCVNE_MPI_ARRIVALS)
 
     MPI::Finalize();
 
+}
+
+BOOST_AUTO_TEST_CASE(MCVNE_MCF_MCF_MPI_ARRIVALS)
+{
+    MPI::Init();
+    std::string vnr_dirs[] =
+            	{"reqs-12-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-14-1000-nodesMin-3-nodesMax-10-grid-25"
+          	, "reqs-16-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-20-1000-nodesMin-3-nodesMax-10-grid-25",
+    			"reqs-25-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-33-1000-nodesMin-3-nodesMax-10-grid-25",
+            	"reqs-50-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-100-1000-nodesMin-3-nodesMax-10-grid-25"};
+    //MCVNE MCF - MCF simulator
+    	for (int j = 0; j < 8; j++)
+    	{
+    	    int rank = -1;
+    	    rank = MPI::COMM_WORLD.Get_rank();
+
+    	    bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dirs[j]);
+			assert(ret);
+			std::string str1 = "MCF";
+			ret = ConfigManager::Instance()->setConfig("MCVNE.NodeEmbeddingAlgo.LinkEmbedder", str1);
+			assert(ret);
+
+    		Logger::Instance()->logInfo("Running MCVNE_MCF Experiment");
+
+			vne::experiments::MCVNENodeMCFLinkExp<> exp = vne::experiments::MCVNENodeMCFLinkExp<> ();
+
+
+    		exp.run();
+
+    		if (rank ==0)
+    		{
+    			int num_processes = MPI::COMM_WORLD.Get_size();
+    			std::string dbPath;
+    			std::stringstream dbName;
+    			dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+    			dbName << dbPath <<"mcvne_mcf_mcf_parallel_" << num_processes << "_" << vnr_dirs[j] << ".db";
+    			std::string str = dbName.str();
+    			std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
+				db->registerBeanClass<vne::experiments::MCVNENodeMCFLinkExp<>>();
+				db->dropModel();
+				db->createModel();
+				db->copyBean(exp);
+    		 }
+
+    		//destroy all singleton classes to start fresh for next simulations
+			ConfigManager::Destroy();
+			IdGenerator::Destroy();
+			RNG::Destroy();
+    	}
+
+    MPI::Finalize();
 }
 
 #endif
