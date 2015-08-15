@@ -1,5 +1,5 @@
 /**
- * @file db-manager.h
+ * @file external-lib-handler.h
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date 7/16/14
  *
@@ -22,28 +22,29 @@
  *     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  **/
 
-#ifndef DB_MANAGER_H_
-#define DB_MANAGER_H_
+#ifndef  NFG_EXTERNAL_LIB_HANDLER_
+#define  NFG_EXTERNAL_LIB_HANDLER_
 
-#include "hiberlite/include/hiberlite.h"
 
-#include <memory>
+#include "core/network.h"
+#include "core/config-manager.h"
 
-namespace vne {
-    class DBManager {
-    public:
-        static std::shared_ptr<DBManager> Instance();
-        std::shared_ptr<hiberlite::Database> createDB (std::string &dbName);
-        std::shared_ptr<hiberlite::Database> getDB (int dbId);
-        std::shared_ptr<hiberlite::Database> getDB (std::string &dbName);
-        ~DBManager ();
-    protected:
-        DBManager ();
-    private:
-        static std::shared_ptr<DBManager> _instance;
-        std::map<int, std::shared_ptr<hiberlite::Database>> dbMap;
-        std::map<std::string, int> dbIdNameMap;
-    };
+
+namespace vne{
+    namespace nfg {
+      template<typename A, typename B>
+      class ExternalLibHandler
+      {
+      public:
+	const boost::property_tree::ptree& getProperties () {return pt;};
+	virtual std::shared_ptr<Network<A, B>> getNetwork
+            (Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+                    Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3) = 0;
+	virtual std::string getPreferredFileName () = 0;
+      protected:
+	boost::property_tree::ptree pt;
+      };
+    }
 }
-
-#endif /* defined */
+#endif

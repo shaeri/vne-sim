@@ -54,6 +54,9 @@ src/core/config.h
 Debug/
 build/
 
+#fnss library
+external-libs/fnss
+
 #adevs library
 external-libs/adevs/
 
@@ -63,6 +66,10 @@ src/Vineyard/files/lp/*.dat*
 # Hiberlite executables
 external-libs/hiberlite/sample
 external-libs/hiberlite/tests
+
+#kdevelop
+.kdev4/
+vne-sim.kdev4
 
 # Xcode user data
 vne-mcts.xcodeproj/xcuserdata/

@@ -27,7 +27,7 @@
 
 #include "core/statistics-subscriber.h"
 
-#include "hiberlite.h"
+#include "hiberlite/include/hiberlite.h"
 
 namespace vne {
     namespace vineyard {

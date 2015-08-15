@@ -56,9 +56,7 @@ ExternalProject_Add (hiberlite_project
 
 
 # Add the include directories of ADEVS and hiberlite and BRITE
-include_directories(${PROJECT_SOURCE_DIR}/external-libs/adevs/include)
-include_directories(${PROJECT_SOURCE_DIR}/external-libs/hiberlite/include)
-include_directories(${PROJECT_SOURCE_DIR}/external-libs/BRITE/C++)
+include_directories(${PROJECT_SOURCE_DIR}/external-libs/)
 
 set(HIBERLITE_LIBRARY hiberlite)
 add_library(${HIBERLITE_LIBRARY} STATIC IMPORTED)
@@ -83,6 +81,30 @@ find_package(Boost
 find_package(GSL REQUIRED)
 find_package(GLPK REQUIRED)		
 find_package(SQLITE3 REQUIRED)
+find_package(PythonLibs)
+IF(${PYTHONLIBS_FOUND})
+	MESSAGE (STATUS "Python Libraries were found! Compiling with FNSS support.") 
+	add_definitions ( -DPYTHON_AVAILABLE)
+	include_directories(${PYTHON_INCLUDE_DIRS})
+	IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/fnss)
+	  MESSAGE (STATUS "FNSS DOES NOT EXIST")
+	ExternalProject_Add (fnss
+			     #DOWNLOAD_DIR /tmp/
+  			     GIT_REPOSITORY https://github.com/fnss/fnss.git 
+			     SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss
+			     CONFIGURE_COMMAND ""
+			     BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
+			     INSTALL_COMMAND ""
+			     LOG_DOWNLOAD ON
+                            )
+               
+      ENDIF() 
+      set(FNSS_LIBRARY fnss)
+      add_library(${FNSS_LIBRARY} STATIC IMPORTED)
+      set_property(TARGET ${FNSS_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp/lib/libfnss.a) 
+ELSE()
+	MESSAGE (STATUS "Python Libraries were not found! Compiling without FNSS support.")  
+ENDIF()
 
 #MPI Support
 option (ENABLE_MPI "ENABLE_MPI" OFF)

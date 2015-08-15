@@ -2,12 +2,12 @@
     <!--if the path does not exist, no log file will be set.-->
     <logFile></logFile>
     <!-- log level can be set using the environment variable LOG_LEVEL. If LOG_LEVEL is not set this variable will be used.-->
-    <logLevel></logLevel>
+    <logLevel>error</logLevel>
 </utilities>
 
 <core>
     <!--The result database file-->
-    <dbPath>/Users/soroosh/Desktop/t2.db</dbPath>
+    <dbPath>/home/soroosh/Dropbox/vne-mcts-simulations/Parallel-Runs/arrival-rate-tests/</dbPath>
     <!-- 0 uses the libraries standard seed -->
     <rngSeed>0</rngSeed>
     <rngUseSameSeedForParallelRuns>false</rngUseSameSeedForParallelRuns>
@@ -17,8 +17,10 @@
 </core>
 
 <NetworkFileGenerator>
+  <!-- Select network file generator: BRITE or FNSS-->
+    
     <BriteHandler>
-        <BriteSeedFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
+    	<BriteSeedFile>/home/soroosh/src/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
         <!-- Random = 1, Heavy Tailed = 2 -->
         <nodePlacement>1</nodePlacement>
         <!-- Number of neighboring node each new node connects to. -->
@@ -34,8 +36,29 @@
             <beta>0.2</beta>
         </RTWaxman>
     </BriteHandler>
-    
-    <DirToSaveFiles>/Users/Soroosh/Desktop/Network_Files/</DirToSaveFiles>
+    <FNSSHandler>
+      <!-- DCNBCube, DCNTwoTier, DCNFatTree --> 
+      <TopoType>DCNBCube</TopoType>
+      <DCNBCube>
+	<!-- Hosts per Bcube_0 -->
+	<N>5</N>
+	<!-- Level of Bcube -->
+	<K>10</K>
+      </DCNBCube>
+      <DCNTwoTier>
+	<!-- Total number of core switches -->  
+	<n_core></n_core>
+	<!-- Total number of edge switches -->
+	<n_edges></n_edges>
+	<!-- Total number of hosts connected to each edge swtich -->
+	<n_hosts></n_hosts>
+      </DCNTwoTier>
+      <DCNFatTree>
+	<!-- Number of ports per switch -->
+	<K></K>
+      </DCNFatTree>
+    </FNSSHandler>  
+	<DirToSaveFiles>/home/soroosh/Desktop/Network_Files/</DirToSaveFiles>
     
     <TotalTime>50000</TotalTime>
     
@@ -110,17 +133,14 @@
 
 <vineyard>
     <SubstrateNetwork>
-        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/substrate_nets/</path>
+        <path>/home/soroosh/Desktop/Network_Files/substrate_nets</path>
         <filename>vy_substrate_net_n_50_outergrid_25_inner_grid_25.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
-        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/</path>
-        <dir>reqs-50-1000-nodesMin-3-nodesMax-10-grid-25</dir>
+        <path>/home/soroosh/Desktop/Network_Files</path>
+        <dir>reqs-12-1000-nodesMin-3-nodesMax-10-grid-25</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>
-    <Results>
-        <path>files/results</path>
-    </Results>
     <Constants>
         <revenueMultiplier>1.0</revenueMultiplier>
         <costMultiplier>1.0</costMultiplier>
@@ -134,10 +154,10 @@
         <nodeMappingType>deterministic</nodeMappingType>
     </Configs>
     <glpk>
-        <LPmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
-        <LPdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
-        <MCFmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
-        <MCFdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
+        <LPmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
+        <LPdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
+        <MCFmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
+        <MCFdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
         <!-- 0 disabled, 1 enabled -->
         <terminalEnabled>0</terminalEnabled>
     </glpk>
@@ -160,7 +180,7 @@
     
     <MCTSParameters>
         <MaxDepth>10</MaxDepth>
-        <NumSimulations>5</NumSimulations>
+        <NumSimulations>40</NumSimulations>
         <!-- How many nodes to add at each expansion step -->
         <ExpandCount>1</ExpandCount>
         <!-- if this is set to false Exploration constant will be used otherwise Exploration constant will be set to 0 if UseRave flag is set or Exploration constant will be set to rewardRange.-->

@@ -25,7 +25,7 @@
 #ifndef VNR_GENERATOR_H_
 #define VNR_GENERATOR_H_
 
-#include "adevs.h"
+#include "adevs/include/adevs.h"
 
 #include "core/virtual-network-request.h"
 

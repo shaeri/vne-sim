@@ -26,6 +26,7 @@
 #define CORE_TYPES_H_
 
 #include <string>
+#include <boost/concept_check.hpp>
 
 namespace vne
 {
@@ -38,23 +39,27 @@ namespace vne
 */
 enum class Entity_t
 {
-	virt = 0, substrate
+    virt = 0, 
+    substrate
 };
     
 enum class Embedding_Result
 {
-	SUCCESSFUL_EMBEDDING = 0, NOT_ENOUGH_SUBSTRATE_RESOURCES,
-    ERROR_IN_SOLUTION
+    SUCCESSFUL_EMBEDDING = 0, 
+    NOT_ENOUGH_SUBSTRATE_RESOURCES,
+     ERROR_IN_SOLUTION
 };
     
 enum class Embedding_Algorithm_Types
 {
-    TWO_STAGE = 0, SINGLE_STAGE
+    TWO_STAGE = 0, 
+    SINGLE_STAGE
 };
     
 enum class Link_Embedding_Algo_Types
 {
-    WITH_PATH_SPLITTING = 0, NO_PATH_SPLITTING
+    WITH_PATH_SPLITTING = 0, 
+    NO_PATH_SPLITTING
 };
     
 enum class Event_Types
@@ -71,7 +76,54 @@ enum class Distribution
     EXPONENTIAL,
     POISSON
 };
+
+enum class Topology_Type
+{
+    DCNTwoTier = 0,
+    DCNThreeTier,
+    DCNBCube,
+    DCNFatTree,
+    Waxman,
+    Barabasi,
+    Erdos
+};
+
+static inline std::string get_Topology_Type_Str (Topology_Type tt)
+{
+    if (tt == Topology_Type::DCNTwoTier)
+        return std::string ("DCNTwoTier");
+    if (tt == Topology_Type::DCNThreeTier)
+        return std::string ("DCNThreeTier");
+    if (tt == Topology_Type::DCNBCube)
+        return std::string ("DCNBCube");
+    if (tt == Topology_Type::DCNFatTree)
+	return std::string ("DCNFatTree");
+    if (tt == Topology_Type::Waxman)
+	return std::string ("Waxman");
+    if (tt == Topology_Type::Barabasi)
+	return std::string ("Barabasi");
+    if (tt == Topology_Type::Erdos)
+	return std::string ("Erdos");
+    return std::string ("Uniform");
+};
     
+static inline Topology_Type get_Topology_Type (std::string tt)
+{
+    if (tt.compare ("DCNTwoTier") == 0)
+	return Topology_Type::DCNTwoTier;
+    if (tt.compare ("DCNThreeTier") == 0)
+	return Topology_Type::DCNThreeTier;
+    if (tt.compare ("DCNBCube") == 0)
+	return Topology_Type::DCNBCube;
+    if (tt.compare ("DCNFatTree") == 0)
+	return Topology_Type::DCNFatTree;
+    if (tt.compare ("Waxman") == 0)
+	return Topology_Type::Waxman;
+    if (tt.compare("Barabasi") == 0)
+	return Topology_Type::Barabasi;
+    return Topology_Type::Erdos;
+}
+
 static inline std::string get_Distribution_Str (Distribution d)
 {
     if (d == Distribution::UNIFORM)

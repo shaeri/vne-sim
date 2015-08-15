@@ -21,35 +21,13 @@
  *     AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  *     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  **/
-/****************************************************************************/
-/*                  Copyright 2001, Trustees of Boston University.          */
-/*                               All Rights Reserved.                       */
-/*                                                                          */
-/* Permission to use, copy, or modify this software and its documentation   */
-/* for educational and research purposes only and without fee is hereby     */
-/* granted, provided that this copyright notice appear on all copies and    */
-/* supporting documentation.  For any other uses of this software, in       */
-/* original or modified form, including but not limited to distribution in  */
-/* whole or in part, specific prior permission must be obtained from Boston */
-/* University.  These programs shall not be used, rewritten, or adapted as  */
-/* the basis of a commercial software or hardware product without first     */
-/* obtaining appropriate licenses from Boston University.  Boston University*/
-/* and the author(s) make no representations about the suitability of this  */
-/* software for any purpose.  It is provided "as is" without express or     */
-/* implied warranty.                                                        */
-/*                                                                          */
-/****************************************************************************/
-/*                                                                          */
-/*  Author:     Alberto Medina                                              */
-/*              Anukool Lakhina                                             */
-/*  Title:     BRITE: Boston university Representative Topology gEnerator   */
-/*  Revision:  2.0         4/02/2001                                        */
-/****************************************************************************/
 
 #ifndef  NFG_BRITE_HANDLER_
 #define  NFG_BRITE_HANDLER_
 
-#include "Brite.h"
+#include "external-lib-handler.h"
+
+#include "BRITE/C++/Brite.h"
 #include "network-file-generator.h"
 
 #include "core/network.h"
@@ -67,7 +45,8 @@ using namespace vne::vineyard;
 
 namespace vne{
     namespace nfg {
-        class BriteHandler
+	template<typename A, typename B>
+        class BriteHandler : public ExternalLibHandler<A,B>
         {
         public:
             struct Parameters {
@@ -84,27 +63,30 @@ namespace vne{
                     double alpha;
                     double beta;
                 } rtWaxman;
-                
-                boost::property_tree::ptree pt;
             };
             
             const Parameters& getParams () const;
             
-            static std::shared_ptr<BriteHandler> Instance();
-            
-            //bw and cpu types: Constant = 1, Uniform =2, HeavyTailed = 3, Exponential =4
-            template<typename A, typename B>
-            std::shared_ptr<Network<A, B>> getNetwork_RTWaxman
-            (int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+            static std::shared_ptr<BriteHandler<A,B>> Instance();
+	    
+            virtual std::shared_ptr<Network<A, B>> getNetwork
+            (Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
                     Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3);
+                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3) override;
+            
+	    virtual std::string getPreferredFileName () override;
         protected:
             BriteHandler ();
             
         private:
-            static std::shared_ptr<BriteHandler> _instance;
+            static std::shared_ptr<BriteHandler<A,B>> _instance;
             Parameters params;
-            template<typename A, typename B>
+	    
+	    //bw and cpu types: Constant = 1, Uniform =2, HeavyTailed = 3, Exponential =4
+            std::shared_ptr<Network<A, B>> getNetwork_RTWaxman
+            (int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+                    Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3); 
             std::shared_ptr<Network<A, B>>
             createNetFromBRITETopo (std::shared_ptr<Topology> t,
                             Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
@@ -114,8 +96,28 @@ namespace vne{
             //void ParseModel ();
         };
        
+	template <typename A, typename B>
+	std::string BriteHandler<A,B>::getPreferredFileName () 
+	{
+	    std::stringstream strstrm;
+	    strstrm << "brite_outergrid_" << params.outerGridSize << "_inner_grid_" << params.innerGridSize;
+	    return strstrm.str();
+	}
+	template <typename A, typename B>
+	std::shared_ptr<Network<A, B>> BriteHandler<A,B>::getNetwork
+            (Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+                    Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
+	{
+	  //if (tt == Topology_Type::Waxman)
+	    return getNetwork_RTWaxman (n, cpu_dist, cpu_param1, cpu_param2, cpu_param3,
+					  bw_dist, bw_param1, bw_param2, bw_param3, 
+					    delay_dist, delay_param1, delay_param2, delay_param3);
+	    
+	}
+	
         template<typename A, typename B>
-        std::shared_ptr<Network<A, B>> BriteHandler::getNetwork_RTWaxman
+        std::shared_ptr<Network<A, B>> BriteHandler<A,B>::getNetwork_RTWaxman
         (int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
                 Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
                 Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
@@ -125,12 +127,12 @@ namespace vne{
                                         min (params.numNeighbors, n), params.rtWaxman.alpha, params.rtWaxman.beta, 1, 10, 1024));
             std::shared_ptr<RouterWaxman> rt_wax_model =  std::shared_ptr<RouterWaxman> (new RouterWaxman(par.get()));
             std::shared_ptr<Topology> t = std::shared_ptr<Topology> (new Topology(rt_wax_model.get()));
-            return createNetFromBRITETopo<A,B> (t, cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist, bw_param1, bw_param2, bw_param3,
+            return createNetFromBRITETopo (t, cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist, bw_param1, bw_param2, bw_param3,
                                                   delay_dist, delay_param1, delay_param2, delay_param3);
         }
         
         template<typename A, typename B>
-        std::shared_ptr<Network<A, B>> BriteHandler::createNetFromBRITETopo
+        std::shared_ptr<Network<A, B>> BriteHandler<A,B>::createNetFromBRITETopo
         (std::shared_ptr<Topology> t, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3, Distribution bw_dist,
          double bw_param1, double bw_param2, double bw_param3, Distribution delay_dist,
          double delay_param1, double delay_param2, double delay_param3)
@@ -167,7 +169,142 @@ namespace vne{
             }
             return net;
         }
+        
+        template <typename A, typename B>
+        std::shared_ptr<BriteHandler<A,B>> BriteHandler<A,B>::_instance = nullptr;
+	
+	template <typename A, typename B>	
+        std::shared_ptr<BriteHandler<A,B>> BriteHandler<A,B>::Instance ()
+        {
+            if (_instance==nullptr) {
+                _instance = std::shared_ptr<BriteHandler<A,B>> (new BriteHandler<A,B>());
+            }
+            return _instance;
+        }
+        
+        template <typename A, typename B> 
+        void BriteHandler<A,B>::InitSeeds() {
+            
+            ofstream last_seed_file;
+            
+            /* Create Parse object */
+            Parse p((char*) params.BriteSeedFile.c_str());
+            
+            /* Parse configuration file */
+            p.ParseSeed((char*) "PLACES", Model::s_places);
+            p.ParseSeed((char*) "CONNECT", Model::s_connect);
+            p.ParseSeed((char*) "EDGE_CONN", Model::s_edgeconn);
+            p.ParseSeed((char*) "GROUPING", Model::s_grouping);
+            p.ParseSeed((char*) "ASSIGNMENT", Model::s_assignment);
+            p.ParseSeed((char*) "BANDWIDTH", Model::s_bandwidth);
+            
+            BOOST_LOG_TRIVIAL(info) << "Place seed used: "
+            << Model::s_places[0] << " "
+            << Model::s_places[1] << " "
+            << Model::s_places[2] << "\n";
+            BOOST_LOG_TRIVIAL(info) << "Connect seed used: "
+            << Model::s_connect[0] << " "
+            << Model::s_connect[1] << " "
+            << Model::s_connect[2] << "\n";
+            BOOST_LOG_TRIVIAL(info) << "Edge conn seed used: "
+            << Model::s_edgeconn[0] << " "
+            << Model::s_edgeconn[1] << " "
+            << Model::s_edgeconn[2] << "\n";
+            BOOST_LOG_TRIVIAL(info) << "Grouping seed used: "
+            << Model::s_grouping[0] << " "
+            << Model::s_grouping[1] << " "
+            << Model::s_grouping[2] << "\n";
+            BOOST_LOG_TRIVIAL(info) << "Assigment seed used: "
+            << Model::s_assignment[0] << " "
+            << Model::s_assignment[1] << " "
+            << Model::s_assignment[2] << "\n";
+            BOOST_LOG_TRIVIAL(info) << "Bandwidth seed used: "
+            << Model::s_bandwidth[0] << " "
+            << Model::s_bandwidth[1] << " "
+            << Model::s_bandwidth[2] << "\n" << std::endl;
+            
+            
+            last_seed_file.open("last_seed_file", ios::out);
+            
+            if (last_seed_file.fail()) {
+                cerr << "Cannot open seed files for input/output...\n";
+                exit(0);
+            }
+            
+            last_seed_file << "PLACES"
+            << " " << Model::s_places[0]
+            << " " << Model::s_places[1]
+            << " " << Model::s_places[2] << "\n";
+            
+            last_seed_file << "CONNECT"
+            << " " << Model::s_connect[0]
+            << " " << Model::s_connect[1]
+            << " " << Model::s_connect[2] << "\n";
+            
+            last_seed_file << "EDGE_CONN"
+            << " " << Model::s_edgeconn[0]
+            << " " << Model::s_edgeconn[1]
+            << " " << Model::s_edgeconn[2] << "\n";
+            
+            last_seed_file << "GROUPING"
+            << " " << Model::s_grouping[0] 
+            << " " << Model::s_grouping[1] 
+            << " " << Model::s_grouping[2] << "\n";
+            
+            last_seed_file << "ASSIGNMENT"
+            << " " << Model::s_assignment[0] 
+            << " " << Model::s_assignment[1] 
+            << " " << Model::s_assignment[2] << "\n";
+            
+            last_seed_file << "BANDWIDTH"
+            << " " << Model::s_bandwidth[0] 
+            << " " << Model::s_bandwidth[1] 
+            << " " << Model::s_bandwidth[2] << "\n";
+            
+            last_seed_file.close();
+            
+        }
+        
+	template <typename A, typename B> 
+        BriteHandler<A,B>::Parameters::Parameters() :
+        BriteSeedFile (ConfigManager::Instance()->getConfig<std::string>("NetworkFileGenerator.BriteHandler.BriteSeedFile")),
+        nodePlacement(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.nodePlacement")),
+        numNeighbors(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.numNeighbors")),
+        innerGridSize(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.innerGridSize")),
+        outerGridSize(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.outerGridSize")),
+        rtWaxman (RTWaxman())
+        {
+        }
+        
+        template <typename A, typename B> 
+        BriteHandler<A,B>::Parameters::RTWaxman::RTWaxman () :
+        growthType(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.RTWaxman.growthType")),
+        alpha(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator.BriteHandler.RTWaxman.alpha")),
+        beta(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator.BriteHandler.RTWaxman.beta"))
+        {
+        }
+        
+        template <typename A, typename B> 
+        BriteHandler<A,B>::BriteHandler () :
+        params(Parameters())
+        {
+            InitSeeds();
+	    this->pt.put ("nodePlacement", params.nodePlacement);
+            this->pt.put ("numNeighbors", params.numNeighbors);
+            this->pt.put ("innerGridSize", params.innerGridSize);
+            this->pt.put ("outerGridSize", params.outerGridSize);
+            this->pt.put ("nodePlacement", params.nodePlacement);
+            this->pt.put ("RTWaxman.growthType", params.rtWaxman.growthType);
+            this->pt.put ("RTWaxman.alpha", params.rtWaxman.alpha);
+            this->pt.put ("RTWaxman.beta", params.rtWaxman.beta); 
+        }
+        
+        template <typename A, typename B> 
+        const typename BriteHandler<A,B>::Parameters&
+        BriteHandler<A,B>::getParams() const
+        {
+            return params;
+        } 
     }
 }
-
 #endif /* defined(__vne_mcts__brite_handler__) */

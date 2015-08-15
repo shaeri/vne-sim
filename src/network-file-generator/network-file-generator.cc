@@ -155,7 +155,7 @@ namespace vne {
         NetworkFileGenerator::VYSubstrateNetFileGenerator (bool writeToFile)
         {
            std::shared_ptr<Network<VYSubstrateNode<>,VYSubstrateLink<>>> substrate_net
-            = BriteHandler::Instance()->getNetwork_RTWaxman<VYSubstrateNode<>, VYSubstrateLink<>>(params.SubstrateNodeNum, params.SNCPUDist, params.SNCPUDistParam1, params.SNCPUDistParam2, params.SNCPUDistParam3, params.SLBWDist, params.SLBWDistParam1, params.SLBWDistParam2, params.SLBWDistParam3, params.SLDelayDist, params.SLDelayDistParam1, params.SLDelayDistParam2, params.SLDelayDistParam3);
+            = BriteHandler<VYSubstrateNode<>, VYSubstrateLink<>>::Instance()->getNetwork(Topology_Type::Waxman, params.SubstrateNodeNum, params.SNCPUDist, params.SNCPUDistParam1, params.SNCPUDistParam2, params.SNCPUDistParam3, params.SLBWDist, params.SLBWDistParam1, params.SLBWDistParam2, params.SLBWDistParam3, params.SLDelayDist, params.SLDelayDistParam1, params.SLDelayDistParam2, params.SLDelayDistParam3);
             
             if (writeToFile)
             {
@@ -178,10 +178,10 @@ namespace vne {
                         snConfigFiles.str(std::string());
                         snConfigFiles << strstrm.str();
                         snConfigFiles << "/substrate_net_brite_params.xml";
-                        boost::property_tree::write_xml(snConfigFiles.str(), BriteHandler::Instance()->getParams().pt, std::locale(), w);
+                        boost::property_tree::write_xml(snConfigFiles.str(), BriteHandler<VYSubstrateNode<>, VYSubstrateLink<>>::Instance()->getProperties(), std::locale(), w);
                         
-                        strstrm << "/vy_substrate_net_n_" << params.SubstrateNodeNum <<
-                        "_outergrid_" << ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.outerGridSize") << "_inner_grid_" << ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.innerGridSize")<<".txt";
+                        strstrm << "/substrate_net_n_" << params.SubstrateNodeNum << "_" << BriteHandler<VYSubstrateNode<>, VYSubstrateLink<>>::Instance()->getPreferredFileName() << ".txt";
+                        
                         ofstrm.open(strstrm.str().c_str());
                         if (ofstrm.is_open())
                         {
@@ -243,7 +243,7 @@ namespace vne {
                     
                     configFile.str(std::string());
                     configFile << vnrDirectoryPath << "/vnr_brite_params.xml";
-                    boost::property_tree::write_xml(configFile.str(), BriteHandler::Instance()->getParams().pt, std::locale(), w);
+                    boost::property_tree::write_xml(configFile.str(), BriteHandler<VYVirtualNode<>,VYVirtualLink<>>::Instance()->getProperties(), std::locale(), w);
                 }
                 catch (...)
                 {
@@ -255,7 +255,7 @@ namespace vne {
                 int numNodes = RNG::Instance()->sampleDistribution<int>(params.VNRNumNodesDist, std::tuple<double,double,double> (params.VNRNumNodesDistParam1, params.VNRNumNodesDistParam2, params.VNRNumNodesDistParam3));
                 
                     std::shared_ptr<Network<VYVirtualNode<>,VYVirtualLink<>>> vn =
-                        BriteHandler::Instance()->getNetwork_RTWaxman<VYVirtualNode<>, VYVirtualLink<>>(numNodes, params.VNCPUDist, params.VNCPUDistParam1, params.VNCPUDistParam2, params.VNCPUDistParam3, params.VLBWDist, params.VLBWDistParam1, params.VLBWDistParam2, params.VLBWDistParam3, params.VLDelayDist, params.VLDelayDistParam1, params.VLDelayDistParam2, params.VLDelayDistParam3);
+                        BriteHandler<VYVirtualNode<>,VYVirtualLink<>>::Instance()->getNetwork (Topology_Type::Waxman, numNodes, params.VNCPUDist, params.VNCPUDistParam1, params.VNCPUDistParam2, params.VNCPUDistParam3, params.VLBWDist, params.VLBWDistParam1, params.VLBWDistParam2, params.VLBWDistParam3, params.VLDelayDist, params.VLDelayDistParam1, params.VLDelayDistParam2, params.VLDelayDistParam3);
                 double rnd = gsl_rng_uniform (RNG::Instance()->getGeneralRNG());
                 
                 int linksplitable = (rnd < params.VNRLinkSplittingRate) ? (int)Link_Embedding_Algo_Types::WITH_PATH_SPLITTING : (int)Link_Embedding_Algo_Types::NO_PATH_SPLITTING;
@@ -270,7 +270,7 @@ namespace vne {
                 
                 unsigned int duration = (unsigned int) RNG::Instance()->sampleDistribution<double>(params.VNRDurationDist, std::tuple<double,double,double>(params.VNRDurationDistParam1,params.VNRDurationDistParam2, params.VNRDurationDistParam3));
                 
-               unsigned int maxD = (unsigned int) RNG::Instance()->sampleDistribution<double>(params.VNRMaxDistanceDist, std::tuple<double,double,double>(params.VNRMaxDistanceDistParam1,params.VNRMaxDistanceDistParam2, params.VNRMaxDistanceDistParam3));
+                unsigned int maxD = (unsigned int) RNG::Instance()->sampleDistribution<double>(params.VNRMaxDistanceDist, std::tuple<double,double,double>(params.VNRMaxDistanceDistParam1,params.VNRMaxDistanceDistParam2, params.VNRMaxDistanceDistParam3));
                 
                 int topo = 0;
                 std::shared_ptr<VYVirtualNetRequest<>> vnr (new VYVirtualNetRequest<> (vn, (double) time, (double) duration, (int) linksplitable, topo, (int)maxD,nullptr,nullptr));

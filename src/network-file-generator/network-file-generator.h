@@ -25,7 +25,7 @@
 #ifndef NFG_NETWORK_FILE_GENERATOR_
 #define NFG_NETWORK_FILE_GENERATOR_
 
-#include "Brite.h"
+#include "BRITE/C++/Brite.h"
 
 #include "brite-handler.h"
 
