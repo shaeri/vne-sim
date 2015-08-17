@@ -1,0 +1,68 @@
+diff --git a/Makefile b/Makefile
+index 1f6582c..202380f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -7,8 +7,8 @@ all : libhiberlite.a sqlite3.o tests sample
+ 
+ OBJS=BeanLoader.o BeanUpdater.o ChildKiller.o CppModel.o Database.o ModelExtractor.o Registry.o SQLiteStmt.o Visitor.o shared_res.o sqlite3.o
+ 
+-CXXFLAGS=-std=c++0x -Iinclude/ -Wall -Isqlite-amalgamation
+-LDFLAGS=-lpthread -ldl
++CXXFLAGS=-std=c++0x -fPIC -Iinclude/ -Wall -Isqlite-amalgamation
++LDFLAGS=-lpthread -ldl -fPIC
+ 
+ libhiberlite.a : $(OBJS)
+ 	ar -r -s libhiberlite.a $(OBJS)
+@@ -22,7 +22,7 @@ install :
+ 	cp libhiberlite.a $(INSTALL_LIB)/
+ 
+ sqlite3.o :
+-	gcc -c sqlite-amalgamation/sqlite3.c -o sqlite3.o
++	gcc -c -fPIC sqlite-amalgamation/sqlite3.c -o sqlite3.o
+ 
+ %.o : src/%.cpp include/*
+ 	g++ -c $(CXXFLAGS) $< -o $@
+diff --git a/include/hiberdefs.h b/include/hiberdefs.h
+index 36aab58..44ce232 100644
+--- a/include/hiberdefs.h
++++ b/include/hiberdefs.h
+@@ -8,6 +8,7 @@
+ #define HIBERLITE_NVP(Field) hiberlite::sql_nvp< decltype(Field) >(#Field,Field)
+ #endif
+ #define HIBERLITE_BASE_CLASS(ClName) hiberlite::sql_nvp< ClName >(#ClName,*((ClName*)this) )
++#define HIBERLITE_BASE_CLASS_WITH_NAME(ClName,tName) hiberlite::sql_nvp< ClName >(#tName,*((ClName*)this) )
+ 
+ #define HIBERLITE_EXPORT_CLASS(ClName) 			\
+ namespace hiberlite{							\
+@@ -15,6 +16,12 @@ template<>										\
+ std::string Database::getClassName<ClName>()	\
+ {	return #ClName;	}}
+ 
++#define HIBERLITE_EXPORT_CLASS_WITH_NAME(ClName,tName) 			\
++namespace hiberlite{							\
++template<>										\
++std::string Database::getClassName<ClName>()	\
++{	return #tName;	}}
++
+ //#define HIBERLITE_COLLECTION(Field) hiberlite::collection_nvp<typeof(Field),typeof(Field.begin())>(#Field, Field, Field.begin(), Field.end())
+ //#define HIBERLITE_ARRAY(Field,N) hiberlite::collection_nvp<typeof(Field),typeof(Field[0])>(#Field,  *Field, *(Field+N))
+ 
+diff --git a/src/Database.cpp b/src/Database.cpp
+index e876d25..1c98aec 100644
+--- a/src/Database.cpp
++++ b/src/Database.cpp
+@@ -1,5 +1,6 @@
+ 
+ #include "hiberlite.h"
++#include <iostream>
+ 
+ namespace hiberlite{
+ 
+@@ -83,6 +84,7 @@ void Database::createModel()
+ 				query+=col.storage_type;
+ 		}
+ 		query +=");";
++        std::cout << query << std::endl;
+ 		dbExecQuery(query);
+ 	}
+ }

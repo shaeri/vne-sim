@@ -54,8 +54,11 @@ src/core/config.h
 Debug/
 build/
 
+#Hiberlite library
+external-libs/hiberlite/
+
 #fnss library
-external-libs/fnss
+external-libs/fnss/
 
 #adevs library
 external-libs/adevs/

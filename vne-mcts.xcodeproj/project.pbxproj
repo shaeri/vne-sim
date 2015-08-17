@@ -126,7 +126,6 @@
 		95FA35E519C118D000B7F416 /* vy-vine-two-stage-embedding-algo.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95FA35E319C118CF00B7F416 /* vy-vine-two-stage-embedding-algo.cc */; };
 		95FBC88219999149003B8968 /* vnr-generator.h in Sources */ = {isa = PBXBuildFile; fileRef = 95A3663819998BAC009FA327 /* vnr-generator.h */; };
 		95FDC4401AC9F5E900222717 /* network-file-generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95FDC43E1AC9F5E900222717 /* network-file-generator.cc */; };
-		95FDC4521AC9FD7A00222717 /* brite-handler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95FDC4501AC9FD7A00222717 /* brite-handler.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -12153,6 +12152,8 @@
 		95E42C911958F9B00016EDBE /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../../../../../usr/local/Cellar/boost/1.55.0_2/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
 		95ED2A8B1AA7C312004D1385 /* libhiberlite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libhiberlite.a; path = "external-libs/hiberlite/libhiberlite.a"; sourceTree = "<group>"; };
 		95EE63391B4ECACC000AC4C9 /* config.h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.h.in; sourceTree = "<group>"; };
+		95F19F1C1B7FF04700A04E40 /* external-lib-handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "external-lib-handler.h"; sourceTree = "<group>"; };
+		95F19F1D1B7FF04700A04E40 /* fnss-handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fnss-handler.h"; sourceTree = "<group>"; };
 		95FA35DD19BE743B00B7F416 /* vy-vine-node-embedding-algo.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vine-node-embedding-algo.cc"; path = "src/Vineyard/vy-vine-node-embedding-algo.cc"; sourceTree = SOURCE_ROOT; };
 		95FA35DE19BE743B00B7F416 /* vy-vine-node-embedding-algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "vy-vine-node-embedding-algo.h"; path = "src/Vineyard/vy-vine-node-embedding-algo.h"; sourceTree = SOURCE_ROOT; };
 		95FA35E019BE745000B7F416 /* vy-vine-link-embedding-algo.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "vy-vine-link-embedding-algo.cc"; path = "src/Vineyard/vy-vine-link-embedding-algo.cc"; sourceTree = SOURCE_ROOT; };
@@ -12162,7 +12163,6 @@
 		95FDC43C1AC9EBA300222717 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		95FDC43E1AC9F5E900222717 /* network-file-generator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "network-file-generator.cc"; sourceTree = "<group>"; };
 		95FDC43F1AC9F5E900222717 /* network-file-generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "network-file-generator.h"; sourceTree = "<group>"; };
-		95FDC4501AC9FD7A00222717 /* brite-handler.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "brite-handler.cc"; sourceTree = "<group>"; };
 		95FDC4511AC9FD7A00222717 /* brite-handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "brite-handler.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -25079,10 +25079,11 @@
 		95FDC43D1AC9F59100222717 /* network-file-generator */ = {
 			isa = PBXGroup;
 			children = (
+				95F19F1C1B7FF04700A04E40 /* external-lib-handler.h */,
+				95F19F1D1B7FF04700A04E40 /* fnss-handler.h */,
 				95AE5AAC1ACCCEA00048DFA2 /* test */,
 				95FDC43E1AC9F5E900222717 /* network-file-generator.cc */,
 				95FDC43F1AC9F5E900222717 /* network-file-generator.h */,
-				95FDC4501AC9FD7A00222717 /* brite-handler.cc */,
 				95FDC4511AC9FD7A00222717 /* brite-handler.h */,
 			);
 			path = "network-file-generator";
@@ -25216,7 +25217,6 @@
 				9561A9451958E30700BF44A6 /* simple-request-proc.cc in Sources */,
 				95D3E4CF1ACB8CAD000F7372 /* RouterModel.cc in Sources */,
 				95D3E4C11ACB8CAD000F7372 /* Makefile in Sources */,
-				95FDC4521AC9FD7A00222717 /* brite-handler.cc in Sources */,
 				95FA35E519C118D000B7F416 /* vy-vine-two-stage-embedding-algo.cc in Sources */,
 				9561A9461958E30700BF44A6 /* simple-request-proc.h in Sources */,
 				954423FA1989830D00DD5675 /* vy-virtual-net-request.cc in Sources */,
@@ -25347,7 +25347,11 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					ENABLE_MPI,
+					PYTHON_AVAILABLE,
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					"DEBUG=1",
+					PYTHON_AVAILABLE,
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)/**",
@@ -25369,7 +25373,7 @@
 					"/usr/local/Cellar/open-mpi/1.8.5/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src $(PROJECT_DIR)/external-libs/adevs/include /usr/local/include /usr/local/include/gsl/ $(PROJECT_DIR)/external-libs/BRITE/C++ /usr/local/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src $(PROJECT_DIR)/external-libs/ /usr/local/include /usr/local/include/gsl/ /usr/local/include";
 			};
 			name = Debug;
 		};
@@ -25397,7 +25401,7 @@
 					"/usr/local/Cellar/open-mpi/1.8.5/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src $(PROJECT_DIR)/external-libs/adevs/include /usr/local/include /usr/local/include/gsl/ $(PROJECT_DIR)/external-libs/BRITE/C++ /usr/local/include";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src $(PROJECT_DIR)/external-libs/ /usr/local/include /usr/local/include/gsl/ /usr/local/include";
 			};
 			name = Release;
 		};

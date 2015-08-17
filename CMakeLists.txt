@@ -45,22 +45,26 @@ endif()
 # We are using a modified version of hiberlite, therefore, we are bound to use
 # the version that comes with the source code and we cannot download it fresh from
 # its git repository.
+IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/hiberlite)
+MESSAGE (STATUS "HIBERLITE DOES NOT EXIST...")
 ExternalProject_Add (hiberlite_project
+			     GIT_REPOSITORY https://github.com/paulftw/hiberlite.git 
                              SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/hiberlite
                              CONFIGURE_COMMAND ""
+			     PATCH_COMMAND git apply ../../cmake/patches/hiberlite.local.patch
 			     BUILD_IN_SOURCE 1
 			     LOG_BUILD 1
                              BUILD_COMMAND make
                              INSTALL_COMMAND ""
                             )
-
-
-# Add the include directories of ADEVS and hiberlite and BRITE
-include_directories(${PROJECT_SOURCE_DIR}/external-libs/)
+ENDIF ()
 
 set(HIBERLITE_LIBRARY hiberlite)
 add_library(${HIBERLITE_LIBRARY} STATIC IMPORTED)
 set_property(TARGET ${HIBERLITE_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/external-libs/hiberlite/libhiberlite.a)
+
+# Add the include directories of external-libraries 
+include_directories(${PROJECT_SOURCE_DIR}/external-libs/)
 
 # Local projec headers
 include_directories(${PROJECT_SOURCE_DIR}/src)
@@ -84,14 +88,15 @@ find_package(SQLITE3 REQUIRED)
 find_package(PythonLibs)
 IF(${PYTHONLIBS_FOUND})
 	MESSAGE (STATUS "Python Libraries were found! Compiling with FNSS support.") 
-	add_definitions ( -DPYTHON_AVAILABLE)
+	add_definitions (-DPYTHON_AVAILABLE)
 	include_directories(${PYTHON_INCLUDE_DIRS})
 	IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/fnss)
-	  MESSAGE (STATUS "FNSS DOES NOT EXIST")
-	ExternalProject_Add (fnss
+	  MESSAGE (STATUS "FNSS DOES NOT EXIST...")
+	ExternalProject_Add (fnss_project
 			     #DOWNLOAD_DIR /tmp/
   			     GIT_REPOSITORY https://github.com/fnss/fnss.git 
 			     SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss
+			     PATCH_COMMAND git apply ../../cmake/patches/fnss.fix_quantity_clang.patch
 			     CONFIGURE_COMMAND ""
 			     BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
 			     INSTALL_COMMAND ""
