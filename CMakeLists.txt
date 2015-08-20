@@ -38,7 +38,7 @@ MESSAGE (STATUS "ADEVS DOES NOT EXIST")
 			     CONFIGURE_COMMAND ""
 			     BUILD_COMMAND ""
 			     INSTALL_COMMAND ""
-			     LOG_DOWNLOAD ON
+			     LOG_DOWNLOAD 1
                             )
 endif()
 
@@ -98,7 +98,8 @@ IF(${PYTHONLIBS_FOUND})
 			     SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss
 			     PATCH_COMMAND git apply ../../cmake/patches/fnss.fix_quantity_clang.patch
 			     CONFIGURE_COMMAND ""
-			     BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
+			     BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/core && sudo python setup.py build && 
+					sudo python setup.py install && cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
 			     INSTALL_COMMAND ""
 			     LOG_DOWNLOAD ON
                             )
@@ -107,6 +108,8 @@ IF(${PYTHONLIBS_FOUND})
       set(FNSS_LIBRARY fnss)
       add_library(${FNSS_LIBRARY} STATIC IMPORTED)
       set_property(TARGET ${FNSS_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp/lib/libfnss.a) 
+      include_directories(${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp/deps)
+ 
 ELSE()
 	MESSAGE (STATUS "Python Libraries were not found! Compiling without FNSS support.")  
 ENDIF()

@@ -49,6 +49,8 @@ namespace vne{
         class BriteHandler : public ExternalLibHandler<A,B>
         {
         public:
+            BriteHandler ();
+            virtual ~BriteHandler () {};
             struct Parameters {
                 Parameters ();
                 std::string BriteSeedFile;
@@ -67,19 +69,14 @@ namespace vne{
             
             const Parameters& getParams () const;
             
-            static std::shared_ptr<BriteHandler<A,B>> Instance();
-	    
             virtual std::shared_ptr<Network<A, B>> getNetwork
             (Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
                     Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
                     Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3) override;
             
 	    virtual std::string getPreferredFileName () override;
-        protected:
-            BriteHandler ();
             
         private:
-            static std::shared_ptr<BriteHandler<A,B>> _instance;
             Parameters params;
 	    
 	    //bw and cpu types: Constant = 1, Uniform =2, HeavyTailed = 3, Exponential =4
@@ -170,17 +167,6 @@ namespace vne{
             return net;
         }
         
-        template <typename A, typename B>
-        std::shared_ptr<BriteHandler<A,B>> BriteHandler<A,B>::_instance = nullptr;
-	
-	template <typename A, typename B>	
-        std::shared_ptr<BriteHandler<A,B>> BriteHandler<A,B>::Instance ()
-        {
-            if (_instance==nullptr) {
-                _instance = std::shared_ptr<BriteHandler<A,B>> (new BriteHandler<A,B>());
-            }
-            return _instance;
-        }
         
         template <typename A, typename B> 
         void BriteHandler<A,B>::InitSeeds() {
@@ -286,10 +272,11 @@ namespace vne{
         
         template <typename A, typename B> 
         BriteHandler<A,B>::BriteHandler () :
+        ExternalLibHandler<A,B> (),
         params(Parameters())
         {
             InitSeeds();
-	    this->pt.put ("nodePlacement", params.nodePlacement);
+            this->pt.put ("nodePlacement", params.nodePlacement);
             this->pt.put ("numNeighbors", params.numNeighbors);
             this->pt.put ("innerGridSize", params.innerGridSize);
             this->pt.put ("outerGridSize", params.outerGridSize);

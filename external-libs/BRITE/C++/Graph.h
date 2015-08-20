@@ -23,8 +23,8 @@
 /*  Title:     BRITE: Boston university Representative Topology gEnerator   */
 /*  Revision:  2.0         4/02/2001                                        */
 /****************************************************************************/
-#ifndef GRAPH_H
-#define GRAPH_H
+#ifndef BRITE_GRAPH_H
+#define BRITE_GRAPH_H
 #pragma interface
 
 #include "Node.h"

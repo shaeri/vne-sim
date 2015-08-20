@@ -28,6 +28,7 @@
 #include "BRITE/C++/Brite.h"
 
 #include "brite-handler.h"
+#include "fnss-handler.h"
 
 #include "core/core-types.h"
 #include "core/config-manager.h"
@@ -105,19 +106,23 @@ namespace vne {
                 
                 boost::property_tree::ptree vnrpt;
                 boost::property_tree::ptree snpt;
+                
+                std::string Handler;
+                Topology_Type vn_topo_type;
+                Topology_Type sn_topo_type;
             };
             
             NetworkFileGenerator ();
             ~NetworkFileGenerator ();
             
-            std::shared_ptr<Network<VYSubstrateNode<>,VYSubstrateLink<>>> VYSubstrateNetFileGenerator (bool writeToFile);
+            std::shared_ptr<Network<VYSubstrateNode<>,VYSubstrateLink<>>>
+                VYSubstrateNetFileGenerator (bool writeToFile);
             
             std::shared_ptr <std::list <std::shared_ptr <VYVirtualNetRequest<> >>>
                 VYVirtualNetRequestGenerator (bool writeToFile);
             
         private:
             Parameters params;
-            
         };
     }
 }

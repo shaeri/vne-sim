@@ -22,8 +22,8 @@
 /*  Title:     BRITE: Boston university Representative Topology gEnerator   */
 /*  Revision:  2.0         4/02/2001                                        */
 /****************************************************************************/
-#ifndef EDGE_H
-#define EDGE_H
+#ifndef BRITE_EDGE_H
+#define BRITE_EDGE_H
 #pragma interface
 
 #include "Util.h"

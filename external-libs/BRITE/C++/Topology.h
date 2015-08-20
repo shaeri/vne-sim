@@ -22,8 +22,8 @@
 /*  Title:     BRITE: Boston university Representative Topology gEnerator   */
 /*  Revision:  2.0         4/02/2001                                        */
 /****************************************************************************/
-#ifndef TOPOLOGY_H
-#define TOPOLOGY_H
+#ifndef BRITE_TOPOLOGY_H
+#define BRITE_TOPOLOGY_H
 
 #include "Models/Model.h"
 
