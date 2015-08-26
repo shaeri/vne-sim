@@ -6,8 +6,10 @@
 </utilities>
 
 <core>
+    <!-- This conditino can be used by all the algorithms to ignore the location constraint -->
+    <ignoreLocationConstrain>true</ignoreLocationConstrain>
     <!--The result database file-->
-    <dbPath>/home/soroosh/Dropbox/vne-mcts-simulations/Parallel-Runs/arrival-rate-tests/</dbPath>
+    <dbPath>/Users/Soroosh/Dropbox/vne-mcts-simulations/single-proc-runs/Datacenter_Substrates/Bcube/</dbPath>
     <!-- 0 uses the libraries standard seed -->
     <rngSeed>0</rngSeed>
     <rngUseSameSeedForParallelRuns>false</rngUseSameSeedForParallelRuns>
@@ -18,23 +20,23 @@
 
 <NetworkFileGenerator>
   <!-- Select network file generator: BRITE or FNSS-->
-    <Handler>FNSS</Handler>
-    <!-- Waxman BCube-->
-    <SNTopologyType>DCNTwoTier</SNTopologyType>
+    <Handler>BRITE</Handler>
+    <!-- Waxman DCNBCube-->
+    <SNTopologyType>DCNBCube</SNTopologyType>
     <VNTopologyType>Waxman</VNTopologyType>
     <BriteHandler>
-    	<BriteSeedFile>/home/soroosh/src/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
+    	<BriteSeedFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
         <!-- Random = 1, Heavy Tailed = 2 -->
         <nodePlacement>1</nodePlacement>
         <!-- Number of neighboring node each new node connects to. -->
-        <numNeighbors>2</numNeighbors>
+        <numNeighbors>3</numNeighbors>
         <!-- We assume the same grid size for SN and VNRs-->
         <innerGridSize>25</innerGridSize>
         <outerGridSize>25</outerGridSize>
         
         <RTWaxman>
             <!-- 1 = incremental, 2 = all -->
-            <growthType>1</growthType>
+            <growthType>2</growthType>
             <alpha>0.5</alpha>
             <beta>0.2</beta>
         </RTWaxman>
@@ -42,25 +44,25 @@
     <FNSSHandler>
       <DCNBCube>
           <!-- Hosts per Bcube_0 -->
-          <N>1</N>
+          <N>4</N>
           <!-- Level of Bcube -->
-          <K>3</K>
+          <K>2</K>
       </DCNBCube>
       <DCNTwoTier>
           <!-- Total number of core switches -->
-          <n_core>2</n_core>
+          <n_core>10</n_core>
           <!-- Total number of edge switches -->
-          <n_edges>2</n_edges>
+          <n_edges>12</n_edges>
           <!-- Total number of hosts connected to each edge swtich -->
-          <n_hosts>2</n_hosts>
+          <n_hosts>5</n_hosts>
           <!-- The link bandwidth of the links connecting the core switches to edge switches will be multiplied by this (must be integer) -->
-          <coreBWMultiplier>2</<coreBWMultiplier>
+          <coreBWMultiplier>1</<coreBWMultiplier>
       </DCNTwoTier>
       <DCNFatTree>
           <!-- Number of ports per switch -->
-          <K>2</K>
+          <K>6</K>
           <!-- The link bandwidth of  for  will be multiplied by this (must be integer) -->
-          <coreBWMultiplier>2</<coreBWMultiplier>
+          <coreBWMultiplier>1</<coreBWMultiplier>
       </DCNFatTree>
     </FNSSHandler>  
 	<DirToSaveFiles>/Users/soroosh/Desktop/Network_Files/</DirToSaveFiles>
@@ -88,7 +90,7 @@
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNRArrivalDist>2</VNRArrivalDist>
     <!-- 1/ArrivalRate => for example for arrival rate of 8 per 100 unit time param = 100/8 = 12.5 -->
-    <VNRArrivalDistParam1>50</VNRArrivalDistParam1>
+    <VNRArrivalDistParam1>100</VNRArrivalDistParam1>
     <VNRArrivalDistParam2>-1</VNRArrivalDistParam2>
     <VNRArrivalDistParam3>-1</VNRArrivalDistParam3>
     
@@ -106,8 +108,8 @@
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <SLBWDist>0</SLBWDist>
-    <SLBWDistParam1>50</SLBWDistParam1>
-    <SLBWDistParam2>50</SLBWDistParam2>
+    <SLBWDistParam1>100</SLBWDistParam1>
+    <SLBWDistParam2>100</SLBWDistParam2>
     <SLBWDistParam3>-1</SLBWDistParam3>
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
@@ -118,14 +120,14 @@
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNCPUDist>0</VNCPUDist>
-    <VNCPUDistParam1>0</VNCPUDistParam1>
+    <VNCPUDistParam1>2</VNCPUDistParam1>
     <VNCPUDistParam2>20</VNCPUDistParam2>
     <VNCPUDistParam3>-1</VNCPUDistParam3>
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VLBWDist>0</VLBWDist>
-    <VLBWDistParam1>0</VLBWDistParam1>
-    <VLBWDistParam2>50</VLBWDistParam2>
+    <VLBWDistParam1>1</VLBWDistParam1>
+    <VLBWDistParam2>10</VLBWDistParam2>
     <VLBWDistParam3>-1</VLBWDistParam3>
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
@@ -138,12 +140,12 @@
 
 <vineyard>
     <SubstrateNetwork>
-        <path>/home/soroosh/Desktop/Network_Files/substrate_nets</path>
-        <filename>vy_substrate_net_n_50_outergrid_25_inner_grid_25.txt</filename>
+        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/substrate_nets/Datacenter_Networks/DCNBCube</path>
+        <filename>substrate_net_DCNBCube_FNSS_nodes_112_links_192_n_4_k_2_nHosts_64_nSwitches_48.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
-        <path>/home/soroosh/Desktop/Network_Files</path>
-        <dir>reqs-12-1000-nodesMin-3-nodesMax-10-grid-25</dir>
+        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/vnr-bw-1-10/</path>
+        <dir>reqs-100-1000-nodesMin-3-nodesMax-10-grid-25</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>
     <Constants>
@@ -159,10 +161,10 @@
         <nodeMappingType>deterministic</nodeMappingType>
     </Configs>
     <glpk>
-        <LPmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
-        <LPdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
-        <MCFmodelFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
-        <MCFdataFile>/home/soroosh/src/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
+        <LPmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
+        <LPdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
+        <MCFmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
+        <MCFdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
         <!-- 0 disabled, 1 enabled -->
         <terminalEnabled>0</terminalEnabled>
     </glpk>

@@ -30,6 +30,7 @@
 #include "substrate-node.h"
 #include "virtual-network-request.h"
 #include "network-builder.h"
+#include "config-manager.h"
 
 namespace vne {
     template<typename,typename> class NodeEmbeddingAlgorithm;
@@ -55,14 +56,26 @@ namespace vne {
                        VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::value, "Template arguments are not correctly set.");
         
     public:
+        const static bool IgnoreLocationConstrain;
+        
         typedef VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>> VNR_TYPE;
         typedef Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>> SUBSTRATE_TYPE;
         
         virtual Embedding_Result embeddVNRNodes (std::shared_ptr<SUBSTRATE_TYPE> substrate_net, std::shared_ptr<VNR_TYPE> vnr) = 0;
         
     protected:
-        NodeEmbeddingAlgorithm (){};
+        NodeEmbeddingAlgorithm () {};
     };
+    
+    template<
+    typename ... SNODERES, template <typename ...> class SNODECLASS,
+    typename... SLINKRES, template <typename...> class SLINKCLASS,
+    typename ... VNODERES, template <typename ...> class VNODECLASS,
+    typename... VLINKRES, template <typename...> class VLINKCLASS,
+    template<typename> class VNRCLASS>
+    const bool NodeEmbeddingAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
+    VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::IgnoreLocationConstrain =
+            ConfigManager::Instance()->getConfig<bool>("core.ignoreLocationConstrain");
 }
 
 #endif

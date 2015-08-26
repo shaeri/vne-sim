@@ -102,16 +102,29 @@ class ExperimentParameters
             ar & HIBERLITE_NVP (vn_growthType);
             ar & HIBERLITE_NVP (vn_alpha);
             ar & HIBERLITE_NVP (vn_beta);
+            
+            ar & HIBERLITE_NVP (sn_topology_type);
+            ar & HIBERLITE_NVP (sn_dcn_n_switches);
+            ar & HIBERLITE_NVP (sn_dcn_n_hosts);
+            ar & HIBERLITE_NVP (sn_dcn_n_link);
+            ar & HIBERLITE_NVP (sn_bcube_n);
+            ar & HIBERLITE_NVP (sn_bcube_k);
+            ar & HIBERLITE_NVP (sn_two_tier_core);
+            ar & HIBERLITE_NVP (sn_two_tier_edge);
+            ar & HIBERLITE_NVP (sn_two_tier_host);
+            ar & HIBERLITE_NVP (sn_two_tier_core_bw_multiplier);
+            ar & HIBERLITE_NVP (sn_fat_tree_k);
+            ar & HIBERLITE_NVP (sn_fat_tree_core_bw_multiplier);
         }
     
     public:
-        void setAllParams (ptree &SNParams, ptree &SNBriteParams, ptree &VNParams, ptree &VNBriteParams);
+        void setAllParams (ptree &SNParams, ptree &SNNetParams, ptree &VNParams, ptree &VNBriteParams);
 
     private:
         inline void setVNParams (ptree &pt);
         inline void setSNParams (ptree &pt);
         inline void setVNBriteParams (ptree &pt);
-        inline void setSNBriteParams (ptree &pt);
+        inline void setSNNetParams (ptree &pt, Topology_Type tt);
         
         int totalTime;
         int SubstrateNodeNum;
@@ -185,6 +198,19 @@ class ExperimentParameters
         std::string vn_growthType;
         double vn_alpha;
         double vn_beta;
+        
+        std::string sn_topology_type;
+        int sn_dcn_n_switches;
+        int sn_dcn_n_hosts;
+        int sn_dcn_n_link;
+        int sn_bcube_n;
+        int sn_bcube_k;
+        int sn_two_tier_core;
+        int sn_two_tier_edge;
+        int sn_two_tier_host;
+        int sn_two_tier_core_bw_multiplier;
+        int sn_fat_tree_k;
+        int sn_fat_tree_core_bw_multiplier;
     };
 }
 

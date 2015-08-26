@@ -29,6 +29,8 @@
 
 #include "core/node-embedding-algorithm.h"
 
+using namespace vne::vineyard;
+
 namespace vne {
     namespace mcvne {
         template<typename = Network<VYSubstrateNode<>,VYSubstrateLink<>> ,

@@ -26,6 +26,7 @@
 #define MCVNE_MCVNE_SIMULATOR_
 
 #include "mcvne/vne-mcts-simulator.h"
+#include "core/node-embedding-algorithm.h"
 
 #include "Vineyard/vy-substrate-link.h"
 #include "Vineyard/vy-substrate-node.h"
@@ -53,6 +54,7 @@ namespace vne {
             virtual double calculateFinalReward (std::shared_ptr<VNENMState> st,
                                                  const std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap) const override;
         private:
+            
             struct ReachabilityConditionWithPathSpliting
             {
                 bool operator()(const std::shared_ptr<const VYSubstrateNode<>> lhs, const std::shared_ptr<const std::vector<std::shared_ptr<VYSubstrateLink<>>> > linksConnectedToLhs, const std::shared_ptr<const VYVirtualNode<>> rhs, const std::shared_ptr<const std::vector<std::shared_ptr<VYVirtualLink<>>> > linksConnectedToRhs, double maxD, std::shared_ptr<std::set<int>> used_sn_ids) const
@@ -67,6 +69,8 @@ namespace vne {
                     {
                         sum_vn_link_bw += (*it)->getBandwidth();
                     }
+                    if (NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>::IgnoreLocationConstrain)
+                        return (sum_sn_link_bw >= sum_vn_link_bw && used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCPU()>=rhs->getCPU());
                     return (sum_sn_link_bw >= sum_vn_link_bw && used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
                             lhs->getCPU()>=rhs->getCPU() );
                 }
@@ -91,6 +95,8 @@ namespace vne {
                         if (count == 0)
                             return false;
                     }
+                    if (NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>::IgnoreLocationConstrain)
+                        return (used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCPU()>=rhs->getCPU());
                     return (used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
                             lhs->getCPU()>=rhs->getCPU() );
                 }

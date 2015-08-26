@@ -99,11 +99,11 @@ static inline std::string get_Topology_Type_Str (Topology_Type tt)
     if (tt == Topology_Type::DCNFatTree)
 	return std::string ("DCNFatTree");
     if (tt == Topology_Type::Waxman)
-	return std::string ("Waxman");
+        return std::string ("Waxman");
     if (tt == Topology_Type::Barabasi)
-	return std::string ("Barabasi");
+        return std::string ("Barabasi");
     if (tt == Topology_Type::Erdos)
-	return std::string ("Erdos");
+        return std::string ("Erdos");
     return std::string ("Uniform");
 };
     

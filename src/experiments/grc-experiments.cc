@@ -71,7 +71,7 @@ namespace vne {
             boost::property_tree::read_xml(ConfigFile.str(), SNParams);
             
             ConfigFile.str (std::string());
-            ConfigFile << snDir.str() << "/substrate_net_brite_params.xml";
+            ConfigFile << snDir.str() << "/substrate_net_generation_algo_params.xml";
             boost::property_tree::ptree SNBriteParams;
             boost::property_tree::read_xml(ConfigFile.str(), SNBriteParams);
             
@@ -146,7 +146,7 @@ namespace vne {
             boost::property_tree::read_xml(ConfigFile.str(), SNParams);
             
             ConfigFile.str (std::string());
-            ConfigFile << snDir.str() << "/substrate_net_brite_params.xml";
+            ConfigFile << snDir.str() << "/substrate_net_generation_algo_params.xml";
             boost::property_tree::ptree SNBriteParams;
             boost::property_tree::read_xml(ConfigFile.str(), SNBriteParams);
             

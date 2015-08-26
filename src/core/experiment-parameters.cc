@@ -25,16 +25,17 @@
 #include "core/experiment-parameters.h"
 
 namespace vne {
-    void ExperimentParameters::setAllParams(ptree &SNParams, ptree &SNBriteParams, ptree &VNParams, ptree &VNBriteParams)
+    void ExperimentParameters::setAllParams(ptree &SNParams, ptree &SNNetParams, ptree &VNParams, ptree &VNBriteParams)
     {
         setSNParams(SNParams);
-        setSNBriteParams(SNBriteParams);
+        setSNNetParams(SNNetParams, get_Topology_Type (SNParams.get<std::string>("SNTopologyType")));
         setVNParams(VNParams);
         setVNBriteParams(VNBriteParams);
     }
     void ExperimentParameters::setSNParams(boost::property_tree::ptree &pt)
     {
         SubstrateNodeNum = pt.get<int> ("SubstrateNodeNum");
+        sn_topology_type =  pt.get<std::string>("SNTopologyType");
         SNCPUDist  =  get_Distribution_Str ((Distribution) pt.get<int> ("SNCPUDist"));
         SNCPUDistParam1 = pt.get<double> ("SNCPUDistParam1");
         SNCPUDistParam2 = pt.get<double> ("SNCPUDistParam2");
@@ -93,18 +94,48 @@ namespace vne {
         VLDelayDistParam3 = pt.get<double> ("VLDelayDistParam3");
     }
     
-    void ExperimentParameters::setSNBriteParams (boost::property_tree::ptree &pt)
+    void ExperimentParameters::setSNNetParams (boost::property_tree::ptree &pt, Topology_Type tt)
     {
-        int node_placement = pt.get<int> ("nodePlacement");
-        sn_nodePlacement = (node_placement == 1)? "Random" : "Heavy-tailed";
-        sn_numNeighbors = pt.get<int> ("numNeighbors");
-        sn_innerGridSize = pt.get<int> ("innerGridSize");
-        sn_outerGridSize = pt.get<int> ("outerGridSize");
-        
-        int grow_type = pt.get<int> ("RTWaxman.growthType");
-        sn_growthType = (grow_type == 1) ? "Incremental" : "All";
-        sn_alpha = pt.get<double> ("RTWaxman.alpha");
-        sn_beta = pt.get<double> ("RTWaxman.beta");
+
+        if (tt == Topology_Type::DCNBCube)
+        {
+            sn_dcn_n_switches = pt.get<int> ("n_switches");
+            sn_dcn_n_hosts = pt.get<int> ("n_hosts");
+            sn_dcn_n_link = pt.get<int>("n_links");
+            sn_bcube_k = pt.get<int>("DCNBCube.K");
+            sn_bcube_n = pt.get<int>("DCNBCube.N");
+        }
+        else if (tt == Topology_Type::DCNFatTree)
+        {
+            sn_dcn_n_switches = pt.get<int> ("n_switches");
+            sn_dcn_n_hosts = pt.get<int> ("n_hosts");
+            sn_dcn_n_link = pt.get<int>("n_links");
+            sn_fat_tree_k = pt.get<int>("DCNFatTree.K");
+            sn_fat_tree_core_bw_multiplier = pt.get<int>("DCNFatTree.coreBWMultiplier");
+        }
+        else if (tt == Topology_Type::DCNTwoTier)
+        {
+            sn_dcn_n_switches = pt.get<int> ("n_switches");
+            sn_dcn_n_hosts = pt.get<int> ("n_hosts");
+            sn_dcn_n_link = pt.get<int>("n_links");
+            sn_two_tier_core = pt.get<int>("DCNTwoTier.n_core");
+            sn_two_tier_edge = pt.get<int>("DCNTwoTier.n_edges");
+            sn_two_tier_host = pt.get<int>("DCNTwoTier.n_hosts");
+            sn_two_tier_core_bw_multiplier = pt.get<int>("DCNTwoTier.coreBWMultiplier");
+        }
+        else
+        {
+            int node_placement = pt.get<int> ("nodePlacement");
+            sn_nodePlacement = (node_placement == 1)? "Random" : "Heavy-tailed";
+            sn_numNeighbors = pt.get<int> ("numNeighbors");
+            sn_innerGridSize = pt.get<int> ("innerGridSize");
+            sn_outerGridSize = pt.get<int> ("outerGridSize");
+            
+            int grow_type = pt.get<int> ("RTWaxman.growthType");
+            sn_growthType = (grow_type == 1) ? "Incremental" : "All";
+            sn_alpha = pt.get<double> ("RTWaxman.alpha");
+            sn_beta = pt.get<double> ("RTWaxman.beta");
+        }
     }
     
     void ExperimentParameters::setVNBriteParams (boost::property_tree::ptree &pt)

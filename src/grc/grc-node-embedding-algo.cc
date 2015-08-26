@@ -238,14 +238,26 @@ namespace vne {
                 for (auto its = substrateRmat.begin(); its != substrateRmat.end(); its++)
                 {
                     // first check the capacity condition
-                   if (substrate_network->getNode(its->first)->getCPU() >= vnr->getVN()->getNode(itv->first)->getCPU() &&
-                       vnr->getVN()->getNode(itv->first)->getCoordinates().distanceFrom (
-                       substrate_network->getNode(its->first)->getCoordinates()) <= vnr->getMaxDistance())
+                   if (substrate_network->getNode(its->first)->getCPU() >= vnr->getVN()->getNode(itv->first)->getCPU())
                    {
-                       vnr->addNodeMapping(its->first, itv->first);
-                       //itv = virtualRmat.erase(itv);
-                       its = substrateRmat.erase(its);
-                       break;
+                       //if Location Constrain need not to be considered add the mapping
+                       if (IgnoreLocationConstrain)
+                       {
+                           vnr->addNodeMapping(its->first, itv->first);
+                           its = substrateRmat.erase(its);
+                           break;
+                       }
+                       // Else check make sure the node is within the required range
+                       else
+                       {
+                           if (vnr->getVN()->getNode(itv->first)->getCoordinates().distanceFrom (
+                                substrate_network->getNode(its->first)->getCoordinates()) <= vnr->getMaxDistance())
+                           {
+                               vnr->addNodeMapping(its->first, itv->first);
+                               its = substrateRmat.erase(its);
+                               break;
+                           }
+                       }
                    }
                 }
             }

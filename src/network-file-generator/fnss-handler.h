@@ -201,6 +201,9 @@ namespace vne{
                 std::shared_ptr<B> l (new B (link_bw, link_delay, nodeFromId, nodeToId));
                 net->addLink (l);
             }
+            this->pt.put ("n_switches", numSwitches);
+            this->pt.put ("n_hosts", numHosts);
+            this->pt.put ("n_links", net->getNumLinks());
             return net;
         }
         
@@ -272,6 +275,9 @@ namespace vne{
                     l.reset (new B (params.twotier.coreBWMultiplier * link_bw, link_delay, nodeFromId, nodeToId));
                 net->addLink (l);
             }
+            this->pt.put ("n_switches", numSwitches);
+            this->pt.put ("n_hosts", numHosts);
+            this->pt.put ("n_links", net->getNumLinks());
             return net;
         }
         
@@ -341,6 +347,9 @@ namespace vne{
                     l.reset (new B (link_bw, link_delay, nodeFromId, nodeToId));
                 net->addLink (l);
             }
+            this->pt.put ("n_switches", numSwitches);
+            this->pt.put ("n_hosts", numHosts);
+            this->pt.put ("n_links", net->getNumLinks());
             return net;
         }
         
