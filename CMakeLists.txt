@@ -11,6 +11,7 @@ list(APPEND CMAKE_CXX_FLAGS "-std=c++0x")
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	SET(CMAKE_SHARED_LINKER_FLAGS " -ldl")
+	add_definitions (-DDARWIN)
 ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl")
 ENDIF()
@@ -98,7 +99,7 @@ IF(${PYTHONLIBS_FOUND})
 			     SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss
 			     PATCH_COMMAND git apply ../../cmake/patches/fnss.fix_quantity_clang.patch
 			     CONFIGURE_COMMAND ""
-			     BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/core && sudo python setup.py build && 
+			     BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/core && sudo python setup.py clean && sudo python setup.py build &&  
 					sudo python setup.py install && cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
 			     INSTALL_COMMAND ""
 			     LOG_DOWNLOAD ON

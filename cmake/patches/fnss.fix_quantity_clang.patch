@@ -1,20 +1,16 @@
-From cde09c892e43c43aea42224c709c7ecc0fe0f1c9 Mon Sep 17 00:00:00 2001
-From: Soroosh Haeri <soroosh.haeri@icloud.com>
-Date: Sun, 16 Aug 2015 07:06:37 -0700
-Subject: [PATCH] There is a starnge error with istingstream using clang (when
- the code is compiled with gnu g++ istringstream does not fail). It fails when
- the quantity class tries to extract its value and units from an input string.
- I changed this to use std::atod instead of istringstream to fix the problem.
-
----
- cpp/src/quantity.cpp | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
 diff --git a/cpp/src/quantity.cpp b/cpp/src/quantity.cpp
-index 352fad0..488f0f9 100644
+index 352fad0..0a469de 100644
 --- a/cpp/src/quantity.cpp
 +++ b/cpp/src/quantity.cpp
-@@ -20,11 +20,13 @@ Quantity::Quantity(const MeasurementUnit &converter_) :
+@@ -1,6 +1,7 @@
+ #include "quantity.h"
+ 
+ #include <sstream>
++#include <algorithm>
+ 
+ namespace fnss {
+ 
+@@ -20,11 +21,13 @@ Quantity::Quantity(const MeasurementUnit &converter_) :
  	value(0), unit(converter_.getBaseUnit()), converter(converter_) {}
  
  void Quantity::fromString(const std::string &str) {
@@ -32,6 +28,3 @@ index 352fad0..488f0f9 100644
  }
  
  std::string Quantity::toString(const std::string &separator) const {
--- 
-2.3.2 (Apple Git-55)
-

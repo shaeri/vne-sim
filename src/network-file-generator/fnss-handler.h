@@ -38,7 +38,12 @@
 #include "fnss/cpp/include/pair.h"
 #include "fnss/cpp/include/parser.h"
 
+//Handling Python header in mac os x 
+#ifdef DARWIN
 #include <python/Python.h>
+#else
+#include <Python.h>
+#endif
 
 using namespace vne::vineyard;
 using namespace fnss;
