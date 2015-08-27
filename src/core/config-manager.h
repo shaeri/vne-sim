@@ -25,6 +25,8 @@
 #ifndef CONFIG_MANAGER_H_
 #define CONFIG_MANAGER_H_
 
+#include <iostream>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 

@@ -32,6 +32,7 @@
 #include <set>
 #include <memory>
 #include <fstream>
+#include <iostream>
 
 #include <boost/log/trivial.hpp>
 #include <boost/log/attributes/named_scope.hpp>
