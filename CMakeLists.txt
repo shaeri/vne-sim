@@ -6,6 +6,13 @@ cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 set (vne-mcts_VERSION_MAJOR 1.0)
 set (vne-mcts_VERSION_MINOR 0)
 
+#Make sure compiler version is at least 4.9
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
+    message(FATAL_ERROR "GCC 4.9 is required to compile VNE-Sim..")
+  endif()
+endif()
+
 # Enable C++11 compilation
 list(APPEND CMAKE_CXX_FLAGS "-std=c++0x")
 
@@ -34,7 +41,7 @@ if (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/adevs)
 MESSAGE (STATUS "ADEVS DOES NOT EXIST")
 	ExternalProject_Add (adevs
 			     #DOWNLOAD_DIR /tmp/
-  			     URL http://web.ornl.gov/~1qn/adevs/adevs.tar.gz  
+  			     URL http://web.ornl.gov/~1qn/adevs/adevs-2.8.tar.gz  
 			     SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/adevs
 			     CONFIGURE_COMMAND ""
 			     BUILD_COMMAND ""

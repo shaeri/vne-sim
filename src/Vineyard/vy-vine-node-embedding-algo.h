@@ -79,14 +79,14 @@ namespace vne {
             {
                 bool operator()(const VYSubstrateNode<>& lhs, const VYVirtualNode<>& rhs, double maxD) const
                 {
-                    if (IgnoreLocationConstrain)
+                    if (IgnoreLocationConstrain())
                         return (lhs.getCPU()>=rhs.getCPU());
                     return (lhs.getCoordinates().distanceFrom(rhs.getCoordinates())<=maxD &&
                             lhs.getCPU()>=rhs.getCPU());
                 }
                 bool operator()(const std::shared_ptr<const VYSubstrateNode<>> lhs, const std::shared_ptr<const VYVirtualNode<>> rhs, double maxD) const
                 {
-                    if (IgnoreLocationConstrain)
+                    if (IgnoreLocationConstrain())
                         return (lhs->getCPU()>=rhs->getCPU());
                     return (lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
                             lhs->getCPU()>=rhs->getCPU());

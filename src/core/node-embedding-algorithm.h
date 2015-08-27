@@ -56,7 +56,7 @@ namespace vne {
                        VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::value, "Template arguments are not correctly set.");
         
     public:
-        const static bool IgnoreLocationConstrain;
+        const static bool IgnoreLocationConstrain();
         
         typedef VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>> VNR_TYPE;
         typedef Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>> SUBSTRATE_TYPE;
@@ -65,6 +65,7 @@ namespace vne {
         
     protected:
         NodeEmbeddingAlgorithm () {};
+	static int ignoreLocationConstrain;
     };
     
     template<
@@ -73,9 +74,22 @@ namespace vne {
     typename ... VNODERES, template <typename ...> class VNODECLASS,
     typename... VLINKRES, template <typename...> class VLINKCLASS,
     template<typename> class VNRCLASS>
+    int NodeEmbeddingAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
+    VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::ignoreLocationConstrain = -1;
+    
+    template<
+    typename ... SNODERES, template <typename ...> class SNODECLASS,
+    typename... SLINKRES, template <typename...> class SLINKCLASS,
+    typename ... VNODERES, template <typename ...> class VNODECLASS,
+    typename... VLINKRES, template <typename...> class VLINKCLASS,
+    template<typename> class VNRCLASS>
     const bool NodeEmbeddingAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
-    VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::IgnoreLocationConstrain =
-            ConfigManager::Instance()->getConfig<bool>("core.ignoreLocationConstrain");
+    VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::IgnoreLocationConstrain()
+    {
+	   if (ignoreLocationConstrain == -1)
+	     ignoreLocationConstrain  = (int) ConfigManager::Instance()->getConfig<bool>("core.ignoreLocationConstrain");
+           return (bool) ignoreLocationConstrain;
+    }
 }
 
 #endif

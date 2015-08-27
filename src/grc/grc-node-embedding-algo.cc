@@ -241,7 +241,7 @@ namespace vne {
                    if (substrate_network->getNode(its->first)->getCPU() >= vnr->getVN()->getNode(itv->first)->getCPU())
                    {
                        //if Location Constrain need not to be considered add the mapping
-                       if (IgnoreLocationConstrain)
+                       if (IgnoreLocationConstrain ())
                        {
                            vnr->addNodeMapping(its->first, itv->first);
                            its = substrateRmat.erase(its);

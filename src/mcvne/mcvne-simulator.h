@@ -69,7 +69,7 @@ namespace vne {
                     {
                         sum_vn_link_bw += (*it)->getBandwidth();
                     }
-                    if (NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>::IgnoreLocationConstrain)
+                    if (NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>::IgnoreLocationConstrain ())
                         return (sum_sn_link_bw >= sum_vn_link_bw && used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCPU()>=rhs->getCPU());
                     return (sum_sn_link_bw >= sum_vn_link_bw && used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
                             lhs->getCPU()>=rhs->getCPU() );
@@ -95,7 +95,7 @@ namespace vne {
                         if (count == 0)
                             return false;
                     }
-                    if (NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>::IgnoreLocationConstrain)
+                    if (NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>::IgnoreLocationConstrain ())
                         return (used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCPU()>=rhs->getCPU());
                     return (used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
                             lhs->getCPU()>=rhs->getCPU() );
