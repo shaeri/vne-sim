@@ -56,23 +56,29 @@ namespace vne {
             std::shared_ptr<const std::set<int> > nodeIdSet = substrate_network->getNodeIdSet();
             std::shared_ptr<const std::set<int>> linkIdSet = substrate_network->getLinkIdSet();
             
+	    int numHosts = 0;
             for (auto it = nodeIdSet->begin(); it != nodeIdSet->end(); it++)
             {
                 std::shared_ptr<const VYSubstrateNode<>> n = substrate_network->getNode(*it);
+		if (n->getMaxCPU() == 0.0)
+		  continue;
+		numHosts++;
                 stress = (n->getMaxCPU() - n->getCPU())/ n->getMaxCPU();
                 if (stress > stat.max_node_stress)
                     stat.max_node_stress = stress;
                 stat.avg_node_stress += stress;
             }
-            stat.avg_node_stress /= nodeIdSet->size();
+            stat.avg_node_stress /= numHosts;
             
             for (auto it = nodeIdSet->begin(); it != nodeIdSet->end(); it++)
             {
                 std::shared_ptr<const VYSubstrateNode<>> n = substrate_network->getNode(*it);
+		if (n->getMaxCPU() == 0.0)
+		  continue;
                 stress = (n->getMaxCPU() - n->getCPU())/ n->getMaxCPU();
                 stat.std_dev_node_stress += ((stat.avg_node_stress - stress) * (stat.avg_node_stress - stress));
             }
-            stat.std_dev_node_stress = sqrt((stat.std_dev_node_stress/nodeIdSet->size()));
+            stat.std_dev_node_stress = sqrt((stat.std_dev_node_stress/numHosts));
             
             for (auto it = linkIdSet->begin(); it != linkIdSet->end(); it++)
             {
