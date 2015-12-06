@@ -28,7 +28,9 @@
 #include "BRITE/C++/Brite.h"
 
 #include "brite-handler.h"
+#ifdef   WITH_FNSS_SUPPORT
 #include "fnss-handler.h"
+#endif
 
 #include "core/core-types.h"
 #include "core/config-manager.h"

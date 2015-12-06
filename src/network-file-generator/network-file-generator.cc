@@ -160,11 +160,14 @@ namespace vne {
         NetworkFileGenerator::VYSubstrateNetFileGenerator (bool writeToFile)
         {
             std::shared_ptr<ExternalLibHandler<VYSubstrateNode<>, VYSubstrateLink<>>> handler;
+            #ifdef WITH_FNSS_SUPPORT
             if (params.Handler.compare("FNSS") == 0)
                 handler.reset(new FNSSHandler<VYSubstrateNode<>, VYSubstrateLink<>> ());
             else
                 handler.reset(new BriteHandler<VYSubstrateNode<>, VYSubstrateLink<>>);
-            
+            #else
+                handler.reset(new BriteHandler<VYSubstrateNode<>, VYSubstrateLink<>>); 
+            #endif
            std::shared_ptr<Network<VYSubstrateNode<>,VYSubstrateLink<>>> substrate_net
             = handler->getNetwork(params.sn_topo_type, params.SubstrateNodeNum, params.SNCPUDist, params.SNCPUDistParam1, params.SNCPUDistParam2, params.SNCPUDistParam3, params.SLBWDist, params.SLBWDistParam1, params.SLBWDistParam2, params.SLBWDistParam3, params.SLDelayDist, params.SLDelayDistParam1, params.SLDelayDistParam2, params.SLDelayDistParam3);
             
@@ -183,13 +186,13 @@ namespace vne {
                         std::stringstream snConfigFiles;
                         snConfigFiles << strstrm.str();
                         snConfigFiles << "/substrate_net_params.xml";
-                        boost::property_tree::xml_writer_settings<char> w(' ', 4);
-                        boost::property_tree::write_xml(snConfigFiles.str(), params.snpt, std::locale(), w);
+                        auto setting = boost::property_tree::xml_writer_make_settings<std::string>(' ',4);
+                        boost::property_tree::write_xml(snConfigFiles.str(), params.snpt, std::locale(), setting);
                         
                         snConfigFiles.str(std::string());
                         snConfigFiles << strstrm.str();
                         snConfigFiles << "/substrate_net_generation_algo_params.xml";
-                        boost::property_tree::write_xml(snConfigFiles.str(), handler->getProperties(), std::locale(), w);
+                        boost::property_tree::write_xml(snConfigFiles.str(), handler->getProperties(), std::locale(), setting);
                         
                         strstrm << "/substrate_net_" << get_Topology_Type_Str(params.sn_topo_type) << "_" << params.Handler << "_nodes_" <<
                             substrate_net->getNumNodes() << "_links_" << substrate_net->getNumLinks() << handler->getPreferredFileName() << ".txt";
@@ -225,11 +228,14 @@ namespace vne {
             
             //set the handler
             std::shared_ptr<ExternalLibHandler<VYVirtualNode<>,VYVirtualLink<>>> handler;
+            #ifdef WITH_FNSS_SUPPORT
             if (params.Handler.compare("FNSS") == 0)
                 handler.reset(new FNSSHandler<VYVirtualNode<>,VYVirtualLink<>> ());
             else
                 handler.reset(new BriteHandler<VYVirtualNode<>,VYVirtualLink<>>);
-            
+            #else
+                handler.reset(new BriteHandler<VYVirtualNode<>,VYVirtualLink<>>); 
+            #endif   
             std::shared_ptr<std::list<std::shared_ptr<VYVirtualNetRequest<>>>> vnrlist
             (new std::list<std::shared_ptr<VYVirtualNetRequest<>>>());
             int numRequests = (int) (params.totalTime / params.VNRArrivalDistParam1);
@@ -258,12 +264,12 @@ namespace vne {
                     }
                     std::stringstream configFile;
                     configFile << vnrDirectoryPath << "/vnr_params.xml";
-                    boost::property_tree::xml_writer_settings<char> w(' ', 4);
-                    boost::property_tree::write_xml(configFile.str(), params.vnrpt, std::locale(), w);
+                    auto setting = boost::property_tree::xml_writer_make_settings<std::string>(' ',4);
+                    boost::property_tree::write_xml(configFile.str(), params.vnrpt, std::locale(), setting);
                     
                     configFile.str(std::string());
                     configFile << vnrDirectoryPath << "/vnr_brite_params.xml";
-                    boost::property_tree::write_xml(configFile.str(), handler->getProperties(), std::locale(), w);
+                    boost::property_tree::write_xml(configFile.str(), handler->getProperties(), std::locale(), setting);
                 }
                 catch (...)
                 {

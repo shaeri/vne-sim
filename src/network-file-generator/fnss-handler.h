@@ -25,6 +25,7 @@
 #ifndef  NFG_FNSS_HANDLER_
 #define  NFG_FNSS_HANDLER_
 
+#ifdef  WITH_FNSS_SUPPORT
 #include "external-lib-handler.h"
 //#include "network-file-generator.h"
 
@@ -407,4 +408,5 @@ namespace vne{
         }
     }
 }
+#endif
 #endif

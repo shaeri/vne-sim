@@ -14,13 +14,13 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 # Enable C++11 compilation
-list(APPEND CMAKE_CXX_FLAGS "-std=c++0x")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -pthread")
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	SET(CMAKE_SHARED_LINKER_FLAGS " -ldl")
 	add_definitions (-DDARWIN)
 ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl")
+	SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl -lpthread")
 ENDIF()
 
 # Set the build directory
@@ -82,7 +82,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
 # Find boost libraries
 find_package(Boost
-             1.54.0
+             1.56.0
 	     COMPONENTS	filesystem
 			log
 			log_setup
@@ -93,34 +93,37 @@ find_package(Boost
 find_package(GSL REQUIRED)
 find_package(GLPK REQUIRED)		
 find_package(SQLITE3 REQUIRED)
-find_package(PythonLibs)
-IF(${PYTHONLIBS_FOUND})
-	MESSAGE (STATUS "Python Libraries were found! Compiling with FNSS support.") 
-	add_definitions (-DPYTHON_AVAILABLE)
-	include_directories(${PYTHON_INCLUDE_DIRS})
-	IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/fnss)
-	  MESSAGE (STATUS "FNSS DOES NOT EXIST...")
-	ExternalProject_Add (fnss_project
-			     #DOWNLOAD_DIR /tmp/
-  			     GIT_REPOSITORY https://github.com/fnss/fnss.git 
-			     SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss
-			     PATCH_COMMAND git apply ../../cmake/patches/fnss.fix_quantity_clang.patch
-			     CONFIGURE_COMMAND ""
-			     BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/core && sudo python setup.py clean && sudo python setup.py build &&  
-					sudo python setup.py install && cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
-			     INSTALL_COMMAND ""
-			     LOG_DOWNLOAD ON
-                            )
-               
-      ENDIF() 
-      set(FNSS_LIBRARY fnss)
-      add_library(${FNSS_LIBRARY} STATIC IMPORTED)
-      set_property(TARGET ${FNSS_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp/lib/libfnss.a) 
-      include_directories(${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp/deps)
- 
-ELSE()
-	MESSAGE (STATUS "Python Libraries were not found! Compiling without FNSS support.")  
-ENDIF()
+option (WITH_FNSS_SUPPORT "WITH_FNSS_SUPPORT" ON)
+IF (${WITH_FNSS_SUPPORT})
+    find_package(PythonLibs)
+    IF(${PYTHONLIBS_FOUND})
+            MESSAGE (STATUS "Python Libraries were found! Compiling with FNSS support.") 
+            add_definitions (-DPYTHON_AVAILABLE)
+            include_directories(${PYTHON_INCLUDE_DIRS})
+            IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/fnss)
+              MESSAGE (STATUS "FNSS DOES NOT EXIST...")
+            ExternalProject_Add (fnss_project
+                                 #DOWNLOAD_DIR /tmp/
+                                 GIT_REPOSITORY https://github.com/fnss/fnss.git 
+                                 SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss
+                                 PATCH_COMMAND git apply ../../cmake/patches/fnss.fix_quantity_clang.patch
+                                 CONFIGURE_COMMAND ""
+                                 BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/core && sudo python setup.py clean && sudo python setup.py build &&  
+                                            sudo python setup.py install && cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
+                                 INSTALL_COMMAND ""
+                                 LOG_DOWNLOAD ON
+                                )
+                   
+          ENDIF() 
+          set(FNSS_LIBRARY fnss)
+          add_library(${FNSS_LIBRARY} STATIC IMPORTED)
+          set_property(TARGET ${FNSS_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp/lib/libfnss.a) 
+          include_directories(${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp/deps)
+     
+    ELSE()
+            MESSAGE (STATUS "Python Libraries were not found! Compiling without FNSS support.")  
+    ENDIF()
+ENDIF ()
 
 #MPI Support
 option (ENABLE_MPI "ENABLE_MPI" OFF)
