@@ -27,8 +27,9 @@
 #define BOOST_LOG_DYN_LINK
 
 #include <stdio.h>
-#include "core/core-types.h"
+#include <cmath>
 
+#include "core/core-types.h"
 #include <boost/log/trivial.hpp>
 #include <boost/log/attributes/named_scope.hpp>
 
@@ -59,7 +60,7 @@ private:
         if (std::get<std::tuple_size<std::tuple<RES...>>::value - Pos> (t) >
                       std::get<std::tuple_size<std::tuple<RES...>>::value - Pos> (*this))
 		{
-            if (abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t) -
+            if (std::abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t) -
                     std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this)) < 1E-6)
             {
                 return hasResources(t, int_<Pos - 1>(), previousResult && true);
@@ -77,7 +78,7 @@ private:
         if (std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (t) >
             std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this))
 		{
-            if (abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (t) -
+            if (std::abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (t) -
                     std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this)) < 1E-6)
             {
                 return previousResult && true;

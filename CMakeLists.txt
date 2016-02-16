@@ -14,13 +14,13 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 # Enable C++11 compilation
-list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -pthread")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++0x")
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	SET(CMAKE_SHARED_LINKER_FLAGS " -ldl")
 	add_definitions (-DDARWIN)
 ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl -lpthread")
+	SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl")
 ENDIF()
 
 # Set the build directory
@@ -102,18 +102,34 @@ IF (${WITH_FNSS_SUPPORT})
             include_directories(${PYTHON_INCLUDE_DIRS})
             IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/fnss)
               MESSAGE (STATUS "FNSS DOES NOT EXIST...")
-            ExternalProject_Add (fnss_project
+			  IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 
+				ExternalProject_Add (fnss_project
+                                 #DOWNLOAD_DIR /tmp/
+                                 GIT_REPOSITORY https://github.com/fnss/fnss.git 
+                                 SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss
+                                 PATCH_COMMAND git apply ../../cmake/patches/fnss.fix_quantity_clang.patch
+												&& git apply ../../cmake/patches/fnss.fix_macos_sed.patch
+                                 CONFIGURE_COMMAND ""
+                                 BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/core && 
+												sudo python setup.py clean && sudo python setup.py build &&  
+												sudo python setup.py install && cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
+                                 INSTALL_COMMAND ""
+                                 LOG_DOWNLOAD ON
+                                )
+			  ELSE()
+				ExternalProject_Add (fnss_project
                                  #DOWNLOAD_DIR /tmp/
                                  GIT_REPOSITORY https://github.com/fnss/fnss.git 
                                  SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss
                                  PATCH_COMMAND git apply ../../cmake/patches/fnss.fix_quantity_clang.patch
                                  CONFIGURE_COMMAND ""
-                                 BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/core && sudo python setup.py clean && sudo python setup.py build &&  
-                                            sudo python setup.py install && cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
+                                 BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/core && 
+												sudo python setup.py clean && sudo python setup.py build &&  
+												sudo python setup.py install && cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
                                  INSTALL_COMMAND ""
                                  LOG_DOWNLOAD ON
                                 )
-                   
+			  ENDIF()
           ENDIF() 
           set(FNSS_LIBRARY fnss)
           add_library(${FNSS_LIBRARY} STATIC IMPORTED)

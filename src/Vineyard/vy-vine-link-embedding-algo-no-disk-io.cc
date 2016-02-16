@@ -351,7 +351,7 @@ namespace vne {
             }
             else
                 glp_erase_prob(lp_problem);
-            int ret;
+
             glp_smcp param;
             glp_init_smcp(&param);
             //turn on the preprocessor

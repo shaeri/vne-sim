@@ -46,7 +46,7 @@ namespace vne {
         public:
             MCVNEBFSLinkEmbeddingAlgo ();
             ~MCVNEBFSLinkEmbeddingAlgo ();
-            virtual Embedding_Result  embeddVNRLinks (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
+            virtual Embedding_Result  embeddVNRLinks (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr) override;
             virtual Embedding_Result  embeddVNRLinksForIdSets (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr, const std::map<int,int>* nodeIdMap,
                                                                std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap) override;
             

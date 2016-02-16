@@ -1,0 +1,13 @@
+diff --git a/cpp/Makefile b/cpp/Makefile
+index 3665744..cc77b0c 100644
+--- a/cpp/Makefile
++++ b/cpp/Makefile
+@@ -133,7 +133,7 @@ get_src     =  $2/$(call remove_root, $(basename $1)$(SRC_EXT))
+ get_bin     = $(filter %$(notdir $1), $(BIN))
+ get_bin_dep = $(filter $(subst $(HDR_EXT),$(SRC_EXT), $(filter $(patsubst ./%,%,$(HDR)), $1)), $(patsubst ./%,%,$(SRC)))
+ make_dep    = @$(CXX) -MM $(CXXFLAGS) $1 > $2.d; \
+-              sed -i 's/.*:/$(subst /,\/,$@):/' $@.d
++              sed -i '.bak' 's/.*:/$(subst /,\/,$@):/' $@.d
+ 
+ # Compile a file and print message. Args: <src_file> <dest_file> <cxx_options>
+ compile     = @echo "Compiling:   $(strip $1) -> $(strip $2): " $(shell $(call compile_cmd, $1, $2, $3))
