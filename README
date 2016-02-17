@@ -1,8 +1,5 @@
 VNE-Sim is a discrete event simulator written in C++.
-It is based on the 2011 C++ standard (C++11)
-that introduces smart pointers and lambda functions.
-These new facilities are extensively employed in the VNE-Sim.
-
+It is based on the 2011 C++ standard (C++11).
 The CMake build system is employed for compiling the simulator.
 The \textit{CMakeLists.txt} file that resides in the root directory includes
 the build instructions such as selecting the compiler, setting the correct build paths,
@@ -222,4 +219,3 @@ calling the getGeneralRNG function or they may subscribe to RNG to get
 their own specific random number generator.
 Only the derivatives of RNGSubscriber may subscribe to RNG
 and possess their specific random number generator.
-
