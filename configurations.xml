@@ -7,9 +7,9 @@
 
 <core>
     <!-- This conditino can be used by all the algorithms to ignore the location constraint -->
-    <ignoreLocationConstrain>true</ignoreLocationConstrain>
+    <ignoreLocationConstrain>false</ignoreLocationConstrain>
     <!--The result database file-->
-    <dbPath>/Users/Soroosh/Dropbox/vne-mcts-simulations/single-proc-runs/Datacenter_Substrates/Bcube/</dbPath>
+    <dbPath>/Users/Soroosh/Desktop/</dbPath>
     <!-- 0 uses the libraries standard seed -->
     <rngSeed>0</rngSeed>
     <rngUseSameSeedForParallelRuns>false</rngUseSameSeedForParallelRuns>
@@ -20,19 +20,19 @@
 
 <NetworkFileGenerator>
   <!-- Select network file generator: BRITE or FNSS-->
-    <Handler>BRITE</Handler>
+  <Handler>FNSS</Handler>
     <!-- Waxman DCNBCube-->
-    <SNTopologyType>DCNBCube</SNTopologyType>
+    <SNTopologyType>DCNFatTree</SNTopologyType>
     <VNTopologyType>Waxman</VNTopologyType>
     <BriteHandler>
     	<BriteSeedFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
         <!-- Random = 1, Heavy Tailed = 2 -->
         <nodePlacement>1</nodePlacement>
         <!-- Number of neighboring node each new node connects to. -->
-        <numNeighbors>3</numNeighbors>
+        <numNeighbors>6</numNeighbors>
         <!-- We assume the same grid size for SN and VNRs-->
-        <innerGridSize>25</innerGridSize>
-        <outerGridSize>25</outerGridSize>
+        <innerGridSize>40</innerGridSize>
+        <outerGridSize>40</outerGridSize>
         
         <RTWaxman>
             <!-- 1 = incremental, 2 = all -->
@@ -64,12 +64,13 @@
           <!-- The link bandwidth of  for  will be multiplied by this (must be integer) -->
           <coreBWMultiplier>1</<coreBWMultiplier>
       </DCNFatTree>
-    </FNSSHandler>  
-	<DirToSaveFiles>/Users/soroosh/Desktop/Network_Files/</DirToSaveFiles>
+    </FNSSHandler>
+    
+	<DirToSaveFiles>/Users/soroosh/Desktop/Network_Files</DirToSaveFiles>
     
     <TotalTime>50000</TotalTime>
     
-    <SubstrateNodeNum>50</SubstrateNodeNum>
+    <SubstrateNodeNum>200</SubstrateNodeNum>
     
     <!-- between 0-1 -->
     <VNRLinkSplittingRate>.1</VNRLinkSplittingRate>
@@ -102,20 +103,20 @@
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <SNCPUDist>0</SNCPUDist>
-    <SNCPUDistParam1>100</SNCPUDistParam1>
+    <SNCPUDistParam1>50</SNCPUDistParam1>
     <SNCPUDistParam2>100</SNCPUDistParam2>
     <SNCPUDistParam3>-1</SNCPUDistParam3>
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <SLBWDist>0</SLBWDist>
-    <SLBWDistParam1>100</SLBWDistParam1>
+    <SLBWDistParam1>50</SLBWDistParam1>
     <SLBWDistParam2>100</SLBWDistParam2>
     <SLBWDistParam3>-1</SLBWDistParam3>
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <SLDelayDist>0</SLDelayDist>
-    <SLDelayDistParam1>50</SLDelayDistParam1>
-    <SLDelayDistParam2>100</SLDelayDistParam2>
+    <SLDelayDistParam1>1</SLDelayDistParam1>
+    <SLDelayDistParam2>5</SLDelayDistParam2>
     <SLDelayDistParam3>-1</SLDelayDistParam3>
     
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
@@ -135,16 +136,15 @@
     <VLDelayDistParam1>50</VLDelayDistParam1>
     <VLDelayDistParam2>100</VLDelayDistParam2>
     <VLDelayDistParam3>-1</VLDelayDistParam3>
-    
 </NetworkFileGenerator>
 
 <vineyard>
     <SubstrateNetwork>
-        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/substrate_nets/Datacenter_Networks/DCNBCube</path>
-        <filename>substrate_net_DCNBCube_FNSS_nodes_112_links_192_n_4_k_2_nHosts_64_nSwitches_48.txt</filename>
+        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/substrate_nets/</path>
+        <filename>vy_substrate_net_n_50_outergrid_25_inner_grid_25.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
-        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/vnr-bw-1-10/</path>
+        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/vnr-bw-0-50/</path>
         <dir>reqs-100-1000-nodesMin-3-nodesMax-10-grid-25</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>
