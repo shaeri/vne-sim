@@ -24,6 +24,7 @@
 #include "vy-vnr-generator.h"
 
 #include <regex>
+#include <boost/regex.hpp>
 
 namespace vne {
     namespace vineyard {
@@ -126,9 +127,9 @@ namespace vne {
                     {
                         if (is_regular_file(dir_iter->status()) && extension(dir_iter->path()).compare(fileExtension)==0)
                         {
-                            std::regex rgx ("/*([0-9]+)\\.txt");
-                            std::smatch match;
-                            if (std::regex_search(dir_iter->path().string().begin(), dir_iter->path().string().end(), match, rgx))
+                            boost::regex rgx ("/*([0-9]+)\\.txt");
+                            boost::smatch match;
+                            if (boost::regex_search(dir_iter->path().string().begin(), dir_iter->path().string().end(), match, rgx))
                             {
                                 _reqFiles.push(std::make_pair(atoi(match[1].str().c_str()), dir_iter->path()));
                             }

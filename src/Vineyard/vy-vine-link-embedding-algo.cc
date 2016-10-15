@@ -99,13 +99,13 @@ namespace vne {
                 {
                     if (i==j || substrate_network->getLinkBetweenNodes(allNodeIds[i], allNodeIds[j])==nullptr)
                     {
-                        fprintf(mcfFpDat, "%.6lf ", 0.0);
+                        fprintf(mcfFpDat, "%.4lf ", 0.0);
                         bVec[i][j] = 0.0;
                     }
                     else
                     {
                         double bw = substrate_network->getLinkBetweenNodes(allNodeIds[i], allNodeIds[j])->getBandwidth();
-                        fprintf(mcfFpDat, "%.6lf ", bw);
+                        fprintf(mcfFpDat, "%.4lf ", bw);
                         bVec[i][j] = bw;
                     }
                 }
@@ -124,7 +124,7 @@ namespace vne {
                 for (int i = 0; i < substrateNodesNum; i++) {
                     fprintf(mcfFpDat, "%d ", i);
                     for (int j = 0; j < substrateNodesNum; j++) {
-                        fprintf(mcfFpDat, "%.6lf ", bVec[i][j]); }
+                        fprintf(mcfFpDat, "%.4lf ", bVec[i][j]); }
                     fprintf(mcfFpDat, "\n");
                 }
             }
@@ -178,7 +178,7 @@ namespace vne {
             count = 0;
             fprintf(mcfFpDat, "param fd:=\n");
             for (auto it = virtualLinkIdSet->begin(); it != virtualLinkIdSet->end() ; it++) {
-                fprintf(mcfFpDat, "f%d %.6lf\n", count, vnr->getVN()->getLink(*it)->getBandwidth());
+                fprintf(mcfFpDat, "f%d %.4lf\n", count, vnr->getVN()->getLink(*it)->getBandwidth());
                 count++;
             }
             fprintf(mcfFpDat, ";\n\n");

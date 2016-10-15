@@ -61,7 +61,7 @@ private:
                       std::get<std::tuple_size<std::tuple<RES...>>::value - Pos> (*this))
 		{
             if (std::abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t) -
-                    std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this)) < 1E-6)
+                    std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this)) < 1E-4)
             {
                 return hasResources(t, int_<Pos - 1>(), previousResult && true);
             }
@@ -79,7 +79,7 @@ private:
             std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this))
 		{
             if (std::abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (t) -
-                    std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this)) < 1E-6)
+                    std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this)) < 1E-4)
             {
                 return previousResult && true;
             }
