@@ -93,7 +93,7 @@ find_package(Boost
 find_package(GSL REQUIRED)
 find_package(GLPK REQUIRED)		
 find_package(SQLITE3 REQUIRED)
-option (WITH_FNSS_SUPPORT "WITH_FNSS_SUPPORT" ON)
+option (WITH_FNSS_SUPPORT "WITH_FNSS_SUPPORT" OFF)
 IF (${WITH_FNSS_SUPPORT})
     find_package(PythonLibs)
     IF(${PYTHONLIBS_FOUND})

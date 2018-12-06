@@ -23,46 +23,28 @@ index 1f6582c..202380f 100644
  %.o : src/%.cpp include/*
  	g++ -c $(CXXFLAGS) $< -o $@
 diff --git a/include/hiberdefs.h b/include/hiberdefs.h
-index 36aab58..44ce232 100644
+index 1293ce9..45f22dc 100644
 --- a/include/hiberdefs.h
 +++ b/include/hiberdefs.h
-@@ -8,6 +8,7 @@
+@@ -8,13 +8,20 @@
  #define HIBERLITE_NVP(Field) hiberlite::sql_nvp< decltype(Field) >(#Field,Field)
  #endif
  #define HIBERLITE_BASE_CLASS(ClName) hiberlite::sql_nvp< ClName >(#ClName,*((ClName*)this) )
-+#define HIBERLITE_BASE_CLASS_WITH_NAME(ClName,tName) hiberlite::sql_nvp< ClName >(#tName,*((ClName*)this) )
++#define HIBERLITE_BASE_CLASS_WITH_NAME(ClName,tName) hiberlite::sql_nvp< ClName >(#tName,*((ClName*)this))
  
- #define HIBERLITE_EXPORT_CLASS(ClName) 			\
+-#define HIBERLITE_EXPORT_CLASS(ClName) 			\
++#define HIBERLITE_EXPORT_CLASS(ClName)      \
  namespace hiberlite{							\
-@@ -15,6 +16,12 @@ template<>										\
+ template<>										\
  std::string Database::getClassName<ClName>()	\
- {	return #ClName;	}}
+ {	std::string temp(#ClName);std::replace(temp.begin(), temp.end(), ':', '_');return temp;}}
  
-+#define HIBERLITE_EXPORT_CLASS_WITH_NAME(ClName,tName) 			\
-+namespace hiberlite{							\
-+template<>										\
-+std::string Database::getClassName<ClName>()	\
-+{	return #tName;	}}
++#define HIBERLITE_EXPORT_CLASS_WITH_NAME(ClName,tName)       \
++namespace hiberlite{             \
++template<>                   \
++std::string Database::getClassName<ClName>() \
++{  return #tName;  }}
 +
  //#define HIBERLITE_COLLECTION(Field) hiberlite::collection_nvp<typeof(Field),typeof(Field.begin())>(#Field, Field, Field.begin(), Field.end())
  //#define HIBERLITE_ARRAY(Field,N) hiberlite::collection_nvp<typeof(Field),typeof(Field[0])>(#Field,  *Field, *(Field+N))
  
-diff --git a/src/Database.cpp b/src/Database.cpp
-index e876d25..1c98aec 100644
---- a/src/Database.cpp
-+++ b/src/Database.cpp
-@@ -1,5 +1,6 @@
- 
- #include "hiberlite.h"
-+#include <iostream>
- 
- namespace hiberlite{
- 
-@@ -83,6 +84,7 @@ void Database::createModel()
- 				query+=col.storage_type;
- 		}
- 		query +=");";
-+        std::cout << query << std::endl;
- 		dbExecQuery(query);
- 	}
- }
