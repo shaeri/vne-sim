@@ -24,7 +24,9 @@
 
 #ifndef RESOURCES_H_
 #define RESOURCES_H_
+#ifndef BOOST_LOG_DYN_LINK
 #define BOOST_LOG_DYN_LINK
+#endif
 
 #include <stdio.h>
 #include <cmath>

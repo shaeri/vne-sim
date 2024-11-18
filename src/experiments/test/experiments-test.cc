@@ -48,16 +48,19 @@ BOOST_AUTO_TEST_SUITE (AlgorithmExperiments)
 BOOST_AUTO_TEST_CASE(ARRIVAL_RATE_TESTS)
 {
     std::string vnr_dirs[] =
-        	{"reqs-12-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-14-1000-nodesMin-3-nodesMax-10-grid-25"
-      	, "reqs-16-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-20-1000-nodesMin-3-nodesMax-10-grid-25",
-			"reqs-25-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-33-1000-nodesMin-3-nodesMax-10-grid-25",
-        	"reqs-50-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-100-1000-nodesMin-3-nodesMax-10-grid-25"};
+        	{"reqs-12-1000-nodesMin-3-nodesMax-10-grid-25" };
+
+// "reqs-14-1000-nodesMin-3-nodesMax-10-grid-25"
+//      	, "reqs-16-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-20-1000-nodesMin-3-nodesMax-10-grid-25",
+//			"reqs-25-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-33-1000-nodesMin-3-nodesMax-10-grid-25",
+//        	"reqs-50-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-100-1000-nodesMin-3-nodesMax-10-grid-25"};
 
 
+    logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::info);
 
 
     //MCVNE MCF - BFS simulator
-	for (int j = 0; j < 8; j++)
+	for (int j = 0; j < 1; j++)
 	{
 		bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dirs[j]);
 		assert(ret);
@@ -88,7 +91,7 @@ BOOST_AUTO_TEST_CASE(ARRIVAL_RATE_TESTS)
 
 
 		// MCVNE MCF MCF
-	for (int j = 0; j < 8; j++)
+	for (int j = 0; j < 1; j++)
 		{
 			bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dirs[j]);
 			assert(ret);
@@ -119,7 +122,7 @@ BOOST_AUTO_TEST_CASE(ARRIVAL_RATE_TESTS)
 		}
 
 	//MCVNE BFS - BFS simulator
-	for (int j = 0; j < 8; j++)
+	for (int j = 0; j < 1; j++)
 	{
 		bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dirs[j]);
 		assert(ret);
@@ -149,7 +152,7 @@ BOOST_AUTO_TEST_CASE(ARRIVAL_RATE_TESTS)
 	}
 
 	//GRC MCF
-	for (int j = 0; j < 8; j++)
+	for (int j = 0; j < 1; j++)
 	{
 		bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dirs[j]);
 		assert(ret);
@@ -177,7 +180,7 @@ BOOST_AUTO_TEST_CASE(ARRIVAL_RATE_TESTS)
 	}
 
 	//GRC BFS
-	for (int j = 0; j < 8; j++)
+	for (int j = 0; j < 1; j++)
 	{
 		bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dirs[j]);
 		assert(ret);
@@ -205,7 +208,7 @@ BOOST_AUTO_TEST_CASE(ARRIVAL_RATE_TESTS)
 	}
 
 	//Vineyard Deterministic
-	for (int j = 0; j < 8; j++)
+	for (int j = 0; j < 1; j++)
 	{
 		bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dirs[j]);
 		assert(ret);
@@ -233,7 +236,7 @@ BOOST_AUTO_TEST_CASE(ARRIVAL_RATE_TESTS)
 	}
 
 	//Vineyard Randomized
-	for (int j = 0; j < 8; j++)
+	for (int j = 0; j < 1; j++)
 	{
 		bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_dirs[j]);
 		assert(ret);

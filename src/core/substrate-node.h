@@ -23,7 +23,9 @@
  */
 #ifndef SUBSTRATE_NODE_H_
 #define SUBSTRATE_NODE_H_
+#ifndef BOOST_LOG_DYN_LINK
 #define BOOST_LOG_DYN_LINK
+#endif
 
 #include "core/node.h"
 #include "core/virtual-node.h"

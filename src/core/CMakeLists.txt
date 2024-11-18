@@ -1,4 +1,6 @@
-set(Config_File_Path "\"${PROJECT_SOURCE_DIR}/configurations.xml\"")
+set(Config_File_Path "\"configurations.xml\"")
+
+# TODO: add command line switch to read configurations.xml file
 
 configure_file (
   		"${CMAKE_CURRENT_SOURCE_DIR}/config.h.in"

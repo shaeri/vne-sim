@@ -33,15 +33,15 @@
 
 #include "utilities/logger.h"
 
-#include "fnss/cpp/include/topology.h"
-#include "fnss/cpp/include/edge.h"
-#include "fnss/cpp/include/node.h"
-#include "fnss/cpp/include/pair.h"
-#include "fnss/cpp/include/parser.h"
+#include "fnss-cpp/src/topology.h"
+#include "fnss-cpp/src/edge.h"
+#include "fnss-cpp/src/node.h"
+#include "fnss-cpp/src/pair.h"
+#include "fnss-cpp/src/parser.h"
 
 //Handling Python header in mac os x 
 #ifdef DARWIN
-#include <python/Python.h>
+#include <Python.h>
 #else
 #include <Python.h>
 #endif

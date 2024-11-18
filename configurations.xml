@@ -9,7 +9,7 @@
     <!-- This conditino can be used by all the algorithms to ignore the location constraint -->
     <ignoreLocationConstrain>false</ignoreLocationConstrain>
     <!--The result database file-->
-    <dbPath>/Users/Soroosh/Desktop/</dbPath>
+    <dbPath>DBs</dbPath>
     <!-- 0 uses the libraries standard seed -->
     <rngSeed>0</rngSeed>
     <rngUseSameSeedForParallelRuns>false</rngUseSameSeedForParallelRuns>
@@ -25,7 +25,8 @@
     <SNTopologyType>DCNFatTree</SNTopologyType>
     <VNTopologyType>Waxman</VNTopologyType>
     <BriteHandler>
-    	<BriteSeedFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile>
+    	<!-- <BriteSeedFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/external-libs/BRITE/seed_file</BriteSeedFile> -->
+        <BriteSeedFile>/Users/ballanty/Network_Files/BRITE/seed_file</BriteSeedFile>
         <!-- Random = 1, Heavy Tailed = 2 -->
         <nodePlacement>1</nodePlacement>
         <!-- Number of neighboring node each new node connects to. -->
@@ -66,7 +67,7 @@
       </DCNFatTree>
     </FNSSHandler>
     
-	<DirToSaveFiles>/Users/soroosh/Desktop/Network_Files</DirToSaveFiles>
+	<DirToSaveFiles>/Users/ballanty/Network_Files</DirToSaveFiles>
     
     <TotalTime>50000</TotalTime>
     
@@ -140,12 +141,12 @@
 
 <vineyard>
     <SubstrateNetwork>
-        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/substrate_nets/</path>
+        <path>/Users/ballanty/CLionProjects/vne-sim/network_files/SN/</path>
         <filename>vy_substrate_net_n_50_outergrid_25_inner_grid_25.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
-        <path>/Users/Soroosh/Dropbox/vne-mcts-simulations/Network_Files/vnr-bw-0-50/</path>
-        <dir>reqs-100-1000-nodesMin-3-nodesMax-10-grid-25</dir>
+        <path>/Users/ballanty/CLionProjects/vne-sim/network_files/VNRs/</path>
+        <dir>reqs-12-1000-nodesMin-3-nodesMax-10-grid-25</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>
     <Constants>
@@ -161,10 +162,10 @@
         <nodeMappingType>deterministic</nodeMappingType>
     </Configs>
     <glpk>
-        <LPmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
-        <LPdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
-        <MCFmodelFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
-        <MCFdataFile>/Users/Soroosh/google-drive/src/codes/workspaces/workspace-cpp/vne-mcts/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
+        <LPmodelFile>/Users/ballanty/CLionProjects/vne-sim/src/Vineyard/files/lp/CNLM-LP.mod</LPmodelFile>
+        <LPdataFile>/Users/ballanty/CLionProjects/vne-sim/src/Vineyard/files/lp/CNLM-LP.dat</LPdataFile>
+        <MCFmodelFile>/Users/ballanty/CLionProjects/vne-sim/src/Vineyard/files/lp/MCF.mod</MCFmodelFile>
+        <MCFdataFile>/Users/ballanty/CLionProjects/vne-sim/src/Vineyard/files/lp/MCF.dat</MCFdataFile>
         <!-- 0 disabled, 1 enabled -->
         <terminalEnabled>0</terminalEnabled>
     </glpk>
