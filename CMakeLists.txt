@@ -2,10 +2,6 @@ project (vne-mcts CXX)
 
 cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 
-cmake_policy(SET CMP0153 OLD)
-cmake_policy(SET CMP0167 OLD)
-
-
 # The version number.
 set (vne-mcts_VERSION_MAJOR 1.0)
 set (vne-mcts_VERSION_MINOR 0)
@@ -73,7 +69,7 @@ IF (${WITH_FNSS_SUPPORT})
 	set(Python3_FIND_VIRTUALENV FIRST)
 	find_package(Python3 COMPONENTS Interpreter Development)
 	MESSAGE(STATUS "..EXEC ${Python3_EXECUTABLE}")
-	MESSAGE(STATUS "..LIB ${Python3_LIBRARY}")
+	MESSAGE(STATUS "..LIBS ${Python3_LIBRARIES}")
 	MESSAGE(STATUS "..LIB_DIRS ${Python3_LIBRARY_DIRS}")
 	MESSAGE(STATUS "..RUNTIME_LIB_DIRS ${Python3_RUNTIME_LIBRARY_DIRS}")
 	MESSAGE(STATUS "..INC ${Python3_INCLUDE_DIRS}")
@@ -81,7 +77,7 @@ IF (${WITH_FNSS_SUPPORT})
             MESSAGE (STATUS "Python Libraries were found! Compiling with FNSS support.") 
             add_definitions (-DPYTHON_AVAILABLE)
             include_directories(${Python3_INCLUDE_DIRS})
-            IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/fnss)
+            IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/deps/src/fnss)
               MESSAGE (STATUS "FNSS DOES NOT EXIST...")
 
       ENDIF()

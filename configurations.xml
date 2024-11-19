@@ -9,7 +9,7 @@
     <!-- This conditino can be used by all the algorithms to ignore the location constraint -->
     <ignoreLocationConstrain>false</ignoreLocationConstrain>
     <!--The result database file-->
-    <dbPath>DBs</dbPath>
+    <dbPath>DBs/</dbPath>
     <!-- 0 uses the libraries standard seed -->
     <rngSeed>0</rngSeed>
     <rngUseSameSeedForParallelRuns>false</rngUseSameSeedForParallelRuns>
