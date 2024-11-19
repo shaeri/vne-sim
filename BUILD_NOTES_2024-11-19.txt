@@ -1,0 +1,45 @@
+PREREQUISITES:
+
+Languages Libraries and Commands
+
+  The following need to be added to your system.  These typically are added via your
+  package manager (apt-get, rpm, brew).
+
+      - Python (3.x, reasonably current)
+      - CMake
+      - Zip (particularly unzip command)
+      - SQLite3 (sqlite3-dev)
+      - GSL (libgsl-dev)
+      - GLPK (libglpk-dev)
+      - Boost libraries (libboost-all-dev)
+      - python-setupuptools (while this is a python lib/module there is usually a os package named like this,
+        alternatively it probably can be installed via pip3 as well)
+
+
+BUILDING vne-sim:
+
+1 - Clone Repo:
+
+  ...% git clone git@bitbucket.org:rballantyne/vne-sim.git
+
+  (swith to branch required if not master)
+
+
+2 - Get the dependencies and build them.
+
+  ...% cd deps
+  ...% bash build-deps.sh
+
+
+3 - Install fnss python package
+
+  ...% cd deps/src/fnss
+  ...% sudo python3 setup.py install
+
+
+4 - Build
+
+  ...% mkdir build
+  ...% cd build
+  ...% cmake -DWITH_FNSS_SUPPORT=yes ..
+  ...% make -j 4
