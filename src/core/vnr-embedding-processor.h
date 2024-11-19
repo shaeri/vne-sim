@@ -24,7 +24,7 @@
 #ifndef VNR_EMBEDDING_PROCESSOR_H_
 #define VNR_EMBEDDING_PROCESSOR_H_
 
-#include "adevs/include/adevs.h"
+#include "adevs/adevs.h"
 #include "core/virtual-network-request.h"
 #include "core/embedding-algorithm.h"
 

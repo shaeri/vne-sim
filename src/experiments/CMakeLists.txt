@@ -1,4 +1,4 @@
-add_library (experiments SHARED
+add_library (experiments STATIC
 		grc-experiments.cc
 		mcvne-experiments.cc
 		vineyard-experiments.cc	

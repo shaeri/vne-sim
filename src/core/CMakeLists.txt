@@ -7,7 +7,7 @@ configure_file (
   		"${CMAKE_CURRENT_SOURCE_DIR}/config.h"
   )
 
-add_library (core SHARED
+add_library (core STATIC
 		config-manager.cc
 		db-manager.cc
 		id-generator.cc

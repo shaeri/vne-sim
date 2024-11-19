@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(ARRIVAL_RATE_TESTS)
 //        	"reqs-50-1000-nodesMin-3-nodesMax-10-grid-25", "reqs-100-1000-nodesMin-3-nodesMax-10-grid-25"};
 
 
-    logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::info);
+    logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::warning);
 
 
     //MCVNE MCF - BFS simulator

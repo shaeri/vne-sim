@@ -66,8 +66,9 @@ mkdir -p ${SRC} ${LIB} ${BIN} ${INC}
 
 download
 
-# Build ADEVS
 
+
+# Build ADEVS
 
 pushd include
 ln -s ../${SRC}/${ADEVS_SRC}/include adevs
@@ -79,6 +80,7 @@ popd
 pushd ${SRC}/${FNSS_CPP_SRC}
 make
 make INSTALL_LIB=../../lib INSTALL_BIN=../../bin INSTALL_HDR=../../include install
+cp lib/libfnss.a ../../lib
 popd
 pushd include/include
 mkdir ../fnss-cpp
@@ -91,10 +93,22 @@ rmdir include/include
 
 pushd ${SRC}/${HIBL_SRC}
 cp ../sqlite/sqlite3.c sqlite-amalgamation
+git apply ../../../cmake/patches/hiberlite.local.patch
 make
 make INSTALL_PREFIX=../.. install
 popd
 
+
+# Make link to Brite in include
+
+pushd ${INC}
+ln -s ../BRITE BRITE
+popd
+
+
+# Make a copy of rapidxml to use
+
+cp src/fnss-cpp/deps/rapidxml.hpp include
 
 
 

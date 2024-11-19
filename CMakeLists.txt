@@ -40,47 +40,12 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 include_directories("/opt/homebrew/include")
 # TODO: figure out what's being included here and fix some platform independent way.
 
-# Enable include external libraries (adevs and hiberlite)
-include (ExternalProject) 
-
-# ADEVS does not require building. We just make sure it exists in the external-libs dir.
-# Otherwise, download it from the URL.
-if (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/adevs)
-MESSAGE (STATUS "ADEVS DOES NOT EXIST")
-	ExternalProject_Add (adevs
-			     #DOWNLOAD_DIR /tmp/
-  			     URL http://web.ornl.gov/~1qn/adevs/adevs-2.8.tar.gz  
-			     SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/adevs
-			     CONFIGURE_COMMAND ""
-			     BUILD_COMMAND ""
-			     INSTALL_COMMAND ""
-			     LOG_DOWNLOAD 1
-                            )
-endif()
-
-# We are using a modified version of hiberlite, therefore, we are bound to use
-# the version that comes with the source code and we cannot download it fresh from
-# its git repository.
-IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/hiberlite)
-MESSAGE (STATUS "HIBERLITE DOES NOT EXIST...")
-ExternalProject_Add (hiberlite_project
-			     GIT_REPOSITORY https://github.com/paulftw/hiberlite.git 
-                             SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/hiberlite
-                             CONFIGURE_COMMAND ""
-			     PATCH_COMMAND git apply ../../cmake/patches/hiberlite.local.patch
-			     BUILD_IN_SOURCE 1
-			     LOG_BUILD 1
-                             BUILD_COMMAND make
-                             INSTALL_COMMAND ""
-                            )
-ENDIF ()
-
 set(HIBERLITE_LIBRARY hiberlite)
 add_library(${HIBERLITE_LIBRARY} STATIC IMPORTED)
-set_property(TARGET ${HIBERLITE_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/external-libs/hiberlite/libhiberlite.a)
+set_property(TARGET ${HIBERLITE_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/libhiberlite.a)
 
 # Add the include directories of external-libraries 
-include_directories(${PROJECT_SOURCE_DIR}/external-libs/)
+include_directories(${PROJECT_SOURCE_DIR}/deps/include/)
 
 # Local projec headers
 include_directories(${PROJECT_SOURCE_DIR}/src)
@@ -103,7 +68,7 @@ find_package(GLPK REQUIRED)
 find_package(SQLITE3 REQUIRED)
 option (WITH_FNSS_SUPPORT "WITH_FNSS_SUPPORT" OFF)
 IF (${WITH_FNSS_SUPPORT})
-	set(Python3_ROOT_DIR "/Users/ballanty/CLionProjects/vne-sim/venv")
+	#set(Python3_ROOT_DIR "/Users/ballanty/CLionProjects/vne-sim/venv")
 	set(Python3_FIND_FRAMEWORK NEVER)
 	set(Python3_FIND_VIRTUALENV FIRST)
 	find_package(Python3 COMPONENTS Interpreter Development)
@@ -118,61 +83,13 @@ IF (${WITH_FNSS_SUPPORT})
             include_directories(${Python3_INCLUDE_DIRS})
             IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/external-libs/fnss)
               MESSAGE (STATUS "FNSS DOES NOT EXIST...")
-			  IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 
-				ExternalProject_Add (fnss_project
-                                 #DOWNLOAD_DIR /tmp/
-                                 GIT_REPOSITORY https://github.com/fnss/fnss.git
-                                 SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss
-                                 #PATCH_COMMAND git apply ../../cmake/patches/fnss.fix_quantity_clang.patch
-								 #				&& git apply ../../cmake/patches/fnss.fix_macos_sed.patch
-                                 CONFIGURE_COMMAND ""
-                                 BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss &&
-												python3.13 setup.py clean && python3.13 setup.py build
-												#sudo python setup.py clean && sudo python setup.py build &&
-												#sudo python setup.py install && cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
-                                 INSTALL_COMMAND ""
-                                 LOG_DOWNLOAD ON
-                                )
-				  ExternalProject_Add(fnss_cpp
-						  GIT_REPOSITORY https://github.com/ballanty/fnss-cpp.git
-						  SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss-cpp
-						  CONFIGURE_COMMAND ""
-						  BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss-cpp && make
-						  INSTALL_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss-cpp &&
-						  					mkdir ../../build/fnss-cpp ../../build/fnss-cpp/bin ../../build/fnss-cpp/lib ../../build/fnss-cpp/include &&
-						  					make INSTALL_LIB=../../build/fnss-cpp/lib INSTALL_BIN=../../build/fnss-cpp/lib INSTALL_HDR=../../build/fnss-cpp install
-						  LOG_DOWNLOAD ON
-				  )
-			  ELSE()
-				ExternalProject_Add (fnss_project
-                                 #DOWNLOAD_DIR /tmp/
-                                 GIT_REPOSITORY https://github.com/fnss/fnss.git
-                                 SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss
-                                 PATCH_COMMAND git apply ../../cmake/patches/fnss.fix_quantity_clang.patch
-                                 CONFIGURE_COMMAND ""
-                                 BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/core &&
-												sudo python setup.py clean && sudo python setup.py build &&
-												sudo python setup.py install && cd ${PROJECT_SOURCE_DIR}/external-libs/fnss/cpp && make
-                                 INSTALL_COMMAND ""
-                                 LOG_DOWNLOAD ON
-                                )
-				ExternalProject_Add(fnss_cpp
-						GIT_REPOSITORY https://github.com/ballanty/fnss-cpp.git
-						SOURCE_DIR ${PROJECT_SOURCE_DIR}/external-libs/fnss-cpp
-						CONFIGURE_COMMAND ""
-						BUILD_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss-cpp && make
-						INSTALL_COMMAND cd ${PROJECT_SOURCE_DIR}/external-libs/fnss-cpp &&
-						                 mkdir bin lib include &&
-						                 make INSTALL_LIB=../../build/fnss-cpp/lib INSTALL_BIN=../../build/fnss-cpp/lib INSTALL_HDR=../../build/fnss-cpp install
-						LOG_DOWNLOAD ON
-				)
-			  ENDIF()
+
       ENDIF()
       set(FNSS_LIBRARY fnss)
-      add_library(${FNSS_LIBRARY} SHARED IMPORTED)
+      add_library(${FNSS_LIBRARY} STATIC IMPORTED)
 	  link_directories(${Python3_LIBRARY_DIRS})
-      set_property(TARGET ${FNSS_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/build/fnss-cpp/lib/libfnss.so)
-      include_directories(${PROJECT_SOURCE_DIR}/external-libs ${PROJECT_SOURCE_DIR}/external-libs/fnss-cpp/deps)
+	  set_property(TARGET ${FNSS_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/libfnss.a)
+      include_directories(${PROJECT_SOURCE_DIR}/deps/include)
       add_definitions(-DWITH_FNSS_SUPPORT)
     ELSE()
             MESSAGE (STATUS "Python Libraries were not found! Compiling without FNSS support.")
@@ -200,7 +117,7 @@ ENDIF()
 
 #add subdirectories that need to be compiled
 add_subdirectory(src)
-add_subdirectory(external-libs/BRITE)
+add_subdirectory(deps/BRITE)
 
 # add_executable (	 )
 

@@ -79,7 +79,7 @@
     <!-- 0: Uniform, 1: Exponential, 2: Poisson -->
     <VNRNumNodesDist>0</VNRNumNodesDist>
     <VNRNumNodesDistParam1>3</VNRNumNodesDistParam1>
-    <VNRNumNodesDistParam2>10</VNRNumNodesDistparam2>
+    <VNRNumNodesDistParam2>10</VNRNumNodesDistParam2>
     <VNRNumNodesDistParam3>-1</VNRNumNodesDistParam3>
     
     
@@ -141,11 +141,11 @@
 
 <vineyard>
     <SubstrateNetwork>
-        <path>/Users/ballanty/CLionProjects/vne-sim/network_files/SN/</path>
+        <path>/Users/ballanty/Network_Files/SN/</path>
         <filename>vy_substrate_net_n_50_outergrid_25_inner_grid_25.txt</filename>
     </SubstrateNetwork>
     <VirtualNetRequest>
-        <path>/Users/ballanty/CLionProjects/vne-sim/network_files/VNRs/</path>
+        <path>/Users/ballanty/Network_Files/VNRs/</path>
         <dir>reqs-12-1000-nodesMin-3-nodesMax-10-grid-25</dir>
         <reqfileExtension>.txt</reqfileExtension>
     </VirtualNetRequest>

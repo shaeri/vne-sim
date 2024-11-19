@@ -1,4 +1,4 @@
-add_library (vineyard SHARED
+add_library (vineyard STATIC
 			vy-coordinate.cc
 			vy-statistics.cc
 			vy-substrate-link.cc

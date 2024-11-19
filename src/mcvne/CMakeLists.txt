@@ -1,4 +1,4 @@
-add_library (mcvne SHARED mcvne-node-embedding-algo.cc
+add_library (mcvne STATIC mcvne-node-embedding-algo.cc
              mcvne-bfs-link-embedding-algo.cc
 			 mcvne-simulator.cc
 			 vne-nm-state.cc

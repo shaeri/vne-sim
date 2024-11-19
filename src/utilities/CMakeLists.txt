@@ -1,4 +1,4 @@
-add_library (utilities SHARED
+add_library (utilities STATIC
 		boost-test-driver.cc 
 		logger.cc
             )
