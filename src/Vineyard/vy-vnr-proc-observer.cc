@@ -39,13 +39,13 @@ namespace vne {
         template<>
         double VYVNRProcObserver<>::ta()
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: ta()" << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: ta()";
             return DBL_MAX;
         }
         template<>
         void VYVNRProcObserver<>::delta_int()
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: delta_int()" << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: delta_int()";
         }
         
         template<>
@@ -111,7 +111,7 @@ namespace vne {
         template<>
         void VYVNRProcObserver<>::delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb)
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: delta_ext()" << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: delta_ext()";
             adevs::Bag<ADEVS_IO_TYPE>::const_iterator i = xb.begin();
             
             for (; i != xb.end (); i++)
@@ -121,20 +121,20 @@ namespace vne {
                 {
                     stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_ARRIVAL);
                     setStatistics(stat, (*i).value);
-                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< entered_embedding_queue << ". A VNR has entered embedding queue."  << std::endl;
+                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< entered_embedding_queue << ". A VNR has entered embedding queue.";
                 }
                 else if ((*i).port == embedding_successful)
                 {
                     stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_SUCCESSFUL_EMBEDDING);
                     setStatistics(stat, (*i).value);
                     
-                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< embedding_successful << ". A VNR has been successfully embedded."  << std::endl;
+                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< embedding_successful << ". A VNR has been successfully embedded.";
                 }
                 else if ((*i).port == embedding_unsuccessful)
                 {
                     stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_FAIL_EMBEDDING);
                     setStatistics(stat, (*i).value);
-                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< embedding_unsuccessful << ". A VNR embedding was unsuccessful."  << std::endl;
+                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< embedding_unsuccessful << ". A VNR embedding was unsuccessful.";
                     
                 }
                 else if ((*i).port == released_resources)
@@ -142,11 +142,11 @@ namespace vne {
                     stat.event_type = get_Evenet_Type_Str(vne::Event_Types::EVENT_TYPE_DEPARTURE);
                     setStatistics(stat, (*i).value);
                     
-                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< released_resources << ". A VNR left the substrate network."  << std::endl;
+                    BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on port: "<< released_resources << ". A VNR left the substrate network.";
                 }
                 else
                 {
-                   BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on an unknown port: " << (*i).port << ". A VNR left the substrate network."  << std::endl;
+                   BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: received an event on an unknown port: " << (*i).port << ". A VNR left the substrate network.";
                 }
                 for (auto it = subscribers.begin (); it != subscribers.end(); it++)
                 {
@@ -157,12 +157,12 @@ namespace vne {
         template<>
         void VYVNRProcObserver<>::delta_conf(const adevs::Bag<ADEVS_IO_TYPE>& xb)
         {
-           BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: delta_conf()" << std::endl;
+           BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: delta_conf()";
         }
         template<>
         void VYVNRProcObserver<>::output_func(adevs::Bag<ADEVS_IO_TYPE>& yb)
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: output_func()" << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-PROC-OBSERVER: output_func()";
         }
     }
 }

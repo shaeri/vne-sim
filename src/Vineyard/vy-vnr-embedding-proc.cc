@@ -47,17 +47,17 @@ namespace vne {
             else if (!vnr_embedding_queue.empty() && vnr_release_queue.empty())
                 return vnr_embedding_queue.top()->getArrivalTime();
             else return DBL_MAX;*/
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: ta (): "  << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: ta (): ";
             if (vnr_queue.empty())
                 return DBL_MAX;
             
-            BOOST_LOG_TRIVIAL(info) << "VNR ID: " << vnr_queue.top()->getId() << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "Current time: " << time << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "Processing time: " << vnr_queue.top()->getProccessingTime() << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "Arrival time: " << vnr_queue.top()->getArrivalTime() << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "Queuing Time: " << vnr_queue.top()->getQueuingTime() << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "Ta Returns: " << (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime() + vnr_queue.top()->getQueuingTime())-time << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "Processing queue size: " << vnr_queue.size() << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VNR ID: " << vnr_queue.top()->getId();
+            BOOST_LOG_TRIVIAL(info) << "Current time: " << time;
+            BOOST_LOG_TRIVIAL(info) << "Processing time: " << vnr_queue.top()->getProccessingTime();
+            BOOST_LOG_TRIVIAL(info) << "Arrival time: " << vnr_queue.top()->getArrivalTime();
+            BOOST_LOG_TRIVIAL(info) << "Queuing Time: " << vnr_queue.top()->getQueuingTime();
+            BOOST_LOG_TRIVIAL(info) << "Ta Returns: " << (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime() + vnr_queue.top()->getQueuingTime())-time;
+            BOOST_LOG_TRIVIAL(info) << "Processing queue size: " << vnr_queue.size();
             
             return (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime() + vnr_queue.top()->getQueuingTime())-time;
         }
@@ -65,8 +65,8 @@ namespace vne {
         template<>
         void VYVNREmbeddingProc<>::delta_int()
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: delta_int()" << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "Time advance: " << (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime()+ vnr_queue.top()->getQueuingTime())-time<< std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: delta_int()";
+            BOOST_LOG_TRIVIAL(info) << "Time advance: " << (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime()+ vnr_queue.top()->getQueuingTime())-time;
             time += (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime()+ vnr_queue.top()->getQueuingTime())-time;
             double queue_time = 0.0;
             double prev_arriv_t = 0.0;
@@ -81,16 +81,16 @@ namespace vne {
             else
                 vnr_queue.pop();
             
-            BOOST_LOG_TRIVIAL(info) << "VNR ID: " << vnr_queue.top()->getId()<< std::endl;
-            BOOST_LOG_TRIVIAL(info) << "VNR Queuing Time: " << vnr_queue.top()->getQueuingTime() << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VNR ID: " << vnr_queue.top()->getId();
+            BOOST_LOG_TRIVIAL(info) << "VNR Queuing Time: " << vnr_queue.top()->getQueuingTime();
         }
         
         template<>
         void VYVNREmbeddingProc<>::delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb)
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC:  delta_ext(). e:"<< e << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC:  delta_ext(). e:"<< e;
             time += e;
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC:  delta_ext(). time:"<< time << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC:  delta_ext(). time:"<< time;
             if (vnr_queue.size()>0)
             {
             }
@@ -113,26 +113,26 @@ namespace vne {
         template<>
         void VYVNREmbeddingProc<>::delta_conf(const adevs::Bag<ADEVS_IO_TYPE>& xb)
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: delta_conf()" << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: delta_conf()";
             delta_int();
             delta_ext(0.0,xb);
         }
         template<>
         void VYVNREmbeddingProc<>::output_func(adevs::Bag<ADEVS_IO_TYPE>& yb)
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func()" << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func()";
             PTR_TYPE leaving = vnr_queue.top ();
             ADEVS_IO_TYPE y;
             if (leaving->getVN()->getNumLinks() == leaving->getLinkMap()->size() &&
                     leaving->getVN()->getNumNodes() == leaving->getNodeMap()->size())
             {
                 y = ADEVS_IO_TYPE (depart_successful_embedding,leaving);
-                BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Successful Mapping " <<  std::endl;
+                BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Successful Mapping ";
             }
             else
             {
                 y = ADEVS_IO_TYPE (depart_unsuccessful_embedding,leaving);
-                BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Failed Mapping " <<  std::endl;
+                BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Failed Mapping ";
             }
             yb.insert(y);
         }

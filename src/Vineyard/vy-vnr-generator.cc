@@ -165,7 +165,7 @@ namespace vne {
         template<>
         void VYVNRGenerator<>::output_func(adevs::Bag<ADEVS_IO_TYPE> &yb)
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-VNR-GEN: output_func()" << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-VNR-GEN: output_func()";
             if (vnr == nullptr)
             {
                 setVNR();
@@ -185,7 +185,7 @@ namespace vne {
         {
             //remove the current last element from the req_files_queue
             _reqFiles.pop();
-            BOOST_LOG_TRIVIAL(info) << "VY-VNR-GEN: delta_int()" << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-VNR-GEN: delta_int()";
             if(vnr != nullptr)
             {
                 last_vnr_arrival = vnr->getArrivalTime();
@@ -196,14 +196,14 @@ namespace vne {
         template<>
         double VYVNRGenerator<>::ta ()
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-VNR-GEN: ta ()" << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-VNR-GEN: ta ()";
             if (_reqFiles.size()==0)
             {
                 return DBL_MAX;
             }
             if (vnr == nullptr) setVNR();
-            BOOST_LOG_TRIVIAL(info) << "---> Next arrival at: " << vnr->getArrivalTime() << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "---> Next arrival is in : " << vnr->getArrivalTime()-last_vnr_arrival << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "---> Next arrival at: " << vnr->getArrivalTime();
+            BOOST_LOG_TRIVIAL(info) << "---> Next arrival is in : " << vnr->getArrivalTime()-last_vnr_arrival;
             return vnr->getArrivalTime()-last_vnr_arrival;
         }
     }
