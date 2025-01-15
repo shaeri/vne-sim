@@ -93,7 +93,7 @@ rmdir include/include
 
 pushd ${SRC}/${HIBL_SRC}
 cp ../sqlite/sqlite3.c sqlite-amalgamation
-git apply ../../../cmake/patches/hiberlite.local.patch
+git apply ../../../../cmake/patches/hiberlite.local.patch
 make
 make INSTALL_PREFIX=../.. install
 popd
