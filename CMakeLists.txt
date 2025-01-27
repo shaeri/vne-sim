@@ -13,6 +13,17 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   endif()
 endif()
 
+# Download and build dependencies
+IF(NOT EXISTS "${CMAKE_BINARY_DIR}/deps")
+	file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/deps)
+	execute_process(COMMAND ${PROJECT_SOURCE_DIR}/scripts/build-deps.sh
+			WORKING_DIRECTORY deps
+			COMMAND_ECHO STDOUT
+			OUTPUT_FILE stdout.log
+			ERROR_FILE stderr.log
+			COMMAND_ERROR_IS_FATAL ANY)
+ENDIF()
+
 # Enable C++11 compilation
 list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -w")
 # TODO: remove -w by fixing warning messages in code
@@ -33,15 +44,15 @@ SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 # Set executable path
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
-include_directories("/opt/homebrew/include")
-# TODO: figure out what's being included here and fix some platform independent way.
-
 set(HIBERLITE_LIBRARY hiberlite)
 add_library(${HIBERLITE_LIBRARY} STATIC IMPORTED)
-set_property(TARGET ${HIBERLITE_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/libhiberlite.a)
+set_property(TARGET ${HIBERLITE_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/deps/lib/libhiberlite.a)
 
 # Add the include directories of external-libraries 
-include_directories(${PROJECT_SOURCE_DIR}/deps/include/)
+include_directories(${PROJECT_BINARY_DIR}/deps/include)
+# For BRITE Network Generator
+include_directories(${PROJECT_SOURCE_DIR}/external-libs)
+
 
 # Local projec headers
 include_directories(${PROJECT_SOURCE_DIR}/src)
@@ -64,7 +75,6 @@ find_package(GLPK REQUIRED)
 find_package(SQLITE3 REQUIRED)
 option (WITH_FNSS_SUPPORT "WITH_FNSS_SUPPORT" OFF)
 IF (${WITH_FNSS_SUPPORT})
-	#set(Python3_ROOT_DIR "/Users/ballanty/CLionProjects/vne-sim/venv")
 	set(Python3_FIND_FRAMEWORK NEVER)
 	set(Python3_FIND_VIRTUALENV FIRST)
 	find_package(Python3 COMPONENTS Interpreter Development)
@@ -83,9 +93,9 @@ IF (${WITH_FNSS_SUPPORT})
       ENDIF()
       set(FNSS_LIBRARY fnss)
       add_library(${FNSS_LIBRARY} STATIC IMPORTED)
-	  link_directories(${Python3_LIBRARY_DIRS})
-	  set_property(TARGET ${FNSS_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/deps/lib/libfnss.a)
-      include_directories(${PROJECT_SOURCE_DIR}/deps/include)
+      link_directories(${Python3_LIBRARY_DIRS})
+      set_property(TARGET ${FNSS_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/deps/lib/libfnss.a)
+      include_directories(${PROJECT_BINARY_DIR}/deps/include)
       add_definitions(-DWITH_FNSS_SUPPORT)
     ELSE()
             MESSAGE (STATUS "Python Libraries were not found! Compiling without FNSS support.")
@@ -113,7 +123,7 @@ ENDIF()
 
 #add subdirectories that need to be compiled
 add_subdirectory(src)
-add_subdirectory(deps/BRITE)
+add_subdirectory(external-libs/BRITE)
 
 # add_executable (	 )
 
