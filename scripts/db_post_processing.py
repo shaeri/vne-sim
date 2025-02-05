@@ -1,4 +1,3 @@
-#!/Users/ballanty/python-envs/vne-sim/bin/python
 
 import sys
 import csv
