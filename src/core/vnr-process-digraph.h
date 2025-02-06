@@ -25,7 +25,7 @@
 #ifndef VNR_PROCESS_DIGRAPH_H_
 #define VNR_PROCESS_DIGRAPH_H_
 
-#include "adevs/include/adevs.h"
+#include "adevs/adevs.h"
 #include "core/vnr-release-processor.h"
 #include "core/vnr-embedding-processor.h"
 #include "core/vnr-generator.h"

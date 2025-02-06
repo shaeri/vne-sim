@@ -23,7 +23,9 @@
  */
 #ifndef NETWORK_H_
 #define NETWORK_H_
+#ifndef BOOST_LOG_DYN_LINK
 #define BOOST_LOG_DYN_LINK
+#endif
 
 #include "node.h"
 #include "link.h"

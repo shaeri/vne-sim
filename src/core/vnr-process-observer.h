@@ -24,7 +24,7 @@
 #ifndef VNR_PROCESS_OBSERVER_H_
 #define VNR_PROCESS_OBSERVER_H_
 
-#include "adevs/include/adevs.h"
+#include "adevs/adevs.h"
 #include "core/virtual-network-request.h"
 #include "core/statistics-subscriber.h"
 

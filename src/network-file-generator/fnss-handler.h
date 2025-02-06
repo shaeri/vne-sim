@@ -33,18 +33,13 @@
 
 #include "utilities/logger.h"
 
-#include "fnss/cpp/include/topology.h"
-#include "fnss/cpp/include/edge.h"
-#include "fnss/cpp/include/node.h"
-#include "fnss/cpp/include/pair.h"
-#include "fnss/cpp/include/parser.h"
+#include "fnss-cpp/topology.h"
+#include "fnss-cpp/edge.h"
+#include "fnss-cpp/node.h"
+#include "fnss-cpp/pair.h"
+#include "fnss-cpp/parser.h"
 
-//Handling Python header in mac os x 
-#ifdef DARWIN
-#include <python/Python.h>
-#else
 #include <Python.h>
-#endif
 
 using namespace vne::vineyard;
 using namespace fnss;

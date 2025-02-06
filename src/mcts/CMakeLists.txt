@@ -1,4 +1,4 @@
-add_library (mcts SHARED mcts-simulator.cc
+add_library (mcts STATIC mcts-simulator.cc
 			 mcts.cc
 			 tree-node.cc
 	    )

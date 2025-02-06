@@ -25,7 +25,7 @@
 #ifndef DB_MANAGER_H_
 #define DB_MANAGER_H_
 
-#include "hiberlite/include/hiberlite.h"
+#include "hiberlite/hiberlite.h"
 
 #include <memory>
 

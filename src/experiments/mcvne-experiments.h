@@ -34,7 +34,7 @@
 #include "Vineyard/vy-vnr-proc-digraph.h"
 #include "Vineyard/vy-statistics.h"
 
-#include "hiberlite/include/hiberlite.h"
+#include "hiberlite/hiberlite.h"
 
 using namespace vne::vineyard;
 using namespace vne::mcvne;

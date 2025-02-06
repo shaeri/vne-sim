@@ -24,7 +24,7 @@
 
 #ifndef STATISTICS_SUBSCRIBER_H_
 #define STATISTICS_SUBSCRIBER_H_
-#include "hiberlite/include/hiberlite.h"
+#include "hiberlite/hiberlite.h"
 namespace vne {
     class Statistics {
         friend class hiberlite::access;

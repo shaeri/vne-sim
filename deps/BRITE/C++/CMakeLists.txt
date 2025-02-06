@@ -1,4 +1,4 @@
-add_library (brite SHARED
+add_library (brite STATIC
 		Edge.cc
 		Graph.cc
 		Node.cc

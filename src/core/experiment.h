@@ -33,7 +33,7 @@
 #include "statistics-subscriber.h"
 #include "experiment-parameters.h"
 
-#include "hiberlite/include/hiberlite.h"
+#include "hiberlite/hiberlite.h"
 
 #ifdef ENABLE_MPI
 #include <mpi.h>

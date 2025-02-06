@@ -33,7 +33,7 @@
 #include "core/virtual-network-request.h"
 #include "core/substrate-node.h"
 #include "core/substrate-link.h"
-#include "adevs/include/adevs.h"
+#include "adevs/adevs.h"
 #include "core/substrate-network.h"
 #include "core/virtual-network.h"
 #include "core/coordinate.h"

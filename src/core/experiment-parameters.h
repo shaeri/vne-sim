@@ -24,7 +24,7 @@
 #ifndef EXPERIMENT_PARAMETERS_H_
 #define EXPERIMENT_PARAMETERS_H_
 
-#include "hiberlite/include/hiberlite.h"
+#include "hiberlite/hiberlite.h"
 #include "core-types.h"
 #include "config-manager.h"
 

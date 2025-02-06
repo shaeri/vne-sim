@@ -125,7 +125,7 @@ namespace vne {
                 {
                     for( directory_iterator dir_iter(p) ; dir_iter != end_itr ; ++dir_iter)
                     {
-                        if (is_regular_file(dir_iter->status()) && extension(dir_iter->path()).compare(fileExtension)==0)
+                        if (is_regular_file(dir_iter->status()) && dir_iter->path().extension().compare(fileExtension)==0)
                         {
                             boost::regex rgx ("/*([0-9]+)\\.txt");
                             boost::smatch match;
