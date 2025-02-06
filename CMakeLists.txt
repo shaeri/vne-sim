@@ -51,7 +51,7 @@ set_property(TARGET ${HIBERLITE_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_BI
 # Add the include directories of external-libraries 
 include_directories(${PROJECT_BINARY_DIR}/deps/include)
 # For BRITE Network Generator
-include_directories(${PROJECT_SOURCE_DIR}/external-libs)
+include_directories(${PROJECT_SOURCE_DIR}/deps)
 
 
 # Local projec headers
@@ -123,7 +123,7 @@ ENDIF()
 
 #add subdirectories that need to be compiled
 add_subdirectory(src)
-add_subdirectory(external-libs/BRITE)
+add_subdirectory(deps/BRITE)
 
 # add_executable (	 )
 
