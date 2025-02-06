@@ -48,3 +48,16 @@ index 1293ce9..45f22dc 100644
  //#define HIBERLITE_COLLECTION(Field) hiberlite::collection_nvp<typeof(Field),typeof(Field.begin())>(#Field, Field, Field.begin(), Field.end())
  //#define HIBERLITE_ARRAY(Field,N) hiberlite::collection_nvp<typeof(Field),typeof(Field[0])>(#Field,  *Field, *(Field+N))
  
+diff --git a/include/some_types.h b/include/some_types.h
+index e5dbc70..f938f31 100644
+--- a/include/some_types.h
++++ b/include/some_types.h
+@@ -1,6 +1,8 @@
+ #ifndef SOM_TYPES_H_INCLUDED
+ #define SOM_TYPES_H_INCLUDED
+
++#include <cstdint>
++
+ namespace hiberlite{
+
+ template<class E, class C>
