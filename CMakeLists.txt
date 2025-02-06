@@ -1,6 +1,6 @@
-project (vne-mcts CXX)
-
 cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
+
+project (vne-mcts CXX)
 
 # The version number.
 set (vne-mcts_VERSION_MAJOR 1.0)
