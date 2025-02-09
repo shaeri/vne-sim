@@ -1,1 +1,7 @@
+#include <string>
+
 #define Config_File_Path @Config_File_Path@
+
+namespace vne {
+	static std::string config_path = Config_File_Path;
+}

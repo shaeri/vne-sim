@@ -32,14 +32,13 @@
 #include "core/config-manager.h"
 
 #include "utilities/logger.h"
+#include "utilities/python_utils.h"
 
 #include "fnss-cpp/topology.h"
 #include "fnss-cpp/edge.h"
 #include "fnss-cpp/node.h"
 #include "fnss-cpp/pair.h"
 #include "fnss-cpp/parser.h"
-
-#include <Python.h>
 
 using namespace vne::vineyard;
 using namespace fnss;
@@ -150,13 +149,16 @@ namespace vne{
                 Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
         {
             std::stringstream pythonScript;
-            Py_Initialize();
-            pythonScript << "import fnss\n";
+			vne::utilities::PythonRunner pr;
+			pythonScript << "import fnss\n";
             //pythonScript << "import networkx as nx\n";
             pythonScript << "topology = " << "fnss.bcube_topology(n=" << params.bcube.n << ", k= " << params.bcube.k << ")\n";
             pythonScript << "fnss.write_topology(topology, '.datacenter_topology.xml')\n";
-            PyRun_SimpleString(pythonScript.str().c_str());
-            Py_Finalize();
+			pr.run(pythonScript.str());
+			if ( pr.get_status_code() != 0 ) {
+				vne::utilities::Logger::Instance()->logFatal("Pythong script to generate network failed with python error result code.");
+				exit(-1);
+			}
             
             fnss::Topology t = fnss::Parser::parseTopology(".datacenter_topology.xml");
             std::set<std::pair <std::string, std::string> > edges = t.getAllEdges();
@@ -215,15 +217,18 @@ namespace vne{
          Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
         {
             std::stringstream pythonScript;
-            Py_Initialize();
+            vne::utilities::PythonRunner pr;
             pythonScript << "import fnss\n";
             //pythonScript << "import networkx as nx\n";
             pythonScript << "topology = " << "fnss.two_tier_topology(n_core=" << params.twotier.n_core << ", n_edge= " << params.twotier.n_edges <<
             ", n_hosts=" << params.twotier.n_hosts << ")\n";
             pythonScript << "fnss.write_topology(topology, '.datacenter_topology.xml')\n";
-            PyRun_SimpleString(pythonScript.str().c_str());
-            Py_Finalize();
-            
+            pr.run(pythonScript.str().c_str());
+			if ( pr.get_status_code() != 0 ) {
+				vne::utilities::Logger::Instance()->logFatal("Pythong script to generate network failed with python error result code.");
+				exit(-1);
+			}
+
             fnss::Topology t = fnss::Parser::parseTopology(".datacenter_topology.xml");
             std::set<std::pair <std::string, std::string> > edges = t.getAllEdges();
             std::set<std::string> nodes = t.getAllNodes();
@@ -289,15 +294,18 @@ namespace vne{
          Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
         {
             std::stringstream pythonScript;
-            Py_Initialize();
-            pythonScript << "import fnss\n";
+			vne::utilities::PythonRunner pr;
             //pythonScript << "import networkx as nx\n";
+			pythonScript << "import fnss\n";
             pythonScript << "topology = " << "fnss.fat_tree_topology(k=" << params.fattree.k << ")\n";
-            pythonScript << "fnss.write_topology(topology, '.datacenter_topology.xml')\n";
-            PyRun_SimpleString(pythonScript.str().c_str());
-            Py_Finalize();
-            
-            fnss::Topology t = fnss::Parser::parseTopology(".datacenter_topology.xml");
+            pythonScript << "fnss.write_topology(topology, 'datacenter_topology.xml')\n";
+			pr.run(pythonScript.str());
+			if ( pr.get_status_code() != 0 ) {
+				vne::utilities::Logger::Instance()->logFatal("Pythong script to generate network failed with python error result code.");
+				exit(-1);
+			}
+
+            fnss::Topology t = fnss::Parser::parseTopology("datacenter_topology.xml");
             std::set<std::pair <std::string, std::string> > edges = t.getAllEdges();
             std::set<std::string> nodes = t.getAllNodes();
             assert (nodes.size() > 0 && edges.size() > 0);

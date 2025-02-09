@@ -19,5 +19,6 @@ add_subdirectory(Vineyard/test)
 
 add_subdirectory(utilities)
 
+add_subdirectory(cmdline)
 
 

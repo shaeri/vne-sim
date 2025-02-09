@@ -60,7 +60,9 @@ Logger* Logger::Instance()
         std::string logFile = ConfigManager::Instance()->getConfig<std::string>("utilities.logFile");
         
         if (boost::filesystem::exists(logFile))
-            logging::add_file_log(logFile);
+            logging::add_file_log(logFile,
+								  keywords::format = "[%TimeStamp%] %Severity%: %Message%",
+								  keywords::auto_flush=true);
         
         const char* env_p = std::getenv("LOG_LEVEL");
         
