@@ -69,7 +69,7 @@ namespace vne{
                     int n_edges;
                     int coreBWMultiplier;
                 } twotier;
-		
+
                 struct DCNFatTree
                 {
                     DCNFatTree ();
@@ -123,7 +123,7 @@ namespace vne{
             
             return ss.str();
         }
-	
+
         template <typename A, typename B>
         std::shared_ptr<Network<A, B>> FNSSHandler<A,B>::getNetwork
             (Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
@@ -141,7 +141,7 @@ namespace vne{
                 return getNetwork_DCNFatTree (cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist, bw_param1, bw_param2, bw_param3,
                                             delay_dist, delay_param1, delay_param2, delay_param3);
         }
-	
+
         template<typename A, typename B>
         std::shared_ptr<Network<A, B>> FNSSHandler<A,B>::getNetwork_DCNBCube
         (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
@@ -149,16 +149,16 @@ namespace vne{
                 Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
         {
             std::stringstream pythonScript;
-			vne::utilities::PythonRunner pr;
-			pythonScript << "import fnss\n";
+            vne::utilities::PythonRunner pr;
+            pythonScript << "import fnss\n";
             //pythonScript << "import networkx as nx\n";
             pythonScript << "topology = " << "fnss.bcube_topology(n=" << params.bcube.n << ", k= " << params.bcube.k << ")\n";
             pythonScript << "fnss.write_topology(topology, '.datacenter_topology.xml')\n";
-			pr.run(pythonScript.str());
-			if ( pr.get_status_code() != 0 ) {
-				vne::utilities::Logger::Instance()->logFatal("Pythong script to generate network failed with python error result code.");
-				exit(-1);
-			}
+            pr.run(pythonScript.str());
+            if ( pr.get_status_code() != 0 ) {
+                vne::utilities::Logger::Instance()->logFatal("Pythong script to generate network failed with python error result code.");
+                exit(-1);
+            }
             
             fnss::Topology t = fnss::Parser::parseTopology(".datacenter_topology.xml");
             std::set<std::pair <std::string, std::string> > edges = t.getAllEdges();
@@ -224,10 +224,10 @@ namespace vne{
             ", n_hosts=" << params.twotier.n_hosts << ")\n";
             pythonScript << "fnss.write_topology(topology, '.datacenter_topology.xml')\n";
             pr.run(pythonScript.str().c_str());
-			if ( pr.get_status_code() != 0 ) {
-				vne::utilities::Logger::Instance()->logFatal("Pythong script to generate network failed with python error result code.");
-				exit(-1);
-			}
+            if ( pr.get_status_code() != 0 ) {
+                vne::utilities::Logger::Instance()->logFatal("Pythong script to generate network failed with python error result code.");
+                exit(-1);
+            }
 
             fnss::Topology t = fnss::Parser::parseTopology(".datacenter_topology.xml");
             std::set<std::pair <std::string, std::string> > edges = t.getAllEdges();
@@ -294,16 +294,16 @@ namespace vne{
          Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
         {
             std::stringstream pythonScript;
-			vne::utilities::PythonRunner pr;
+            vne::utilities::PythonRunner pr;
             //pythonScript << "import networkx as nx\n";
-			pythonScript << "import fnss\n";
+            pythonScript << "import fnss\n";
             pythonScript << "topology = " << "fnss.fat_tree_topology(k=" << params.fattree.k << ")\n";
             pythonScript << "fnss.write_topology(topology, 'datacenter_topology.xml')\n";
-			pr.run(pythonScript.str());
-			if ( pr.get_status_code() != 0 ) {
-				vne::utilities::Logger::Instance()->logFatal("Pythong script to generate network failed with python error result code.");
-				exit(-1);
-			}
+            pr.run(pythonScript.str());
+            if ( pr.get_status_code() != 0 ) {
+                vne::utilities::Logger::Instance()->logFatal("Pythong script to generate network failed with python error result code.");
+                exit(-1);
+            }
 
             fnss::Topology t = fnss::Parser::parseTopology("datacenter_topology.xml");
             std::set<std::pair <std::string, std::string> > edges = t.getAllEdges();
@@ -400,13 +400,13 @@ namespace vne{
         ExternalLibHandler<A,B> (),
         params(Parameters())
         {
-	      this->pt.put ("DCNBCube.N", params.bcube.n);
-	      this->pt.put ("DCNBCube.K", params.bcube.k);
+          this->pt.put ("DCNBCube.N", params.bcube.n);
+          this->pt.put ("DCNBCube.K", params.bcube.k);
           this->pt.put ("DCNFatTree.coreBWMultiplier", params.fattree.coreBWMultiplier);
-	      this->pt.put ("DCNFatTree.K", params.fattree.k);
-	      this->pt.put ("DCNTwoTier.n_core", params.twotier.n_core);
-	      this->pt.put ("DCNTwoTier.n_edges", params.twotier.n_edges);
-	      this->pt.put ("DCNTwoTier.n_hosts", params.twotier.n_hosts);
+          this->pt.put ("DCNFatTree.K", params.fattree.k);
+          this->pt.put ("DCNTwoTier.n_core", params.twotier.n_core);
+          this->pt.put ("DCNTwoTier.n_edges", params.twotier.n_edges);
+          this->pt.put ("DCNTwoTier.n_hosts", params.twotier.n_hosts);
           this->pt.put ("DCNTwoTier.coreBWMultiplier", params.twotier.coreBWMultiplier);
         }
     }
