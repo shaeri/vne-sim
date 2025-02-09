@@ -40,32 +40,32 @@ namespace vne {
         template<>
         double VYVNRReleaseProc<>::ta()
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC: ta() "<< std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC: ta() ";
             if (vnr_queue.empty())
                 return DBL_MAX;
             
-            BOOST_LOG_TRIVIAL(info) << "---> Next departure at: " << vnr_queue.top()->getDepartureTime() << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "---> Time to next departure in : " << vnr_queue.top()->getDepartureTime()-time << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "---> Next departure VNR id : " << vnr_queue.top()->getId () << std::endl;
-            BOOST_LOG_TRIVIAL(info) << "---> VNR queue size : " << vnr_queue.size() << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "---> Next departure at: " << vnr_queue.top()->getDepartureTime();
+            BOOST_LOG_TRIVIAL(info) << "---> Time to next departure in : " << vnr_queue.top()->getDepartureTime()-time;
+            BOOST_LOG_TRIVIAL(info) << "---> Next departure VNR id : " << vnr_queue.top()->getId ();
+            BOOST_LOG_TRIVIAL(info) << "---> VNR queue size : " << vnr_queue.size();
 
             return vnr_queue.top()->getDepartureTime()-time;
         }
         template<>
         void VYVNRReleaseProc<>::delta_int()
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC: delta_int() "<< std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC: delta_int() ";
             time = vnr_queue.top()->getDepartureTime();
-            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC: delta_int() time: "<< time << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC: delta_int() time: "<< time;
             vnr_queue.pop();
         }
         template<>
         void VYVNRReleaseProc<>::delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb)
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC:  delta_ext(). e:"<< e << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC:  delta_ext(). e:"<< e;
             time += e;
             
-            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC:  delta_ext(). time:"<< time << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC:  delta_ext(). time:"<< time;
             
             adevs::Bag<ADEVS_IO_TYPE>::const_iterator i = xb.begin();
             
@@ -78,14 +78,14 @@ namespace vne {
         template<>
         void VYVNRReleaseProc<>::delta_conf(const adevs::Bag<ADEVS_IO_TYPE>& xb)
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC: delta_conf() "<< std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC: delta_conf() ";
             delta_int();
             delta_ext(0.0,xb);
         }
         template<>
         void VYVNRReleaseProc<>::output_func(adevs::Bag<ADEVS_IO_TYPE>& yb)
         {
-            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC: output_func() "<< std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-RELEASE-PROC: output_func() ";
             //////////////////
             //The release logic should be added here.
             //////////////////
@@ -94,8 +94,8 @@ namespace vne {
             last_departure_time = leaving->getDepartureTime();
             ADEVS_IO_TYPE y (depart, leaving);
             yb.insert(y);
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: ID: " << leaving->getId() << std::endl << "It was supposed to leave at: " << leaving->getDepartureTime() << std::endl <<
-            "Its actual time of departure: " << time << std::endl;
+            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: ID: " << leaving->getId() << "; It was supposed to leave at: " << leaving->getDepartureTime() <<
+            "; its actual time of departure: " << time;
             //time = leaving->getDepartureTime();
         }
     }
