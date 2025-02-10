@@ -22,21 +22,6 @@ using namespace std;
 
 namespace po = boost::program_options;
 
-struct algo {
-    string algorithm;
-    string config_str;
-};
-
-vector<algo> algos = { {"mcvne_bfs_mcf", "BFS-SP"},
-              {"mcvne_mcf_mcf", "MCF"},
-              {"mcvne_bfs_bfs", "BFS-SP"},
-              {"grc_mcf", ""},
-              {"grc_bfs", ""},
-              {"vineyard_d",""},
-              {"vineyard_r", ""},
-              {"",""}
-              };
-
 int run_experiment(string vnr_file, string algo) {
 
     if ( algo == "mcvne_bfs_mcf" ) {
