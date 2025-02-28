@@ -33,7 +33,7 @@ int run_experiment(string vnr_file, string algo) {
         std::string dbPath;
         std::stringstream dbName;
         dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
-        dbName << dbPath <<"mcvne_bfs_mcf_" << vnr_file <<".db";
+        dbName << dbPath << "mcvne_bfs_mcf_" << vnr_file <<".db";
         std::string str = dbName.str();
         std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
 

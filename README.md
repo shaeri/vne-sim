@@ -224,7 +224,33 @@ and possess their specific random number generator.
 
 *** TODO: Integrate/rewrite README to a markdown file to reflect the present ***
 
-* APPENDIX - BUILD NOTES FOR THE LATEST VERSION (~ Nov. 2024)
+## Running VNE-Sim via the CLI
+
+The command `vnesim` (that is available in the build/bin directory after a successful build) can
+be used to run the VNE-Sim tool.  
+
+The command has a number of subcommands to run the components of VNE-Sim: `simulate` runs the
+simulator, `substrategen` is used to generate a substrate network file, and `requestgen` is
+used to generate a set of virtual network requests.
+
+The `configurations.xml` file still plays the primary role in how the
+tool runs.  You can specify the configuration file used for a particular
+run using the `--config` command line switch.
+
+For example, the command:
+
+` somehost$ ./build/bin/vnesim --config configurations.xml simulate`
+
+will use the configurations.xml file in the current directory to run
+a simulation.
+
+The `simulate` subcommand takes a couple of options: `-a` is required and indicates
+which algorithm to run (one of: mcvne_bfs_mcf, mcvne_mcf_mcf, mcvne_bfs_bfs, grc_mcf,
+grc_bfs, vineyard_d, vineyard_r) and `-v` which is the path to the directory containing
+virtual network requests (VNRs).
+
+
+## APPENDIX - BUILD NOTES FOR THE LATEST VERSION (~ Nov. 2024)
 
 PREREQUISITES:
 

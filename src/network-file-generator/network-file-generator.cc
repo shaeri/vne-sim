@@ -286,12 +286,7 @@ namespace vne {
                 
                 int linksplitable = (rnd < params.VNRLinkSplittingRate) ? (int)Link_Embedding_Algo_Types::WITH_PATH_SPLITTING : (int)Link_Embedding_Algo_Types::NO_PATH_SPLITTING;
                 
-                unsigned int interArrivalTime;
-                do {
-                     interArrivalTime = (unsigned int) RNG::Instance()->sampleDistribution<double>(params.VNRArrivalDist, std::tuple<double,double,double>(params.VNRArrivalDistParam1,params.VNRArrivalDistParam2,params.VNRArrivalDistParam3));
-                    //BOOST_LOG_TRIVIAL(debug) << time+ interArrivalTime;
-                }
-                while (time + interArrivalTime > params.totalTime);
+                unsigned int interArrivalTime = (unsigned int) RNG::Instance()->sampleDistribution<double>(params.VNRArrivalDist, std::tuple<double,double,double>(params.VNRArrivalDistParam1,params.VNRArrivalDistParam2,params.VNRArrivalDistParam3));
                 time += interArrivalTime;
                 
                 unsigned int duration = (unsigned int) RNG::Instance()->sampleDistribution<double>(params.VNRDurationDist, std::tuple<double,double,double>(params.VNRDurationDistParam1,params.VNRDurationDistParam2, params.VNRDurationDistParam3));

@@ -55,7 +55,7 @@ namespace vne {
     const T ConfigManager::getConfig (const std::string& conf) const
     {
     	//if its the first time that a config being read write and reload the config file.
-    	if (!lock_configs && conf != "utilities.logFile")
+    	if (!lock_configs)
     		lock_configs = true;
 
         return _pt.get<T> (conf);
