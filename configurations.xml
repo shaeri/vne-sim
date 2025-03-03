@@ -1,8 +1,10 @@
 <utilities>
-    <!--if the path does not exist, no log file will be set.-->
-    <logFile></logFile>
     <!-- log level can be set using the environment variable LOG_LEVEL. If LOG_LEVEL is not set this variable will be used.-->
     <logLevel>error</logLevel>
+    <!-- if you want to use venv to run python from a Virtual Environment, you have to provide a full path to the interpreter
+         an example: /Users/ballanty/CLionProjects/vne-sim/venv/bin/python
+         leave it empty for system python -->
+    <pythonPath></pythonPath>
 </utilities>
 
 <core>

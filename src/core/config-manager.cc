@@ -45,7 +45,7 @@ namespace vne {
     ConfigManager::ConfigManager () :
     		lock_configs (false)
     {
-    	read_xml (Config_File_Path, _pt);
+    	read_xml (vne::config_path, _pt);
     }
     ConfigManager::~ConfigManager()
     {
@@ -55,6 +55,6 @@ namespace vne {
     {
         auto setting = boost::property_tree::xml_writer_make_settings<std::string>(' ',4); 
         //boost::property_tree::xml_writer_settings<char> w(' ', 4);
-        write_xml (Config_File_Path ,_pt, std::locale(), setting);
+        write_xml (config_path ,_pt, std::locale(), setting);
     }
 }

@@ -66,6 +66,7 @@ find_package(Boost
 	     COMPONENTS	filesystem
 			log
 			log_setup
+			program_options
 			thread
 			system
 			unit_test_framework
