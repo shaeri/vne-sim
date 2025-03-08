@@ -66,6 +66,9 @@
           <!-- The link bandwidth of  for  will be multiplied by this (must be integer) -->
           <coreBWMultiplier>1</<coreBWMultiplier>
       </DCNFatTree>
+      <HyperCube>
+            <size>6</size>
+      </HyperCube>
     </FNSSHandler>
     
 	<DirToSaveFiles>/Users/soroosh/Desktop/Network_Files</DirToSaveFiles>
