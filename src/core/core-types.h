@@ -85,7 +85,8 @@ enum class Topology_Type
     DCNFatTree,
     Waxman,
     Barabasi,
-    Erdos
+    Erdos,
+    HyperCube
 };
 
 static inline std::string get_Topology_Type_Str (Topology_Type tt)
@@ -104,24 +105,31 @@ static inline std::string get_Topology_Type_Str (Topology_Type tt)
         return std::string ("Barabasi");
     if (tt == Topology_Type::Erdos)
         return std::string ("Erdos");
-    return std::string ("Uniform");
+	if (tt == Topology_Type::HyperCube)
+		return std::string("HyperCube");
+
+	// Fallthrough
+	return std::string ("Uniform");
 };
     
 static inline Topology_Type get_Topology_Type (std::string tt)
 {
     if (tt.compare ("DCNTwoTier") == 0)
-	return Topology_Type::DCNTwoTier;
+		return Topology_Type::DCNTwoTier;
     if (tt.compare ("DCNThreeTier") == 0)
-	return Topology_Type::DCNThreeTier;
+		return Topology_Type::DCNThreeTier;
     if (tt.compare ("DCNBCube") == 0)
-	return Topology_Type::DCNBCube;
+		return Topology_Type::DCNBCube;
     if (tt.compare ("DCNFatTree") == 0)
-	return Topology_Type::DCNFatTree;
+		return Topology_Type::DCNFatTree;
     if (tt.compare ("Waxman") == 0)
-	return Topology_Type::Waxman;
+		return Topology_Type::Waxman;
     if (tt.compare("Barabasi") == 0)
-	return Topology_Type::Barabasi;
-    return Topology_Type::Erdos;
+		return Topology_Type::Barabasi;
+    if (tt.compare("Erdos") == 0)
+		return Topology_Type::Erdos;
+	if (tt.compare("HyperCube") == 0)
+		return Topology_Type::HyperCube;
 }
 
 static inline std::string get_Distribution_Str (Distribution d)

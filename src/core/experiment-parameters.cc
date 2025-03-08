@@ -123,6 +123,10 @@ namespace vne {
             sn_two_tier_host = pt.get<int>("DCNTwoTier.n_hosts");
             sn_two_tier_core_bw_multiplier = pt.get<int>("DCNTwoTier.coreBWMultiplier");
         }
+		else if (tt == Topology_Type::HyperCube)
+		{
+            sn_hypercube_size = pt.get<int>("HyperCube.size");
+		}
         else
         {
             int node_placement = pt.get<int> ("nodePlacement");
