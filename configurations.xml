@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<vnesim>
 <utilities>
     <!-- log level can be set using the environment variable LOG_LEVEL. If LOG_LEVEL is not set this variable will be used.-->
     <logLevel>error</logLevel>
@@ -239,3 +241,4 @@
     <sigma>0.00001</sigma>
     <dampingFactor>0.85</dampingFactor>
 </GRC>
+</vnesim>
