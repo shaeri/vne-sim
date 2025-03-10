@@ -72,7 +72,7 @@ namespace vne {
     				<< " setConfig can only be called before any calls to getConfig." << std::endl;
     		return false;
     	}
-    	boost::optional<T> property = _pt.get_optional<T>(conf);
+    	boost::optional<T> property = _pt.get_optional<T>(vne_prefix + "." + conf);
     	if (!property)
     	{
     		std::cerr << "The configuration that you want to modify does not exist." << std::endl;
