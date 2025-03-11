@@ -130,6 +130,9 @@ static inline Topology_Type get_Topology_Type (std::string tt)
 		return Topology_Type::Erdos;
 	if (tt.compare("HyperCube") == 0)
 		return Topology_Type::HyperCube;
+
+    // Fallthrough
+    return Topology_Type::DCNTwoTier;
 }
 
 static inline std::string get_Distribution_Str (Distribution d)
@@ -140,6 +143,8 @@ static inline std::string get_Distribution_Str (Distribution d)
         return std::string ("Exponential");
     if (d == Distribution::POISSON)
         return std::string ("Poisson");
+
+    // Fallthrough
     return std::string ("Uniform");
 };
     
