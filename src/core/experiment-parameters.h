@@ -115,6 +115,7 @@ class ExperimentParameters
             ar & HIBERLITE_NVP (sn_two_tier_core_bw_multiplier);
             ar & HIBERLITE_NVP (sn_fat_tree_k);
             ar & HIBERLITE_NVP (sn_fat_tree_core_bw_multiplier);
+            ar & HIBERLITE_NVP (sn_hypercube_size);
         }
     
     public:
@@ -211,6 +212,7 @@ class ExperimentParameters
         int sn_two_tier_core_bw_multiplier;
         int sn_fat_tree_k;
         int sn_fat_tree_core_bw_multiplier;
+        int sn_hypercube_size;
     };
 }
 
