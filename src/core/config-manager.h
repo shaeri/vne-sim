@@ -34,6 +34,7 @@
 
 namespace vne {
     using boost::property_tree::ptree;
+    const std::string vne_prefix = "vnesim";
     class ConfigManager {
     public:
         static std::shared_ptr<ConfigManager> Instance();
@@ -58,7 +59,7 @@ namespace vne {
     	if (!lock_configs)
     		lock_configs = true;
 
-        return _pt.get<T> (conf);
+        return _pt.get<T> (vne_prefix + "." + conf);
     }
     template<typename T>
     bool ConfigManager::setConfig (const std::string& conf, T& val)
@@ -71,13 +72,13 @@ namespace vne {
     				<< " setConfig can only be called before any calls to getConfig." << std::endl;
     		return false;
     	}
-    	boost::optional<T> property = _pt.get_optional<T>(conf);
+    	boost::optional<T> property = _pt.get_optional<T>(vne_prefix + "." + conf);
     	if (!property)
     	{
     		std::cerr << "The configuration that you want to modify does not exist." << std::endl;
     		return false;
     	}
-    	_pt.put (conf, val);
+    	_pt.put (vne_prefix + "." + conf, val);
     	return true;
     }
 }
