@@ -26,8 +26,11 @@ int run_experiment(string vnr_file, string algo) {
 
     if ( algo == "mcvne_bfs_mcf" ) {
 
+        bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_file);
+        assert(ret);
         string str1 = "BFS-SP";
-        bool ret = ConfigManager::Instance()->setConfig("MCVNE.NodeEmbeddingAlgo.LinkEmbedder", str1);
+        ret = ConfigManager::Instance()->setConfig("MCVNE.NodeEmbeddingAlgo.LinkEmbedder", str1);
+        assert(ret);
         vne::experiments::MCVNENodeMCFLinkExp<> exp = vne::experiments::MCVNENodeMCFLinkExp<> ();
 
         std::string dbPath;
@@ -83,6 +86,7 @@ int run_experiment(string vnr_file, string algo) {
         assert(ret);
         std::string str1 = "BFS-SP";
         ret = ConfigManager::Instance()->setConfig("MCVNE.NodeEmbeddingAlgo.LinkEmbedder", str1);
+        assert(ret);
         vne::experiments::MCVNENodeBFSLinkExp<> exp = vne::experiments::MCVNENodeBFSLinkExp<> ();
 
         std::string dbPath;
