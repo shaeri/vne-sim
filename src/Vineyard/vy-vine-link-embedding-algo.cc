@@ -38,18 +38,18 @@ namespace vne {
         substrateLinkIdSet(nullptr),
         substrateNodeIdSet(nullptr)
         {
-            glp_term_out(ConfigManager::Instance()->getConfig<int>("vineyard.glpk.terminalEnabled"));
+            glp_term_out(ConfigManager::Instance()->getConfig<int>("vineyard", "glpk", "terminalEnabled"));
             
-            MCFdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFdataFile");
-            MCFmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFmodelFile");
+            MCFdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "MCFdataFile");
+            MCFmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "MCFmodelFile");
 #ifdef ENABLE_MPI
             int my_rank = MPI::COMM_WORLD.Get_rank();
             std::stringstream strm;
             strm << "-" << my_rank;
             MCFdataFile.append(strm.str());
 #endif
-            setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setAlpha");
-            setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setBeta");
+            setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setAlpha");
+            setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setBeta");
         }
         template<>
         VYVineLinkEmbeddingAlgo<>::~VYVineLinkEmbeddingAlgo()

@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(createNetwork)
     std::shared_ptr<vne::Node<int>> node3Ptr =
         std::make_shared<vne::Node<int>>(Resources<int>(5), vne::Entity_t::substrate);
     n.addNode(node3Ptr);
-    
+
 	std::shared_ptr<vne::Link<int>> l1Ptr = std::make_shared<vne::Link<int>>(
 			5, vne::Entity_t::substrate, node1Ptr->getId(), node2Ptr->getId());
 	BOOST_REQUIRE(l1Ptr->getNodeFromId() != l1Ptr->getNodeToId());
@@ -175,16 +175,16 @@ BOOST_AUTO_TEST_CASE(createNetwork)
         std::make_shared<vne::Link<int>>(5, vne::Entity_t::substrate, node1Ptr->getId(), node3Ptr->getId());
     BOOST_REQUIRE(l2Ptr->getNodeFromId() != l1Ptr->getNodeToId());
     n.addLink(l2Ptr);
-    
+
     std::shared_ptr<const vne::Link<int>> anotherLptr = n.getLinkBetweenNodes(node2Ptr->getId(), node3Ptr->getId());
-    
+
 	BOOST_CHECK(n.getLinksForNodeId(node1Ptr->getId())->size() == 2);
 	BOOST_CHECK(n.getLinksForNodeId(node2Ptr->getId())->size() == 1);
-    
+
     BOOST_REQUIRE(n.getLinkBetweenNodes(node1Ptr->getId(), node1Ptr->getId()) == nullptr);
     BOOST_REQUIRE(n.getLinkBetweenNodes(node2Ptr->getId(), node2Ptr->getId()) == nullptr);
     BOOST_REQUIRE(n.getLinkBetweenNodes(node3Ptr->getId(), node3Ptr->getId()) == nullptr);
-    
+
     BOOST_REQUIRE(n.getLinkBetweenNodes(node2Ptr->getId(), node3Ptr->getId()) == nullptr);
     BOOST_REQUIRE(n.getLinkBetweenNodes(node3Ptr->getId(), node2Ptr->getId()) == nullptr);
 
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(createNetwork)
     BOOST_REQUIRE(n.getLinkBetweenNodes(node3Ptr->getId(), node1Ptr->getId())->getId() == l2Ptr->getId());
     BOOST_REQUIRE(n.getLinkBetweenNodes(node1Ptr->getId(), node2Ptr->getId())->getId() == l1Ptr->getId());
     BOOST_REQUIRE(n.getLinkBetweenNodes(node2Ptr->getId(), node1Ptr->getId())->getId() == l1Ptr->getId());
-    
+
 	/*std::shared_ptr<vne::Link<int>> linkPtr = std::make_shared<vne::Link<int>>(
 	 vne::Entity_t::substrate, 0, 0);
 	 net.addLink(linkPtr);
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE(SubstrateVirtualLinkTest)
 #if 0
 BOOST_AUTO_TEST_CASE(SubstrateNetworkTestCase)
 {
-    
+
    SubstrateNetwork<SubstrateNode<int>, SubstrateLink<int>> n =
             vne::SubstrateNetwork<SubstrateNode<int>, SubstrateLink<int>>();
 
@@ -355,13 +355,13 @@ BOOST_AUTO_TEST_CASE(VirtualNetworkTestCase)
 #endif
 BOOST_AUTO_TEST_CASE(SubstrateNetworkTestCase)
 {
-    
+
     Network<SubstrateNode<int>, SubstrateLink<int>> n =
             vne::Network<SubstrateNode<int>, SubstrateLink<int>>();
-    
+
 	std::shared_ptr<vne::SubstrateNode<int>> node1Ptr = std::make_shared<vne::SubstrateNode<int>>(Resources<int>(5));
 	n.addNode(node1Ptr);
-	
+
     std::shared_ptr<const vne::SubstrateNode<int>> anotherPtr = n.getNode(node1Ptr->getId());
 	BOOST_REQUIRE(anotherPtr->getId() == node1Ptr->getId());
 	anotherPtr.reset();
@@ -371,7 +371,7 @@ BOOST_AUTO_TEST_CASE(SubstrateNetworkTestCase)
 	n.addNode(node2Ptr);
 	std::shared_ptr<vne::SubstrateLink<int>> lPtr = std::make_shared<vne::SubstrateLink<int>>(
 			12, node1Ptr->getId(), node2Ptr->getId());
-    
+
 	BOOST_REQUIRE(lPtr->getNodeFromId() != lPtr->getNodeToId());
 	n.addLink(lPtr);
     BOOST_CHECK(n.getLinksForNodeId(node1Ptr->getId())->size() == 1);
@@ -413,7 +413,7 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(Config)
 BOOST_AUTO_TEST_CASE(ConfigTest)
 {
-    cout<< ConfigManager::Instance()->getConfig<string>("vineyard.SubstrateNetwork.path") << endl;
+    cout<< ConfigManager::Instance()->getConfig<string>("vineyard", "SubstrateNetwork.path") << endl;
     //std::cout << boost::filesystem::initial_path() << std::endl;
 }
 BOOST_AUTO_TEST_SUITE_END()

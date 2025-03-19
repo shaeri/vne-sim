@@ -1,0 +1,225 @@
+# vnesim TOML Configuread_xmlration
+[utilities]
+# log level can be set using the environment variable LOG_LEVEL. If LOG_LEVEL is not set this variable will be used.
+logLevel = "error"
+# if you want to use venv to run python from a Virtual Environment, you have to provide a full path to the interpreter
+# an example: /Users/ballanty/CLionProjects/vne-sim/venv/bin/python
+# leave it empty for system python
+pythonPath = ""
+
+[core]
+# This condition can be used by all the algorithms to ignore the location constraint
+ignoreLocationConstrain = false
+# The result database file
+dbPath = "./results/"
+# 0 uses the libraries standard seed
+rngSeed = 0
+rngUseSameSeedForParallelRuns = false
+# Various random number generator types that gsl_rng library implements may be found at:
+# https://www.gnu.org/software/gsl/manual/html_node/Random-number-generator-algorithms.html#Random-number-generator-algorithms
+rngType = "gsl_rng_mt19937"
+
+[NetworkFileGenerator]
+# Select network file generator: BRITE or FNSS
+Handler = "BRITE"
+SNTopologyType = "Waxman"
+VNTopologyType = "Waxman"
+DirToSaveFiles = "./nets/"
+TotalTime = 50000
+SubstrateNodeNum = 200
+# between 0-1
+VNRLinkSplittingRate = 0.1
+
+# 0: Uniform, 1: Exponential, 2: Poisson
+VNRNumNodesDist = 0
+VNRNumNodesDistParam1 = 3.0
+VNRNumNodesDistParam2 = 10.0
+VNRNumNodesDistParam3 = -1.0
+
+# 0: Uniform, 1: Exponential, 2: Poisson
+VNRDurationDist = 1
+VNRDurationDistParam1 = 1000.0
+VNRDurationDistParam2 = -1.0
+VNRDurationDistParam3 = -1.0
+
+# 0: Uniform, 1: Exponential, 2: Poisson
+VNRArrivalDist = 1
+# 1/ArrivalRate => for example for arrival rate of 8 per 100 unit time param = 100/8 = 12.5
+VNRArrivalDistParam1 = 100.0
+VNRArrivalDistParam2 = -1.0
+VNRArrivalDistParam3 = -1.0
+
+# 0: Uniform, 1: Exponential, 2: Poisson
+VNRMaxDistanceDist = 0
+VNRMaxDistanceDistParam1 = 15.0
+VNRMaxDistanceDistParam2 = 25.0
+VNRMaxDistanceDistParam3 = -1.0
+
+# 0: Uniform, 1: Exponential, 2: Poisson
+SNCPUDist = 0
+SNCPUDistParam1 = 50.0
+SNCPUDistParam2 = 100.0
+SNCPUDistParam3 = -1.0
+
+# 0: Uniform, 1: Exponential, 2: Poisson
+SLBWDist = 0
+SLBWDistParam1 = 50.0
+SLBWDistParam2 = 100.0
+SLBWDistParam3 = -1.0
+
+# 0: Uniform, 1: Exponential, 2: Poisson
+SLDelayDist = 0
+SLDelayDistParam1 = 1.0
+SLDelayDistParam2 = 5.0
+SLDelayDistParam3 = -1.0
+
+# 0: Uniform, 1: Exponential, 2: Poisson
+VNCPUDist = 0
+VNCPUDistParam1 = 2.0
+VNCPUDistParam2 = 20.0
+VNCPUDistParam3 = -1.0
+
+# 0: Uniform, 1: Exponential, 2: Poisson
+VLBWDist = 0
+VLBWDistParam1 = 1.0
+VLBWDistParam2 = 10.0
+VLBWDistParam3 = -1.0
+
+# 0: Uniform, 1: Exponential, 2: Poisson
+VLDelayDist = 0
+VLDelayDistParam1 = 50.0
+VLDelayDistParam2 = 100.0
+VLDelayDistParam3 = -1.0
+
+[NetworkFileGenerator.BriteHandler]
+BriteSeedFile = "./deps/BRITE/seed_file"
+# Random = 1, Heavy Tailed = 2
+nodePlacement = 1
+# Number of neighboring node each new node connects to.
+numNeighbors = 6
+# We assume the same grid size for SN and VNRs
+innerGridSize = 40
+outerGridSize = 40
+
+[NetworkFileGenerator.BriteHandler.RTWaxman]
+# 1 = incremental, 2 = all
+growthType = 2
+alpha = 0.5
+beta = 0.2
+
+[NetworkFileGenerator.FNSSHandler.DCNBCube]
+# Hosts per Bcube_0
+N = 4
+# Level of Bcube
+K = 2
+
+[NetworkFileGenerator.FNSSHandler.DCNTwoTier]
+# Total number of core switches
+n_core = 5
+# Total number of edge switches
+n_edges = 2
+# Total number of hosts connected to each edge switch
+n_hosts = 5
+# The link bandwidth of the links connecting the core switches to edge switches will be multiplied by this (must be integer)
+coreBWMultiplier = 1
+
+[NetworkFileGenerator.FNSSHandler.DCNFatTree]
+# Number of ports per switch
+K = 6
+# The link bandwidth of  for  will be multiplied by this (must be integer)
+coreBWMultiplier = 1
+
+[NetworkFileGenerator.FNSSHandler.HyperCube]
+size = 6
+
+[vineyard.SubstrateNetwork]
+# Path to the folder containing the substrate network file
+path = "./nets/substrate"
+# Substrate network file name
+filename = "substrate_net_Waxman_BRITE_nodes_200_links_973brite_outergrid_40_inner_grid_40.txt"
+
+[vineyard.VirtualNetRequest]
+# Root path of folder containing the virtual network requests
+path = "./nets/vr/"
+# Folder containing the virtual network requests
+dir = "reqs-100-1000-nodesMin-3-nodesMax-10-grid-40"
+# filters all files that do not have this extension
+reqfileExtension = ".txt"
+
+[vineyard.Constants]
+revenueMultiplier = 1.0
+costMultiplier = 1.0
+epsilon = 1e-06
+
+[vineyard.Configs]
+# if set to false Alpha is automatically set to 1
+setAlpha = false
+# if set to false Beta is automatically set to 1
+setBeta = false
+# "deterministic" or "randomized" (use exact words without quotes).
+# If it is not specified deterministic approach is selected by default.
+nodeMappingType = "deterministic"
+
+[vineyard.glpk]
+LPmodelFile = "./src/Vineyard/files/lp/CNLM-LP.mod"
+LPdataFile = "./src/Vineyard/files/lp/CNLM-LP.dat"
+MCFmodelFile = "./src/Vineyard/files/lp/MCF.mod"
+MCFdataFile = "./src/Vineyard/files/lp/MCF.dat"
+# 0 disabled, 1 enabled
+terminalEnabled = 0
+
+[MCTS.Simulator.Knowledge]
+# 0:PURE 1:LEGAL 2:SMART
+TreeLevel = 1
+# 0:PURE 1:LEGAL 2:SMART
+RolloutLevel = 1
+SmartTreeCount = 10
+SmartTreeValue = 1.0
+
+[MCTS.Simulator]
+# Discount in (0,1]
+discount = 1
+rewardRange = 1000
+
+[MCTS.MCTSParameters]
+MaxDepth = 10
+NumSimulations = 40
+# How many nodes to add at each expansion step
+ExpandCount = 1
+# if this is set to false Exploration constant will be used otherwise Exploration constant will be set to 0 if UseRave flag is set or Exploration constant will be set to rewardRange.
+AutoExploration = false
+# One option is to set Exploration Constant c = R_{hi}-R_{lo}
+ExplorationConstant = 0.5
+# Rave Parameters: 0 -> rave is not set
+UseRave = false
+RaveDiscount = 1
+RaveConstant = 0.01
+# When set, the baseline rollout algorithm is run.
+DisableTree = 0
+UseSinglePlayerMCTS = false
+SPMCTSConstant = 10000
+# 0: Action Root Parallelization, 1: Full Tree parallelization
+# Setting this parameter does not enable parallelism. You need to compile the code with option -DENABLE_MPI=on
+# to enable parallelism.
+ParallelizationType = 1
+
+[MCVNE.VNEMCTSSimulator]
+# alpha is the substrate links weight and beta is the substrate node weight
+# if set to false the weights are 1
+setAlpha = false
+setBeta = false
+
+[MCVNE.NodeEmbeddingAlgo]
+# MCF of BFS-SP
+LinkEmbedder = "BFS-SP"
+
+[GRC]
+# unit price charged for computing resources
+alpha = 1.0
+# unit price charged for bandwidth resources
+beta = 1.0
+# It is a positive small threshold defining the convergence of node mapping algorithm
+# Refer to:
+# L. Gong, Y. Wen, Z. Zhu, and T. Lee, “Toward profit-seeking virtual network embedding algorithm via global resource capacity.,” INFOCOM, pp. 1–9, 2014.
+sigma = 0.00001
+dampingFactor = 0.85

@@ -38,14 +38,14 @@ namespace vne {
         EmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>(_sb),
         lp_problem(glp_create_prob())
         {
-            LPdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.LPdataFile");
-            LPmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.LPmodelFile");
-            MCFdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFdataFile");
-            MCFmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFmodelFile");
+            LPdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "LPdataFile");
+            LPmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "LPmodelFile");
+            MCFdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "MCFdataFile");
+            MCFmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "MCFmodelFile");
             
-            setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setAlpha");
-            setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setBeta");
-            if (ConfigManager::Instance()->getConfig<std::string>("vineyard.Configs.nodeMappingType").compare("randomized")==0)
+            setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setAlpha");
+            setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setBeta");
+            if (ConfigManager::Instance()->getConfig<std::string>("vineyard", "Configs", "nodeMappingType").compare("randomized")==0)
                 nodeMappingType = RANDOMIZED;
             else
                 nodeMappingType = DETERMINISTIC;
@@ -55,14 +55,14 @@ namespace vne {
         EmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>(_sn),
         lp_problem(glp_create_prob())
         {
-            LPdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.LPdataFile");
-            LPmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.LPmodelFile");
-            MCFdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFdataFile");
-            MCFmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFmodelFile");
+            LPdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "LPdataFile");
+            LPmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "LPmodelFile");
+            MCFdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "MCFdataFile");
+            MCFmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "MCFmodelFile");
             
-            setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setAlpha");
-            setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setBeta");
-            if (ConfigManager::Instance()->getConfig<std::string>("vineyard.Configs.nodeMappingType").compare("randomized")==0)
+            setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setAlpha");
+            setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setBeta");
+            if (ConfigManager::Instance()->getConfig<std::string>("vineyard", "Configs", "nodeMappingType").compare("randomized")==0)
                 nodeMappingType = RANDOMIZED;
             else
                 nodeMappingType = DETERMINISTIC;

@@ -5,6 +5,7 @@
 #ifndef VNE_MCTS_PYTHON_UTILS_H
 #define VNE_MCTS_PYTHON_UTILS_H
 
+#ifdef WITH_FNSS_SUPPORT
 #include <string>
 
 #include "Python.h"
@@ -24,5 +25,7 @@ namespace vne {
         };
     }
 }
+
+#endif
 
 #endif //VNE_MCTS_PYTHON_UTILS_H

@@ -1,4 +1,4 @@
-set(Config_File_Path "\"configurations.xml\"")
+set(Config_File_Path "\"config.toml\"")
 
 # TODO: add command line switch to read configurations.xml file
 

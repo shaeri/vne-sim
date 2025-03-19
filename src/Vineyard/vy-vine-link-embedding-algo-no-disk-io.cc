@@ -34,13 +34,13 @@ namespace vne {
         substrateLinkIdSet(nullptr),
         substrateNodeIdSet(nullptr)
         {
-            glp_term_out(ConfigManager::Instance()->getConfig<int>("vineyard.glpk.terminalEnabled"));
+            glp_term_out(ConfigManager::Instance()->getConfig<int>("vineyard", "glpk", "terminalEnabled"));
             
-            MCFdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFdataFile");
-            MCFmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.MCFmodelFile");
+            MCFdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "MCFdataFile");
+            MCFmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "MCFmodelFile");
             
-            setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setAlpha");
-            setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setBeta");
+            setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setAlpha");
+            setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setBeta");
         }
         template<>
         VYVineLinkEmbeddingAlgoNoDiskIO<>::~VYVineLinkEmbeddingAlgoNoDiskIO()

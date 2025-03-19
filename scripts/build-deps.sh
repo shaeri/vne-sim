@@ -27,35 +27,35 @@ download()
 
     if [ ! -d ${ADEVS_SRC} ]
     then
-	wget ${ADEVS_SITE}/${ADEVS_SRC}.zip
-	unzip ${ADEVS_SRC}.zip
-	rm ${ADEVS_SRC}.zip
+    wget ${ADEVS_SITE}/${ADEVS_SRC}.zip
+    unzip ${ADEVS_SRC}.zip
+    rm ${ADEVS_SRC}.zip
     fi
 
     if [ ! -d ${HIBL_SRC} ]
     then
-	git clone ${HIBL_SITE}/${HIBL_SRC}.git
+    git clone ${HIBL_SITE}/${HIBL_SRC}.git
     fi
 
     if [ ! -d ${FNSS_SRC} ]
     then
-	git clone ${FNSS_SITE}/${FNSS_SRC}.git
+    git clone ${FNSS_SITE}/${FNSS_SRC}.git
     fi
 
 
     if [ ! -d ${FNSS_CPP_SRC} ]
     then
-	git clone ${FNSS_CPP_SITE}/${FNSS_CPP_SRC}.git
+    git clone ${FNSS_CPP_SITE}/${FNSS_CPP_SRC}.git
     fi
 
     if [ ! -d ${SQLITE_SRC} ]
     then
-	wget ${SQLITE_SITE}/${SQLITE_SRC}.zip
-	unzip ${SQLITE_SRC}.zip
-	ln -s ${SQLITE_SRC} sqlite
-	rm ${SQLITE_SRC}.zip
+    wget ${SQLITE_SITE}/${SQLITE_SRC}.zip
+    unzip ${SQLITE_SRC}.zip
+    ln -s ${SQLITE_SRC} sqlite
+    rm ${SQLITE_SRC}.zip
     fi
-    
+
 
     popd
 
@@ -109,13 +109,3 @@ popd
 # Make a copy of rapidxml to use
 
 cp src/fnss-cpp/deps/rapidxml.hpp include
-
-
-
-
-
-
-
-
-
-

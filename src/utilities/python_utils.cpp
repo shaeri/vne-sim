@@ -2,6 +2,8 @@
 // Created by Rob Ballantyne on 2025-02-06.
 //
 
+#ifdef WITH_FNSS_SUPPORT
+
 #include "python_utils.h"
 #include "core/config-manager.h"
 #include "utilities/logger.h"
@@ -13,7 +15,7 @@ namespace vne {
     namespace utilities {
 
         PythonRunner::PythonRunner() {
-            string pythonPath = ConfigManager::Instance()->getConfig<string>("utilities.pythonPath");
+            string pythonPath = ConfigManager::Instance()->getConfig<string>("utilities", "pythonPath");
             boost::trim(pythonPath);
             PyConfig_InitPythonConfig(&config);
             status = PyConfig_SetBytesString(&config,  &config.program_name, (pythonPath != "" ? pythonPath.c_str() : NULL));
@@ -40,3 +42,4 @@ namespace vne {
         }
     }
 }
+#endif

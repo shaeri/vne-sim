@@ -22,138 +22,141 @@
  *            OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include "toml.hpp"
 #include "core/experiment-parameters.h"
 
 namespace vne {
-    void ExperimentParameters::setAllParams(ptree &SNParams, ptree &SNNetParams, ptree &VNParams, ptree &VNBriteParams)
+    void ExperimentParameters::setAllParams(vne::ConfigType &SNParams,  vne::ConfigType &VNParams)
     {
         setSNParams(SNParams);
-        setSNNetParams(SNNetParams, get_Topology_Type (SNParams.get<std::string>("SNTopologyType")));
+        setSNNetParams(SNParams, get_Topology_Type (toml::find<std::string>(SNParams, "NetworkFileGenerator", "SNTopologyType")));
         setVNParams(VNParams);
-        setVNBriteParams(VNBriteParams);
+        setVNBriteParams(VNParams);
     }
-    void ExperimentParameters::setSNParams(boost::property_tree::ptree &pt)
+    void ExperimentParameters::setSNParams(vne::ConfigType &pt)
     {
-        SubstrateNodeNum = pt.get<int> ("SubstrateNodeNum");
-        sn_topology_type =  pt.get<std::string>("SNTopologyType");
-        SNCPUDist  =  get_Distribution_Str ((Distribution) pt.get<int> ("SNCPUDist"));
-        SNCPUDistParam1 = pt.get<double> ("SNCPUDistParam1");
-        SNCPUDistParam2 = pt.get<double> ("SNCPUDistParam2");
-        SNCPUDistParam3 = pt.get<double> ("SNCPUDistParam3");
-        
-        SLBWDist = get_Distribution_Str ((Distribution) pt.get<int> ("SLBWDist"));
-        SLBWDistParam1 = pt.get<double> ("SLBWDistParam1");
-        SLBWDistParam2 = pt.get<double> ("SLBWDistParam2");
-        SLBWDistParam3 = pt.get<double> ("SLBWDistParam3");
-        
-        SLDelayDist = get_Distribution_Str ((Distribution) pt.get<int> ("SLDelayDist"));
-        SLDelayDistParam1 = pt.get<double> ("SLDelayDistParam1");
-        SLDelayDistParam2 = pt.get<double> ("SLDelayDistParam2");
-        SLDelayDistParam3 = pt.get<double> ("SLDelayDistParam3");
-        
-    }
-    
-    void ExperimentParameters::setVNParams (boost::property_tree::ptree &pt)
-    {
-        totalTime = pt.get<int> ("TotalTime");
-        VNRLinkSplittingRate = pt.get<double> ("VNRLinkSplittingRate");
+        SubstrateNodeNum = toml::find<int> (pt, "NetworkFileGenerator", "SubstrateNodeNum");
+        sn_topology_type =  toml::find<std::string> (pt, "NetworkFileGenerator", "SNTopologyType");
+        SNCPUDist  =  get_Distribution_Str ((Distribution) toml::find<int> (pt, "NetworkFileGenerator", "SNCPUDist"));
+        SNCPUDistParam1 = toml::find<double> (pt, "NetworkFileGenerator", "SNCPUDistParam1");
+        SNCPUDistParam2 = toml::find<double> (pt, "NetworkFileGenerator", "SNCPUDistParam2");
+        SNCPUDistParam3 = toml::find<double> (pt, "NetworkFileGenerator", "SNCPUDistParam3");
 
-        VNRNumNodesDist = get_Distribution_Str ((Distribution) pt.get<int> ("VNRNumNodesDist"));
-        VNRNumNodesDistParam1 = pt.get<double> ("VNRNumNodesDistParam1");
-        VNRNumNodesDistParam2 = pt.get<double> ("VNRNumNodesDistParam2");
-        VNRNumNodesDistParam3 = pt.get<double> ("VNRNumNodesDistParam3");
-        
-        VNRDurationDist = get_Distribution_Str ((Distribution) pt.get<int> ("VNRDurationDist"));
-        VNRDurationDistParam1 = pt.get<double> ("VNRDurationDistParam1");
-        VNRDurationDistParam2 = pt.get<double> ("VNRDurationDistParam2");
-        VNRDurationDistParam3 = pt.get<double> ("VNRDurationDistParam3");
-        
-        VNRArrivalDist = get_Distribution_Str ((Distribution) pt.get<int> ("VNRArrivalDist"));
-        VNRArrivalDistParam1 = pt.get<double> ("VNRArrivalDistParam1");
-        VNRArrivalDistParam2 = pt.get<double> ("VNRArrivalDistParam2");
-        VNRArrivalDistParam3 = pt.get<double> ("VNRArrivalDistParam3");
-        
-        VNRMaxDistanceDist = get_Distribution_Str ((Distribution) pt.get<int> ("VNRMaxDistanceDist"));
-        VNRMaxDistanceDistParam1 = pt.get<double> ("VNRMaxDistanceDistParam1");
-        VNRMaxDistanceDistParam2 = pt.get<double> ("VNRMaxDistanceDistParam2");
-        VNRMaxDistanceDistParam3 = pt.get<double> ("VNRMaxDistanceDistParam3");
-        
-        VNCPUDist = get_Distribution_Str ((Distribution) pt.get<int> ("VNCPUDist"));
-        VNCPUDistParam1 = pt.get<double> ("VNCPUDistParam1");
-        VNCPUDistParam2 = pt.get<double> ("VNCPUDistParam2");
-        VNCPUDistParam3 = pt.get<double> ("VNCPUDistParam3");
-        
-        VLBWDist = get_Distribution_Str ((Distribution) pt.get<int> ("VLBWDist"));
-        VLBWDistParam1 = pt.get<double> ("VLBWDistParam1");
-        VLBWDistParam2 = pt.get<double> ("VLBWDistParam2");
-        VLBWDistParam3 = pt.get<double> ("VLBWDistParam3");
-        
-        VLDelayDist = get_Distribution_Str ((Distribution) pt.get<int> ("VLDelayDist"));
-        VLDelayDistParam1 = pt.get<double> ("VLDelayDistParam1");
-        VLDelayDistParam2 = pt.get<double> ("VLDelayDistParam2");
-        VLDelayDistParam3 = pt.get<double> ("VLDelayDistParam3");
-    }
-    
-    void ExperimentParameters::setSNNetParams (boost::property_tree::ptree &pt, Topology_Type tt)
-    {
+        SLBWDist = get_Distribution_Str ((Distribution) toml::find<int> (pt, "NetworkFileGenerator", "SLBWDist"));
+        SLBWDistParam1 = toml::find<double> (pt, "NetworkFileGenerator", "SLBWDistParam1");
+        SLBWDistParam2 = toml::find<double> (pt, "NetworkFileGenerator", "SLBWDistParam2");
+        SLBWDistParam3 = toml::find<double> (pt, "NetworkFileGenerator", "SLBWDistParam3");
 
+        SLDelayDist = get_Distribution_Str ((Distribution) toml::find<int> (pt, "NetworkFileGenerator", "SLDelayDist"));
+        SLDelayDistParam1 = toml::find<double> (pt, "NetworkFileGenerator", "SLDelayDistParam1");
+        SLDelayDistParam2 = toml::find<double> (pt, "NetworkFileGenerator", "SLDelayDistParam2");
+        SLDelayDistParam3 = toml::find<double> (pt, "NetworkFileGenerator", "SLDelayDistParam3");
+
+    }
+
+    void ExperimentParameters::setVNParams (vne::ConfigType &pt)
+    {
+        totalTime = toml::find<int> (pt, "NetworkFileGenerator", "TotalTime");
+        VNRLinkSplittingRate = toml::find<double> (pt, "NetworkFileGenerator", "VNRLinkSplittingRate");
+
+        VNRNumNodesDist = get_Distribution_Str ((Distribution) toml::find<int> (pt, "NetworkFileGenerator", "VNRNumNodesDist"));
+        VNRNumNodesDistParam1 = toml::find<double> (pt, "NetworkFileGenerator", "VNRNumNodesDistParam1");
+        VNRNumNodesDistParam2 = toml::find<double> (pt, "NetworkFileGenerator", "VNRNumNodesDistParam2");
+        VNRNumNodesDistParam3 = toml::find<double> (pt, "NetworkFileGenerator", "VNRNumNodesDistParam3");
+
+        VNRDurationDist = get_Distribution_Str ((Distribution) toml::find<int> (pt, "NetworkFileGenerator", "VNRDurationDist"));
+        VNRDurationDistParam1 = toml::find<double> (pt, "NetworkFileGenerator", "VNRDurationDistParam1");
+        VNRDurationDistParam2 = toml::find<double> (pt, "NetworkFileGenerator", "VNRDurationDistParam2");
+        VNRDurationDistParam3 = toml::find<double> (pt, "NetworkFileGenerator", "VNRDurationDistParam3");
+
+        VNRArrivalDist = get_Distribution_Str ((Distribution) toml::find<int> (pt, "NetworkFileGenerator", "VNRArrivalDist"));
+        VNRArrivalDistParam1 = toml::find<double> (pt, "NetworkFileGenerator", "VNRArrivalDistParam1");
+        VNRArrivalDistParam2 = toml::find<double> (pt, "NetworkFileGenerator", "VNRArrivalDistParam2");
+        VNRArrivalDistParam3 = toml::find<double> (pt, "NetworkFileGenerator", "VNRArrivalDistParam3");
+
+        VNRMaxDistanceDist = get_Distribution_Str ((Distribution) toml::find<int> (pt, "NetworkFileGenerator", "VNRMaxDistanceDist"));
+        VNRMaxDistanceDistParam1 = toml::find<double> (pt, "NetworkFileGenerator", "VNRMaxDistanceDistParam1");
+        VNRMaxDistanceDistParam2 = toml::find<double> (pt, "NetworkFileGenerator", "VNRMaxDistanceDistParam2");
+        VNRMaxDistanceDistParam3 = toml::find<double> (pt, "NetworkFileGenerator", "VNRMaxDistanceDistParam3");
+
+        VNCPUDist = get_Distribution_Str ((Distribution) toml::find<int> (pt, "NetworkFileGenerator", "VNCPUDist"));
+        VNCPUDistParam1 = toml::find<double> (pt, "NetworkFileGenerator", "VNCPUDistParam1");
+        VNCPUDistParam2 = toml::find<double> (pt, "NetworkFileGenerator", "VNCPUDistParam2");
+        VNCPUDistParam3 = toml::find<double> (pt, "NetworkFileGenerator", "VNCPUDistParam3");
+
+        VLBWDist = get_Distribution_Str ((Distribution) toml::find<int> (pt, "NetworkFileGenerator", "VLBWDist"));
+        VLBWDistParam1 = toml::find<double> (pt, "NetworkFileGenerator", "VLBWDistParam1");
+        VLBWDistParam2 = toml::find<double> (pt, "NetworkFileGenerator", "VLBWDistParam2");
+        VLBWDistParam3 = toml::find<double> (pt, "NetworkFileGenerator", "VLBWDistParam3");
+
+        VLDelayDist = get_Distribution_Str ((Distribution) toml::find<int> (pt, "NetworkFileGenerator", "VLDelayDist"));
+        VLDelayDistParam1 = toml::find<double> (pt, "NetworkFileGenerator", "VLDelayDistParam1");
+        VLDelayDistParam2 = toml::find<double> (pt, "NetworkFileGenerator", "VLDelayDistParam2");
+        VLDelayDistParam3 = toml::find<double> (pt, "NetworkFileGenerator", "VLDelayDistParam3");
+    }
+
+    void ExperimentParameters::setSNNetParams (vne::ConfigType &pt, Topology_Type tt)
+    {
         if (tt == Topology_Type::DCNBCube)
         {
-            sn_dcn_n_switches = pt.get<int> ("n_switches");
-            sn_dcn_n_hosts = pt.get<int> ("n_hosts");
-            sn_dcn_n_link = pt.get<int>("n_links");
-            sn_bcube_k = pt.get<int>("DCNBCube.K");
-            sn_bcube_n = pt.get<int>("DCNBCube.N");
+            sn_dcn_n_switches = toml::find<int> (pt, "n_switches");
+            sn_dcn_n_hosts = toml::find<int> (pt, "n_hosts");
+            sn_dcn_n_link = toml::find<int>(pt, "n_links");
+
+            sn_bcube_k = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "DCNBCube", "K");
+            sn_bcube_n = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "DCNBCube", "N");
         }
         else if (tt == Topology_Type::DCNFatTree)
         {
-            sn_dcn_n_switches = pt.get<int> ("n_switches");
-            sn_dcn_n_hosts = pt.get<int> ("n_hosts");
-            sn_dcn_n_link = pt.get<int>("n_links");
-            sn_fat_tree_k = pt.get<int>("DCNFatTree.K");
-            sn_fat_tree_core_bw_multiplier = pt.get<int>("DCNFatTree.coreBWMultiplier");
+            sn_dcn_n_switches = toml::find<int> (pt, "n_switches");
+            sn_dcn_n_hosts = toml::find<int> (pt, "n_hosts");
+            sn_dcn_n_link = toml::find<int>(pt, "n_links");
+
+            sn_fat_tree_k = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "DCNFatTree", "K");
+            sn_fat_tree_core_bw_multiplier = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "DCNFatTree", "coreBWMultiplier");
         }
         else if (tt == Topology_Type::DCNTwoTier)
         {
-            sn_dcn_n_switches = pt.get<int> ("n_switches");
-            sn_dcn_n_hosts = pt.get<int> ("n_hosts");
-            sn_dcn_n_link = pt.get<int>("n_links");
-            sn_two_tier_core = pt.get<int>("DCNTwoTier.n_core");
-            sn_two_tier_edge = pt.get<int>("DCNTwoTier.n_edges");
-            sn_two_tier_host = pt.get<int>("DCNTwoTier.n_hosts");
-            sn_two_tier_core_bw_multiplier = pt.get<int>("DCNTwoTier.coreBWMultiplier");
+            sn_dcn_n_switches = toml::find<int> (pt, "n_switches");
+            sn_dcn_n_hosts = toml::find<int> (pt, "n_hosts");
+            sn_dcn_n_link = toml::find<int>(pt, "n_links");
+
+            sn_two_tier_core = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_core");
+            sn_two_tier_edge = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_edges");
+            sn_two_tier_host = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_hosts");
+            sn_two_tier_core_bw_multiplier = toml::find<int>(pt, "coreBWMultiplier");
         }
-		else if (tt == Topology_Type::HyperCube)
-		{
-            sn_hypercube_size = pt.get<int>("HyperCube.size");
-		}
+        else if (tt == Topology_Type::HyperCube)
+        {
+            sn_hypercube_size = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "HyberCube", "size");
+        }
         else
         {
-            int node_placement = pt.get<int> ("nodePlacement");
+            int node_placement = toml::find<int> (pt, "NetworkFileGenerator", "BriteHandler", "nodePlacement");
             sn_nodePlacement = (node_placement == 1)? "Random" : "Heavy-tailed";
-            sn_numNeighbors = pt.get<int> ("numNeighbors");
-            sn_innerGridSize = pt.get<int> ("innerGridSize");
-            sn_outerGridSize = pt.get<int> ("outerGridSize");
-            
-            int grow_type = pt.get<int> ("RTWaxman.growthType");
+            sn_numNeighbors = toml::find<int> (pt, "NetworkFileGenerator", "BriteHandler", "numNeighbors");
+            sn_innerGridSize = toml::find<int> (pt, "NetworkFileGenerator", "BriteHandler", "innerGridSize");
+            sn_outerGridSize = toml::find<int> (pt, "NetworkFileGenerator", "BriteHandler", "outerGridSize");
+
+            int grow_type = toml::find<int> (pt, "NetworkFileGenerator", "BriteHandler", "RTWaxman", "growthType");
             sn_growthType = (grow_type == 1) ? "Incremental" : "All";
-            sn_alpha = pt.get<double> ("RTWaxman.alpha");
-            sn_beta = pt.get<double> ("RTWaxman.beta");
+            sn_alpha = toml::find<double> (pt, "NetworkFileGenerator", "BriteHandler", "RTWaxman", "alpha");
+            sn_beta = toml::find<double> (pt, "NetworkFileGenerator", "BriteHandler", "RTWaxman", "beta");
         }
     }
-    
-    void ExperimentParameters::setVNBriteParams (boost::property_tree::ptree &pt)
+
+    void ExperimentParameters::setVNBriteParams (vne::ConfigType &pt)
     {
-        int node_placement = pt.get<int> ("nodePlacement");
+        int node_placement = toml::find<int> (pt, "NetworkFileGenerator", "BriteHandler", "nodePlacement");
         vn_nodePlacement = (node_placement == 1)? "Random" : "Heavy-tailed";
-        vn_numNeighbors = pt.get<int> ("numNeighbors");
-        vn_innerGridSize = pt.get<int> ("innerGridSize");
-        vn_outerGridSize = pt.get<int> ("outerGridSize");
-        
-        int grow_type = pt.get<int> ("RTWaxman.growthType");
+        vn_numNeighbors = toml::find<int> (pt, "NetworkFileGenerator", "BriteHandler", "numNeighbors");
+        vn_innerGridSize = toml::find<int> (pt, "NetworkFileGenerator", "BriteHandler", "innerGridSize");
+        vn_outerGridSize = toml::find<int> (pt, "NetworkFileGenerator", "BriteHandler", "outerGridSize");
+
+        int grow_type = toml::find<int> (pt, "NetworkFileGenerator", "BriteHandler", "RTWaxman", "growthType");
         vn_growthType = (grow_type == 1) ? "Incremental" : "All";
-        vn_alpha = pt.get<double> ("RTWaxman.alpha");
-        vn_beta = pt.get<double> ("RTWaxman.beta");
+        vn_alpha = toml::find<double> (pt, "NetworkFileGenerator", "BriteHandler", "RTWaxman", "alpha");
+        vn_beta = toml::find<double> (pt, "NetworkFileGenerator", "BriteHandler", "RTWaxman", "beta");
     }
 }
 using namespace vne;

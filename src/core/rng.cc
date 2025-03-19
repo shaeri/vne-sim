@@ -36,7 +36,7 @@ namespace vne
     {
         if (_instance==nullptr)
         {
-            _instance = std::shared_ptr<RNG> (new RNG(ConfigManager::Instance()->getConfig<unsigned long int>("core.rngSeed")));
+            _instance = std::shared_ptr<RNG> (new RNG(ConfigManager::Instance()->getConfig<unsigned long int>("core", "rngSeed")));
         }
         return _instance;
     }
@@ -55,7 +55,7 @@ namespace vne
     RNG::RNG(unsigned long int _seed)
 
     {
-        useSameSeedForParallelRuns = ConfigManager::Instance()->getConfig<bool>("core.rngUseSameSeedForParallelRuns");
+        useSameSeedForParallelRuns = ConfigManager::Instance()->getConfig<bool>("core", "rngUseSameSeedForParallelRuns");
         if (useSameSeedForParallelRuns)
             seed = _seed;
         else
@@ -65,8 +65,8 @@ namespace vne
         : seed(_seed)
         {
 #endif
-        
-        std::string type = ConfigManager::Instance()->getConfig<std::string>("core.rngType");
+
+        std::string type = ConfigManager::Instance()->getConfig<std::string>("core", "rngType");
 
         if (type.compare("gsl_rng_mt19937")==0)
             rng_type = *gsl_rng_mt19937;
@@ -91,7 +91,7 @@ namespace vne
         //default case
         else
             rng_type = *gsl_rng_ranlux;
-        
+
         generalRNG = gsl_rng_alloc (&rng_type);
         gsl_rng_set(generalRNG, seed);
     }

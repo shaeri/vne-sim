@@ -28,15 +28,15 @@
 
 namespace vne {
     namespace grc {
-        
+
         template<>
         GRCNodeEmbeddingAlgo<>::GRCNodeEmbeddingAlgo()
         :
         NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<> >, VYVirtualNetRequest<> > (),
-        alpha(ConfigManager::Instance()->getConfig<double>("GRC.alpha")),
-        beta(ConfigManager::Instance()->getConfig<double>("GRC.beta")),
-        sigma(ConfigManager::Instance()->getConfig<float>("GRC.sigma")),
-        dampingFactor(ConfigManager::Instance()->getConfig<float>("GRC.dampingFactor"))
+        alpha(ConfigManager::Instance()->getConfig<double>("GRC", "alpha")),
+        beta(ConfigManager::Instance()->getConfig<double>("GRC", "beta")),
+        sigma(ConfigManager::Instance()->getConfig<float>("GRC", "sigma")),
+        dampingFactor(ConfigManager::Instance()->getConfig<float>("GRC", "dampingFactor"))
         {
         };
         //template<>
@@ -44,10 +44,10 @@ namespace vne {
         //{
         //    return ( first.second > second.second );
         //};
-        
+
         template<>
         GRCNodeEmbeddingAlgo<>::~GRCNodeEmbeddingAlgo() {};
-        
+
         template<>
         double GRCNodeEmbeddingAlgo<>::calculateNormOfDifference (std::map<int, double>& Mat1, std::map<int, double>& Mat2)
         {
@@ -60,7 +60,7 @@ namespace vne {
             }
             return norm;
         };
-        
+
         template<>
         void GRCNodeEmbeddingAlgo<>::scalarVecMultiplication (float& scalar, std::map<int, double>& cMat)
         {
@@ -69,7 +69,7 @@ namespace vne {
                 it->second *= scalar;
             }
         };
-        
+
         template<>
         std::map<int, double> GRCNodeEmbeddingAlgo<>::matrixMultiplication (std::map<int, std::map<int, double>>& mMat, std::map<int, double>& rVec)
         {
@@ -87,16 +87,16 @@ namespace vne {
             assert(output.size() == rVec.size());
             return output;
         };
-        
+
         template<>
         std::list<std::pair<int, double>>
         GRCNodeEmbeddingAlgo<>::calculateSubstrateGRCVector (std::shared_ptr<SUBSTRATE_TYPE> substrate_network)
         {
             std::shared_ptr<std::set<int>> substrateIdSet = substrate_network->getNodeIdSet();
-            
+
             std::map<int, double> cMat;
             std::map<int, std::map<int, double>> mMat;
-            
+
             double sumSubstrateNodeCPU = 0.0;
             for(auto it = substrateIdSet->begin(); it != substrateIdSet->end(); it++)
             {
@@ -127,13 +127,13 @@ namespace vne {
                     }
                 }
             }
-            
+
             double delta = Infinity;
             std::map<int, double> current_r = cMat;
             std::map<int, double> next_r;
             float scalar = 1-dampingFactor;
             scalarVecMultiplication(scalar, cMat);
-            
+
             while (delta>=sigma)
             {
                 std::map<int,double> mrMatrix = matrixMultiplication(mMat, current_r);
@@ -146,7 +146,7 @@ namespace vne {
                 delta = calculateNormOfDifference(next_r, current_r);
                 current_r = next_r;
             }
-            
+
             std::list<std::pair<int, double>> output;
             for (auto it = current_r.begin(); it != current_r.end(); it++ )
             {
@@ -155,17 +155,17 @@ namespace vne {
             output.sort(sort_order());
             return output;
         };
-        
-        
+
+
         template<>
         std::list<std::pair<int, double>>
         GRCNodeEmbeddingAlgo<>::calculateVNRGRCVector (std::shared_ptr<VNR_TYPE> vnr)
         {
             std::shared_ptr<std::set<int>> vnIdSet = vnr->getVN()->getNodeIdSet();
-            
+
             std::map<int, double> cMat;
             std::map<int, std::map<int, double>> mMat;
-            
+
             double sumVirtualNodeCPU = 0.0;
             for(auto it = vnIdSet->begin(); it != vnIdSet->end(); it++)
             {
@@ -180,7 +180,7 @@ namespace vne {
                 for (auto it2 = vnIdSet->begin(); it2 != vnIdSet->end(); it2++)
                 {
                     std::shared_ptr<VYVirtualLink<>> linkBetweenVNs = vnr->getVN()->getLinkBetweenNodes(*it1, *it2);
-                    
+
                     if (linkBetweenVNs == nullptr)
                     {
                         mMat[*it1][*it2] = 0.0;
@@ -197,13 +197,13 @@ namespace vne {
                     }
                 }
             }
-            
+
             double delta = Infinity;
             std::map<int, double> current_r = cMat;
             std::map<int, double> next_r;
             float scalar = 1-dampingFactor;
             scalarVecMultiplication(scalar, cMat);
-            
+
             while (delta>=sigma)
             {
                 std::map<int,double> mrMatrix = matrixMultiplication(mMat, current_r);
@@ -216,7 +216,7 @@ namespace vne {
                 delta = calculateNormOfDifference(next_r, current_r);
                 current_r = next_r;
             }
-            
+
             std::list<std::pair<int, double>> output;
             for (auto it = current_r.begin(); it != current_r.end(); it++ )
             {
@@ -225,8 +225,8 @@ namespace vne {
             output.sort(sort_order());
             return output;
         };
-        
-        
+
+
         template<>
         Embedding_Result
         GRCNodeEmbeddingAlgo<>::embeddVNRNodes (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr)

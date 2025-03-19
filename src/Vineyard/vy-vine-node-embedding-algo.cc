@@ -37,14 +37,14 @@ namespace vne {
         virtualLinkIdSet(nullptr),
         virtualNodeIdSet(nullptr)
         {
-            glp_term_out(ConfigManager::Instance()->getConfig<int>("vineyard.glpk.terminalEnabled"));
+            glp_term_out(ConfigManager::Instance()->getConfig<int>("vineyard", "glpk", "terminalEnabled"));
             
-            LPdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.LPdataFile");
-            LPmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard.glpk.LPmodelFile");
+            LPdataFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "LPdataFile");
+            LPmodelFile = ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "LPmodelFile");
             
-            setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setAlpha");
-            setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard.Configs.setBeta");
-            if (ConfigManager::Instance()->getConfig<std::string>("vineyard.Configs.nodeMappingType").compare("randomized")==0)
+            setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setAlpha");
+            setBeta  = ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setBeta");
+            if (ConfigManager::Instance()->getConfig<std::string>("vineyard", "Configs", "nodeMappingType").compare("randomized")==0)
                 nodeMappingType = RANDOMIZED;
             else
                 nodeMappingType = DETERMINISTIC;
@@ -449,7 +449,7 @@ namespace vne {
             char varName[50];
             int numVariables = glp_get_num_cols(lp_problem);
             int flowId, from, to;
-            float Ep = ConfigManager::Instance()->getConfig<float>("vineyard.Constants.epsilon");
+            float Ep = ConfigManager::Instance()->getConfig<float>("vineyard", "Constants", "epsilon");
             
             for (int i=1; i<= numVariables; i++)
             {

@@ -203,27 +203,27 @@ namespace vne{
                 fnssNodeIdToVNESimNodeId[*it] = n->getId();
                 net->addNode (n);
             }
-            
+
             for(set<pair <string, string> >::iterator it = edges.begin(); it != edges.end(); it++)
             {
                 double link_bw = RNG::Instance()->sampleDistribution<double,double,double,double>
                 (bw_dist, std::tuple<double,double,double> (bw_param1, bw_param2, bw_param3));
-                
+
                 double link_delay = RNG::Instance()->sampleDistribution<double,double,double,double>
                 (delay_dist, std::tuple<double,double,double> (delay_param1, delay_param2, delay_param3));
-                
+
                 int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
                 int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
-                
+
                 std::shared_ptr<B> l (new B (link_bw, link_delay, nodeFromId, nodeToId));
                 net->addLink (l);
             }
-            this->pt.put ("n_switches", numSwitches);
-            this->pt.put ("n_hosts", numHosts);
-            this->pt.put ("n_links", net->getNumLinks());
+            this->pt["n_switches"] = numSwitches;
+            this->pt["n_hosts"] = numHosts;
+            this->pt["n_links"] = net->getNumLinks();
             return net;
         }
-        
+
         template<typename A, typename B>
         std::shared_ptr<Network<A, B>> FNSSHandler<A,B>::getNetwork_DCNTwoTier
         (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
@@ -295,12 +295,12 @@ namespace vne{
                     l.reset (new B (params.twotier.coreBWMultiplier * link_bw, link_delay, nodeFromId, nodeToId));
                 net->addLink (l);
             }
-            this->pt.put ("n_switches", numSwitches);
-            this->pt.put ("n_hosts", numHosts);
-            this->pt.put ("n_links", net->getNumLinks());
+            this->pt["n_switches"] = numSwitches;
+            this->pt["n_hosts"] = numHosts;
+            this->pt["n_links"] = net->getNumLinks();
             return net;
         }
-        
+
         template<typename A, typename B>
         std::shared_ptr<Network<A, B>> FNSSHandler<A,B>::getNetwork_DCNFatTree
         (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
@@ -348,31 +348,31 @@ namespace vne{
                 fnssNodeIdToVNESimNodeId[*it] = n->getId();
                 net->addNode (n);
             }
-            
+
             for(set<pair <string, string> >::iterator it = edges.begin(); it != edges.end(); it++)
             {
                 double link_bw = RNG::Instance()->sampleDistribution<double,double,double,double>
                 (bw_dist, std::tuple<double,double,double> (bw_param1, bw_param2, bw_param3));
-                
+
                 double link_delay = RNG::Instance()->sampleDistribution<double,double,double,double>
                 (delay_dist, std::tuple<double,double,double> (delay_param1, delay_param2, delay_param3));
-                
+
                 std::shared_ptr<B> l = nullptr;
                 int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
                 fnss::Node fnssNodeFrom = t.getNode ((*it).first);
                 int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
                 fnss::Node fnssNodeTo = t.getNode ((*it).second);
-                
+
                 if ((fnssNodeFrom.getProperty("layer").compare("core") == 0 ||  fnssNodeTo.getProperty ("layer").compare("core") == 0 ))
                     l.reset (new B (params.fattree.coreBWMultiplier * link_bw, link_delay, nodeFromId, nodeToId));
-                    
+
                 else
                     l.reset (new B (link_bw, link_delay, nodeFromId, nodeToId));
                 net->addLink (l);
             }
-            this->pt.put ("n_switches", numSwitches);
-            this->pt.put ("n_hosts", numHosts);
-            this->pt.put ("n_links", net->getNumLinks());
+            this->pt["n_switches"] = numSwitches;
+            this->pt["n_hosts"] = numHosts;
+            this->pt["n_links"] = net->getNumLinks();
             return net;
         }
 
@@ -440,39 +440,39 @@ namespace vne{
 
                 net->addLink (l);
             }
-            this->pt.put ("n_switches", numSwitches);
-            this->pt.put ("n_hosts", numHosts);
-            this->pt.put ("n_links", net->getNumLinks());
+            this->pt["n_switches"] = numSwitches;
+            this->pt["n_hosts"] = numHosts;
+            this->pt["n_links"] = net->getNumLinks();
 
             return net;
         }
-        
-        template <typename A, typename B> 
+
+        template <typename A, typename B>
         FNSSHandler<A,B>::Parameters::DCNBCube::DCNBCube () :
-        n(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.FNSSHandler.DCNBCube.N")),
-        k(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.FNSSHandler.DCNBCube.K"))
+        n(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNBCube", "N")),
+        k(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNBCube", "K"))
         {
         }
-        
-        template <typename A, typename B> 
+
+        template <typename A, typename B>
         FNSSHandler<A,B>::Parameters::DCNTwoTier::DCNTwoTier () :
-        n_core(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.FNSSHandler.DCNTwoTier.n_core")),
-        n_edges(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.FNSSHandler.DCNTwoTier.n_edges")),
-        n_hosts(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.FNSSHandler.DCNTwoTier.n_hosts")),
-        coreBWMultiplier (ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.FNSSHandler.DCNTwoTier.coreBWMultiplier"))
+        n_core(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_core")),
+        n_edges(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_edges")),
+        n_hosts(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_hosts")),
+        coreBWMultiplier (ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "coreBWMultiplier"))
         {
-        } 
-        
-        template <typename A, typename B> 
+        }
+
+        template <typename A, typename B>
         FNSSHandler<A,B>::Parameters::DCNFatTree::DCNFatTree () :
-        k(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.FNSSHandler.DCNFatTree.K")),
-        coreBWMultiplier (ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.FNSSHandler.DCNFatTree.coreBWMultiplier"))
+        k(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNFatTree", "K")),
+        coreBWMultiplier (ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNFatTree", "coreBWMultiplier"))
         {
         }
 
         template <typename A, typename B>
         FNSSHandler<A,B>::Parameters::HyperCube::HyperCube () :
-                size(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.FNSSHandler.HyperCube.size"))
+                size(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "HyperCube", "size"))
         {
         }
 
@@ -483,21 +483,23 @@ namespace vne{
         fattree (DCNFatTree())
         {
         }
-        
-        template <typename A, typename B> 
+
+        template <typename A, typename B>
         FNSSHandler<A,B>::FNSSHandler () :
         ExternalLibHandler<A,B> (),
+        numHosts(0),
+        numSwitches(0),
         params(Parameters())
         {
-          this->pt.put ("DCNBCube.N", params.bcube.n);
-          this->pt.put ("DCNBCube.K", params.bcube.k);
-          this->pt.put ("DCNFatTree.coreBWMultiplier", params.fattree.coreBWMultiplier);
-          this->pt.put ("DCNFatTree.K", params.fattree.k);
-          this->pt.put ("DCNTwoTier.n_core", params.twotier.n_core);
-          this->pt.put ("DCNTwoTier.n_edges", params.twotier.n_edges);
-          this->pt.put ("DCNTwoTier.n_hosts", params.twotier.n_hosts);
-          this->pt.put ("DCNTwoTier.coreBWMultiplier", params.twotier.coreBWMultiplier);
-          this->pt.put("HyperCube.size", params.hypercube.size);
+          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNBCube"]["N"] = params.bcube.n;
+          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNBCube"]["K"] = params.bcube.k;
+          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNFatTree"]["coreBWMultiplier"] = params.fattree.coreBWMultiplier;
+          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNFatTree"]["K"] = params.fattree.k;
+          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["n_core"] = params.twotier.n_core;
+          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["n_edges"] = params.twotier.n_edges;
+          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["n_hosts"] = params.twotier.n_hosts;
+          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["coreBWMultiplier"] = params.twotier.coreBWMultiplier;
+          this->pt["NetworkFileGenerator"]["FNSSHandler"]["HyperCube"]["size"] = params.hypercube.size;
         }
     }
 }

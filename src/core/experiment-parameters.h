@@ -36,57 +36,57 @@ class ExperimentParameters
         void hibernate(Archive & ar)
         {
             ar & HIBERLITE_NVP (VNRLinkSplittingRate);
-            
+
             ar & HIBERLITE_NVP (VNRNumNodesDist);
             ar & HIBERLITE_NVP (VNRNumNodesDistParam1);
             ar & HIBERLITE_NVP (VNRNumNodesDistParam2);
             ar & HIBERLITE_NVP (VNRNumNodesDistParam3);
-            
+
             ar & HIBERLITE_NVP (VNRDurationDist);
             ar & HIBERLITE_NVP (VNRDurationDistParam1);
             ar & HIBERLITE_NVP (VNRDurationDistParam2);
             ar & HIBERLITE_NVP (VNRDurationDistParam3);
-            
+
             ar & HIBERLITE_NVP (VNRArrivalDist);
             ar & HIBERLITE_NVP (VNRArrivalDistParam1);
             ar & HIBERLITE_NVP (VNRArrivalDistParam2);
             ar & HIBERLITE_NVP (VNRArrivalDistParam3);
-            
+
             ar & HIBERLITE_NVP (VNRMaxDistanceDist);
             ar & HIBERLITE_NVP (VNRMaxDistanceDistParam1);
             ar & HIBERLITE_NVP (VNRMaxDistanceDistParam2);
             ar & HIBERLITE_NVP (VNRMaxDistanceDistParam3);
-            
+
             ar & HIBERLITE_NVP (SNCPUDist);
             ar & HIBERLITE_NVP (SNCPUDistParam1);
             ar & HIBERLITE_NVP (SNCPUDistParam2);
             ar & HIBERLITE_NVP (SNCPUDistParam3);
-            
+
             ar & HIBERLITE_NVP (SLBWDist);
             ar & HIBERLITE_NVP (SLBWDistParam1);
             ar & HIBERLITE_NVP (SLBWDistParam2);
             ar & HIBERLITE_NVP (SLBWDistParam3);
-            
+
             ar & HIBERLITE_NVP (SLDelayDist);
             ar & HIBERLITE_NVP (SLDelayDistParam1);
             ar & HIBERLITE_NVP (SLDelayDistParam2);
             ar & HIBERLITE_NVP (SLDelayDistParam3);
-            
+
             ar & HIBERLITE_NVP (VNCPUDist);
             ar & HIBERLITE_NVP (VNCPUDistParam1);
             ar & HIBERLITE_NVP (VNCPUDistParam2);
             ar & HIBERLITE_NVP (VNCPUDistParam3);
-            
+
             ar & HIBERLITE_NVP (VLBWDist);
             ar & HIBERLITE_NVP (VLBWDistParam1);
             ar & HIBERLITE_NVP (VLBWDistParam2);
             ar & HIBERLITE_NVP (VLBWDistParam3);
-                                
+
             ar & HIBERLITE_NVP (VLDelayDist);
             ar & HIBERLITE_NVP (VLDelayDistParam1);
             ar & HIBERLITE_NVP (VLDelayDistParam2);
             ar & HIBERLITE_NVP (VLDelayDistParam3);
-            
+
             ar & HIBERLITE_NVP (sn_nodePlacement);
             ar & HIBERLITE_NVP (sn_numNeighbors);
             ar & HIBERLITE_NVP (sn_innerGridSize);
@@ -102,7 +102,7 @@ class ExperimentParameters
             ar & HIBERLITE_NVP (vn_growthType);
             ar & HIBERLITE_NVP (vn_alpha);
             ar & HIBERLITE_NVP (vn_beta);
-            
+
             ar & HIBERLITE_NVP (sn_topology_type);
             ar & HIBERLITE_NVP (sn_dcn_n_switches);
             ar & HIBERLITE_NVP (sn_dcn_n_hosts);
@@ -117,71 +117,71 @@ class ExperimentParameters
             ar & HIBERLITE_NVP (sn_fat_tree_core_bw_multiplier);
             ar & HIBERLITE_NVP (sn_hypercube_size);
         }
-    
+
     public:
-        void setAllParams (ptree &SNParams, ptree &SNNetParams, ptree &VNParams, ptree &VNBriteParams);
+        void setAllParams (vne::ConfigType &SNParams, vne::ConfigType &VNParams);
 
     private:
-        inline void setVNParams (ptree &pt);
-        inline void setSNParams (ptree &pt);
-        inline void setVNBriteParams (ptree &pt);
-        inline void setSNNetParams (ptree &pt, Topology_Type tt);
-        
+        inline void setVNParams (vne::ConfigType &pt);
+        inline void setSNParams (vne::ConfigType &pt);
+        inline void setVNBriteParams (vne::ConfigType &pt);
+        inline void setSNNetParams (vne::ConfigType &pt, Topology_Type tt);
+
         int totalTime;
         int SubstrateNodeNum;
-        
+
         double VNRLinkSplittingRate;
-        
+
         std::string VNRNumNodesDist;
         double VNRNumNodesDistParam1;
         double VNRNumNodesDistParam2;
         double VNRNumNodesDistParam3;
-        
+
         std::string VNRDurationDist;
         double VNRDurationDistParam1;
         double VNRDurationDistParam2;
         double VNRDurationDistParam3;
-        
+
         std::string VNRArrivalDist;
         double VNRArrivalDistParam1;
         double VNRArrivalDistParam2;
         double VNRArrivalDistParam3;
-        
+
         std::string VNRMaxDistanceDist;
         double VNRMaxDistanceDistParam1;
         double VNRMaxDistanceDistParam2;
         double VNRMaxDistanceDistParam3;
-        
+
         std::string SNCPUDist;
         double SNCPUDistParam1;
         double SNCPUDistParam2;
         double SNCPUDistParam3;
-        
+
         std::string SLBWDist;
         double SLBWDistParam1;
         double SLBWDistParam2;
         double SLBWDistParam3;
-        
+
         std::string SLDelayDist;
         double SLDelayDistParam1;
         double SLDelayDistParam2;
         double SLDelayDistParam3;
-        
+
         std::string VNCPUDist;
         double VNCPUDistParam1;
         double VNCPUDistParam2;
         double VNCPUDistParam3;
-        
+
         std::string VLBWDist;
         double VLBWDistParam1;
         double VLBWDistParam2;
         double VLBWDistParam3;
-        
+
         std::string VLDelayDist;
         double VLDelayDistParam1;
         double VLDelayDistParam2;
         double VLDelayDistParam3;
-        
+
         std::string sn_nodePlacement;
         int sn_numNeighbors;
         int sn_innerGridSize;
@@ -190,16 +190,16 @@ class ExperimentParameters
         std::string sn_growthType;
         double sn_alpha;
         double sn_beta;
-        
+
         std::string vn_nodePlacement;
         int vn_numNeighbors;
         int vn_innerGridSize;
         int vn_outerGridSize;
-        
+
         std::string vn_growthType;
         double vn_alpha;
         double vn_beta;
-        
+
         std::string sn_topology_type;
         int sn_dcn_n_switches;
         int sn_dcn_n_hosts;

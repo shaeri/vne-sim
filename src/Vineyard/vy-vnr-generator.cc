@@ -89,7 +89,7 @@ namespace vne {
                 std::cerr << ">>>>Exception in reading a request file.<<< \n" <<
                 "File: " << _reqFiles.top().second.string().c_str()
                 << " does not exist. ";
-                // << ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.path")
+                // << ConfigManager::Instance()->getConfig<std::string>("vineyard", "SubstrateNetwork", "path")
                 //<< std::endl;
                 throw e;
             }
@@ -112,9 +112,9 @@ namespace vne {
             vnr = nullptr;
             
             std::stringstream vnDirPath;
-            vnDirPath << ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.path") <<
-            ("/") << (ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.dir"));
-            const std::string fileExtension = ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetRequest.reqfileExtension");
+            vnDirPath << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "path") <<
+            ("/") << (ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "dir"));
+            const std::string fileExtension = ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "reqfileExtension");
             path p (vnDirPath.str());
             
             directory_iterator end_itr;
@@ -152,9 +152,9 @@ namespace vne {
                 else
                 {
                     std::cerr << ">>>>Exception in reading virtual network request directory.<<< \n" <<
-                    "Directory: " << ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetwork.dir")
+                    "Directory: " << ConfigManager::Instance()->getConfig<std::string>("vineyard","VirtualNetwork", "dir")
                     << " does not exist in: " <<
-                    ConfigManager::Instance()->getConfig<std::string>("vineyard.VirtualNetwork.path");
+                    ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetwork", "path");
                     throw;
                 }
             }

@@ -84,7 +84,7 @@ Logger* Logger::Instance()
         }
         else
         {
-            std::string log_level = ConfigManager::Instance()->getConfig<std::string>("utilities.logLevel");
+            std::string log_level = ConfigManager::Instance()->getConfig<std::string>("utilities", "logLevel");
             if (strcmp(log_level.c_str(),"trace")==0)
                 logging::core::get()->set_filter (logging::trivial::severity >= logging::trivial::trace);
             else if (strcmp(log_level.c_str(),"debug")==0)

@@ -140,11 +140,11 @@ namespace vne{
           substrate_net(_substrate_net),
           vnr (_vnr),
           link_embedder (_link_embedder),
-          setAlpha(ConfigManager::Instance()->getConfig<bool>("MCVNE.VNEMCTSSimulator.setAlpha")),
-          setBeta(ConfigManager::Instance()->getConfig<bool>("MCVNE.VNEMCTSSimulator.setBeta"))
+          setAlpha(ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator", "setAlpha")),
+          setBeta(ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator", "setBeta"))
         {
         }
-        
+
         template<
         typename ... SNODERES, template <typename ...> class SNODECLASS,
         typename... SLINKRES, template <typename...> class SLINKCLASS,

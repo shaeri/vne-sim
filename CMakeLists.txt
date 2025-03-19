@@ -15,24 +15,25 @@ endif()
 
 # Download and build dependencies
 IF(NOT EXISTS "${CMAKE_BINARY_DIR}/deps")
-	file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/deps)
-	execute_process(COMMAND ${PROJECT_SOURCE_DIR}/scripts/build-deps.sh
-			WORKING_DIRECTORY deps
-			COMMAND_ECHO STDOUT
-			OUTPUT_FILE stdout.log
-			ERROR_FILE stderr.log
-			COMMAND_ERROR_IS_FATAL ANY)
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/deps)
+    execute_process(COMMAND ${PROJECT_SOURCE_DIR}/scripts/build-deps.sh
+        WORKING_DIRECTORY deps
+        COMMAND_ECHO STDOUT
+        OUTPUT_FILE stdout.log
+        ERROR_FILE stderr.log
+        COMMAND_ERROR_IS_FATAL ANY)
 ENDIF()
 
 # Enable C++11 compilation
-list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -w")
+# list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -w")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -w")
 # TODO: remove -w by fixing warning messages in code
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	SET(CMAKE_SHARED_LINKER_FLAGS " -ldl")
-	add_definitions (-DDARWIN)
+    SET(CMAKE_SHARED_LINKER_FLAGS " -ldl")
+    add_definitions (-DDARWIN)
 ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-	SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl")
+    SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl")
 ENDIF()
 
 # Set the build directory
@@ -48,7 +49,13 @@ set(HIBERLITE_LIBRARY hiberlite)
 add_library(${HIBERLITE_LIBRARY} STATIC IMPORTED)
 set_property(TARGET ${HIBERLITE_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/deps/lib/libhiberlite.a)
 
-# Add the include directories of external-libraries 
+file(DOWNLOAD
+    "https://raw.githubusercontent.com/ToruNiina/toml11/refs/tags/v4.4.0/single_include/toml.hpp"
+    "${PROJECT_BINARY_DIR}/deps/include/toml.hpp"
+    TLS_VERIFY ON
+)
+
+# Add the include directories of external-libraries
 include_directories(${PROJECT_BINARY_DIR}/deps/include)
 # For BRITE Network Generator
 include_directories(${PROJECT_SOURCE_DIR}/deps)
@@ -63,32 +70,33 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 # Find boost libraries
 find_package(Boost
              1.56.0
-	     COMPONENTS	filesystem
-			log
-			log_setup
-			program_options
-			thread
-			system
-			unit_test_framework
+             COMPONENTS
+                filesystem
+                log
+                log_setup
+                program_options
+                thread
+                system
+                unit_test_framework
              REQUIRED)
 find_package(GSL REQUIRED)
-find_package(GLPK REQUIRED)		
+find_package(GLPK REQUIRED)
 find_package(SQLITE3 REQUIRED)
 option (WITH_FNSS_SUPPORT "WITH_FNSS_SUPPORT" OFF)
 IF (${WITH_FNSS_SUPPORT})
-	set(Python3_FIND_FRAMEWORK NEVER)
-	set(Python3_FIND_VIRTUALENV FIRST)
-	find_package(Python3 COMPONENTS Interpreter Development)
-	MESSAGE(STATUS "..EXEC ${Python3_EXECUTABLE}")
-	MESSAGE(STATUS "..LIBS ${Python3_LIBRARIES}")
-	MESSAGE(STATUS "..LIB_DIRS ${Python3_LIBRARY_DIRS}")
-	MESSAGE(STATUS "..RUNTIME_LIB_DIRS ${Python3_RUNTIME_LIBRARY_DIRS}")
-	MESSAGE(STATUS "..INC ${Python3_INCLUDE_DIRS}")
+    set(Python3_FIND_FRAMEWORK NEVER)
+    set(Python3_FIND_VIRTUALENV FIRST)
+    find_package(Python3 COMPONENTS Interpreter Development)
+    MESSAGE(STATUS "..EXEC ${Python3_EXECUTABLE}")
+    MESSAGE(STATUS "..LIBS ${Python3_LIBRARIES}")
+    MESSAGE(STATUS "..LIB_DIRS ${Python3_LIBRARY_DIRS}")
+    MESSAGE(STATUS "..RUNTIME_LIB_DIRS ${Python3_RUNTIME_LIBRARY_DIRS}")
+    MESSAGE(STATUS "..INC ${Python3_INCLUDE_DIRS}")
     IF(Python3_RUNTIME_LIBRARY_DIRS)
-            MESSAGE (STATUS "Python Libraries were found! Compiling with FNSS support.") 
+            MESSAGE (STATUS "Python Libraries were found! Compiling with FNSS support.")
             add_definitions (-DPYTHON_AVAILABLE)
             include_directories(${Python3_INCLUDE_DIRS})
-            IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/deps/src/fnss)
+            IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/build/deps/src/fnss)
               MESSAGE (STATUS "FNSS DOES NOT EXIST...")
 
       ENDIF()
@@ -106,27 +114,26 @@ ENDIF ()
 #MPI Support
 option (ENABLE_MPI "ENABLE_MPI" OFF)
 IF (${ENABLE_MPI})
-	MESSAGE (STATUS "Trying to compile with MPI. Searching for MPI Libraries...")
-	find_package(MPI)
-	IF (${MPI_FOUND})
-		MESSAGE (STATUS "Compiling with MPI support.") 
-		add_definitions (-DENABLE_MPI)
-		set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-		# set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
-		include_directories(${MPI_INCLUDE_PATH})	
-	ELSE()
-		MESSAGE (STATUS "Could not find the MPI Libraries...")
-		 
-	ENDIF()
+    MESSAGE (STATUS "Trying to compile with MPI. Searching for MPI Libraries...")
+    find_package(MPI)
+    IF (${MPI_FOUND})
+        MESSAGE (STATUS "Compiling with MPI support.")
+        add_definitions (-DENABLE_MPI)
+        set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+        # set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+        include_directories(${MPI_INCLUDE_PATH})
+    ELSE()
+        MESSAGE (STATUS "Could not find the MPI Libraries...")
+
+    ENDIF()
 ELSE()
-MESSAGE (STATUS "Compiling without MPI support. Use option -DENABLE_MPI=ON to compile with MPI support.") 
+MESSAGE (STATUS "Compiling without MPI support. Use option -DENABLE_MPI=ON to compile with MPI support.")
 ENDIF()
 
 #add subdirectories that need to be compiled
 add_subdirectory(src)
 add_subdirectory(deps/BRITE)
 
-# add_executable (	 )
 
 # Enable C++11 standard
 # set_property(TARGET vne-mcts PROPERTY CXX_STANDARD 11)

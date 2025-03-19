@@ -66,24 +66,24 @@ namespace vne{
                     double beta;
                 } rtWaxman;
             };
-            
+
             const Parameters& getParams () const;
-            
+
             virtual std::shared_ptr<Network<A, B>> getNetwork
             (Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
                     Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
                     Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3) override;
-            
+
 	    virtual std::string getPreferredFileName () override;
-            
+
         private:
             Parameters params;
-	    
+
 	    //bw and cpu types: Constant = 1, Uniform =2, HeavyTailed = 3, Exponential =4
             std::shared_ptr<Network<A, B>> getNetwork_RTWaxman
             (int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
                     Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3); 
+                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3);
             std::shared_ptr<Network<A, B>>
             createNetFromBRITETopo (std::shared_ptr<Topology> t,
                             Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
@@ -108,11 +108,11 @@ namespace vne{
 	{
 	  //if (tt == Topology_Type::Waxman)
 	    return getNetwork_RTWaxman (n, cpu_dist, cpu_param1, cpu_param2, cpu_param3,
-					  bw_dist, bw_param1, bw_param2, bw_param3, 
+					  bw_dist, bw_param1, bw_param2, bw_param3,
 					    delay_dist, delay_param1, delay_param2, delay_param3);
-	    
+
 	}
-	
+
         template<typename A, typename B>
         std::shared_ptr<Network<A, B>> BriteHandler<A,B>::getNetwork_RTWaxman
         (int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
@@ -208,90 +208,90 @@ namespace vne{
             << Model::s_bandwidth[0] << " "
             << Model::s_bandwidth[1] << " "
             << Model::s_bandwidth[2] << "\n" << std::endl;
-            
-            
+
+
             last_seed_file.open("last_seed_file", ios::out);
-            
+
             if (last_seed_file.fail()) {
                 cerr << "Cannot open seed files for input/output...\n";
                 exit(0);
             }
-            
+
             last_seed_file << "PLACES"
             << " " << Model::s_places[0]
             << " " << Model::s_places[1]
             << " " << Model::s_places[2] << "\n";
-            
+
             last_seed_file << "CONNECT"
             << " " << Model::s_connect[0]
             << " " << Model::s_connect[1]
             << " " << Model::s_connect[2] << "\n";
-            
+
             last_seed_file << "EDGE_CONN"
             << " " << Model::s_edgeconn[0]
             << " " << Model::s_edgeconn[1]
             << " " << Model::s_edgeconn[2] << "\n";
-            
+
             last_seed_file << "GROUPING"
-            << " " << Model::s_grouping[0] 
-            << " " << Model::s_grouping[1] 
+            << " " << Model::s_grouping[0]
+            << " " << Model::s_grouping[1]
             << " " << Model::s_grouping[2] << "\n";
-            
+
             last_seed_file << "ASSIGNMENT"
-            << " " << Model::s_assignment[0] 
-            << " " << Model::s_assignment[1] 
+            << " " << Model::s_assignment[0]
+            << " " << Model::s_assignment[1]
             << " " << Model::s_assignment[2] << "\n";
-            
+
             last_seed_file << "BANDWIDTH"
-            << " " << Model::s_bandwidth[0] 
-            << " " << Model::s_bandwidth[1] 
+            << " " << Model::s_bandwidth[0]
+            << " " << Model::s_bandwidth[1]
             << " " << Model::s_bandwidth[2] << "\n";
-            
+
             last_seed_file.close();
-            
+
         }
-        
-	template <typename A, typename B> 
+
+	template <typename A, typename B>
         BriteHandler<A,B>::Parameters::Parameters() :
-        BriteSeedFile (ConfigManager::Instance()->getConfig<std::string>("NetworkFileGenerator.BriteHandler.BriteSeedFile")),
-        nodePlacement(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.nodePlacement")),
-        numNeighbors(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.numNeighbors")),
-        innerGridSize(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.innerGridSize")),
-        outerGridSize(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.outerGridSize")),
+        BriteSeedFile (ConfigManager::Instance()->getConfig<std::string>("NetworkFileGenerator", "BriteHandler", "BriteSeedFile")),
+        nodePlacement(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "BriteHandler", "nodePlacement")),
+        numNeighbors(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "BriteHandler", "numNeighbors")),
+        innerGridSize(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "BriteHandler", "innerGridSize")),
+        outerGridSize(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "BriteHandler", "outerGridSize")),
         rtWaxman (RTWaxman())
         {
         }
-        
-        template <typename A, typename B> 
+
+        template <typename A, typename B>
         BriteHandler<A,B>::Parameters::RTWaxman::RTWaxman () :
-        growthType(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator.BriteHandler.RTWaxman.growthType")),
-        alpha(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator.BriteHandler.RTWaxman.alpha")),
-        beta(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator.BriteHandler.RTWaxman.beta"))
+        growthType(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "BriteHandler", "RTWaxman", "growthType")),
+        alpha(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator", "BriteHandler", "RTWaxman", "alpha")),
+        beta(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator", "BriteHandler", "RTWaxman", "beta"))
         {
         }
-        
-        template <typename A, typename B> 
+
+        template <typename A, typename B>
         BriteHandler<A,B>::BriteHandler () :
         ExternalLibHandler<A,B> (),
         params(Parameters())
         {
             InitSeeds();
-            this->pt.put ("nodePlacement", params.nodePlacement);
-            this->pt.put ("numNeighbors", params.numNeighbors);
-            this->pt.put ("innerGridSize", params.innerGridSize);
-            this->pt.put ("outerGridSize", params.outerGridSize);
-            this->pt.put ("nodePlacement", params.nodePlacement);
-            this->pt.put ("RTWaxman.growthType", params.rtWaxman.growthType);
-            this->pt.put ("RTWaxman.alpha", params.rtWaxman.alpha);
-            this->pt.put ("RTWaxman.beta", params.rtWaxman.beta); 
+            this->pt["NetworkFileGenerator"]["BriteHandler"]["nodePlacement"] = params.nodePlacement;
+            this->pt["NetworkFileGenerator"]["BriteHandler"]["numNeighbors"] = params.numNeighbors;
+            this->pt["NetworkFileGenerator"]["BriteHandler"]["innerGridSize"] = params.innerGridSize;
+            this->pt["NetworkFileGenerator"]["BriteHandler"]["outerGridSize"] = params.outerGridSize;
+            this->pt["NetworkFileGenerator"]["BriteHandler"]["nodePlacement"] = params.nodePlacement;
+            this->pt["NetworkFileGenerator"]["BriteHandler"]["RTWaxman"]["growthType"] = params.rtWaxman.growthType;
+            this->pt["NetworkFileGenerator"]["BriteHandler"]["RTWaxman"]["alpha"] = params.rtWaxman.alpha;
+            this->pt["NetworkFileGenerator"]["BriteHandler"]["RTWaxman"]["beta"] = params.rtWaxman.beta;
         }
-        
-        template <typename A, typename B> 
+
+        template <typename A, typename B>
         const typename BriteHandler<A,B>::Parameters&
         BriteHandler<A,B>::getParams() const
         {
             return params;
-        } 
+        }
     }
 }
 #endif /* defined(__vne_mcts__brite_handler__) */

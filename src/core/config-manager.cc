@@ -22,6 +22,9 @@
  *     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  **/
 
+#include <iostream>
+#include <fstream>
+
 #include "config-manager.h"
 
 namespace vne {
@@ -43,18 +46,18 @@ namespace vne {
     	return;
     }
     ConfigManager::ConfigManager () :
-    		lock_configs (false)
-    {
-    	read_xml (vne::config_path, _pt);
-    }
+    		lock_configs (false),
+            _pt(toml::parse(vne::config_path))
+    {}
     ConfigManager::~ConfigManager()
     {
     }
     void
     ConfigManager::saveConfigFile()
     {
-        auto setting = boost::property_tree::xml_writer_make_settings<std::string>(' ',4); 
-        //boost::property_tree::xml_writer_settings<char> w(' ', 4);
-        write_xml (config_path ,_pt, std::locale(), setting);
+        std::ofstream conf;
+        conf.open(vne::config_path);
+        conf << toml::format(_pt);
+        conf.close();
     }
 }

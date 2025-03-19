@@ -40,8 +40,8 @@ namespace vne {
                 return _net;
             //get generate the path to the substrate network file
             std::stringstream snfilePath;
-            snfilePath << ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.path") <<
-            ("/") << (ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.filename"));
+            snfilePath << ConfigManager::Instance()->getConfig<std::string>("vineyard", "SubstrateNetwork", "path") <<
+            ("/") << (ConfigManager::Instance()->getConfig<std::string>("vineyard", "SubstrateNetwork", "filename"));
             
             //open the file
             std::ifstream snFile;
@@ -89,9 +89,9 @@ namespace vne {
                 //throw e;
                 
                 std::cerr << ">>>>Exception in reading substrate network creation file.<<< \n" <<
-                "File: " << ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.filename")
+                "File: " << ConfigManager::Instance()->getConfig<std::string>("vineyard", "SubstrateNetwork", "filename")
                 << " does not exist in: " <<
-                ConfigManager::Instance()->getConfig<std::string>("vineyard.SubstrateNetwork.path")
+                ConfigManager::Instance()->getConfig<std::string>("vineyard", "SubstrateNetwork", "path")
                 << std::endl;
                 throw e;
             }

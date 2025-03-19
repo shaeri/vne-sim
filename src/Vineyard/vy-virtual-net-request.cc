@@ -126,7 +126,7 @@ namespace vne {
         template<>
         double VYVirtualNetRequest<>::getTotalRevenue() const
         {
-            float mult = ConfigManager::Instance()->getConfig<float>("vineyard.Constants.revenueMultiplier");
+            float mult = ConfigManager::Instance()->getConfig<float>("vineyard", "Constants", "revenueMultiplier");
             return revenue(this)->first + mult * revenue(this)->second;
         }
         template<>
@@ -142,7 +142,7 @@ namespace vne {
         template<>
         double VYVirtualNetRequest<>::getTotalCost() const
         {
-            float mult = ConfigManager::Instance()->getConfig<float>("vineyard.Constants.costMultiplier");
+            float mult = ConfigManager::Instance()->getConfig<float>("vineyard", "Constants", "costMultiplier");
             return cost(this)->first + mult * cost(this)->second;
         }
         template<>

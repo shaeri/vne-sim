@@ -45,84 +45,84 @@ namespace vne {
     namespace nfg {
         class NetworkFileGenerator{
         public:
-            
+
             struct Parameters {
-                
+
                 Parameters ();
-                
+
                 std::string DirToSaveFiles;
                 int totalTime;
                 int SubstrateNodeNum;
-                
+
                 double VNRLinkSplittingRate;
-                
+
                 Distribution VNRNumNodesDist;
                 double VNRNumNodesDistParam1;
                 double VNRNumNodesDistParam2;
                 double VNRNumNodesDistParam3;
-                
+
                 Distribution VNRDurationDist;
                 double VNRDurationDistParam1;
                 double VNRDurationDistParam2;
                 double VNRDurationDistParam3;
-                
+
                 Distribution VNRArrivalDist;
                 double VNRArrivalDistParam1;
                 double VNRArrivalDistParam2;
                 double VNRArrivalDistParam3;
-                
+
                 Distribution VNRMaxDistanceDist;
                 double VNRMaxDistanceDistParam1;
                 double VNRMaxDistanceDistParam2;
                 double VNRMaxDistanceDistParam3;
-                
+
                 Distribution SNCPUDist;
                 double SNCPUDistParam1;
                 double SNCPUDistParam2;
                 double SNCPUDistParam3;
-                
+
                 Distribution SLBWDist;
                 double SLBWDistParam1;
                 double SLBWDistParam2;
                 double SLBWDistParam3;
-                
+
                 Distribution SLDelayDist;
                 double SLDelayDistParam1;
                 double SLDelayDistParam2;
                 double SLDelayDistParam3;
-                
+
                 Distribution VNCPUDist;
                 double VNCPUDistParam1;
                 double VNCPUDistParam2;
                 double VNCPUDistParam3;
-                
+
                 Distribution VLBWDist;
                 double VLBWDistParam1;
                 double VLBWDistParam2;
                 double VLBWDistParam3;
-                
+
                 Distribution VLDelayDist;
                 double VLDelayDistParam1;
                 double VLDelayDistParam2;
                 double VLDelayDistParam3;
-                
-                boost::property_tree::ptree vnrpt;
-                boost::property_tree::ptree snpt;
-                
+
+                vne::ConfigType vnrpt;
+                vne::ConfigType snpt;
+
                 std::string Handler;
                 Topology_Type vn_topo_type;
                 Topology_Type sn_topo_type;
             };
-            
+
             NetworkFileGenerator ();
             ~NetworkFileGenerator ();
-            
+
             std::shared_ptr<Network<VYSubstrateNode<>,VYSubstrateLink<>>>
                 VYSubstrateNetFileGenerator (bool writeToFile);
-            
+
             std::shared_ptr <std::list <std::shared_ptr <VYVirtualNetRequest<> >>>
                 VYVirtualNetRequestGenerator (bool writeToFile);
-            
+
         private:
             Parameters params;
         };

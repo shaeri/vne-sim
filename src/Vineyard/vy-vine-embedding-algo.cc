@@ -97,8 +97,8 @@ namespace vne {
             std::copy(virtualNodeIdSet->begin(), virtualNodeIdSet->end(), it);
             
             //configs
-            bool setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard.Constants.setAlpha");
-            bool setBeta = ConfigManager::Instance()->getConfig<bool>("vineyard.Constants.setBeta");
+            bool setAlpha = ConfigManager::Instance()->getConfig<bool>("vineyard", "Constants", "setAlpha");
+            bool setBeta = ConfigManager::Instance()->getConfig<bool>("vineyard", "Constants", "setBeta");
             
             //rechability checking object
             VYNodesReachabilityCondition reachability_cond;

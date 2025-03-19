@@ -26,16 +26,16 @@ int run_experiment(string vnr_file, string algo) {
 
     if ( algo == "mcvne_bfs_mcf" ) {
 
-        bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_file);
+        bool ret = ConfigManager::Instance()->setConfig<std::string>(vnr_file, "vineyard", "VirtualNetRequest", "dir");
         assert(ret);
         string str1 = "BFS-SP";
-        ret = ConfigManager::Instance()->setConfig("MCVNE.NodeEmbeddingAlgo.LinkEmbedder", str1);
+        ret = ConfigManager::Instance()->setConfig<std::string>(str1, "MCVNE", "NodeEmbeddingAlgo", "LinkEmbedder");
         assert(ret);
         vne::experiments::MCVNENodeMCFLinkExp<> exp = vne::experiments::MCVNENodeMCFLinkExp<> ();
 
         std::string dbPath;
         std::stringstream dbName;
-        dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+        dbPath = ConfigManager::Instance()->getConfig<std::string>("core", "dbPath");
         dbName << dbPath << "mcvne_bfs_mcf_" << vnr_file <<".db";
         std::string str = dbName.str();
         std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
@@ -54,16 +54,16 @@ int run_experiment(string vnr_file, string algo) {
 
     } else if ( algo == "mcvne_mcf_mcf" ) {
 
-        bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_file);
+        bool ret = ConfigManager::Instance()->setConfig<std::string>(vnr_file, "vineyard", "VirtualNetRequest", "dir");
         assert(ret);
         std::string str1 = "MCF";
-        ret = ConfigManager::Instance()->setConfig("MCVNE.NodeEmbeddingAlgo.LinkEmbedder", str1);
+        ret = ConfigManager::Instance()->setConfig<std::string>(str1, "MCVNE", "NodeEmbeddingAlgo", "LinkEmbedder");
         assert(ret);
         vne::experiments::MCVNENodeMCFLinkExp<> exp = vne::experiments::MCVNENodeMCFLinkExp<> ();
 
         std::string dbPath;
         std::stringstream dbName;
-        dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+        dbPath = ConfigManager::Instance()->getConfig<std::string>("core", "dbPath");
         dbName << dbPath <<"mcvne_mcf_mcf_" <<  vnr_file <<".db";
         std::string str = dbName.str();
         std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
@@ -82,16 +82,16 @@ int run_experiment(string vnr_file, string algo) {
 
     } else if ( algo == "mcvne_bfs_bfs" ) {
 
-        bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_file);
+        bool ret = ConfigManager::Instance()->setConfig<std::string>(vnr_file, "vineyard", "VirtualNetRequest", "dir");
         assert(ret);
         std::string str1 = "BFS-SP";
-        ret = ConfigManager::Instance()->setConfig("MCVNE.NodeEmbeddingAlgo.LinkEmbedder", str1);
+        ret = ConfigManager::Instance()->setConfig<std::string>(str1, "MCVNE", "NodeEmbeddingAlgo", "LinkEmbedder");
         assert(ret);
         vne::experiments::MCVNENodeBFSLinkExp<> exp = vne::experiments::MCVNENodeBFSLinkExp<> ();
 
         std::string dbPath;
         std::stringstream dbName;
-        dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+        dbPath = ConfigManager::Instance()->getConfig<std::string>("core", "dbPath");
         dbName << dbPath <<"mcvne_bfs_bfs_" <<  vnr_file << ".db";
         std::string str = dbName.str();
         std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
@@ -110,13 +110,13 @@ int run_experiment(string vnr_file, string algo) {
 
     } else if ( algo == "grc_mcf" ) {
 
-        bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_file);
+        bool ret = ConfigManager::Instance()->setConfig<std::string>(vnr_file, "vineyard", "VirtualNetRequest", "dir");
         assert(ret);
         vne::experiments::GRCNodeMCFLinkExp<> exp = vne::experiments::GRCNodeMCFLinkExp<> ();
 
         std::string dbPath;
         std::stringstream dbName;
-        dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+        dbPath = ConfigManager::Instance()->getConfig<std::string>("core", "dbPath");
         dbName << dbPath <<"grc_mcf_" <<  vnr_file << ".db";
         std::string str = dbName.str();
         std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
@@ -135,13 +135,13 @@ int run_experiment(string vnr_file, string algo) {
 
     } else if ( algo == "grc_bfs" ) {
 
-        bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_file);
+        bool ret = ConfigManager::Instance()->setConfig<std::string>(vnr_file, "vineyard", "VirtualNetRequest", "dir");
         assert(ret);
         vne::experiments::GRCNodeBFSLinkExp<> exp = vne::experiments::GRCNodeBFSLinkExp<> ();
 
         std::string dbPath;
         std::stringstream dbName;
-        dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+        dbPath = ConfigManager::Instance()->getConfig<std::string>("core", "dbPath");
         dbName << dbPath <<"grc_bfs_" <<  vnr_file << ".db";
         std::string str = dbName.str();
         std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
@@ -158,43 +158,43 @@ int run_experiment(string vnr_file, string algo) {
         IdGenerator::Destroy();
         RNG::Destroy();
 
-    } else if ( algo == "vineyard_d" ) {
+  } else if ( algo == "vineyard_d" ) {
 
-        bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_file);
-        assert(ret);
-        vne::experiments::VineNodeMCFLinkExp<> exp = vne::experiments::VineNodeMCFLinkExp<> ();
+         bool ret = ConfigManager::Instance()->setConfig(vnr_file, "vineyard", "VirtualNetRequest", "dir");
+         assert(ret);
+         vne::experiments::VineNodeMCFLinkExp<> exp = vne::experiments::VineNodeMCFLinkExp<> ();
 
-        std::string dbPath;
-        std::stringstream dbName;
-        dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
-        dbName << dbPath <<"vineyard_deterministic_" <<  vnr_file << ".db";
-        std::string str = dbName.str();
-        std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
+         std::string dbPath;
+         std::stringstream dbName;
+         dbPath = ConfigManager::Instance()->getConfig<std::string>("core", "dbPath");
+         dbName << dbPath <<"vineyard_deterministic_" <<  vnr_file << ".db";
+         std::string str = dbName.str();
+         std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
 
-        exp.run();
+         exp.run();
 
-        db->registerBeanClass<vne::experiments::VineNodeMCFLinkExp<>>();
-        db->dropModel();
-        db->createModel();
-        db->copyBean(exp);
+         db->registerBeanClass<vne::experiments::VineNodeMCFLinkExp<>>();
+         db->dropModel();
+         db->createModel();
+         db->copyBean(exp);
 
-        //destroy all singleton classes to start fresh for next simulations
-        ConfigManager::Destroy();
-        IdGenerator::Destroy();
-        RNG::Destroy();
+         //destroy all singleton classes to start fresh for next simulations
+         ConfigManager::Destroy();
+         IdGenerator::Destroy();
+         RNG::Destroy();
 
     } else if ( algo == "vineyard_r" ) {
 
-        bool ret = ConfigManager::Instance()->setConfig("vineyard.VirtualNetRequest.dir", vnr_file);
+        bool ret = ConfigManager::Instance()->setConfig<std::string>(vnr_file, "vineyard", "VirtualNetRequest", "dir");
         assert(ret);
         std::string str1 = "randomized";
-        ret = ConfigManager::Instance()->setConfig("vineyard.Configs.nodeMappingType", str1);
+        ret = ConfigManager::Instance()->setConfig<std::string>(str1, "vineyard", "Configs", "nodeMappingType");
         assert(ret);
         vne::experiments::VineNodeMCFLinkExp<> exp = vne::experiments::VineNodeMCFLinkExp<> ();
 
         std::string dbPath;
         std::stringstream dbName;
-        dbPath = ConfigManager::Instance()->getConfig<std::string>("core.dbPath");
+        dbPath = ConfigManager::Instance()->getConfig<std::string>("core", "dbPath");
         dbName << dbPath <<"vineyard_randomized_" <<  vnr_file << ".db";
         std::string str = dbName.str();
         std::shared_ptr<hiberlite::Database> db = DBManager::Instance()->createDB(str);
@@ -221,7 +221,7 @@ int run_experiment(string vnr_file, string algo) {
 
 int main(int argc, char *argv[]) {
 
-    vne::utilities::Logger::Instance()->logWarn("vne-startup");
+    // vne::utilities::Logger::Instance()->logWarn("vne-startup");
 
     po::options_description desc("Root Options");
     desc.add_options()

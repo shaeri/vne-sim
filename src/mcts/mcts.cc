@@ -35,18 +35,18 @@ namespace vne {
     namespace mcts{
         MCTS::Parameters::Parameters()
         :
-        MaxDepth(ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.MaxDepth")),
-        NumSimulations(ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.NumSimulations")),
-        ExpandCount(ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.ExpandCount")),
-        AutoExploration(ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.AutoExploration")),
-        ExplorationConstant(ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.ExplorationConstant")),
-        UseRave(ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.UseRave")),
-        RaveDiscount(ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.RaveDiscount")),
-        RaveConstant(ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.RaveConstant")),
-        DisableTree(ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.DisableTree")),
-        UseSinglePlayerMCTS(ConfigManager::Instance()->getConfig<bool>("MCTS.MCTSParameters.UseSinglePlayerMCTS")),
-        SPMCTSConstant(ConfigManager::Instance()->getConfig<double>("MCTS.MCTSParameters.SPMCTSConstant")),
-        ParalleizationType(ConfigManager::Instance()->getConfig<int>("MCTS.MCTSParameters.ParallelizationType"))
+        MaxDepth(ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "MaxDepth")),
+        NumSimulations(ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "NumSimulations")),
+        ExpandCount(ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "ExpandCount")),
+        AutoExploration(ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "AutoExploration")),
+        ExplorationConstant(ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "ExplorationConstant")),
+        UseRave(ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "UseRave")),
+        RaveDiscount(ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "RaveDiscount")),
+        RaveConstant(ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "RaveConstant")),
+        DisableTree(ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "DisableTree")),
+        UseSinglePlayerMCTS(ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "UseSinglePlayerMCTS")),
+        SPMCTSConstant(ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "SPMCTSConstant")),
+        ParalleizationType(ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "ParallelizationType"))
         {
         }
         MCTS::MCTS(const std::shared_ptr<MCTSSimulator> sim)
@@ -80,7 +80,7 @@ namespace vne {
             // Find matching vnode from the rest of the tree
             std::shared_ptr<TreeNode> child_node = root->child(action);
             BOOST_LOG_TRIVIAL(debug) << "Child's node value: " << child_node->value.getValue() <<std::endl;
-            
+
             // Delete old tree and create new root
             if (child_node->getState() == nullptr)
             {
@@ -119,10 +119,10 @@ namespace vne {
 
                     MPI::Op customSumOp;
                     customSumOp.Init(&sumFunction, true);
-                
+
                     MPI::COMM_WORLD.Allreduce(childrenCounts, childrenCountsGlobal, numChildren, MPI::INT, customSumOp);
                     MPI::COMM_WORLD.Allreduce(childrenValues, childrenValuesGlobal, numChildren, MPI::DOUBLE, customSumOp);
-                
+
 /*                double maxVal = -Infinity;
                 for (int i = 0; i<numChildren; i++)
                 {
@@ -158,7 +158,7 @@ namespace vne {
 #else
             return greedyUCB(root, false);
 #endif
-            
+
         }
 
         void MCTS::rolloutSearch()
@@ -168,22 +168,22 @@ namespace vne {
             assert(root->getState() != nullptr);
             simulator->generateLegal(root->getState(), history, legal, status);
             random_shuffle(legal.begin(), legal.end());
-            
+
             for (int i = 0; i < params.NumSimulations; i++)
             {
                 int action = legal[i % legal.size()];
                 std::shared_ptr<State> st = root->getState()->getCopy();
                 simulator->validate(st);
-                
+
                 double immediateReward, delayedReward, totalReward;
                 bool terminal = simulator->step(st, action, immediateReward);
-                
+
                 std::shared_ptr<TreeNode> node = root->child(action);
                 if (node->getState()==nullptr && !terminal)
                 {
                     *node = *(expandNode(st));
                 }
-               
+
                 history.push_back(action);
                 delayedReward = rollout(st->getCopy());
                 totalReward = immediateReward + (simulator->getDiscount() * delayedReward);
@@ -196,47 +196,47 @@ namespace vne {
         void MCTS::UCTSearch()
         {
             clearStatistics();
-            
+
             int historyDepth = (int) history.size();
-            
-            
+
+
             for (int n = 0; n < params.NumSimulations; n++)
             {
                 status.Phase = MCTSSimulator::Status::TREE;
-                
+
                 treeDepth = 0;
                 peakTreeDepth = 0;
 
                 double totalReward = simulateNode(root);
                 root->value.add(totalReward);
-                
+
                 //addRave(root, totalReward);
                 statTotalReward.Add(totalReward);
                 statTreeDepth.Add(peakTreeDepth);
-                
+
                 history.resize(historyDepth);
             }
         }
-        
+
         double MCTS::simulateNode(std::shared_ptr<TreeNode> node)
         {
             double immediateReward, delayedReward = 0;
-            
+
             int action = greedyUCB(node, true);
-            
+
             peakTreeDepth = treeDepth;
-            
+
             if (treeDepth >= params.MaxDepth) // search horizon reached
                 return 0;
-            
+
             std::shared_ptr<State> st = node->getState()->getCopy();
             bool terminal = simulator->step(st, action, immediateReward);
             history.push_back(action);
             std::shared_ptr<TreeNode> child_node = node->child(action);
-            
+
             if (child_node->getState()==nullptr && !terminal && node->value.getCount() >= params.ExpandCount)
                 *child_node = *(expandNode(st));
-            
+
             if (!terminal)
             {
                 treeDepth++;
@@ -247,12 +247,12 @@ namespace vne {
                 treeDepth--;
             }
             double totalReward = immediateReward + simulator->getDiscount() * delayedReward;
-            
+
             child_node->value.add(totalReward);
             addRave(node, totalReward);
             return totalReward;
         }
-        
+
         void MCTS::addRave(std::shared_ptr<TreeNode> node, double totalReward)
         {
             double totalDiscount = 1.0;
@@ -263,7 +263,7 @@ namespace vne {
                 totalDiscount *= params.RaveDiscount;
             }
         }
-        
+
         std::shared_ptr<TreeNode> MCTS::expandNode(const std::shared_ptr<State> state)
         {
             std::shared_ptr<TreeNode> node (new TreeNode(state));
@@ -279,7 +279,7 @@ namespace vne {
             double bestq = -Infinity;
             int N = node->value.getCount();
             double logN = log(N + 1);
-            
+
             //these values will only change if partitioning is enabled;
             int mystart = 0;
             int myend = simulator->getNumActions();
@@ -294,7 +294,7 @@ namespace vne {
                 //int myWorkShare = my_rank * (simulator->getNumActions()/world_size);
                 mystart = (simulator->getNumActions() / numproc) * my_rank + ((simulator->getNumActions() % numproc) < my_rank ? (simulator->getNumActions() % numproc) : my_rank);
                 myend = mystart + (simulator->getNumActions() / numproc) + ((simulator->getNumActions() % numproc) > my_rank);
-                
+
                 //BOOST_LOG_TRIVIAL(debug) << "Process: " << my_rank << " In partitioned UCB. MyStart: " << mystart << " MyEnd: " << myend;
             }
 #endif
@@ -303,25 +303,25 @@ namespace vne {
             {
                 double q;
                 int n;
-                
+
                 std::shared_ptr<TreeNode> child_node = node->child(action);
                 q = child_node->value.getValue();
                 n = child_node->value.getCount();
-                
+
                 if (params.UseRave && child_node->AMAF.getCount() > 0)
                 {
                     double n2 = child_node->AMAF.getCount();
                     double beta = n2 / (n + n2 + params.RaveConstant * n * n2);
                     q = (1.0 - beta) * q + beta * child_node->AMAF.getValue();
                 }
-                
+
                 if (ucb)
                     q += fastUCB(N, n, logN);
-                
+
                 if (params.UseSinglePlayerMCTS && child_node->value.getCount() > 0
                      && child_node->value.getValue() > -Infinity)
                     q += sqrt( (child_node->value.getSumSquaredValue() - n * child_node->value.getValue() * child_node->value.getValue() + params.SPMCTSConstant) / n );
-                
+
                 if (q >= bestq)
                 {
                     if (q > bestq)
@@ -330,7 +330,7 @@ namespace vne {
                     besta.push_back(action);
                 }
             }
-            
+
             assert(!besta.empty());
             int randomIndex = (int) gsl_rng_uniform_int (RNG::Instance()->getGeneralRNG(), besta.size());
             return besta[randomIndex];
@@ -339,7 +339,7 @@ namespace vne {
         double MCTS::rollout(std::shared_ptr<State> state)
         {
             status.Phase = MCTSSimulator::Status::ROLLOUT;
-            
+
             double totalReward = 0.0;
             double discount = 1.0;
             bool terminal = false;
@@ -347,19 +347,19 @@ namespace vne {
             for (numSteps = 0; numSteps + treeDepth < params.MaxDepth && !terminal; ++numSteps)
             {
                 double reward;
-                
+
                 int action = simulator->selectRandom(state, history, status);
                 terminal = simulator->step(state, action, reward);
-                
+
                 totalReward += reward * discount;
                 discount *= simulator->getDiscount();
             }
-            
+
             statRolloutDepth.Add(numSteps);
-            
+
             return totalReward;
         }
-        
+
         double MCTS::UCB[UCB_N][UCB_n];
         bool MCTS::initialisedFastUCB = false;
 
@@ -378,7 +378,7 @@ namespace vne {
         {
             if (initialisedFastUCB && N < UCB_N && n < UCB_n)
                 return UCB[N][n];
-            
+
             if (n == 0)
                 return Infinity;
             else
@@ -400,7 +400,7 @@ void sumFunction (const void* input, void* inoutput, int len, const MPI::Datatyp
     {
         if (datatype == MPI::INT)
         {
-        
+
             int* currentInPtr = (int*) input;
             currentInPtr += i;
             int* currentOutPtr = (int*) inoutput;
