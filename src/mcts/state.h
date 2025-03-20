@@ -27,15 +27,19 @@
 
 #include <memory>
 
-namespace vne {
-    namespace mcts {
-        class State {
-        public:
-            virtual std::shared_ptr<State> getCopy() const = 0;
-            virtual ~State() {};
-        protected:
-            State () {};
-        };
-    }
-}
+namespace vne
+{
+namespace mcts
+{
+    class State
+    {
+       public:
+        virtual std::shared_ptr<State> getCopy() const = 0;
+        virtual ~State() {};
+
+       protected:
+        State() {};
+    };
+}  // namespace mcts
+}  // namespace vne
 #endif

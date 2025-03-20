@@ -22,10 +22,10 @@
  *     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  **/
 
-#ifndef  NFG_FNSS_HANDLER_
-#define  NFG_FNSS_HANDLER_
+#ifndef NFG_FNSS_HANDLER_
+#define NFG_FNSS_HANDLER_
 
-#ifdef  WITH_FNSS_SUPPORT
+#ifdef WITH_FNSS_SUPPORT
 #include "external-lib-handler.h"
 //#include "network-file-generator.h"
 
@@ -43,465 +43,493 @@
 using namespace vne::vineyard;
 using namespace fnss;
 
-namespace vne{
-    namespace nfg {
-      template<typename A, typename B> 
-      class FNSSHandler : public ExternalLibHandler<A,B>
-        {
-        public:
-            FNSSHandler ();
-            virtual ~FNSSHandler () {};
-            struct Parameters
-            {
-                Parameters ();
-                struct DCNBCube
-                {
-                    DCNBCube ();
-                    int n;
-                    int k;
-                } bcube;
-                
-                struct DCNTwoTier
-                {
-                    DCNTwoTier ();
-                    int n_core;
-                    int n_hosts;
-                    int n_edges;
-                    int coreBWMultiplier;
-                } twotier;
+namespace vne
+{
+namespace nfg
+{
+    template <typename A, typename B>
+    class FNSSHandler : public ExternalLibHandler<A, B>
+    {
+       public:
+        FNSSHandler();
+        virtual ~FNSSHandler() {};
+        struct Parameters {
+            Parameters();
+            struct DCNBCube {
+                DCNBCube();
+                int n;
+                int k;
+            } bcube;
 
-                struct DCNFatTree
-                {
-                    DCNFatTree ();
-                    int k;
-                    int coreBWMultiplier;
-                } fattree;
+            struct DCNTwoTier {
+                DCNTwoTier();
+                int n_core;
+                int n_hosts;
+                int n_edges;
+                int coreBWMultiplier;
+            } twotier;
 
-                struct HyperCube
-                {
-                    HyperCube ();
-                    int size;
-                } hypercube;
-            };
-            virtual std::shared_ptr<Network<A, B>> getNetwork
-            (Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-                    Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3) override;
+            struct DCNFatTree {
+                DCNFatTree();
+                int k;
+                int coreBWMultiplier;
+            } fattree;
 
-            virtual std::string getPreferredFileName () override;
-            
-        private:
-            int numHosts;
-            int numSwitches;
-            Topology_Type _Topology_Type;
-            
-            Parameters params;
-            
-            std::shared_ptr<Network<A, B>> getNetwork_DCNBCube
-            (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-                    Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3);
-            
-            std::shared_ptr<Network<A, B>> getNetwork_DCNTwoTier
-            (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-                Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3);
-            
-            std::shared_ptr<Network<A, B>> getNetwork_DCNFatTree
-            (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-                Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3);
-
-          std::shared_ptr<Network<A, B>> getNetwork_HyperCube
-                  (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-                   Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                   Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3);
+            struct HyperCube {
+                HyperCube();
+                int size;
+            } hypercube;
         };
-        
-        template <typename A, typename B>
-        std::string FNSSHandler<A,B>::getPreferredFileName ()
-        {
-            stringstream ss;
-            
-            if (_Topology_Type == Topology_Type::DCNBCube)
-                ss << "_n_" << params.bcube.n << "_k_" << params.bcube.k << "_nHosts_" << numHosts << "_nSwitches_" << numSwitches;
-            else if (_Topology_Type == Topology_Type::DCNTwoTier)
-                ss << "_nCore_" << params.twotier.n_core << "_nEdges_" << params.twotier.n_edges << "_nHosts_" << params.twotier.n_hosts <<
-                    "_coreMultiplier_" << params.twotier.coreBWMultiplier << "_nHosts_" << numHosts << "_nSwitches_" << numSwitches;
-            else
-                ss << "_k_" << params.fattree.k << "_coreMultiplier_" << params.fattree.coreBWMultiplier <<
-                    "_nHosts_" << numHosts << "_nSwitches_" << numSwitches;
-            
-            return ss.str();
-        }
+        virtual std::shared_ptr<Network<A, B>> getNetwork(
+            Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2,
+            double cpu_param3, Distribution bw_dist, double bw_param1, double bw_param2,
+            double bw_param3, Distribution delay_dist, double delay_param1, double delay_param2,
+            double delay_param3) override;
 
-        template <typename A, typename B>
-        std::shared_ptr<Network<A, B>> FNSSHandler<A,B>::getNetwork
-            (Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-                    Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
-        {
-            _Topology_Type = tt;
-            if (tt == Topology_Type::DCNBCube)
-                return getNetwork_DCNBCube (cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist, bw_param1, bw_param2, bw_param3,
-                                            delay_dist, delay_param1, delay_param2, delay_param3);
-            else if (tt == Topology_Type::DCNTwoTier)
-                return getNetwork_DCNTwoTier (cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist, bw_param1, bw_param2, bw_param3,
-                                            delay_dist, delay_param1, delay_param2, delay_param3);
-            else if (tt == Topology_Type::DCNFatTree)
-                return getNetwork_DCNFatTree (cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist, bw_param1, bw_param2, bw_param3,
-                                            delay_dist, delay_param1, delay_param2, delay_param3);
-            else if (tt == Topology_Type::HyperCube)
-                return getNetwork_HyperCube(cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist, bw_param1, bw_param2, bw_param3,
-                                            delay_dist, delay_param1, delay_param2, delay_param3);
-        }
+        virtual std::string getPreferredFileName() override;
 
-        template<typename A, typename B>
-        std::shared_ptr<Network<A, B>> FNSSHandler<A,B>::getNetwork_DCNBCube
-        (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-                Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
-        {
-            std::stringstream pythonScript;
-            vne::utilities::PythonRunner pr;
-            pythonScript << "import fnss\n";
-            //pythonScript << "import networkx as nx\n";
-            pythonScript << "topology = " << "fnss.bcube_topology(n=" << params.bcube.n << ", k= " << params.bcube.k << ")\n";
-            pythonScript << "fnss.write_topology(topology, '.datacenter_topology.xml')\n";
-            pr.run(pythonScript.str());
-            if ( pr.get_status_code() != 0 ) {
-                vne::utilities::Logger::Instance()->logFatal("Python script to generate network failed with python error result code.");
-                exit(-1);
-            }
-            
-            fnss::Topology t = fnss::Parser::parseTopology(".datacenter_topology.xml");
-            std::set<std::pair <std::string, std::string> > edges = t.getAllEdges();
-            std::set<std::string> nodes = t.getAllNodes();
-            assert (nodes.size() > 0 && edges.size() > 0);
-            
-            std::shared_ptr<Network<A, B>> net (new Network<A, B>());
-            std::map<std::string, int> fnssNodeIdToVNESimNodeId;
-            
-            for(set<string>::iterator it = nodes.begin(); it != nodes.end(); it++)
-            {
-                fnss::Node fnssNode = t.getNode(*it);
+       private:
+        int numHosts;
+        int numSwitches;
+        Topology_Type _Topology_Type;
 
-                std::shared_ptr<A> n = nullptr;
-                // If the node is a host create it with a cpu capacity
-                if (fnssNode.getProperty("type").compare("host") == 0)
-                {
-                    numHosts++;
-                    double node_cpu = RNG::Instance()->sampleDistribution<double,double,double,double>
-                    (cpu_dist, std::tuple<double,double,double> (cpu_param1, cpu_param2, cpu_param3)) ;
-                    n.reset (new A (node_cpu, 0, 0));
-                }
-                else
-                {
-                    numSwitches++;
-                    n.reset (new A (0,0,0));
-                }
-                fnssNodeIdToVNESimNodeId[*it] = n->getId();
-                net->addNode (n);
-            }
+        Parameters params;
 
-            for(set<pair <string, string> >::iterator it = edges.begin(); it != edges.end(); it++)
-            {
-                double link_bw = RNG::Instance()->sampleDistribution<double,double,double,double>
-                (bw_dist, std::tuple<double,double,double> (bw_param1, bw_param2, bw_param3));
+        std::shared_ptr<Network<A, B>> getNetwork_DCNBCube(
+            Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+            Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+            Distribution delay_dist, double delay_param1, double delay_param2,
+            double delay_param3);
 
-                double link_delay = RNG::Instance()->sampleDistribution<double,double,double,double>
-                (delay_dist, std::tuple<double,double,double> (delay_param1, delay_param2, delay_param3));
+        std::shared_ptr<Network<A, B>> getNetwork_DCNTwoTier(
+            Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+            Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+            Distribution delay_dist, double delay_param1, double delay_param2,
+            double delay_param3);
 
-                int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
-                int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
+        std::shared_ptr<Network<A, B>> getNetwork_DCNFatTree(
+            Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+            Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+            Distribution delay_dist, double delay_param1, double delay_param2,
+            double delay_param3);
 
-                std::shared_ptr<B> l (new B (link_bw, link_delay, nodeFromId, nodeToId));
-                net->addLink (l);
-            }
-            this->pt["n_switches"] = numSwitches;
-            this->pt["n_hosts"] = numHosts;
-            this->pt["n_links"] = net->getNumLinks();
-            return net;
-        }
+        std::shared_ptr<Network<A, B>> getNetwork_HyperCube(
+            Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+            Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+            Distribution delay_dist, double delay_param1, double delay_param2,
+            double delay_param3);
+    };
 
-        template<typename A, typename B>
-        std::shared_ptr<Network<A, B>> FNSSHandler<A,B>::getNetwork_DCNTwoTier
-        (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-         Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-         Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
-        {
-            std::stringstream pythonScript;
-            vne::utilities::PythonRunner pr;
-            pythonScript << "import fnss\n";
-            //pythonScript << "import networkx as nx\n";
-            pythonScript << "topology = " << "fnss.two_tier_topology(n_core=" << params.twotier.n_core << ", n_edge= " << params.twotier.n_edges <<
-            ", n_hosts=" << params.twotier.n_hosts << ")\n";
-            pythonScript << "fnss.write_topology(topology, '.datacenter_topology.xml')\n";
-            pr.run(pythonScript.str().c_str());
-            if ( pr.get_status_code() != 0 ) {
-                vne::utilities::Logger::Instance()->logFatal("Python script to generate network failed with python error result code.");
-                exit(-1);
-            }
+    template <typename A, typename B>
+    std::string FNSSHandler<A, B>::getPreferredFileName()
+    {
+        stringstream ss;
 
-            fnss::Topology t = fnss::Parser::parseTopology(".datacenter_topology.xml");
-            std::set<std::pair <std::string, std::string> > edges = t.getAllEdges();
-            std::set<std::string> nodes = t.getAllNodes();
-            assert (nodes.size() > 0 && edges.size() > 0);
-            
-            std::shared_ptr<Network<A, B>> net (new Network<A, B>());
-            std::map<std::string, int> fnssNodeIdToVNESimNodeId;
-            
-            for(set<string>::iterator it = nodes.begin(); it != nodes.end(); it++)
-            {
-                fnss::Node fnssNode = t.getNode(*it);
-                
-                std::shared_ptr<A> n = nullptr;
-                // If the node is a host create it with a cpu capacity
-                if (fnssNode.getProperty("type").compare("host") == 0)
-                {
-                    numHosts++;
-                    double node_cpu = RNG::Instance()->sampleDistribution<double,double,double,double>
-                    (cpu_dist, std::tuple<double,double,double> (cpu_param1, cpu_param2, cpu_param3)) ;
-                    n.reset (new A (node_cpu, 0, 0));
-                }
-                else
-                {
-                    numSwitches++;
-                    n.reset (new A (0,0,0));
-                }
-                fnssNodeIdToVNESimNodeId[*it] = n->getId();
-                net->addNode (n);
-            }
-            
-            for(set<pair <string, string> >::iterator it = edges.begin(); it != edges.end(); it++)
-            {
-                double link_bw = RNG::Instance()->sampleDistribution<double,double,double,double>
-                (bw_dist, std::tuple<double,double,double> (bw_param1, bw_param2, bw_param3));
-                
-                double link_delay = RNG::Instance()->sampleDistribution<double,double,double,double>
-                (delay_dist, std::tuple<double,double,double> (delay_param1, delay_param2, delay_param3));
-                
-                std::shared_ptr<B> l = nullptr;
-                int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
-                fnss::Node fnssNodeFrom = t.getNode ((*it).first);
-                int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
-                fnss::Node fnssNodeTo = t.getNode ((*it).second);
-                
-                if ((fnssNodeFrom.getProperty("type").compare("host") == 0 ||  fnssNodeTo.getProperty ("type").compare("host") == 0 ))
-                {
-                    l.reset (new B (link_bw, link_delay, nodeFromId, nodeToId));
-                }
-                else
-                    l.reset (new B (params.twotier.coreBWMultiplier * link_bw, link_delay, nodeFromId, nodeToId));
-                net->addLink (l);
-            }
-            this->pt["n_switches"] = numSwitches;
-            this->pt["n_hosts"] = numHosts;
-            this->pt["n_links"] = net->getNumLinks();
-            return net;
-        }
+        if (_Topology_Type == Topology_Type::DCNBCube)
+            ss << "_n_" << params.bcube.n << "_k_" << params.bcube.k << "_nHosts_" << numHosts
+               << "_nSwitches_" << numSwitches;
+        else if (_Topology_Type == Topology_Type::DCNTwoTier)
+            ss << "_nCore_" << params.twotier.n_core << "_nEdges_" << params.twotier.n_edges
+               << "_nHosts_" << params.twotier.n_hosts << "_coreMultiplier_"
+               << params.twotier.coreBWMultiplier << "_nHosts_" << numHosts << "_nSwitches_"
+               << numSwitches;
+        else
+            ss << "_k_" << params.fattree.k << "_coreMultiplier_"
+               << params.fattree.coreBWMultiplier << "_nHosts_" << numHosts << "_nSwitches_"
+               << numSwitches;
 
-        template<typename A, typename B>
-        std::shared_ptr<Network<A, B>> FNSSHandler<A,B>::getNetwork_DCNFatTree
-        (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-         Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-         Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
-        {
-            std::stringstream pythonScript;
-            vne::utilities::PythonRunner pr;
-            //pythonScript << "import networkx as nx\n";
-            pythonScript << "import fnss\n";
-            pythonScript << "topology = " << "fnss.fat_tree_topology(k=" << params.fattree.k << ")\n";
-            pythonScript << "fnss.write_topology(topology, 'datacenter_topology.xml')\n";
-            pr.run(pythonScript.str());
-            if ( pr.get_status_code() != 0 ) {
-                vne::utilities::Logger::Instance()->logFatal("Python script to generate network failed with python error result code.");
-                exit(-1);
-            }
-
-            fnss::Topology t = fnss::Parser::parseTopology("datacenter_topology.xml");
-            std::set<std::pair <std::string, std::string> > edges = t.getAllEdges();
-            std::set<std::string> nodes = t.getAllNodes();
-            assert (nodes.size() > 0 && edges.size() > 0);
-            
-            std::shared_ptr<Network<A, B>> net (new Network<A, B>());
-            std::map<std::string, int> fnssNodeIdToVNESimNodeId;
-            
-            for(set<string>::iterator it = nodes.begin(); it != nodes.end(); it++)
-            {
-                fnss::Node fnssNode = t.getNode(*it);
-                
-                std::shared_ptr<A> n = nullptr;
-                // If the node is a host create it with a cpu capacity
-                if (fnssNode.getProperty("type").compare("host") == 0)
-                {
-                    numHosts++;
-                    double node_cpu = RNG::Instance()->sampleDistribution<double,double,double,double>
-                    (cpu_dist, std::tuple<double,double,double> (cpu_param1, cpu_param2, cpu_param3)) ;
-                    n.reset (new A (node_cpu, 0, 0));
-                }
-                else
-                {
-                    numSwitches++;
-                    n.reset (new A (0,0,0));
-                }
-                fnssNodeIdToVNESimNodeId[*it] = n->getId();
-                net->addNode (n);
-            }
-
-            for(set<pair <string, string> >::iterator it = edges.begin(); it != edges.end(); it++)
-            {
-                double link_bw = RNG::Instance()->sampleDistribution<double,double,double,double>
-                (bw_dist, std::tuple<double,double,double> (bw_param1, bw_param2, bw_param3));
-
-                double link_delay = RNG::Instance()->sampleDistribution<double,double,double,double>
-                (delay_dist, std::tuple<double,double,double> (delay_param1, delay_param2, delay_param3));
-
-                std::shared_ptr<B> l = nullptr;
-                int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
-                fnss::Node fnssNodeFrom = t.getNode ((*it).first);
-                int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
-                fnss::Node fnssNodeTo = t.getNode ((*it).second);
-
-                if ((fnssNodeFrom.getProperty("layer").compare("core") == 0 ||  fnssNodeTo.getProperty ("layer").compare("core") == 0 ))
-                    l.reset (new B (params.fattree.coreBWMultiplier * link_bw, link_delay, nodeFromId, nodeToId));
-
-                else
-                    l.reset (new B (link_bw, link_delay, nodeFromId, nodeToId));
-                net->addLink (l);
-            }
-            this->pt["n_switches"] = numSwitches;
-            this->pt["n_hosts"] = numHosts;
-            this->pt["n_links"] = net->getNumLinks();
-            return net;
-        }
-
-        template<typename A, typename B>
-        std::shared_ptr<Network<A, B>> FNSSHandler<A,B>::getNetwork_HyperCube
-                (Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-                 Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                 Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
-        {
-            std::stringstream pythonScript;
-            vne::utilities::PythonRunner pr;
-            pythonScript << "import fnss\n"
-                         << "import networkx as nx\n"
-                         << "\n"
-                         << "n = 6\n"
-                         << "intercon = fnss.topologies.topology.Topology(nx.hypercube_graph(" << params.hypercube.size << "))\n"
-                         << "intercon.name = 'hypergraph_topology(n=%d, size=%d)' % (n, 2**n)\n"
-                         << "intercon.graph['type'] = 'hypergraph'\n"
-                         << "fnss.write_topology(intercon, '.hypercube_topology.xml')\n";
-            pr.run(pythonScript.str());
-            if ( pr.get_status_code() != 0 ) {
-                vne::utilities::Logger::Instance()->logFatal("Python script to generate network failed with python error result code.");
-                exit(-1);
-            }
-
-            fnss::Topology t = fnss::Parser::parseTopology(".hypercube_topology.xml");
-            std::set<std::pair <std::string, std::string> > edges = t.getAllEdges();
-            std::set<std::string> nodes = t.getAllNodes();
-            assert (nodes.size() > 0 && edges.size() > 0);
-
-            std::shared_ptr<Network<A, B>> net (new Network<A, B>());
-            std::map<std::string, int> fnssNodeIdToVNESimNodeId;
-
-            for(set<string>::iterator it = nodes.begin(); it != nodes.end(); it++)
-            {
-                fnss::Node fnssNode = t.getNode(*it);
-
-                std::shared_ptr<A> n = nullptr;
-                // If the node is a host create it with a cpu capacity
-
-                numHosts++;
-                double node_cpu = RNG::Instance()->sampleDistribution<double,double,double,double>
-                        (cpu_dist, std::tuple<double,double,double> (cpu_param1, cpu_param2, cpu_param3)) ;
-                n.reset (new A (node_cpu, 0, 0));
-
-                fnssNodeIdToVNESimNodeId[*it] = n->getId();
-                net->addNode (n);
-            }
-
-            for(set<pair <string, string> >::iterator it = edges.begin(); it != edges.end(); it++)
-            {
-                double link_bw = RNG::Instance()->sampleDistribution<double,double,double,double>
-                        (bw_dist, std::tuple<double,double,double> (bw_param1, bw_param2, bw_param3));
-
-                double link_delay = RNG::Instance()->sampleDistribution<double,double,double,double>
-                        (delay_dist, std::tuple<double,double,double> (delay_param1, delay_param2, delay_param3));
-
-                std::shared_ptr<B> l = nullptr;
-                int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
-                fnss::Node fnssNodeFrom = t.getNode ((*it).first);
-                int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
-                fnss::Node fnssNodeTo = t.getNode ((*it).second);
-
-                l.reset (new B (params.fattree.coreBWMultiplier * link_bw, link_delay, nodeFromId, nodeToId));
-
-                net->addLink (l);
-            }
-            this->pt["n_switches"] = numSwitches;
-            this->pt["n_hosts"] = numHosts;
-            this->pt["n_links"] = net->getNumLinks();
-
-            return net;
-        }
-
-        template <typename A, typename B>
-        FNSSHandler<A,B>::Parameters::DCNBCube::DCNBCube () :
-        n(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNBCube", "N")),
-        k(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNBCube", "K"))
-        {
-        }
-
-        template <typename A, typename B>
-        FNSSHandler<A,B>::Parameters::DCNTwoTier::DCNTwoTier () :
-        n_core(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_core")),
-        n_edges(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_edges")),
-        n_hosts(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_hosts")),
-        coreBWMultiplier (ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "coreBWMultiplier"))
-        {
-        }
-
-        template <typename A, typename B>
-        FNSSHandler<A,B>::Parameters::DCNFatTree::DCNFatTree () :
-        k(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNFatTree", "K")),
-        coreBWMultiplier (ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "DCNFatTree", "coreBWMultiplier"))
-        {
-        }
-
-        template <typename A, typename B>
-        FNSSHandler<A,B>::Parameters::HyperCube::HyperCube () :
-                size(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler", "HyperCube", "size"))
-        {
-        }
-
-        template<typename A, typename B>
-        FNSSHandler<A,B>::Parameters::Parameters () :
-        bcube (DCNBCube()),
-        twotier (DCNTwoTier()),
-        fattree (DCNFatTree())
-        {
-        }
-
-        template <typename A, typename B>
-        FNSSHandler<A,B>::FNSSHandler () :
-        ExternalLibHandler<A,B> (),
-        numHosts(0),
-        numSwitches(0),
-        params(Parameters())
-        {
-          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNBCube"]["N"] = params.bcube.n;
-          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNBCube"]["K"] = params.bcube.k;
-          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNFatTree"]["coreBWMultiplier"] = params.fattree.coreBWMultiplier;
-          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNFatTree"]["K"] = params.fattree.k;
-          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["n_core"] = params.twotier.n_core;
-          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["n_edges"] = params.twotier.n_edges;
-          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["n_hosts"] = params.twotier.n_hosts;
-          this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["coreBWMultiplier"] = params.twotier.coreBWMultiplier;
-          this->pt["NetworkFileGenerator"]["FNSSHandler"]["HyperCube"]["size"] = params.hypercube.size;
-        }
+        return ss.str();
     }
-}
+
+    template <typename A, typename B>
+    std::shared_ptr<Network<A, B>> FNSSHandler<A, B>::getNetwork(
+        Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2,
+        double cpu_param3, Distribution bw_dist, double bw_param1, double bw_param2,
+        double bw_param3, Distribution delay_dist, double delay_param1, double delay_param2,
+        double delay_param3)
+    {
+        _Topology_Type = tt;
+        if (tt == Topology_Type::DCNBCube)
+            return getNetwork_DCNBCube(cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist,
+                                       bw_param1, bw_param2, bw_param3, delay_dist, delay_param1,
+                                       delay_param2, delay_param3);
+        else if (tt == Topology_Type::DCNTwoTier)
+            return getNetwork_DCNTwoTier(cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist,
+                                         bw_param1, bw_param2, bw_param3, delay_dist, delay_param1,
+                                         delay_param2, delay_param3);
+        else if (tt == Topology_Type::DCNFatTree)
+            return getNetwork_DCNFatTree(cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist,
+                                         bw_param1, bw_param2, bw_param3, delay_dist, delay_param1,
+                                         delay_param2, delay_param3);
+        else if (tt == Topology_Type::HyperCube)
+            return getNetwork_HyperCube(cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist,
+                                        bw_param1, bw_param2, bw_param3, delay_dist, delay_param1,
+                                        delay_param2, delay_param3);
+    }
+
+    template <typename A, typename B>
+    std::shared_ptr<Network<A, B>> FNSSHandler<A, B>::getNetwork_DCNBCube(
+        Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+        Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+        Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
+    {
+        std::stringstream pythonScript;
+        vne::utilities::PythonRunner pr;
+        pythonScript << "import fnss\n";
+        //pythonScript << "import networkx as nx\n";
+        pythonScript << "topology = " << "fnss.bcube_topology(n=" << params.bcube.n
+                     << ", k= " << params.bcube.k << ")\n";
+        pythonScript << "fnss.write_topology(topology, '.datacenter_topology.xml')\n";
+        pr.run(pythonScript.str());
+        if (pr.get_status_code() != 0) {
+            vne::utilities::Logger::Instance()->logFatal(
+                "Python script to generate network failed with python error result code.");
+            exit(-1);
+        }
+
+        fnss::Topology t = fnss::Parser::parseTopology(".datacenter_topology.xml");
+        std::set<std::pair<std::string, std::string>> edges = t.getAllEdges();
+        std::set<std::string> nodes = t.getAllNodes();
+        assert(nodes.size() > 0 && edges.size() > 0);
+
+        std::shared_ptr<Network<A, B>> net(new Network<A, B>());
+        std::map<std::string, int> fnssNodeIdToVNESimNodeId;
+
+        for (set<string>::iterator it = nodes.begin(); it != nodes.end(); it++) {
+            fnss::Node fnssNode = t.getNode(*it);
+
+            std::shared_ptr<A> n = nullptr;
+            // If the node is a host create it with a cpu capacity
+            if (fnssNode.getProperty("type").compare("host") == 0) {
+                numHosts++;
+                double node_cpu = RNG::Instance()
+                                      ->sampleDistribution<double, double, double, double>(
+                                          cpu_dist, std::tuple<double, double, double>(
+                                                        cpu_param1, cpu_param2, cpu_param3));
+                n.reset(new A(node_cpu, 0, 0));
+            } else {
+                numSwitches++;
+                n.reset(new A(0, 0, 0));
+            }
+            fnssNodeIdToVNESimNodeId[*it] = n->getId();
+            net->addNode(n);
+        }
+
+        for (set<pair<string, string>>::iterator it = edges.begin(); it != edges.end(); it++) {
+            double link_bw = RNG::Instance()->sampleDistribution<double, double, double, double>(
+                bw_dist, std::tuple<double, double, double>(bw_param1, bw_param2, bw_param3));
+
+            double link_delay = RNG::Instance()
+                                    ->sampleDistribution<double, double, double, double>(
+                                        delay_dist, std::tuple<double, double, double>(
+                                                        delay_param1, delay_param2, delay_param3));
+
+            int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
+            int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
+
+            std::shared_ptr<B> l(new B(link_bw, link_delay, nodeFromId, nodeToId));
+            net->addLink(l);
+        }
+        this->pt["n_switches"] = numSwitches;
+        this->pt["n_hosts"] = numHosts;
+        this->pt["n_links"] = net->getNumLinks();
+        return net;
+    }
+
+    template <typename A, typename B>
+    std::shared_ptr<Network<A, B>> FNSSHandler<A, B>::getNetwork_DCNTwoTier(
+        Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+        Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+        Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
+    {
+        std::stringstream pythonScript;
+        vne::utilities::PythonRunner pr;
+        pythonScript << "import fnss\n";
+        //pythonScript << "import networkx as nx\n";
+        pythonScript << "topology = " << "fnss.two_tier_topology(n_core=" << params.twotier.n_core
+                     << ", n_edge= " << params.twotier.n_edges
+                     << ", n_hosts=" << params.twotier.n_hosts << ")\n";
+        pythonScript << "fnss.write_topology(topology, '.datacenter_topology.xml')\n";
+        pr.run(pythonScript.str().c_str());
+        if (pr.get_status_code() != 0) {
+            vne::utilities::Logger::Instance()->logFatal(
+                "Python script to generate network failed with python error result code.");
+            exit(-1);
+        }
+
+        fnss::Topology t = fnss::Parser::parseTopology(".datacenter_topology.xml");
+        std::set<std::pair<std::string, std::string>> edges = t.getAllEdges();
+        std::set<std::string> nodes = t.getAllNodes();
+        assert(nodes.size() > 0 && edges.size() > 0);
+
+        std::shared_ptr<Network<A, B>> net(new Network<A, B>());
+        std::map<std::string, int> fnssNodeIdToVNESimNodeId;
+
+        for (set<string>::iterator it = nodes.begin(); it != nodes.end(); it++) {
+            fnss::Node fnssNode = t.getNode(*it);
+
+            std::shared_ptr<A> n = nullptr;
+            // If the node is a host create it with a cpu capacity
+            if (fnssNode.getProperty("type").compare("host") == 0) {
+                numHosts++;
+                double node_cpu = RNG::Instance()
+                                      ->sampleDistribution<double, double, double, double>(
+                                          cpu_dist, std::tuple<double, double, double>(
+                                                        cpu_param1, cpu_param2, cpu_param3));
+                n.reset(new A(node_cpu, 0, 0));
+            } else {
+                numSwitches++;
+                n.reset(new A(0, 0, 0));
+            }
+            fnssNodeIdToVNESimNodeId[*it] = n->getId();
+            net->addNode(n);
+        }
+
+        for (set<pair<string, string>>::iterator it = edges.begin(); it != edges.end(); it++) {
+            double link_bw = RNG::Instance()->sampleDistribution<double, double, double, double>(
+                bw_dist, std::tuple<double, double, double>(bw_param1, bw_param2, bw_param3));
+
+            double link_delay = RNG::Instance()
+                                    ->sampleDistribution<double, double, double, double>(
+                                        delay_dist, std::tuple<double, double, double>(
+                                                        delay_param1, delay_param2, delay_param3));
+
+            std::shared_ptr<B> l = nullptr;
+            int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
+            fnss::Node fnssNodeFrom = t.getNode((*it).first);
+            int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
+            fnss::Node fnssNodeTo = t.getNode((*it).second);
+
+            if ((fnssNodeFrom.getProperty("type").compare("host") == 0 ||
+                 fnssNodeTo.getProperty("type").compare("host") == 0)) {
+                l.reset(new B(link_bw, link_delay, nodeFromId, nodeToId));
+            } else
+                l.reset(new B(params.twotier.coreBWMultiplier * link_bw, link_delay, nodeFromId,
+                              nodeToId));
+            net->addLink(l);
+        }
+        this->pt["n_switches"] = numSwitches;
+        this->pt["n_hosts"] = numHosts;
+        this->pt["n_links"] = net->getNumLinks();
+        return net;
+    }
+
+    template <typename A, typename B>
+    std::shared_ptr<Network<A, B>> FNSSHandler<A, B>::getNetwork_DCNFatTree(
+        Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+        Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+        Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
+    {
+        std::stringstream pythonScript;
+        vne::utilities::PythonRunner pr;
+        //pythonScript << "import networkx as nx\n";
+        pythonScript << "import fnss\n";
+        pythonScript << "topology = " << "fnss.fat_tree_topology(k=" << params.fattree.k << ")\n";
+        pythonScript << "fnss.write_topology(topology, 'datacenter_topology.xml')\n";
+        pr.run(pythonScript.str());
+        if (pr.get_status_code() != 0) {
+            vne::utilities::Logger::Instance()->logFatal(
+                "Python script to generate network failed with python error result code.");
+            exit(-1);
+        }
+
+        fnss::Topology t = fnss::Parser::parseTopology("datacenter_topology.xml");
+        std::set<std::pair<std::string, std::string>> edges = t.getAllEdges();
+        std::set<std::string> nodes = t.getAllNodes();
+        assert(nodes.size() > 0 && edges.size() > 0);
+
+        std::shared_ptr<Network<A, B>> net(new Network<A, B>());
+        std::map<std::string, int> fnssNodeIdToVNESimNodeId;
+
+        for (set<string>::iterator it = nodes.begin(); it != nodes.end(); it++) {
+            fnss::Node fnssNode = t.getNode(*it);
+
+            std::shared_ptr<A> n = nullptr;
+            // If the node is a host create it with a cpu capacity
+            if (fnssNode.getProperty("type").compare("host") == 0) {
+                numHosts++;
+                double node_cpu = RNG::Instance()
+                                      ->sampleDistribution<double, double, double, double>(
+                                          cpu_dist, std::tuple<double, double, double>(
+                                                        cpu_param1, cpu_param2, cpu_param3));
+                n.reset(new A(node_cpu, 0, 0));
+            } else {
+                numSwitches++;
+                n.reset(new A(0, 0, 0));
+            }
+            fnssNodeIdToVNESimNodeId[*it] = n->getId();
+            net->addNode(n);
+        }
+
+        for (set<pair<string, string>>::iterator it = edges.begin(); it != edges.end(); it++) {
+            double link_bw = RNG::Instance()->sampleDistribution<double, double, double, double>(
+                bw_dist, std::tuple<double, double, double>(bw_param1, bw_param2, bw_param3));
+
+            double link_delay = RNG::Instance()
+                                    ->sampleDistribution<double, double, double, double>(
+                                        delay_dist, std::tuple<double, double, double>(
+                                                        delay_param1, delay_param2, delay_param3));
+
+            std::shared_ptr<B> l = nullptr;
+            int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
+            fnss::Node fnssNodeFrom = t.getNode((*it).first);
+            int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
+            fnss::Node fnssNodeTo = t.getNode((*it).second);
+
+            if ((fnssNodeFrom.getProperty("layer").compare("core") == 0 ||
+                 fnssNodeTo.getProperty("layer").compare("core") == 0))
+                l.reset(new B(params.fattree.coreBWMultiplier * link_bw, link_delay, nodeFromId,
+                              nodeToId));
+
+            else
+                l.reset(new B(link_bw, link_delay, nodeFromId, nodeToId));
+            net->addLink(l);
+        }
+        this->pt["n_switches"] = numSwitches;
+        this->pt["n_hosts"] = numHosts;
+        this->pt["n_links"] = net->getNumLinks();
+        return net;
+    }
+
+    template <typename A, typename B>
+    std::shared_ptr<Network<A, B>> FNSSHandler<A, B>::getNetwork_HyperCube(
+        Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
+        Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
+        Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
+    {
+        std::stringstream pythonScript;
+        vne::utilities::PythonRunner pr;
+        pythonScript << "import fnss\n"
+                     << "import networkx as nx\n"
+                     << "\n"
+                     << "n = 6\n"
+                     << "intercon = fnss.topologies.topology.Topology(nx.hypercube_graph("
+                     << params.hypercube.size << "))\n"
+                     << "intercon.name = 'hypergraph_topology(n=%d, size=%d)' % (n, 2**n)\n"
+                     << "intercon.graph['type'] = 'hypergraph'\n"
+                     << "fnss.write_topology(intercon, '.hypercube_topology.xml')\n";
+        pr.run(pythonScript.str());
+        if (pr.get_status_code() != 0) {
+            vne::utilities::Logger::Instance()->logFatal(
+                "Python script to generate network failed with python error result code.");
+            exit(-1);
+        }
+
+        fnss::Topology t = fnss::Parser::parseTopology(".hypercube_topology.xml");
+        std::set<std::pair<std::string, std::string>> edges = t.getAllEdges();
+        std::set<std::string> nodes = t.getAllNodes();
+        assert(nodes.size() > 0 && edges.size() > 0);
+
+        std::shared_ptr<Network<A, B>> net(new Network<A, B>());
+        std::map<std::string, int> fnssNodeIdToVNESimNodeId;
+
+        for (set<string>::iterator it = nodes.begin(); it != nodes.end(); it++) {
+            fnss::Node fnssNode = t.getNode(*it);
+
+            std::shared_ptr<A> n = nullptr;
+            // If the node is a host create it with a cpu capacity
+
+            numHosts++;
+            double node_cpu = RNG::Instance()->sampleDistribution<double, double, double, double>(
+                cpu_dist, std::tuple<double, double, double>(cpu_param1, cpu_param2, cpu_param3));
+            n.reset(new A(node_cpu, 0, 0));
+
+            fnssNodeIdToVNESimNodeId[*it] = n->getId();
+            net->addNode(n);
+        }
+
+        for (set<pair<string, string>>::iterator it = edges.begin(); it != edges.end(); it++) {
+            double link_bw = RNG::Instance()->sampleDistribution<double, double, double, double>(
+                bw_dist, std::tuple<double, double, double>(bw_param1, bw_param2, bw_param3));
+
+            double link_delay = RNG::Instance()
+                                    ->sampleDistribution<double, double, double, double>(
+                                        delay_dist, std::tuple<double, double, double>(
+                                                        delay_param1, delay_param2, delay_param3));
+
+            std::shared_ptr<B> l = nullptr;
+            int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
+            fnss::Node fnssNodeFrom = t.getNode((*it).first);
+            int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
+            fnss::Node fnssNodeTo = t.getNode((*it).second);
+
+            l.reset(new B(params.fattree.coreBWMultiplier * link_bw, link_delay, nodeFromId,
+                          nodeToId));
+
+            net->addLink(l);
+        }
+        this->pt["n_switches"] = numSwitches;
+        this->pt["n_hosts"] = numHosts;
+        this->pt["n_links"] = net->getNumLinks();
+
+        return net;
+    }
+
+    template <typename A, typename B>
+    FNSSHandler<A, B>::Parameters::DCNBCube::DCNBCube()
+        : n(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler",
+                                                      "DCNBCube", "N")),
+          k(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler",
+                                                      "DCNBCube", "K"))
+    {
+    }
+
+    template <typename A, typename B>
+    FNSSHandler<A, B>::Parameters::DCNTwoTier::DCNTwoTier()
+        : n_core(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler",
+                                                           "DCNTwoTier", "n_core")),
+          n_edges(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler",
+                                                            "DCNTwoTier", "n_edges")),
+          n_hosts(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler",
+                                                            "DCNTwoTier", "n_hosts")),
+          coreBWMultiplier(ConfigManager::Instance()->getConfig<int>(
+              "NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "coreBWMultiplier"))
+    {
+    }
+
+    template <typename A, typename B>
+    FNSSHandler<A, B>::Parameters::DCNFatTree::DCNFatTree()
+        : k(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler",
+                                                      "DCNFatTree", "K")),
+          coreBWMultiplier(ConfigManager::Instance()->getConfig<int>(
+              "NetworkFileGenerator", "FNSSHandler", "DCNFatTree", "coreBWMultiplier"))
+    {
+    }
+
+    template <typename A, typename B>
+    FNSSHandler<A, B>::Parameters::HyperCube::HyperCube()
+        : size(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler",
+                                                         "HyperCube", "size"))
+    {
+    }
+
+    template <typename A, typename B>
+    FNSSHandler<A, B>::Parameters::Parameters()
+        : bcube(DCNBCube()), twotier(DCNTwoTier()), fattree(DCNFatTree())
+    {
+    }
+
+    template <typename A, typename B>
+    FNSSHandler<A, B>::FNSSHandler()
+        : ExternalLibHandler<A, B>(), numHosts(0), numSwitches(0), params(Parameters())
+    {
+        this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNBCube"]["N"] = params.bcube.n;
+        this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNBCube"]["K"] = params.bcube.k;
+        this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNFatTree"]["coreBWMultiplier"] =
+            params.fattree.coreBWMultiplier;
+        this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNFatTree"]["K"] = params.fattree.k;
+        this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["n_core"] = params.twotier
+                                                                                      .n_core;
+        this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["n_edges"] = params.twotier
+                                                                                       .n_edges;
+        this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["n_hosts"] = params.twotier
+                                                                                       .n_hosts;
+        this->pt["NetworkFileGenerator"]["FNSSHandler"]["DCNTwoTier"]["coreBWMultiplier"] =
+            params.twotier.coreBWMultiplier;
+        this->pt["NetworkFileGenerator"]["FNSSHandler"]["HyperCube"]["size"] = params.hypercube
+                                                                                   .size;
+    }
+}  // namespace nfg
+}  // namespace vne
 #endif
 #endif

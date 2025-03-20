@@ -1,299 +1,133 @@
-VNE-Sim is a discrete event simulator written in C++.
-It is based on the 2011 C++ standard (C++11).
-The CMake build system is employed for compiling the simulator.
-The \textit{CMakeLists.txt} file that resides in the root directory includes
-the build instructions such as selecting the compiler, setting the correct build paths,
-and searching for the required external libraries.
+# VNE-Sim 🕸
 
-VNE-Sim relies on several external libraries. 
-While some required libraries are downloaded and installed automatically by CMake during the build process,
-some required external libraries are expected to be installed on the system prior to initiating the build process.
-
-The libraries that are automatically installed by CMake are:
+![CMake](https://img.shields.io/badge/CMake-%23008FBA.svg?style=flat&logo=cmake&logoColor=white)
+![C++](https://img.shields.io/badge/C++11-%2300599C.svg?style=flat&logo=c%2B%2B&logoColor=white)
 
--- Fast Network Simulation Setup (FNSS) used for generating data center network topologies;
--- Hiberlite library used for writing the simulation results to disk;
--- The Adevs library employed for modeling the virtual network embedding
-	process as a discrete event system.
-
-The libraries that must exist on the system prior to compilation are:
-
--- Boost File System, Log, Thread, and Unit Test Framework libraries are 
-	mainly used in the core classes for file handling, logging, testing, and debugging.
-	The test cases and experiments are written using the Unit Test Framework.
-
--- GNU Scientific Library is used for generating random numbers.
-	The required random numbers and distributions are generated using this library.
-
--- GNU Linear Programming Kit (GLPK) is used for solving the MCF problem.
-	It is also employed by the Vine algorithms.
-
--- The Message Passing Interface (MPI) standard is used for MCTS parallelization. Therefore,
-	either the OpenMPI or MPICH libraries should be installed the system 
-	for compilation of the MCTS in a parallel mode.
-
--- SQLite3 library is used for handling simulation results. 
-	The simulation results are exported automatically as SQLite3 databases. 
-
-CMake uses scripts to search for the libraries.
-Certain scripts are not included in the default installation of CMake.
-They reside in the "cmake/modules" directory.
-
-VNE-Sim uses a modified versions of the Hiberlite and FNSS libraries. 
-Therefore, CMake applies the required modifications after downloading the libraries.
-The patches that CMake uses for these two libraries reside in "cmake/patches".
-VNE-Sim also contains a modified version of the 
-Boston University Representative Topology Generator (BRITE) that is compiled as a part of the simulator.
-External libraries that are installed by CMake and the BRITE library 
-reside in the "external-libs" directory.
-
-The "src" directory contains the simulator source code.
-The components are located in its subdirectories:
-
--- "src/core" contains the classes and interfaces required for 
-	implementing various virtual network embedding algorithms. It also contains 
-	the discrete event simulation system that models the process of embedding virtual networks 
-	as a discrete event system.
-
--- "src/experiments" contains various simulation scenarios.
-
--- "src/grc" contains the implementation of the Global Resource Capacity (GRC) algorithm.
-
--- "src/mcts" contains a modular implementation of the Monte Carlo Tree Search (MCTS) algorithm.
-	We have adopted a similar structure to an available MCTS simulator.
-
--- "src/mcvne" contains the implementation of the MaVEn algorithms.
-
--- "src/network-file-generator" contains the network file generator package. 
-	This package may be used for generating
-	various network topologies and virtual network requests. 
-	This package employs the BRITE and FNSS libraries for generating network topologies. 
-	It also uses the GNU Scientific Library for generating distributions of 
-	VNR arrival times, life-times, and resource requirements.
-
--- "src/utilities" contains the logging system and the Unit Test Framework initializer.
-
--- "src/Vineyard" contains the implementation of R-Vine and D-Vine algorithms.
-
-2.0 The Simulator Core: "src/core"
-The facilities required to simulate VNE algorithms are implemented as abstract 
-template classes in the \textit{core} directory.
-They may be divided into five categories:
-
- -- Network Component Classes provide a framework for defining
-	substrate and virtual nodes and links, networks, and virtual network requests.
-
--- Virtual Network Embedding Classes define an interface for embedding algorithms.
- 
--- Discrete Event Simulation Classes model the virtual network 
-	embedding process as a discrete event system. All these classes are derived from Adevs library.
-
--- Experiment and Result Collection Classes connect various components 
-	to define simulation scenarios that the user requires. They create SQL database tables
-	for simulation parameters and presenting simulation results.  
-
--- Operation Related Classes provide the basic required functionalities such as 
-	managing the configuration file, database access, type definitions, and random number generation.
-
-2.1 Network Component Classes
-2.1.1 Substrate and Virtual Nodes and Links
-Substrate and virtual nodes and links are derived from the node ("core/node.h") 
-and link ("core/link.h") base template classes, respectively. 
-They are implemented as C++ variadic templates where the resources 
-of the substrate and virtual elements are defined by the template arguments.
-
-A substrate node that possesses CPU capacity of type double and memory 
-of type int is defined by a <double,int> specialization of the SubstrateNode template class.
-The VYSubstrateNode<> template class ("src/Vineyard/vy-substrate-node.h") 
-is an example of a class that is derived from a <double> 
-specialization of the SubstrateNode template class.
-The SubstrateLink<typename...>, VirtualNode<typename...>, and VirtualLink<typename...>
-template classes are similar to SubstrateNode<typename...>.
-
-2.1.2 Networks and Virtual Network Requests
-In VNE-Sim, a network is defined by the Network<typename,typename>
-template class ("core/network.h").
-The network template class requires two arguments: a Node class and a Link class.
-This enables implementing substrate and virtual networks using the 
-same template class. For example, in the Vineyard package ("src/Vineyard/"),
-a substrate network is defined by specializing the Network class with template arguments:
-VYSubstrateNode<> and VYSubstrateLink<>. 
-Similarly, a virtual network is defined by using VYVirtualNode<> and VYVirtualLink<> template arguments. 
-
-VNRs are derived from the VirtualNetworkRequest<typename> template class 
-("core/\\virtual-network-request.h"). 
-This class maintains a pointer to a virtual network and requires 
-a template argument that defines the type of the virtual networks that it entails.
-
-2.2 Virtual Network Embedding Classes
-These classes define an interface for implementing VNE algorithms.
-The backbone of these classes is the EmbeddingAlgorithm<typename, typename>
-abstract template class ("src/embedding-algorithm.h"). 
-The first template argument is a specialization of the Network<typename, typename>
-while the second argument is a specialization of the VirtualNetworkRequest template class.
-The classes that are derived from EmbeddingAlgorithm should implement the 
-embedVNR virtual function.
-
-Two stage VNE algorithms employ a node mapping algorithm to map the virtual nodes onto
-substrate nodes. They also employ a link mapping algorithm for mapping virtual links
-onto substrate paths. Two stage embedding algorithms may be implemented in VNE-Sim using the 
-TwoStageEmbeddingAlgo<typename,typename> template class ("core/two-stage-embedidng-algo.h").
-Since TwoStageEmbeddingAlgo is derived from EmbeddingAlgorithm<typename, typename>,
-its first and second template arguments identify the types of substrate network and virtual network requests
-that it recognizes for operation, respectively.
-NodeEmbeddingAlgorithm<typename,typename> ("core/node-embedidng-algorithm.h") and 
-LinkEmbeddingAlgorithm<typename,typename> ("core/link-embedidng-algorithm.h") 
-are interfaces for virtual node and link mapping algorithms, respectively.
-The constructor of specializations of the TwoStageEmbeddingAlgo<typename,typename> requires
-pointers to a NodeEmbeddingAlgorithm<typename,typename> and a LinkEmbeddingAlgorithm<typename,typename>.
-The template arguments of the node and link embedding algorithms are similar to those of the 
-two stage embedding algorithm.
-
-2.3 Discrete Event Simulation Classes
-The VNR embedding process may be modeled using three discrete event processes.
-The VNRs are first \textit{generated} based on an arrival process. 
-The arrived VNRs are then passed to an embedding algorithm. During the \textit{embedding processes},
-the VNRs are subjected to queuing and processing delays. 
-Based on the outcome of the embedding process, a VNR may either be accepted 
-or rejected for embedding. Finally, when the life-time of an embedded VNR expires,
-the \textit{release process} begins, where an algorithm release the resources occupied by the VNR.
-
-The template class VNRGenerator<typename> is used to generate virtual network requests.
-It implements VNR generation process. The required template argument is a specialization of the 
-VirtualNetworkRequest template class. VYVNRGenerator<> is a specialization 
-of the VNRGenerator template class. It may be found in the \textit{Vineyard} package.
-The embedding and release processes are implemented using the 
-VNREmbeddingProcessor<typename,typename> and VNRReleaseProcessor<typename,typename>
-template classes, respectively. Their first template argument is a specialization of the Network class 
-that represents a substrate network while the second template argument is a VirtualNetworkRequest
-specialization. 
-
-The VNRProcessObserver implements the Observer design pattern.
-It is mainly used for logging, collecting statistics, and recording the embedding outcomes.
-The events that occur in the three VNR embedding phases are transparent to the Observer.
-The VNRProcessDigraph connects the three main processes and the observer.
-It requires four template arguments. They are specializations of a generator, embedding, release,
-and observer template classes.
-
-2.4 Experiment and Result Collection Classes
-A simulation scenario in VNE-Sim is defined using the Experiment<typename> template class.
-The required template argument is a specialization of VNRProcessDigraph template class.
-The Experiment class also maintains statistics that are collected during a simulation
-and writes them to disk when the simulation is completed.
-Various examples of specializations of the Experiment template class may be found in 
-"src/experiment" directory.
-
-2.5 Operation Related Classes
-The ConfigManager class reads the configuration 
-file ("root/configurations.xml") and maintains a structured Boost Property Tree
-of the configurations. 
-This class is a singleton. Therefore, a pointer to its instance must be acquired first.
-After obtaining the pointer, a property value may be acquired by calling the ConfigManager::getConfig function.
-
-The DBManager class creates instances of hiberlite::Database class 
-and maintains pointers to the created databases in a map data structure.
-This class is also implemented as singleton and a pointer to its instance should be acquired first
-using the Instance() function.
-Its interface contains two main functions: createDB and getDB.
-The createDB function requires a name as an std::string argument. 
-It creates a database using the given name and returns a pointer to the created database.
-Pointers to the created databases may also be acquired using the getDB function, which requires 
-the name of a database as an std::string argument.
-
-All network component classes require identification numbers for operation.
-Classes that have similar types should not possess identical identification numbers.
-The IdGenerator class produces such type-based unique numbers. 
-It is also singleton and acquisition of a pointer to 
-its instance is similar to the previously described singleton classes.
-The generated identification numbers are naturally ordered.
-The IdGenerator interface consists of two template functions:
-the getId<typename> function that generates a unique ID for a class type that is given as its template argument, 
-and the peekId<typename> function that returns the next ID that will be generated for the type given as its template argument.
-
-The RNG class employs the GNU Scientific Library. 
-It may be used to generate random numbers and various probability distributions.
-The seed and type of the random number generator are defined by core.rngSeed and core.rngType
-fields in the configuration file, respectively.
-Classes using RNG may either use a general purpose random number generator by 
-calling the getGeneralRNG function or they may subscribe to RNG to get 
-their own specific random number generator.
-Only the derivatives of RNGSubscriber may subscribe to RNG
-and possess their specific random number generator.
-
-
-
-*** TODO: Integrate/rewrite README to a markdown file to reflect the present ***
-
-## Running VNE-Sim via the CLI
-
-The command `vnesim` (that is available in the build/bin directory after a successful build) can
-be used to run the VNE-Sim tool.  
-
-The command has a number of subcommands to run the components of VNE-Sim: `simulate` runs the
-simulator, `substrategen` is used to generate a substrate network file, and `requestgen` is
-used to generate a set of virtual network requests.
-
-The `configurations.xml` file still plays the primary role in how the
-tool runs.  You can specify the configuration file used for a particular
-run using the `--config` command line switch.
-
-For example, the command:
-
-` somehost$ ./build/bin/vnesim --config configurations.xml simulate`
-
-will use the configurations.xml file in the current directory to run
-a simulation.
-
-The `simulate` subcommand takes a couple of options: `-a` is required and indicates
-which algorithm to run (one of: mcvne_bfs_mcf, mcvne_mcf_mcf, mcvne_bfs_bfs, grc_mcf,
-grc_bfs, vineyard_d, vineyard_r) and `-v` which is the path to the directory containing
-virtual network requests (VNRs).
-
-
-## APPENDIX - BUILD NOTES FOR THE LATEST VERSION (~ Nov. 2024)
-
-PREREQUISITES:
-
-Languages Libraries and Commands
-
-  The following need to be added to your system.  These typically are added via your
-  package manager (apt-get, rpm, brew).
-
-      - Python (3.x, reasonably current)
-      - CMake
-      - Zip (particularly unzip command)
-      - SQLite3 (sqlite3-dev)
-      - GSL (libgsl-dev)
-      - GLPK (libglpk-dev)
-      - Boost libraries (libboost-all-dev)
-      - python-setupuptools (while this is a python lib/module there is usually a os package named like this,
-        alternatively it probably can be installed via pip3 as well)
-
-
-BUILDING vne-sim:
-
-1 - Clone Repo:
-
-  ...% git clone git@bitbucket.org:rballantyne/vne-sim.git
-
-  (swith to branch required if not master)
-
-
-2 - Get the dependencies and build them.
-
-  ...% cd deps
-  ...% bash build-deps.sh
-
-
-3 - Install fnss python package
-
-  ...% cd deps/src/fnss
-  ...% sudo python3 setup.py install
-
-
-4 - Build
-
-  ...% mkdir build
-  ...% cd build
-  ...% cmake -DWITH_FNSS_SUPPORT=yes ..
-  ...% make -j 4
+A discrete event simulator for Virtual Network Embedding (VNE) algorithms,
+written in C++11. This implementation has been used in the article: **S. Haeri**
+and **Lj. Trajkovic**,
+[_"Virtual network embedding via Monte-Carlo tree search,"_](http://www.sfu.ca/~ljilja/papers/t-cybernetics-2016_web.pdf)
+IEEE Transactions on Cybernetics, vol. 48, no. 2, pp. 510-521, Feb. 2018.
+
+---
+
+## 🛠️ Building VNE-Sim
+
+### Prerequisites
+
+| Component              | Purpose                                    | Debian/Ubuntu Package    |
+| ---------------------- | ------------------------------------------ | ------------------------ |
+| Python 3.x             | Build scripts & FNSS installation          | `python3`                |
+| CMake (≥3.5)           | Build system                               | `cmake`                  |
+| GNU Scientific Library | Random number generation                   | `libgsl-dev`             |
+| GLPK                   | Mixed-integer linear programming           | `libglpk-dev`            |
+| Boost                  | Filesystem, logging, threading, unit tests | `libboost-all-dev`       |
+| MPI (OpenMPI/MPICH)    | Parallelization for MCTS                   | `libopenmpi-dev`         |
+| SQLite3                | Simulation results storage                 | `sqlite3 libsqlite3-dev` |
+
+#### Development only Dependencies
+
+| Component    | Purpose                                                        | Debian/Ubuntu Package    |
+| ------------ | -------------------------------------------------------------- | ------------------------ |
+| pre-commit   | Installs the pre commit hooks to ensure proper code formatting | pip package (pre-commit) |
+| clang-format | code formatting                                                | `clang-format`           |
+
+### 🏗️ Build Steps
+
+1. **Clone and Install Dependencies with CMake**
+
+   ```bash
+   git clone https://bitbucket.org/shaeri/vne-sim.git
+   # if you do not need FNSS for creating datacenter networks leave FNSS_SUPPORT=OFF
+   mkdir build && cd build && cmake .. -DWITH_FNSS_SUPPORT=ON
+   ```
+
+2. **Install FNSS Python Package**
+
+   ```bash
+   # assuming you are still in the build folder
+   cd deps/src/fnss
+   # install fnss for user or any virtual env you want to use
+   python3 setup.py install --user
+   # alternatively you can install it system wide
+   sudo python3 setup.py install
+   ```
+
+3. **Compile VNE-Sim**
+
+   ```bash
+   make -j$(nproc)
+   ```
+
+4. **Further steps for development**
+
+   ```bash
+   # install the pre-commit hooks
+   pre-commit install
+   ```
+
+---
+
+## 🚀 Running VNE-Sim
+
+### CLI Command Structure
+
+```bash
+./build/bin/vnesim --config [CONFIG_FILE] [SUBCOMMAND] [OPTIONS]
+```
+
+#### Subcommands
+
+| Command        | Description                 | Required Options              |
+| -------------- | --------------------------- | ----------------------------- |
+| `simulate`     | Run a simulation            | `-a [ALGORITHM] -v [VNR_DIR]` |
+| `substrategen` | Generate substrate networks | None                          |
+| `requestgen`   | Generate VNR datasets       | None                          |
+
+#### Supported Algorithms (`-a` flag)
+
+| Algorithm       | Description                            |
+| --------------- | -------------------------------------- |
+| `mcvne_bfs_mcf` | MC-VNE with BFS node mapping, MCF link |
+| `mcvne_mcf_mcf` | MC-VNE with MCF for both stages        |
+| `grc_mcf`       | GRC algorithm with MCF link mapping    |
+| `vineyard_d`    | D-Vine algorithm from Vineyard         |
+| `vineyard_r`    | R-Vine algorithm from Vineyard         |
+
+**Example**:
+
+```bash
+./build/bin/vnesim --config config.toml simulate \
+  -a grc_mcf \
+  -v ./vnr_requests/
+```
+
+---
+
+## 📖 Citation and Papers
+
+If you use this implementation in your research, please cite:
+
+**S. Haeri** and **Lj. Trajkovic**,
+[_"Virtual network embedding via Monte-Carlo tree search,"_](http://www.sfu.ca/~ljilja/papers/t-cybernetics-2016_web.pdf)
+IEEE Transactions on Cybernetics, vol. 48, no. 2, pp. 510-521, Feb. 2018.
+
+📜 **BibTeX**:
+
+```bibtex
+@article{haeri2018vne,
+title={Virtual network embedding via Monte-Carlo tree search},
+author={Haeri, S. and Trajkovic, Lj.},
+journal={IEEE Transactions on Cybernetics},
+volume={48},
+number={2},
+pages={510--521},
+year={2018},
+month={Feb},
+doi={10.1109/TCYB.2017.2653244}
+
+}
+
+```
+
+---

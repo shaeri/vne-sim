@@ -27,12 +27,11 @@
 
 #include "utilities/logger.h"
 
-
 using namespace vne;
 using namespace vne::utilities;
 using namespace vne::nfg;
 
-BOOST_AUTO_TEST_SUITE (FileGenerator)
+BOOST_AUTO_TEST_SUITE(FileGenerator)
 
 BOOST_AUTO_TEST_CASE(SubstrateNetworkGenerator)
 {
@@ -44,4 +43,4 @@ BOOST_AUTO_TEST_CASE(VNRGenerator)
     NetworkFileGenerator nfg;
     nfg.VYVirtualNetRequestGenerator(true);
 }
-BOOST_AUTO_TEST_SUITE_END ()
+BOOST_AUTO_TEST_SUITE_END()

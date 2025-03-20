@@ -32,21 +32,20 @@
 #include "Vineyard/vy-vnr-generator.h"
 #include "Vineyard/vy-vnr-embedding-proc.h"
 
-namespace vne {
-    namespace vineyard {
-        template<
-            typename = VYVNRGenerator<>, typename = VYVNREmbeddingProc<>,
-            typename = VYVNRReleaseProc<>, typename = VYVNRProcObserver<>>
-        class VYVNRProcDigraph
-        : public VNRProcessDigraph<VYVNRGenerator<>, VYVNREmbeddingProc<>, VYVNRReleaseProc<>, VYVNRProcObserver<>>
-        {
-        public:
-            VYVNRProcDigraph (VYVNREmbeddingProc<>* embed,
-                              VYVNRReleaseProc<>* release,
-                              VYVNRGenerator<>* gen,
-                              VYVNRProcObserver<>* obs);
-            ~VYVNRProcDigraph ();
-        };
-    }
-}
+namespace vne
+{
+namespace vineyard
+{
+    template <typename = VYVNRGenerator<>, typename = VYVNREmbeddingProc<>,
+              typename = VYVNRReleaseProc<>, typename = VYVNRProcObserver<>>
+    class VYVNRProcDigraph : public VNRProcessDigraph<VYVNRGenerator<>, VYVNREmbeddingProc<>,
+                                                      VYVNRReleaseProc<>, VYVNRProcObserver<>>
+    {
+       public:
+        VYVNRProcDigraph(VYVNREmbeddingProc<> *embed, VYVNRReleaseProc<> *release,
+                         VYVNRGenerator<> *gen, VYVNRProcObserver<> *obs);
+        ~VYVNRProcDigraph();
+    };
+}  // namespace vineyard
+}  // namespace vne
 #endif /* defined(__vne_mcts__vy_vnr_proc_digraph__) */

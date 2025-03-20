@@ -28,23 +28,26 @@
 #include "vy-coordinate.h"
 #include "core/virtual-node.h"
 
-namespace vne {
-    namespace vineyard {
-        template<typename = double>
-        class VYVirtualNode : public VirtualNode<double>
-        {
-        public:
-            VYVirtualNode (double cpu, const VYCoordinate& coord);
-            VYVirtualNode (double cpu, int _x, int _y);
-            const VYCoordinate& getCoordinates () const;
-            double getCPU () const;
-            void writeNodeToFile (std::ofstream& ofstrm);
-            ~VYVirtualNode ();
-        private:
-            typedef VYVirtualNode<> this_t;
-            VYCoordinate coordinate;
-        };
-    }
-}
+namespace vne
+{
+namespace vineyard
+{
+    template <typename = double>
+    class VYVirtualNode : public VirtualNode<double>
+    {
+       public:
+        VYVirtualNode(double cpu, const VYCoordinate &coord);
+        VYVirtualNode(double cpu, int _x, int _y);
+        const VYCoordinate &getCoordinates() const;
+        double getCPU() const;
+        void writeNodeToFile(std::ofstream &ofstrm);
+        ~VYVirtualNode();
+
+       private:
+        typedef VYVirtualNode<> this_t;
+        VYCoordinate coordinate;
+    };
+}  // namespace vineyard
+}  // namespace vne
 
 #endif

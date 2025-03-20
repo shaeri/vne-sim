@@ -28,57 +28,49 @@
 
 int Edge::edge_count = 0;
 
-Edge::Edge(Node* s, Node* d) 
+Edge::Edge(Node *s, Node *d)
 {
-
-  assert(s != NULL && d != NULL);
-  src = s;
-  dst = d;
-  color = BLACK;
-  conf = NULL;
-  id = edge_count;
-  edge_count += 1;
-  directed = false; /* Undirected by default */
-
+    assert(s != NULL && d != NULL);
+    src = s;
+    dst = d;
+    color = BLACK;
+    conf = NULL;
+    id = edge_count;
+    edge_count += 1;
+    directed = false; /* Undirected by default */
 }
 
-Edge::~Edge() {
-
-  delete src;
-  delete dst;
-  delete conf;
-
+Edge::~Edge()
+{
+    delete src;
+    delete dst;
+    delete conf;
 }
 
-ASEdgeConf::ASEdgeConf() {
-
-  as_edge_type = AS_NONE;
-  SetBW(0.0);
-  SetWeight(7.9);
-
+ASEdgeConf::ASEdgeConf()
+{
+    as_edge_type = AS_NONE;
+    SetBW(0.0);
+    SetWeight(7.9);
 }
 
-
-
-RouterEdgeConf::RouterEdgeConf(double len) {
-
-  rt_edge_type = RT_NONE;
-  length = len;
-  SetBW(0.0);
-  delay = 1000.0 * (1000.0 * length)/SPEED_OF_LIGHT;
-  SetWeight(7.9);
-
+RouterEdgeConf::RouterEdgeConf(double len)
+{
+    rt_edge_type = RT_NONE;
+    length = len;
+    SetBW(0.0);
+    delay = 1000.0 * (1000.0 * length) / SPEED_OF_LIGHT;
+    SetWeight(7.9);
 }
 
 /* Euclidean distance between two vertices */
-double Edge::Length() {
+double Edge::Length()
+{
+    double dx, dy;
+    double foo;
 
-  double dx, dy;
-  double foo;
-
-  dx = (double) src->GetNodeInfo()->GetCoordX() -  (double)dst->GetNodeInfo()->GetCoordX();
-  dy = (double) src->GetNodeInfo()->GetCoordY() -  (double)dst->GetNodeInfo()->GetCoordY();
-  foo = (dx*dx) + (dy*dy);
-  return sqrt(foo);
-
+    dx = (double)src->GetNodeInfo()->GetCoordX() - (double)dst->GetNodeInfo()->GetCoordX();
+    dy = (double)src->GetNodeInfo()->GetCoordY() - (double)dst->GetNodeInfo()->GetCoordY();
+    foo = (dx * dx) + (dy * dy);
+    return sqrt(foo);
 }

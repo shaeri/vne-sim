@@ -30,19 +30,14 @@
 
 class ASBarabasiAlbert_1_Par;
 
-class ASBarabasiAlbert_1 : public ASBarabasiAlbert {
-    
- public:
-    
-  ASBarabasiAlbert_1(ASBarabasiAlbert_1_Par* par);
-  string ToString();
-    
- private:
-  void InterconnectNodes(Graph *g);
-    
+class ASBarabasiAlbert_1 : public ASBarabasiAlbert
+{
+   public:
+    ASBarabasiAlbert_1(ASBarabasiAlbert_1_Par *par);
+    string ToString();
+
+   private:
+    void InterconnectNodes(Graph *g);
 };
 
-
 #endif /* AS_BAR_2_MODEL_H */
-
-

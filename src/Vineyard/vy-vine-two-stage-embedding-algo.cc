@@ -26,27 +26,29 @@
 
 namespace vne
 {
-    namespace vineyard
+namespace vineyard
+{
+    template <>
+    VYVineTwoStageEmbeddingAlgo<>::VYVineTwoStageEmbeddingAlgo(
+        std::shared_ptr<SUBSTRATE_TYPE> _sn,
+        std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
+        std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedding_algo)
+        : TwoStageEmbeddingAlgo<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                VYVirtualNetRequest<>>(_sn, _node_embedding_algo,
+                                                       _link_embedding_algo){};
+
+    template <>
+    VYVineTwoStageEmbeddingAlgo<>::VYVineTwoStageEmbeddingAlgo(
+        NetworkBuilder<SUBSTRATE_TYPE> &_nb,
+        std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
+        std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedding_algo)
+        : TwoStageEmbeddingAlgo<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                VYVirtualNetRequest<>>(_nb, _node_embedding_algo,
+                                                       _link_embedding_algo){};
+
+    template <>
+    VYVineTwoStageEmbeddingAlgo<>::~VYVineTwoStageEmbeddingAlgo()
     {
-        template<>
-        VYVineTwoStageEmbeddingAlgo<>::VYVineTwoStageEmbeddingAlgo (std::shared_ptr<SUBSTRATE_TYPE> _sn,
-                    std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
-                    std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedding_algo) :
-        TwoStageEmbeddingAlgo<Network<VYSubstrateNode<>, VYSubstrateLink<> >, VYVirtualNetRequest<> >
-            (_sn,_node_embedding_algo,_link_embedding_algo)
-        {};
-        
-        template<>
-        VYVineTwoStageEmbeddingAlgo<>::VYVineTwoStageEmbeddingAlgo (NetworkBuilder<SUBSTRATE_TYPE>& _nb,
-                    std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
-                    std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedding_algo) :
-        TwoStageEmbeddingAlgo<Network<VYSubstrateNode<>, VYSubstrateLink<> >, VYVirtualNetRequest<> >
-            (_nb, _node_embedding_algo, _link_embedding_algo)
-        {};
-        
-        template<>
-        VYVineTwoStageEmbeddingAlgo<>::~VYVineTwoStageEmbeddingAlgo()
-        {
-        }
     }
-}
+}  // namespace vineyard
+}  // namespace vne

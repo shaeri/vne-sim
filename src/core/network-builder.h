@@ -1,4 +1,4 @@
-  /**
+/**
    * @file network-builder.h
    * @author Soroush Haeri <soroosh.haeri@me.com>
    * @date 7/16/14
@@ -26,18 +26,22 @@
 #define NETWORK_BUILDER_H_
 #include "core/network.h"
 
-namespace vne{
+namespace vne
+{
 //template <typename ...> class NetworkBuilder;
 //template<typename ... NODET, typename ... LINKT>
 //class NetworkBuilder<Network<Node<NODET...>, Link <LINKT...>>>{
-template<typename> class NetworkBuilder;
-template<typename... NodeT, template<typename...> class NodeC,
-typename... LinkT, template <typename...> class LinkC>
-class NetworkBuilder<Network<NodeC<NodeT...>, LinkC<LinkT...>>>{
-public:
-    virtual std::shared_ptr<Network<NodeC<NodeT...>, LinkC<LinkT...>>> getNetwork () {return 0;};
-protected:
+template <typename>
+class NetworkBuilder;
+template <typename... NodeT, template <typename...> class NodeC, typename... LinkT,
+          template <typename...> class LinkC>
+class NetworkBuilder<Network<NodeC<NodeT...>, LinkC<LinkT...>>>
+{
+   public:
+    virtual std::shared_ptr<Network<NodeC<NodeT...>, LinkC<LinkT...>>> getNetwork() { return 0; };
+
+   protected:
     NetworkBuilder() {};
 };
-}
+}  // namespace vne
 #endif

@@ -36,38 +36,42 @@
 
 using namespace vne::vineyard;
 
-namespace vne {
-    namespace experiments {
-        template<typename = VYVNRProcDigraph<>>
-        class VineNodeMCFLinkExp : public Experiment<VYVNRProcDigraph<>>
+namespace vne
+{
+namespace experiments
+{
+    template <typename = VYVNRProcDigraph<>>
+    class VineNodeMCFLinkExp : public Experiment<VYVNRProcDigraph<>>
+    {
+        friend class hiberlite::access;
+        template <class Archive>
+        void hibernate(Archive &ar)
         {
-           friend class hiberlite::access;
-            template<class Archive>
-            void hibernate(Archive & ar)
-            {
-                ar & HIBERLITE_BASE_CLASS_WITH_NAME(vne::Experiment<VYVNRProcDigraph<>>,Experiment);
-                ar & HIBERLITE_NVP(node_embedding_type);
-                ar & HIBERLITE_NVP(setAlpha);
-                ar & HIBERLITE_NVP(setBeta);
-                ar & HIBERLITE_NVP(statistics);
-            }
-        public:
-            VineNodeMCFLinkExp ();
-            virtual void statisticsGenerated (Statistics& stat);
-            virtual ~VineNodeMCFLinkExp ();
-            
-        protected:
-            //deterministic or
-            std::string node_embedding_type;
-            //set Alpha
-            int setAlpha;
-            //setBeta
-            int setBeta;
-        private:
-            VYVNRProcDigraph<>* graph;
-            std::shared_ptr<VYSubstrateNetworkBuilder<>> sb;
-            std::list<VYStatistics> statistics;
-        };
-    }
-}
+            ar &HIBERLITE_BASE_CLASS_WITH_NAME(vne::Experiment<VYVNRProcDigraph<>>, Experiment);
+            ar &HIBERLITE_NVP(node_embedding_type);
+            ar &HIBERLITE_NVP(setAlpha);
+            ar &HIBERLITE_NVP(setBeta);
+            ar &HIBERLITE_NVP(statistics);
+        }
+
+       public:
+        VineNodeMCFLinkExp();
+        virtual void statisticsGenerated(Statistics &stat);
+        virtual ~VineNodeMCFLinkExp();
+
+       protected:
+        //deterministic or
+        std::string node_embedding_type;
+        //set Alpha
+        int setAlpha;
+        //setBeta
+        int setBeta;
+
+       private:
+        VYVNRProcDigraph<> *graph;
+        std::shared_ptr<VYSubstrateNetworkBuilder<>> sb;
+        std::list<VYStatistics> statistics;
+    };
+}  // namespace experiments
+}  // namespace vne
 #endif

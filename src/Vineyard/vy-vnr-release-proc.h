@@ -30,27 +30,30 @@
 #include "Vineyard/vy-virtual-net-request.h"
 #include "Vineyard/vy-substrate-node.h"
 
+namespace vne
+{
+namespace vineyard
+{
 
-namespace vne {
-    namespace vineyard {
-        
-        template<typename = Network <VYSubstrateNode<>,VYSubstrateLink<>>, typename = VYVirtualNetRequest<>>
-        class VYVNRReleaseProc :
-                public VNRReleaseProcessor <Network <VYSubstrateNode<>,VYSubstrateLink<>>,VYVirtualNetRequest<>>
-        {
-        public:
-            VYVNRReleaseProc (std::shared_ptr<ReleaseAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> releaseAlgo);
-            ~VYVNRReleaseProc ();
-            
-            virtual void delta_int();
-            virtual void delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb);
-            virtual void delta_conf(const adevs::Bag<ADEVS_IO_TYPE>& xb);
-            virtual void output_func(adevs::Bag<ADEVS_IO_TYPE>& yb);
-            virtual double ta();
-            
-        private:
-            double last_departure_time;
-        };
-    }
-}
+    template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+              typename = VYVirtualNetRequest<>>
+    class VYVNRReleaseProc
+        : public VNRReleaseProcessor<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                     VYVirtualNetRequest<>>
+    {
+       public:
+        VYVNRReleaseProc(std::shared_ptr<ReleaseAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> releaseAlgo);
+        ~VYVNRReleaseProc();
+
+        virtual void delta_int();
+        virtual void delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE> &xb);
+        virtual void delta_conf(const adevs::Bag<ADEVS_IO_TYPE> &xb);
+        virtual void output_func(adevs::Bag<ADEVS_IO_TYPE> &yb);
+        virtual double ta();
+
+       private:
+        double last_departure_time;
+    };
+}  // namespace vineyard
+}  // namespace vne
 #endif /* defined(__vne_mcts__vy_vnr_processor__) */

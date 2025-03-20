@@ -31,36 +31,31 @@
 ////////////////////////////////////////
 //
 // class RouterModel
-// Base class for models that generate 
+// Base class for models that generate
 // router-level topologies
 //
 ////////////////////////////////////////
 
-class RouterModel : public Model {
+class RouterModel : public Model
+{
+   public:
+    ~RouterModel() {}
+    virtual Graph *Generate() { return (Graph *)NULL; }
+    void PlaceNodes(Graph *g);
+    void AssignBW(Graph *g);
 
- public:
+    BWDistType GetBWDistType() { return BWdist; }
+    void SetBWDist(BWDistType t) { BWdist = t; }
+    void SetBWMin(double bw) { BWmin = bw; }
+    void SetBWMax(double bw) { BWmax = bw; }
+    int GetBWDist() { return BWdist; }
+    double GetBWMin() { return BWmin; }
+    double GetBWMax() { return BWmax; }
 
-  ~RouterModel() {}
-  virtual Graph* Generate() {return (Graph*)NULL;}  
-  void PlaceNodes(Graph* g);
-  void AssignBW(Graph* g);
-
-  BWDistType GetBWDistType() { return BWdist; }
-  void SetBWDist(BWDistType t) { BWdist = t; }
-  void SetBWMin(double bw) { BWmin = bw; }
-  void SetBWMax(double bw) { BWmax = bw; }
-  int GetBWDist() { return BWdist; }
-  double GetBWMin() { return BWmin; }
-  double GetBWMax() { return BWmax; }
-
- private:
-
-  BWDistType BWdist;
-  double BWmin;
-  double BWmax;
-
+   private:
+    BWDistType BWdist;
+    double BWmin;
+    double BWmax;
 };
 
 #endif /* ROUTER_MODEL_H */
-
-

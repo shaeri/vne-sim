@@ -38,75 +38,66 @@
 using namespace std;
 
 #define MAXNUM 0x3FFFFFFF
-#define	MAXINT	2147483647
+#define MAXINT 2147483647
 
-enum Color { YELLOW, BLUE, RED, WHITE,
-	     BLACK, PURPLE, CYAN, PINK, GRAY};
+enum Color { YELLOW, BLUE, RED, WHITE, BLACK, PURPLE, CYAN, PINK, GRAY };
 
-enum Seed {PLACES = 1, CONNECT = 2};
+enum Seed { PLACES = 1, CONNECT = 2 };
 
+class RandomVariable
+{
+   public:
+    RandomVariable(unsigned short int *seed);
+    ~RandomVariable();
+    double GetValUniform();
+    double GetValUniform(double r);
+    double GetValUniform(double a, double b);
+    double GetValExponential(double lambda);
+    double GetValNormal(double avg, double std);
+    double GetValPareto(double scale, double shape);
+    double GetValLognormal(double avg, double std);
+    unsigned short int GetSeed(int i) { return seed[i]; }
 
-class RandomVariable {
-
- public:
-
-  RandomVariable(unsigned short int* seed);
-  ~RandomVariable();
-  double GetValUniform();
-  double GetValUniform(double r);
-  double GetValUniform(double a, double b);
-  double GetValExponential(double lambda);
-  double GetValNormal(double avg, double std);
-  double GetValPareto(double scale, double shape);
-  double GetValLognormal(double avg, double std);
-  unsigned short int GetSeed(int i) {return seed[i];}
-
- private:
-
-  unsigned short int seed[3];
-  unsigned short int* sptr;
-
+   private:
+    unsigned short int seed[3];
+    unsigned short int *sptr;
 };
 
-inline double RandomVariable::GetValUniform() {
-
-  return erand48(seed);
-
+inline double RandomVariable::GetValUniform()
+{
+    return erand48(seed);
 }
 
-inline double RandomVariable::GetValUniform(double r) {
-
-  return  r * erand48(seed);
-
+inline double RandomVariable::GetValUniform(double r)
+{
+    return r * erand48(seed);
 }
 
-inline double RandomVariable::GetValUniform(double min, double max) {
-  return min + GetValUniform(max - min);
+inline double RandomVariable::GetValUniform(double min, double max)
+{
+    return min + GetValUniform(max - min);
 }
 
-inline double RandomVariable::GetValExponential(double lambda) {
-  assert(lambda > 0);
-  return (-log(GetValUniform())/lambda);  
+inline double RandomVariable::GetValExponential(double lambda)
+{
+    assert(lambda > 0);
+    return (-log(GetValUniform()) / lambda);
 }
 
-inline double RandomVariable::GetValPareto(double scale, double shape) {
-
-  assert(shape > 0);
-  double x = GetValUniform();
-  double den = pow(1.0 - x + x*pow(1.0/scale, shape), 1.0/shape);
-  double res = 1.0/den;
-  return res;
-
+inline double RandomVariable::GetValPareto(double scale, double shape)
+{
+    assert(shape > 0);
+    double x = GetValUniform();
+    double den = pow(1.0 - x + x * pow(1.0 / scale, shape), 1.0 / shape);
+    double res = 1.0 / den;
+    return res;
 }
 
-inline double RandomVariable::GetValLognormal(double avg, double std) {
-  
-  return (exp(GetValNormal(avg, std))); 
-
+inline double RandomVariable::GetValLognormal(double avg, double std)
+{
+    return (exp(GetValNormal(avg, std)));
 }
 
-int BinarySearch(vector<double>&, int, int, double);
-
+int BinarySearch(vector<double> &, int, int, double);
 
 #endif /* UTIL_H */
-

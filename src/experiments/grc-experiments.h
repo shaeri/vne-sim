@@ -42,77 +42,82 @@ using namespace vne::vineyard;
 using namespace vne::grc;
 using namespace vne::mcvne;
 
-namespace vne {
-    namespace experiments {
-        /**************************************************************
+namespace vne
+{
+namespace experiments
+{
+    /**************************************************************
          * This is MCVNE with MCF link embedding
          ***************************************************************/
-        template<typename = VYVNRProcDigraph<>>
-        class GRCNodeMCFLinkExp : public Experiment<VYVNRProcDigraph<>>
+    template <typename = VYVNRProcDigraph<>>
+    class GRCNodeMCFLinkExp : public Experiment<VYVNRProcDigraph<>>
+    {
+        friend class hiberlite::access;
+        template <class Archive>
+        void hibernate(Archive &ar)
         {
-            friend class hiberlite::access;
-            template<class Archive>
-            void hibernate(Archive & ar)
-            {
-                ar & HIBERLITE_BASE_CLASS_WITH_NAME(vne::Experiment<VYVNRProcDigraph<>>,Experiment);
-                ar & HIBERLITE_NVP(alpha);
-                ar & HIBERLITE_NVP(beta);
-                ar & HIBERLITE_NVP(sigma);
-                ar & HIBERLITE_NVP(damping_factor);
-                ar & HIBERLITE_NVP(statistics);
-            }
-        public:
-            GRCNodeMCFLinkExp ();
-            virtual void statisticsGenerated (Statistics& stat);
-            virtual ~GRCNodeMCFLinkExp ();
-            
-        protected:
-            //Alpha
-            double alpha;
-            //Beta
-            double beta;
-            double sigma;
-            double damping_factor;
-            
-        private:
-            VYVNRProcDigraph<>* graph;
-            std::shared_ptr<VYSubstrateNetworkBuilder<>> sb;
-            std::list<VYStatistics> statistics;
-        };
-        
-        /**************************************************************
+            ar &HIBERLITE_BASE_CLASS_WITH_NAME(vne::Experiment<VYVNRProcDigraph<>>, Experiment);
+            ar &HIBERLITE_NVP(alpha);
+            ar &HIBERLITE_NVP(beta);
+            ar &HIBERLITE_NVP(sigma);
+            ar &HIBERLITE_NVP(damping_factor);
+            ar &HIBERLITE_NVP(statistics);
+        }
+
+       public:
+        GRCNodeMCFLinkExp();
+        virtual void statisticsGenerated(Statistics &stat);
+        virtual ~GRCNodeMCFLinkExp();
+
+       protected:
+        //Alpha
+        double alpha;
+        //Beta
+        double beta;
+        double sigma;
+        double damping_factor;
+
+       private:
+        VYVNRProcDigraph<> *graph;
+        std::shared_ptr<VYSubstrateNetworkBuilder<>> sb;
+        std::list<VYStatistics> statistics;
+    };
+
+    /**************************************************************
          * This is MCVNE with BFS based shortest path link embedding
          ***************************************************************/
-        template<typename = VYVNRProcDigraph<>>
-        class GRCNodeBFSLinkExp : public Experiment<VYVNRProcDigraph<>>
+    template <typename = VYVNRProcDigraph<>>
+    class GRCNodeBFSLinkExp : public Experiment<VYVNRProcDigraph<>>
+    {
+        friend class hiberlite::access;
+        template <class Archive>
+        void hibernate(Archive &ar)
         {
-            friend class hiberlite::access;
-            template<class Archive>
-            void hibernate(Archive & ar)
-            {
-                ar & HIBERLITE_BASE_CLASS_WITH_NAME(vne::Experiment<VYVNRProcDigraph<>>,Experiment);
-                ar & HIBERLITE_NVP(alpha);
-                ar & HIBERLITE_NVP(beta);
-                ar & HIBERLITE_NVP(sigma);
-                ar & HIBERLITE_NVP(damping_factor);
-                ar & HIBERLITE_NVP(statistics);
-            }
-        public:
-            GRCNodeBFSLinkExp ();
-            virtual void statisticsGenerated (Statistics& stat);
-            virtual ~GRCNodeBFSLinkExp ();
-            
-        protected:
-            double alpha;
-            //Beta
-            double beta;
-            double sigma;
-            double damping_factor;
-        private:
-            VYVNRProcDigraph<>* graph;
-            std::shared_ptr<VYSubstrateNetworkBuilder<>> sb;
-            std::list<VYStatistics> statistics;
-        };
-    }
-}
+            ar &HIBERLITE_BASE_CLASS_WITH_NAME(vne::Experiment<VYVNRProcDigraph<>>, Experiment);
+            ar &HIBERLITE_NVP(alpha);
+            ar &HIBERLITE_NVP(beta);
+            ar &HIBERLITE_NVP(sigma);
+            ar &HIBERLITE_NVP(damping_factor);
+            ar &HIBERLITE_NVP(statistics);
+        }
+
+       public:
+        GRCNodeBFSLinkExp();
+        virtual void statisticsGenerated(Statistics &stat);
+        virtual ~GRCNodeBFSLinkExp();
+
+       protected:
+        double alpha;
+        //Beta
+        double beta;
+        double sigma;
+        double damping_factor;
+
+       private:
+        VYVNRProcDigraph<> *graph;
+        std::shared_ptr<VYSubstrateNetworkBuilder<>> sb;
+        std::list<VYStatistics> statistics;
+    };
+}  // namespace experiments
+}  // namespace vne
 #endif

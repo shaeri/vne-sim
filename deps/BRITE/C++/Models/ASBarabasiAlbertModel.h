@@ -30,21 +30,16 @@
 
 class ASBarabasiAlbertPar;
 
-class ASBarabasiAlbert : public ASModel {
-    
- public:
-    
-  double ProbFunc(Node* dst);
-  Graph* Generate();
-  virtual string ToString() {return 0;}
-    
- protected:
-  virtual void InterconnectNodes(Graph *g) {return;}
-  int SumDj;  // Sum of outdegrees of all nodes
+class ASBarabasiAlbert : public ASModel
+{
+   public:
+    double ProbFunc(Node *dst);
+    Graph *Generate();
+    virtual string ToString() { return 0; }
 
+   protected:
+    virtual void InterconnectNodes(Graph *g) { return; }
+    int SumDj;  // Sum of outdegrees of all nodes
 };
 
-
 #endif /* AS_BAR_MODEL_H */
-
-

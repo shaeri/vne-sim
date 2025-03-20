@@ -13,12 +13,9 @@ add_subdirectory(mcvne)
 add_subdirectory(network-file-generator)
 add_subdirectory(network-file-generator/test)
 
-
 add_subdirectory(Vineyard)
 add_subdirectory(Vineyard/test)
 
 add_subdirectory(utilities)
 
 add_subdirectory(cli)
-
-

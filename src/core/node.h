@@ -36,28 +36,30 @@
 
 namespace vne
 {
-template<typename ... Args>
-class Node 
+template <typename... Args>
+class Node
 {
-template<typename, typename> friend class Network;
-    
-public:
-	//Node();
-	//Node(Entity_t t);
-    Node(const Resources<Args...>& _res, const Entity_t& t);
-    Node(const Args &... _args, const Entity_t& t);
+    template <typename, typename>
+    friend class Network;
+
+   public:
+    //Node();
+    //Node(Entity_t t);
+    Node(const Resources<Args...> &_res, const Entity_t &t);
+    Node(const Args &..._args, const Entity_t &t);
     virtual ~Node();
     int getId() const;
-    int getLocalId() const {return local_id;};
-    const Entity_t& getType() const;
-    const Resources<Args...>& getResources() const;
-    virtual void writeNodeToFile (std::ofstream& ofstrm) {};
-    	//void setResources(std::tuple<Args...>);
-private:
-	typedef Node<Args...> this_t;
-protected:
-    Node(const Resources<Args...>& _res, const Entity_t& t, bool noid);
-    Node(const Args &... _args, const Entity_t& t, bool noid);
+    int getLocalId() const { return local_id; };
+    const Entity_t &getType() const;
+    const Resources<Args...> &getResources() const;
+    virtual void writeNodeToFile(std::ofstream &ofstrm) {};
+    //void setResources(std::tuple<Args...>);
+   private:
+    typedef Node<Args...> this_t;
+
+   protected:
+    Node(const Resources<Args...> &_res, const Entity_t &t, bool noid);
+    Node(const Args &..._args, const Entity_t &t, bool noid);
     // id is a unique id assigned by IdGenerator
     int id;
     //local_id is a number strating from 0 it is local to the node.
@@ -77,33 +79,29 @@ Node<Args...>::Node(Entity_t t) :
 {
 }
 */
-template<typename ... Args>
-Node<Args...>::Node(const Resources<Args...>& _res, const Entity_t& t) :
-        id (vne::IdGenerator::Instance()->getId<this_t>(this)),
-        type(t),
-        resources (_res)
+template <typename... Args>
+Node<Args...>::Node(const Resources<Args...> &_res, const Entity_t &t)
+    : id(vne::IdGenerator::Instance()->getId<this_t>(this)), type(t), resources(_res)
 {
 }
-template<typename ... Args>
-Node<Args...>::Node(const Resources<Args...>& _res, const Entity_t& t, bool noid)
-        : type(t),
-          resources (_res)
+template <typename... Args>
+Node<Args...>::Node(const Resources<Args...> &_res, const Entity_t &t, bool noid)
+    : type(t), resources(_res)
 {
 }
-template<typename ... Args>
-Node<Args...>::Node(const Args &... _args, const Entity_t& t)
-    : id (vne::IdGenerator::Instance()->getId<this_t>(this)),
+template <typename... Args>
+Node<Args...>::Node(const Args &..._args, const Entity_t &t)
+    : id(vne::IdGenerator::Instance()->getId<this_t>(this)),
       type(t),
-      resources (Resources<Args...> (_args...))
+      resources(Resources<Args...>(_args...))
 {
 }
-template<typename ... Args>
-Node<Args...>::Node(const Args &... _args, const Entity_t& t, bool noid)
-: type(t),
-resources (Resources<Args...> (_args...))
+template <typename... Args>
+Node<Args...>::Node(const Args &..._args, const Entity_t &t, bool noid)
+    : type(t), resources(Resources<Args...>(_args...))
 {
 }
-template<typename ... Args>
+template <typename... Args>
 Node<Args...>::~Node()
 {
 }
@@ -114,21 +112,21 @@ void Node<Args...>::setResources(std::tuple<Args...> t)
 	resources = t;
 }
 */
-template<typename ... Args>
-const Resources<Args...>& Node<Args...>::getResources() const
+template <typename... Args>
+const Resources<Args...> &Node<Args...>::getResources() const
 {
-	return resources;
+    return resources;
 }
 
-template<typename ... Args>
-const Entity_t& Node<Args...>::getType() const
+template <typename... Args>
+const Entity_t &Node<Args...>::getType() const
 {
-	return type;
+    return type;
 }
-template<typename ... Args>
+template <typename... Args>
 int Node<Args...>::getId() const
 {
-	return id;
+    return id;
 }
-}
+}  // namespace vne
 #endif

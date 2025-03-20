@@ -10,22 +10,26 @@
 
 #include "Python.h"
 
-namespace vne {
-    namespace utilities {
+namespace vne
+{
+namespace utilities
+{
 
-        class PythonRunner {
-        public:
-            PythonRunner();
-            void run(const std::string& script);
-            int get_status_code();
-        private:
-            PyConfig config;
-            PyStatus status;
-            int status_code;
-        };
-    }
-}
+    class PythonRunner
+    {
+       public:
+        PythonRunner();
+        void run(const std::string &script);
+        int get_status_code();
+
+       private:
+        PyConfig config;
+        PyStatus status;
+        int status_code;
+    };
+}  // namespace utilities
+}  // namespace vne
 
 #endif
 
-#endif //VNE_MCTS_PYTHON_UTILS_H
+#endif  //VNE_MCTS_PYTHON_UTILS_H

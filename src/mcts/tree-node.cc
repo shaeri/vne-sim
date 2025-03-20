@@ -26,51 +26,49 @@
 #include <assert.h>
 #include <iostream>
 
-namespace vne{
-    namespace mcts{
-        int TreeNode::NumChildren = 0;
-        TreeNode::TreeNode(std::shared_ptr<State> st) : state(std::move(st))
-        {
-            assert(NumChildren);
-            Children.resize(TreeNode::NumChildren);
-            Initialize();
-        }
-        
-        TreeNode::TreeNode() : state(nullptr)
-        {
-            assert(NumChildren);
-            Children.resize(TreeNode::NumChildren);
-        }
-        
-        void TreeNode::Initialize()
-        {
-            for (int action = 0; action < Children.size(); action++)
-            {
-                    Children[action]  = std::shared_ptr<TreeNode> (new TreeNode());
-            }
-        }
-        
-        TreeNode::~TreeNode()
-        {
-        }
-        
-        const std::shared_ptr<State> TreeNode::getState () const
-        {
-            return state;
-        }
-        
-        void TreeNode::setChildren(int count, double value)
-        {
-            for (int action = 0; action < NumChildren; action++)
-            {
-                std::shared_ptr<TreeNode> node = Children[action];
-                node->value.set(count, value);
-                node->AMAF.set(count, value);
-            }
-        }
-        std::shared_ptr<TreeNode> TreeNode::child (int c)
-        {
-            return Children[c];
+namespace vne
+{
+namespace mcts
+{
+    int TreeNode::NumChildren = 0;
+    TreeNode::TreeNode(std::shared_ptr<State> st) : state(std::move(st))
+    {
+        assert(NumChildren);
+        Children.resize(TreeNode::NumChildren);
+        Initialize();
+    }
+
+    TreeNode::TreeNode() : state(nullptr)
+    {
+        assert(NumChildren);
+        Children.resize(TreeNode::NumChildren);
+    }
+
+    void TreeNode::Initialize()
+    {
+        for (int action = 0; action < Children.size(); action++) {
+            Children[action] = std::shared_ptr<TreeNode>(new TreeNode());
         }
     }
-}
+
+    TreeNode::~TreeNode() {}
+
+    const std::shared_ptr<State> TreeNode::getState() const
+    {
+        return state;
+    }
+
+    void TreeNode::setChildren(int count, double value)
+    {
+        for (int action = 0; action < NumChildren; action++) {
+            std::shared_ptr<TreeNode> node = Children[action];
+            node->value.set(count, value);
+            node->AMAF.set(count, value);
+        }
+    }
+    std::shared_ptr<TreeNode> TreeNode::child(int c)
+    {
+        return Children[c];
+    }
+}  // namespace mcts
+}  // namespace vne

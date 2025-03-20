@@ -29,48 +29,57 @@
 #include "vy-virtual-link.h"
 #include "vy-virtual-node.h"
 
-namespace vne {
-    namespace vineyard {
-        
-        template<typename = Network<VYVirtualNode<>, VYVirtualLink<>>>
-        class VYVirtualNetRequest : public VirtualNetworkRequest<Network<VYVirtualNode<>, VYVirtualLink<>>>
-        {
-        public:
-            VYVirtualNetRequest(std::shared_ptr<Network<VYVirtualNode<>,VYVirtualLink<>>> _vn,
-                                double _time, double _duration, int _split, int _topology, int _maxD,
-                                std::function<std::shared_ptr<std::pair<double,double>>(const VYVirtualNetRequest<>* vnr)> calcRevenue = nullptr,
-                                std::function<std::shared_ptr<std::pair<double,double>>(const VYVirtualNetRequest<>* vnr)> calcCost = nullptr);
-            ~VYVirtualNetRequest ();
-            int getSplit () const;
-            int getTopology () const;
-            int getMaxDistance () const;
-            virtual double getNodeRevenue () const;
-            virtual double getLinkRevenue () const;
-            virtual double getTotalRevenue () const;
-            virtual double getNodeCost () const;
-            virtual double getLinkCost () const;
-            virtual double getTotalCost () const;
-            // link cost and total cost depend on the mapping, therefore they cannot be calculated
-            //  at creation time.
-            bool operator> (const VYVirtualNetRequest<>& rhs);
-            bool operator< (const VYVirtualNetRequest<>& rhs);
-            bool operator> (const double& rhs);
-            bool operator< (const double& rhs);
-            
-            //Values of objective function for link and node mappings.
-            double linkMappingObjectiveVal;
-            double nodeMappingObjectiveVal;
-            
-            virtual void writeVNRToFile (std::ofstream& ofstrm);
-            
-        private:
-            int split;
-            int topology;
-            int maxDistance;
-            std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)> revenue;
-            std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)> cost;
-        };
-    }
-}
+namespace vne
+{
+namespace vineyard
+{
+
+    template <typename = Network<VYVirtualNode<>, VYVirtualLink<>>>
+    class VYVirtualNetRequest
+        : public VirtualNetworkRequest<Network<VYVirtualNode<>, VYVirtualLink<>>>
+    {
+       public:
+        VYVirtualNetRequest(std::shared_ptr<Network<VYVirtualNode<>, VYVirtualLink<>>> _vn,
+                            double _time, double _duration, int _split, int _topology, int _maxD,
+                            std::function<std::shared_ptr<std::pair<double, double>>(
+                                const VYVirtualNetRequest<> *vnr)>
+                                calcRevenue = nullptr,
+                            std::function<std::shared_ptr<std::pair<double, double>>(
+                                const VYVirtualNetRequest<> *vnr)>
+                                calcCost = nullptr);
+        ~VYVirtualNetRequest();
+        int getSplit() const;
+        int getTopology() const;
+        int getMaxDistance() const;
+        virtual double getNodeRevenue() const;
+        virtual double getLinkRevenue() const;
+        virtual double getTotalRevenue() const;
+        virtual double getNodeCost() const;
+        virtual double getLinkCost() const;
+        virtual double getTotalCost() const;
+        // link cost and total cost depend on the mapping, therefore they cannot be calculated
+        //  at creation time.
+        bool operator>(const VYVirtualNetRequest<> &rhs);
+        bool operator<(const VYVirtualNetRequest<> &rhs);
+        bool operator>(const double &rhs);
+        bool operator<(const double &rhs);
+
+        //Values of objective function for link and node mappings.
+        double linkMappingObjectiveVal;
+        double nodeMappingObjectiveVal;
+
+        virtual void writeVNRToFile(std::ofstream &ofstrm);
+
+       private:
+        int split;
+        int topology;
+        int maxDistance;
+        std::function<std::shared_ptr<std::pair<double, double>>(const VYVirtualNetRequest<> *vnr)>
+            revenue;
+        std::function<std::shared_ptr<std::pair<double, double>>(const VYVirtualNetRequest<> *vnr)>
+            cost;
+    };
+}  // namespace vineyard
+}  // namespace vne
 
 #endif /* defined(__vne_mcts__vy_virtual_net_request__) */

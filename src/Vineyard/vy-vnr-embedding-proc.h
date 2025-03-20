@@ -33,27 +33,34 @@
 #include <chrono>
 #include <random>
 
-namespace vne {
-    namespace vineyard {
-        
-        template<typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,typename = VYVirtualNetRequest<>>
-        class VYVNREmbeddingProc :
-                public VNREmbeddingProcessor <Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>
-        {
-        public:
-            VYVNREmbeddingProc (std::shared_ptr<EmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>> embeddingAlgo);
-            ~VYVNREmbeddingProc ();
-            
-            virtual void delta_int();
-            virtual void delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb);
-            virtual void delta_conf(const adevs::Bag<ADEVS_IO_TYPE>& xb);
-            virtual void output_func(adevs::Bag<ADEVS_IO_TYPE>& yb);
-            virtual double ta();
-            
-        private:
-            std::chrono::time_point<std::chrono::system_clock> start, end;
-            std::chrono::duration<double> elapsed_seconds;
-        };
-    }
-}
+namespace vne
+{
+namespace vineyard
+{
+
+    template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+              typename = VYVirtualNetRequest<>>
+    class VYVNREmbeddingProc
+        : public VNREmbeddingProcessor<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                       VYVirtualNetRequest<>>
+    {
+       public:
+        VYVNREmbeddingProc(
+            std::shared_ptr<EmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                               VYVirtualNetRequest<>>>
+                embeddingAlgo);
+        ~VYVNREmbeddingProc();
+
+        virtual void delta_int();
+        virtual void delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE> &xb);
+        virtual void delta_conf(const adevs::Bag<ADEVS_IO_TYPE> &xb);
+        virtual void output_func(adevs::Bag<ADEVS_IO_TYPE> &yb);
+        virtual double ta();
+
+       private:
+        std::chrono::time_point<std::chrono::system_clock> start, end;
+        std::chrono::duration<double> elapsed_seconds;
+    };
+}  // namespace vineyard
+}  // namespace vne
 #endif /* defined(__vne_mcts__vy_vnr_processor__) */

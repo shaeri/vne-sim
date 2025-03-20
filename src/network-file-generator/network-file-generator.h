@@ -28,7 +28,7 @@
 #include "BRITE/C++/Brite.h"
 
 #include "brite-handler.h"
-#ifdef   WITH_FNSS_SUPPORT
+#ifdef WITH_FNSS_SUPPORT
 #include "fnss-handler.h"
 #endif
 
@@ -38,94 +38,94 @@
 #include "Vineyard/vy-substrate-link.h"
 #include "Vineyard/vy-substrate-node.h"
 
-
 using namespace vne::vineyard;
 
-namespace vne {
-    namespace nfg {
-        class NetworkFileGenerator{
-        public:
+namespace vne
+{
+namespace nfg
+{
+    class NetworkFileGenerator
+    {
+       public:
+        struct Parameters {
+            Parameters();
 
-            struct Parameters {
+            std::string DirToSaveFiles;
+            int totalTime;
+            int SubstrateNodeNum;
 
-                Parameters ();
+            double VNRLinkSplittingRate;
 
-                std::string DirToSaveFiles;
-                int totalTime;
-                int SubstrateNodeNum;
+            Distribution VNRNumNodesDist;
+            double VNRNumNodesDistParam1;
+            double VNRNumNodesDistParam2;
+            double VNRNumNodesDistParam3;
 
-                double VNRLinkSplittingRate;
+            Distribution VNRDurationDist;
+            double VNRDurationDistParam1;
+            double VNRDurationDistParam2;
+            double VNRDurationDistParam3;
 
-                Distribution VNRNumNodesDist;
-                double VNRNumNodesDistParam1;
-                double VNRNumNodesDistParam2;
-                double VNRNumNodesDistParam3;
+            Distribution VNRArrivalDist;
+            double VNRArrivalDistParam1;
+            double VNRArrivalDistParam2;
+            double VNRArrivalDistParam3;
 
-                Distribution VNRDurationDist;
-                double VNRDurationDistParam1;
-                double VNRDurationDistParam2;
-                double VNRDurationDistParam3;
+            Distribution VNRMaxDistanceDist;
+            double VNRMaxDistanceDistParam1;
+            double VNRMaxDistanceDistParam2;
+            double VNRMaxDistanceDistParam3;
 
-                Distribution VNRArrivalDist;
-                double VNRArrivalDistParam1;
-                double VNRArrivalDistParam2;
-                double VNRArrivalDistParam3;
+            Distribution SNCPUDist;
+            double SNCPUDistParam1;
+            double SNCPUDistParam2;
+            double SNCPUDistParam3;
 
-                Distribution VNRMaxDistanceDist;
-                double VNRMaxDistanceDistParam1;
-                double VNRMaxDistanceDistParam2;
-                double VNRMaxDistanceDistParam3;
+            Distribution SLBWDist;
+            double SLBWDistParam1;
+            double SLBWDistParam2;
+            double SLBWDistParam3;
 
-                Distribution SNCPUDist;
-                double SNCPUDistParam1;
-                double SNCPUDistParam2;
-                double SNCPUDistParam3;
+            Distribution SLDelayDist;
+            double SLDelayDistParam1;
+            double SLDelayDistParam2;
+            double SLDelayDistParam3;
 
-                Distribution SLBWDist;
-                double SLBWDistParam1;
-                double SLBWDistParam2;
-                double SLBWDistParam3;
+            Distribution VNCPUDist;
+            double VNCPUDistParam1;
+            double VNCPUDistParam2;
+            double VNCPUDistParam3;
 
-                Distribution SLDelayDist;
-                double SLDelayDistParam1;
-                double SLDelayDistParam2;
-                double SLDelayDistParam3;
+            Distribution VLBWDist;
+            double VLBWDistParam1;
+            double VLBWDistParam2;
+            double VLBWDistParam3;
 
-                Distribution VNCPUDist;
-                double VNCPUDistParam1;
-                double VNCPUDistParam2;
-                double VNCPUDistParam3;
+            Distribution VLDelayDist;
+            double VLDelayDistParam1;
+            double VLDelayDistParam2;
+            double VLDelayDistParam3;
 
-                Distribution VLBWDist;
-                double VLBWDistParam1;
-                double VLBWDistParam2;
-                double VLBWDistParam3;
+            vne::ConfigType vnrpt;
+            vne::ConfigType snpt;
 
-                Distribution VLDelayDist;
-                double VLDelayDistParam1;
-                double VLDelayDistParam2;
-                double VLDelayDistParam3;
-
-                vne::ConfigType vnrpt;
-                vne::ConfigType snpt;
-
-                std::string Handler;
-                Topology_Type vn_topo_type;
-                Topology_Type sn_topo_type;
-            };
-
-            NetworkFileGenerator ();
-            ~NetworkFileGenerator ();
-
-            std::shared_ptr<Network<VYSubstrateNode<>,VYSubstrateLink<>>>
-                VYSubstrateNetFileGenerator (bool writeToFile);
-
-            std::shared_ptr <std::list <std::shared_ptr <VYVirtualNetRequest<> >>>
-                VYVirtualNetRequestGenerator (bool writeToFile);
-
-        private:
-            Parameters params;
+            std::string Handler;
+            Topology_Type vn_topo_type;
+            Topology_Type sn_topo_type;
         };
-    }
-}
+
+        NetworkFileGenerator();
+        ~NetworkFileGenerator();
+
+        std::shared_ptr<Network<VYSubstrateNode<>, VYSubstrateLink<>>> VYSubstrateNetFileGenerator(
+            bool writeToFile);
+
+        std::shared_ptr<std::list<std::shared_ptr<VYVirtualNetRequest<>>>>
+        VYVirtualNetRequestGenerator(bool writeToFile);
+
+       private:
+        Parameters params;
+    };
+}  // namespace nfg
+}  // namespace vne
 #endif

@@ -26,90 +26,74 @@
 
 #include "Node.h"
 
-Node::Node(int i) {
-
-  nodeId = i;
-  nodeAddr = 0;
-  inDegree = 0;
-  outDegree = 0;
-  nodeColor = BLACK;
-
+Node::Node(int i)
+{
+    nodeId = i;
+    nodeAddr = 0;
+    inDegree = 0;
+    outDegree = 0;
+    nodeColor = BLACK;
 }
 
-Node::Node(NodeConf* c) {
-
-  nodeInfo = c;
-
+Node::Node(NodeConf *c)
+{
+    nodeInfo = c;
 }
 
-ASNodeConf::ASNodeConf() { 
-
-  SetCost(1.0);
-  t = NULL;
-  SetNodeType(AS_NODE);
-  astype = AS_NONE;
-  
+ASNodeConf::ASNodeConf()
+{
+    SetCost(1.0);
+    t = NULL;
+    SetNodeType(AS_NODE);
+    astype = AS_NONE;
 }
 
-RouterNodeConf::RouterNodeConf() { 
-
-  SetCost(1.0);
-  SetNodeType(RT_NODE);
-  rttype = RT_NONE;
-
+RouterNodeConf::RouterNodeConf()
+{
+    SetCost(1.0);
+    SetNodeType(RT_NODE);
+    rttype = RT_NONE;
 }
 
-
-void ASNodeConf::SetTopology(Topology* top, int asid) {
-  
-  t = top; 
-  if (t != NULL) {
-    Graph* g = t->GetGraph();
-    for (int i = 0; i < g->GetNumNodes(); i++) {
-      RouterNodeConf* rt_conf = (RouterNodeConf*)(g->GetNodePtr(i)->GetNodeInfo());
-      rt_conf->SetASId(asid);
+void ASNodeConf::SetTopology(Topology *top, int asid)
+{
+    t = top;
+    if (t != NULL) {
+        Graph *g = t->GetGraph();
+        for (int i = 0; i < g->GetNumNodes(); i++) {
+            RouterNodeConf *rt_conf = (RouterNodeConf *)(g->GetNodePtr(i)->GetNodeInfo());
+            rt_conf->SetASId(asid);
+        }
     }
-  } 
 }
 
-Edge* Node::GetEdge(int v) {
+Edge *Node::GetEdge(int v)
+{
+    list<Edge *>::iterator li;
 
-  list<Edge*>::iterator li;
+    for (li = incEdges.begin(); li != incEdges.end(); li++) {
+        if ((*li)->GetDirection()) {
+            if (((*li)->GetSrc()->GetId() == this->nodeId) && ((*li)->GetDst()->GetId() == v)) {
+                break;
+            }
 
-  for (li = incEdges.begin(); li != incEdges.end(); li++) {
-    
-    if ((*li)->GetDirection()) {
-      
-      if (((*li)->GetSrc()->GetId() == this->nodeId) && 
-	  ((*li)->GetDst()->GetId() == v)) {
-	break;
-      }
-
-    }else {
-
-      if ((((*li)->GetSrc()->GetId() == this->nodeId) && 
-	   ((*li)->GetDst()->GetId() == v)) ||  
-	  (((*li)->GetSrc()->GetId() == v) && 
-	   ((*li)->GetDst()->GetId() == this->nodeId))) {
-	break;
-      }
-      
+        } else {
+            if ((((*li)->GetSrc()->GetId() == this->nodeId) && ((*li)->GetDst()->GetId() == v)) ||
+                (((*li)->GetSrc()->GetId() == v) && ((*li)->GetDst()->GetId() == this->nodeId))) {
+                break;
+            }
+        }
     }
-  }
 
-  if (li == incEdges.end()) {
-    cout << "Edge not found for adjacent node " << v << "!\n";
-    assert(li == incEdges.end());
-  }
+    if (li == incEdges.end()) {
+        cout << "Edge not found for adjacent node " << v << "!\n";
+        assert(li == incEdges.end());
+    }
 
-  return (*li);
-
+    return (*li);
 }
 
-
-void Node::AddIncEdge(Edge* edge) { 
-
-  incEdges.insert(incEdges.begin(), edge); 
-
+void Node::AddIncEdge(Edge *edge)
+{
+    incEdges.insert(incEdges.begin(), edge);
 }
-

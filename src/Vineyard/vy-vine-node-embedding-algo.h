@@ -35,65 +35,75 @@
 
 #define META_EDGE_BW 1000000
 
-namespace vne {
-    namespace vineyard{
-        
-        template<typename = Network<VYSubstrateNode<>,VYSubstrateLink<>> ,
-        typename = VYVirtualNetRequest<>>
-        class VYVineNodeEmbeddingAlgo :
-                public NodeEmbeddingAlgorithm <Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>
-        {
-        public:
-            VYVineNodeEmbeddingAlgo ();
-            ~VYVineNodeEmbeddingAlgo ();
-            virtual Embedding_Result  embeddVNRNodes (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
-            
-        private:
-            
-            glp_prob* lp_problem;
-            std::string LPmodelFile;
-            std::string LPdataFile;
-            
-            std::shared_ptr<const std::set<int>> substrateNodeIdSet;
-            std::shared_ptr<const std::set<int>> substrateLinkIdSet;
-            std::shared_ptr<const std::set<int>> virtualNodeIdSet;
-            std::shared_ptr<const std::set<int>> virtualLinkIdSet;
+namespace vne
+{
+namespace vineyard
+{
 
-            std::vector <int> allNodeIds;
-            //this is based on local ids (vector index)
-            std::map<int,std::vector<int>> nodesWithinReach;
-            
-            bool setAlpha;
-            bool setBeta;
-            // 0 is returned if methods are successful otherwise 1 is returned
-            inline int solveNodeMappingLP (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
-            inline void writeDataFile (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
-            inline void cleanUp (std::shared_ptr<SUBSTRATE_TYPE> substrate_network);
-            inline Embedding_Result deterministicNodeMapping (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr, std::vector<std::vector<double>>& xVec);
-            inline Embedding_Result randomizedNodeMapping (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr, std::vector<std::vector<double>>& xVec);
-            //inline Embedding_Result parseLPSolution ();
-            
-            enum {DETERMINISTIC,RANDOMIZED} nodeMappingType;
-            
-            struct VYNodesReachabilityCondition
+    template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+              typename = VYVirtualNetRequest<>>
+    class VYVineNodeEmbeddingAlgo
+        : public NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                        VYVirtualNetRequest<>>
+    {
+       public:
+        VYVineNodeEmbeddingAlgo();
+        ~VYVineNodeEmbeddingAlgo();
+        virtual Embedding_Result embeddVNRNodes(std::shared_ptr<SUBSTRATE_TYPE> substrate_network,
+                                                std::shared_ptr<VNR_TYPE> vnr);
+
+       private:
+        glp_prob *lp_problem;
+        std::string LPmodelFile;
+        std::string LPdataFile;
+
+        std::shared_ptr<const std::set<int>> substrateNodeIdSet;
+        std::shared_ptr<const std::set<int>> substrateLinkIdSet;
+        std::shared_ptr<const std::set<int>> virtualNodeIdSet;
+        std::shared_ptr<const std::set<int>> virtualLinkIdSet;
+
+        std::vector<int> allNodeIds;
+        //this is based on local ids (vector index)
+        std::map<int, std::vector<int>> nodesWithinReach;
+
+        bool setAlpha;
+        bool setBeta;
+        // 0 is returned if methods are successful otherwise 1 is returned
+        inline int solveNodeMappingLP(std::shared_ptr<SUBSTRATE_TYPE> substrate_network,
+                                      std::shared_ptr<VNR_TYPE> vnr);
+        inline void writeDataFile(std::shared_ptr<SUBSTRATE_TYPE> substrate_network,
+                                  std::shared_ptr<VNR_TYPE> vnr);
+        inline void cleanUp(std::shared_ptr<SUBSTRATE_TYPE> substrate_network);
+        inline Embedding_Result deterministicNodeMapping(
+            std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
+            std::vector<std::vector<double>> &xVec);
+        inline Embedding_Result randomizedNodeMapping(
+            std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
+            std::vector<std::vector<double>> &xVec);
+        //inline Embedding_Result parseLPSolution ();
+
+        enum { DETERMINISTIC, RANDOMIZED } nodeMappingType;
+
+        struct VYNodesReachabilityCondition {
+            bool operator()(const VYSubstrateNode<> &lhs, const VYVirtualNode<> &rhs,
+                            double maxD) const
             {
-                bool operator()(const VYSubstrateNode<>& lhs, const VYVirtualNode<>& rhs, double maxD) const
-                {
-                    if (IgnoreLocationConstrain())
-                        return (lhs.getCPU()>=rhs.getCPU());
-                    return (lhs.getCoordinates().distanceFrom(rhs.getCoordinates())<=maxD &&
-                            lhs.getCPU()>=rhs.getCPU());
-                }
-                bool operator()(const std::shared_ptr<const VYSubstrateNode<>> lhs, const std::shared_ptr<const VYVirtualNode<>> rhs, double maxD) const
-                {
-                    if (IgnoreLocationConstrain())
-                        return (lhs->getCPU()>=rhs->getCPU());
-                    return (lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
-                            lhs->getCPU()>=rhs->getCPU());
-                }
-            };
+                if (IgnoreLocationConstrain())
+                    return (lhs.getCPU() >= rhs.getCPU());
+                return (lhs.getCoordinates().distanceFrom(rhs.getCoordinates()) <= maxD &&
+                        lhs.getCPU() >= rhs.getCPU());
+            }
+            bool operator()(const std::shared_ptr<const VYSubstrateNode<>> lhs,
+                            const std::shared_ptr<const VYVirtualNode<>> rhs, double maxD) const
+            {
+                if (IgnoreLocationConstrain())
+                    return (lhs->getCPU() >= rhs->getCPU());
+                return (lhs->getCoordinates().distanceFrom(rhs->getCoordinates()) <= maxD &&
+                        lhs->getCPU() >= rhs->getCPU());
+            }
         };
-    }
-}
+    };
+}  // namespace vineyard
+}  // namespace vne
 
 #endif

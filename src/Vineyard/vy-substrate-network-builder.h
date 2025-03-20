@@ -29,17 +29,21 @@
 #include "vy-substrate-node.h"
 #include "vy-substrate-link.h"
 
-namespace vne {
-    namespace vineyard {
-        template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>>
-        class VYSubstrateNetworkBuilder : public NetworkBuilder<Network<VYSubstrateNode<>, VYSubstrateLink<>>>
-        {
-        public:
-            VYSubstrateNetworkBuilder ();
-            virtual std::shared_ptr<Network<VYSubstrateNode<>, VYSubstrateLink<>>> getNetwork ();
-        private:
-            std::shared_ptr<Network<VYSubstrateNode<>, VYSubstrateLink<>>> _net;
-        };
-    }
-}
+namespace vne
+{
+namespace vineyard
+{
+    template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>>
+    class VYSubstrateNetworkBuilder
+        : public NetworkBuilder<Network<VYSubstrateNode<>, VYSubstrateLink<>>>
+    {
+       public:
+        VYSubstrateNetworkBuilder();
+        virtual std::shared_ptr<Network<VYSubstrateNode<>, VYSubstrateLink<>>> getNetwork();
+
+       private:
+        std::shared_ptr<Network<VYSubstrateNode<>, VYSubstrateLink<>>> _net;
+    };
+}  // namespace vineyard
+}  // namespace vne
 #endif /* defined(__vne_mcts__vy_substrate_network_builder__) */

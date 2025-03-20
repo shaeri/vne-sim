@@ -31,36 +31,30 @@
 ////////////////////////////////////////
 //
 // class ASModel
-// Base class for models that generate 
+// Base class for models that generate
 // AS-level topologies
 //
 ////////////////////////////////////////
 
-class ASModel : public Model {
+class ASModel : public Model
+{
+   public:
+    ~ASModel() {}
+    virtual Graph *Generate() { return (Graph *)NULL; }
+    void PlaceNodes(Graph *g);
+    void AssignBW(Graph *g);
 
- public:
-  
-  ~ASModel() {}
-  virtual Graph* Generate() { return (Graph*)NULL;} 
-  void PlaceNodes(Graph* g);
-  void AssignBW(Graph* g);
+    BWDistType GetBWDist() { return BWdist; }
+    void SetBWDist(BWDistType t) { BWdist = t; }
+    void SetBWMin(double bw) { BWmin = bw; }
+    void SetBWMax(double bw) { BWmax = bw; }
+    double GetBWMin() { return BWmin; }
+    double GetBWMax() { return BWmax; }
 
-  BWDistType GetBWDist() { return BWdist; }
-  void SetBWDist(BWDistType t) { BWdist = t; }
-  void SetBWMin(double bw) { BWmin = bw; }
-  void SetBWMax(double bw) { BWmax = bw; }
-  double GetBWMin() { return BWmin; }
-  double GetBWMax() { return BWmax; }
-
- private:
-
-  BWDistType BWdist;
-  double BWmin;
-  double BWmax;
-
+   private:
+    BWDistType BWdist;
+    double BWmin;
+    double BWmax;
 };
 
-
 #endif /* AS_MODEL_H */
-
-

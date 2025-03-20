@@ -32,64 +32,67 @@
 #include "network-builder.h"
 #include "config-manager.h"
 
-namespace vne {
-    template<typename,typename> class NodeEmbeddingAlgorithm;
+namespace vne
+{
+template <typename, typename>
+class NodeEmbeddingAlgorithm;
 
-    template<
-    typename ... SNODERES, template <typename ...> class SNODECLASS,
-    typename... SLINKRES, template <typename...> class SLINKCLASS,
-    typename ... VNODERES, template <typename ...> class VNODECLASS,
-    typename... VLINKRES, template <typename...> class VLINKCLASS,
-    template<typename> class VNRCLASS>
-    class NodeEmbeddingAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
-    VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>
-    {
-        static_assert (std::is_base_of<SubstrateNode<SNODERES...>, SNODECLASS<SNODERES...>>::value,
-                       "Template arguments are not correctly set.");
-        static_assert (std::is_base_of<VirtualNode<VNODERES...>, VNODECLASS<VNODERES...>>::value,
-                       "Template arguments are not correctly set.");
-        static_assert (std::is_base_of<SubstrateLink<SLINKRES...>, SLINKCLASS<SLINKRES...>>::value,
-                       "Template arguments are not correctly set.");
-        static_assert (std::is_base_of<VirtualLink<VLINKRES...>, VLINKCLASS<VLINKRES...>>::value,
-                       "Template arguments are not correctly set.");
-        static_assert (std::is_base_of<VirtualNetworkRequest<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>,
-                       VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::value, "Template arguments are not correctly set.");
+template <typename... SNODERES, template <typename...> class SNODECLASS, typename... SLINKRES,
+          template <typename...> class SLINKCLASS, typename... VNODERES,
+          template <typename...> class VNODECLASS, typename... VLINKRES,
+          template <typename...> class VLINKCLASS, template <typename> class VNRCLASS>
+class NodeEmbeddingAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
+                             VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>
+{
+    static_assert(std::is_base_of<SubstrateNode<SNODERES...>, SNODECLASS<SNODERES...>>::value,
+                  "Template arguments are not correctly set.");
+    static_assert(std::is_base_of<VirtualNode<VNODERES...>, VNODECLASS<VNODERES...>>::value,
+                  "Template arguments are not correctly set.");
+    static_assert(std::is_base_of<SubstrateLink<SLINKRES...>, SLINKCLASS<SLINKRES...>>::value,
+                  "Template arguments are not correctly set.");
+    static_assert(std::is_base_of<VirtualLink<VLINKRES...>, VLINKCLASS<VLINKRES...>>::value,
+                  "Template arguments are not correctly set.");
+    static_assert(
+        std::is_base_of<
+            VirtualNetworkRequest<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>,
+            VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::value,
+        "Template arguments are not correctly set.");
 
-    public:
-        const static bool IgnoreLocationConstrain();
+   public:
+    const static bool IgnoreLocationConstrain();
 
-        typedef VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>> VNR_TYPE;
-        typedef Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>> SUBSTRATE_TYPE;
+    typedef VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>> VNR_TYPE;
+    typedef Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>> SUBSTRATE_TYPE;
 
-        virtual Embedding_Result embeddVNRNodes (std::shared_ptr<SUBSTRATE_TYPE> substrate_net, std::shared_ptr<VNR_TYPE> vnr) = 0;
+    virtual Embedding_Result embeddVNRNodes(std::shared_ptr<SUBSTRATE_TYPE> substrate_net,
+                                            std::shared_ptr<VNR_TYPE> vnr) = 0;
 
-    protected:
-        NodeEmbeddingAlgorithm () {};
-	static int ignoreLocationConstrain;
-    };
+   protected:
+    NodeEmbeddingAlgorithm() {};
+    static int ignoreLocationConstrain;
+};
 
-    template<
-    typename ... SNODERES, template <typename ...> class SNODECLASS,
-    typename... SLINKRES, template <typename...> class SLINKCLASS,
-    typename ... VNODERES, template <typename ...> class VNODECLASS,
-    typename... VLINKRES, template <typename...> class VLINKCLASS,
-    template<typename> class VNRCLASS>
-    int NodeEmbeddingAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
-    VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::ignoreLocationConstrain = -1;
+template <typename... SNODERES, template <typename...> class SNODECLASS, typename... SLINKRES,
+          template <typename...> class SLINKCLASS, typename... VNODERES,
+          template <typename...> class VNODECLASS, typename... VLINKRES,
+          template <typename...> class VLINKCLASS, template <typename> class VNRCLASS>
+int NodeEmbeddingAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
+                           VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::
+    ignoreLocationConstrain = -1;
 
-    template<
-    typename ... SNODERES, template <typename ...> class SNODECLASS,
-    typename... SLINKRES, template <typename...> class SLINKCLASS,
-    typename ... VNODERES, template <typename ...> class VNODECLASS,
-    typename... VLINKRES, template <typename...> class VLINKCLASS,
-    template<typename> class VNRCLASS>
-    const bool NodeEmbeddingAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
+template <typename... SNODERES, template <typename...> class SNODECLASS, typename... SLINKRES,
+          template <typename...> class SLINKCLASS, typename... VNODERES,
+          template <typename...> class VNODECLASS, typename... VLINKRES,
+          template <typename...> class VLINKCLASS, template <typename> class VNRCLASS>
+const bool NodeEmbeddingAlgorithm<
+    Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
     VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::IgnoreLocationConstrain()
-    {
-	   if (ignoreLocationConstrain == -1)
-	     ignoreLocationConstrain  = (int) ConfigManager::Instance()->getConfig<bool>("core", "ignoreLocationConstrain");
-           return (bool) ignoreLocationConstrain;
-    }
+{
+    if (ignoreLocationConstrain == -1)
+        ignoreLocationConstrain = (int)ConfigManager::Instance()->getConfig<bool>(
+            "core", "ignoreLocationConstrain");
+    return (bool)ignoreLocationConstrain;
 }
+}  // namespace vne
 
 #endif

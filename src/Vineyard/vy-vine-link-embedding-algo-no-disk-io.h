@@ -33,48 +33,59 @@
 #include "Vineyard/vy-substrate-node.h"
 #include "Vineyard/vy-virtual-net-request.h"
 
-namespace vne {
-    namespace vineyard{
-        
-        template<typename = Network<VYSubstrateNode<>,VYSubstrateLink<>> ,
-        typename = VYVirtualNetRequest<>>
-        class VYVineLinkEmbeddingAlgoNoDiskIO :
-        public LinkEmbeddingAlgorithm <Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>
-        {
-        public:
-            VYVineLinkEmbeddingAlgoNoDiskIO ();
-            ~VYVineLinkEmbeddingAlgoNoDiskIO ();
-            virtual Embedding_Result  embeddVNRLinks (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr) override;
-            virtual Embedding_Result  embeddVNRLinksForIdSets (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr, const std::map<int,int>* nodeIdMap,
-                                                               std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap) override;
-            
-        private:
-            glp_prob* lp_problem;
-            
-            std::string MCFmodelFile;
-            std::string MCFdataFile;
-            
-            std::shared_ptr<const std::set<int>> substrateNodeIdSet;
-            std::shared_ptr<const std::set<int>> substrateLinkIdSet;
-            std::shared_ptr<const std::set<int>> virtualNodeIdSet;
-            std::shared_ptr<const std::set<int>> virtualLinkIdSet;
-            
-            std::vector <int> allNodeIds;
-            
-            bool setAlpha;
-            bool setBeta;
-            // 0 is returned if methods are successful otherwise 1 is returned
-            inline int solveLinkMappingLP (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr, const std::map<int,int>* nodeIdMap);
-            inline void prepareProblem (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
-                                       const std::map<int,int>* nodeIdMap);
-            
-            inline void cleanUp ();
-            //inline Embedding_Result parseLPSolution ();
-            inline Embedding_Result embeddLinks (
-                                                 std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
-                                                 const std::map<int,int>* nodeIdMap = nullptr,
-                                                 std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap = nullptr);
-        };
-    }
-}
+namespace vne
+{
+namespace vineyard
+{
+
+    template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+              typename = VYVirtualNetRequest<>>
+    class VYVineLinkEmbeddingAlgoNoDiskIO
+        : public LinkEmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                        VYVirtualNetRequest<>>
+    {
+       public:
+        VYVineLinkEmbeddingAlgoNoDiskIO();
+        ~VYVineLinkEmbeddingAlgoNoDiskIO();
+        virtual Embedding_Result embeddVNRLinks(std::shared_ptr<SUBSTRATE_TYPE> substrate_network,
+                                                std::shared_ptr<VNR_TYPE> vnr) override;
+        virtual Embedding_Result embeddVNRLinksForIdSets(
+            std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
+            const std::map<int, int> *nodeIdMap,
+            std::map<int, std::list<std::pair<int, std::shared_ptr<Resources<double>>>>> *linkMap)
+            override;
+
+       private:
+        glp_prob *lp_problem;
+
+        std::string MCFmodelFile;
+        std::string MCFdataFile;
+
+        std::shared_ptr<const std::set<int>> substrateNodeIdSet;
+        std::shared_ptr<const std::set<int>> substrateLinkIdSet;
+        std::shared_ptr<const std::set<int>> virtualNodeIdSet;
+        std::shared_ptr<const std::set<int>> virtualLinkIdSet;
+
+        std::vector<int> allNodeIds;
+
+        bool setAlpha;
+        bool setBeta;
+        // 0 is returned if methods are successful otherwise 1 is returned
+        inline int solveLinkMappingLP(std::shared_ptr<SUBSTRATE_TYPE> substrate_network,
+                                      std::shared_ptr<VNR_TYPE> vnr,
+                                      const std::map<int, int> *nodeIdMap);
+        inline void prepareProblem(std::shared_ptr<SUBSTRATE_TYPE> substrate_network,
+                                   std::shared_ptr<VNR_TYPE> vnr,
+                                   const std::map<int, int> *nodeIdMap);
+
+        inline void cleanUp();
+        //inline Embedding_Result parseLPSolution ();
+        inline Embedding_Result embeddLinks(
+            std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr,
+            const std::map<int, int> *nodeIdMap = nullptr,
+            std::map<int, std::list<std::pair<int, std::shared_ptr<Resources<double>>>>> *linkMap =
+                nullptr);
+    };
+}  // namespace vineyard
+}  // namespace vne
 #endif

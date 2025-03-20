@@ -26,7 +26,7 @@
 #define BU_MODEL_H
 #pragma interface
 
-#include "Model.h" 
+#include "Model.h"
 
 //////////////////////////////////////////////
 //
@@ -38,35 +38,34 @@
 
 class BottUpPar;
 
-class BottomUpHierModel : public Model {
-    
- public:
-    
-  BottomUpHierModel(BottUpPar* par);
-  Graph* Generate(); 
-  void GroupNodes(Graph* g);
-  void SetModel(Model* m, int i) { assert(m != NULL); models[i] = m; }
-  void RandomWalk(Graph* g, vector<Color>&, int last, int size, RandomVariable& U, int as, int& c);
-  void AssignBW(Graph* g);
-  int GetBWInterDist() { return BWInterdist; }
-  double GetBWInterMin() { return BWIntermin; }
-  double GetBWInterMax() { return BWIntermax; }
-  string ToString();
-    
- private:
-    
-  int nlevels;
-  int ASNodes;
-  vector<Model*> models;
-  GroupingType group;
-  AssignmentType at;
-  BWDistType BWInterdist;
-  double BWIntermin;
-  double BWIntermax;
+class BottomUpHierModel : public Model
+{
+   public:
+    BottomUpHierModel(BottUpPar *par);
+    Graph *Generate();
+    void GroupNodes(Graph *g);
+    void SetModel(Model *m, int i)
+    {
+        assert(m != NULL);
+        models[i] = m;
+    }
+    void RandomWalk(Graph *g, vector<Color> &, int last, int size, RandomVariable &U, int as,
+                    int &c);
+    void AssignBW(Graph *g);
+    int GetBWInterDist() { return BWInterdist; }
+    double GetBWInterMin() { return BWIntermin; }
+    double GetBWInterMax() { return BWIntermax; }
+    string ToString();
 
+   private:
+    int nlevels;
+    int ASNodes;
+    vector<Model *> models;
+    GroupingType group;
+    AssignmentType at;
+    BWDistType BWInterdist;
+    double BWIntermin;
+    double BWIntermax;
 };
 
-
 #endif /* MODEL_H */
-
-

@@ -42,6 +42,3 @@
 #include "Topology.h"
 
 #endif /* BRITE_H */
-
-
-

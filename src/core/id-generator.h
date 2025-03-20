@@ -34,21 +34,22 @@ namespace vne
 //Singleton class
 class IdGenerator
 {
-public:
+   public:
     static std::shared_ptr<IdGenerator> Instance();
-    static void Destroy ();
-	
-	virtual ~IdGenerator();
-	template<typename T>
-	int getId(T *obj);
-	template<typename T>
-	int peekId();
-	//template<typename T>
-	//static void resetTypeCounter(T obj);
-	//static void resetAllCounters();
-protected:
+    static void Destroy();
+
+    virtual ~IdGenerator();
+    template <typename T>
+    int getId(T *obj);
+    template <typename T>
+    int peekId();
+    //template<typename T>
+    //static void resetTypeCounter(T obj);
+    //static void resetAllCounters();
+   protected:
     IdGenerator();
-private:
+
+   private:
     static std::shared_ptr<IdGenerator> _instance;
     std::map<std::type_index, int> m_map;
 };
@@ -59,37 +60,31 @@ private:
  IdGenerator::~IdGenerator ()
  {
  }*/
-template<typename T>
+template <typename T>
 int IdGenerator::getId(T *obj)
 {
-	int ret;
-	//const char* type_name = typeid(*obj).name();
-	auto it = m_map.find(typeid(*obj));
-	if (it == m_map.end())
-	{
-		m_map[typeid(*obj)] = 0;
-		ret = 0;
-	}
-	else
-	{
-		ret = ++it->second;
-	}
-	return ret;
+    int ret;
+    //const char* type_name = typeid(*obj).name();
+    auto it = m_map.find(typeid(*obj));
+    if (it == m_map.end()) {
+        m_map[typeid(*obj)] = 0;
+        ret = 0;
+    } else {
+        ret = ++it->second;
+    }
+    return ret;
 }
-template<typename T>
+template <typename T>
 int IdGenerator::peekId()
 {
-	int ret;
-	auto it = m_map.find(typeid(T));
-	if (it == m_map.end())
-	{
-		ret = 0;
-	}
-	else
-	{
-		ret = it->second + 1;
-	}
-	return ret;
+    int ret;
+    auto it = m_map.find(typeid(T));
+    if (it == m_map.end()) {
+        ret = 0;
+    } else {
+        ret = it->second + 1;
+    }
+    return ret;
 }
-}
+}  // namespace vne
 #endif

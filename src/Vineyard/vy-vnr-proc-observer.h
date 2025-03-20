@@ -31,25 +31,30 @@
 
 #include "core/vnr-process-observer.h"
 
+namespace vne
+{
+namespace vineyard
+{
+    template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+              typename = VYVirtualNetRequest<>>
+    class VYVNRProcObserver
+        : public VNRProcessObserver<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                    VYVirtualNetRequest<>>
+    {
+       public:
+        VYVNRProcObserver(std::shared_ptr<SUBSTRATE_TYPE> _sn);
+        virtual ~VYVNRProcObserver();
 
-namespace vne {
-    namespace vineyard {
-        template<typename = Network<VYSubstrateNode<>,VYSubstrateLink<>>, typename = VYVirtualNetRequest<>>
-        class VYVNRProcObserver : public VNRProcessObserver <Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>
-        {
-        public:
-            VYVNRProcObserver (std::shared_ptr<SUBSTRATE_TYPE> _sn);
-            virtual ~VYVNRProcObserver ();
-            
-            virtual void delta_int();
-            virtual void delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb);
-            virtual void delta_conf(const adevs::Bag<ADEVS_IO_TYPE>& xb);
-            virtual void output_func(adevs::Bag<ADEVS_IO_TYPE>& yb);
-            virtual double ta();
-        private:
-            inline void setStatistics (VYStatistics& stat, std::shared_ptr<VYVirtualNetRequest<>> req);
-        };
-    }
-}
+        virtual void delta_int();
+        virtual void delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE> &xb);
+        virtual void delta_conf(const adevs::Bag<ADEVS_IO_TYPE> &xb);
+        virtual void output_func(adevs::Bag<ADEVS_IO_TYPE> &yb);
+        virtual double ta();
+
+       private:
+        inline void setStatistics(VYStatistics &stat, std::shared_ptr<VYVirtualNetRequest<>> req);
+    };
+}  // namespace vineyard
+}  // namespace vne
 
 #endif /* defined(__vne_mcts__vy_vnr_proc_observer__) */

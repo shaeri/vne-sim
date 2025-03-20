@@ -28,7 +28,6 @@
 #ifndef MCTS_MCTS_
 #define MCTS_MCTS_
 
-
 #include "mcts/tree-node.h"
 
 #include "mcts/mcts-simulator.h"
@@ -38,81 +37,81 @@
 #include <mpi.h>
 #endif
 
-namespace vne{
-    namespace mcts{
+namespace vne
+{
+namespace mcts
+{
 
-        class MCTS {
-        public:
-            
-            struct Parameters
-            {
-                Parameters();
-                
-                int MaxDepth;
-                int NumSimulations;
-                /** How many nodes to add at each expansion step */
-                int ExpandCount;
-                bool AutoExploration;
-                /** One option is to set Exploration Constant c = R_{hi}-R_{lo}*/
-                double ExplorationConstant;
-                bool UseRave;
-                double RaveDiscount;
-                double RaveConstant;
-                /** When set, the baseline rollout algorithm is run. */
-                bool DisableTree;
-                bool UseSinglePlayerMCTS;
-                double SPMCTSConstant;
-                
-                // 0: Root Parallelization with synchronizaiton after each action
-                // 1: Root Parallelization without synch
-                int ParalleizationType;
-            };
-            
-            MCTS(std::shared_ptr<MCTSSimulator> sim);
-            ~MCTS();
-            
-            int selectAction();
-            bool update(int action, double reward);
-            
-            void UCTSearch();
-            void rolloutSearch();
-            
-            double rollout(std::shared_ptr<State> st);
-            
-            const MCTSSimulator::Status& getStatus() const { return status; }
-            
-            static void initFastUCB(double exploration);
-            
-        private:
-            
-            const std::shared_ptr<MCTSSimulator> simulator;
-            std::vector<int> history;
-            int treeDepth, peakTreeDepth;
-            Parameters params;
-            std::shared_ptr<TreeNode> root;
-            MCTSSimulator::Status status;
-            
-            void clearStatistics();
-            MCTSStatistics statTreeDepth;
-            MCTSStatistics statRolloutDepth;
-            MCTSStatistics statTotalReward;
-            
-            int greedyUCB(std::shared_ptr<TreeNode> node, bool ucb) const;
-            int selectRandom() const;
-            double simulateNode(std::shared_ptr<TreeNode> node);
-            void addRave(std::shared_ptr<TreeNode> node, double totalReward);
-            std::shared_ptr<TreeNode> expandNode(const std::shared_ptr<State> state);
-            
-            // Fast lookup table for UCB
-            static const int UCB_N = 10000, UCB_n = 100;
-            static double UCB[UCB_N][UCB_n];
-            static bool initialisedFastUCB;
-            
-            double fastUCB(int N, int n, double logN) const;
+    class MCTS
+    {
+       public:
+        struct Parameters {
+            Parameters();
+
+            int MaxDepth;
+            int NumSimulations;
+            /** How many nodes to add at each expansion step */
+            int ExpandCount;
+            bool AutoExploration;
+            /** One option is to set Exploration Constant c = R_{hi}-R_{lo}*/
+            double ExplorationConstant;
+            bool UseRave;
+            double RaveDiscount;
+            double RaveConstant;
+            /** When set, the baseline rollout algorithm is run. */
+            bool DisableTree;
+            bool UseSinglePlayerMCTS;
+            double SPMCTSConstant;
+
+            // 0: Root Parallelization with synchronizaiton after each action
+            // 1: Root Parallelization without synch
+            int ParalleizationType;
         };
-    }
-}
+
+        MCTS(std::shared_ptr<MCTSSimulator> sim);
+        ~MCTS();
+
+        int selectAction();
+        bool update(int action, double reward);
+
+        void UCTSearch();
+        void rolloutSearch();
+
+        double rollout(std::shared_ptr<State> st);
+
+        const MCTSSimulator::Status &getStatus() const { return status; }
+
+        static void initFastUCB(double exploration);
+
+       private:
+        const std::shared_ptr<MCTSSimulator> simulator;
+        std::vector<int> history;
+        int treeDepth, peakTreeDepth;
+        Parameters params;
+        std::shared_ptr<TreeNode> root;
+        MCTSSimulator::Status status;
+
+        void clearStatistics();
+        MCTSStatistics statTreeDepth;
+        MCTSStatistics statRolloutDepth;
+        MCTSStatistics statTotalReward;
+
+        int greedyUCB(std::shared_ptr<TreeNode> node, bool ucb) const;
+        int selectRandom() const;
+        double simulateNode(std::shared_ptr<TreeNode> node);
+        void addRave(std::shared_ptr<TreeNode> node, double totalReward);
+        std::shared_ptr<TreeNode> expandNode(const std::shared_ptr<State> state);
+
+        // Fast lookup table for UCB
+        static const int UCB_N = 10000, UCB_n = 100;
+        static double UCB[UCB_N][UCB_n];
+        static bool initialisedFastUCB;
+
+        double fastUCB(int N, int n, double logN) const;
+    };
+}  // namespace mcts
+}  // namespace vne
 #if ENABLE_MPI
-void sumFunction (const void* input, void* inoutput, int len, const MPI::Datatype& datatype);
+void sumFunction(const void *input, void *inoutput, int len, const MPI::Datatype &datatype);
 #endif
 #endif

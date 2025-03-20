@@ -38,46 +38,45 @@
 
 class TopDownPar;
 
-class TopDownHierModel : public Model {
+class TopDownHierModel : public Model
+{
+   public:
+    TopDownHierModel(TopDownPar *par);
 
- public:
+    int GetK() { return k; }
+    int GetLevels() { return nlevels; }
+    void SetModel(Model *m, int i)
+    {
+        assert(m != NULL);
+        models[i] = m;
+    }
+    EdgeConnType GetEdgeConnType() { return edge_conn_type; }
+    Graph *Generate();
+    Graph *FlattenGraph(Graph *g);
+    void InterConnectBorders(Graph *g, Graph *flat_g);
+    int GetFlatRandomNode(int as, Graph *g, Graph *flat_g, vector<int> &p, RandomVariable &U);
+    int GetFlatSmallest(int, Graph *, Graph *, vector<int> &p);
+    int GetFlatSmallestNoLeaf(int, Graph *, Graph *, vector<int> &p);
+    int GetFlatSmallestK(int ASid, Graph *g, Graph *flat_g, vector<int> &p);
+    int GetBWInterDist() { return BWInterdist; }
+    double GetBWInterMin() { return BWIntermin; }
+    double GetBWInterMax() { return BWIntermax; }
+    int GetBWIntraDist() { return BWIntradist; }
+    double GetBWIntraMin() { return BWIntramin; }
+    double GetBWIntraMax() { return BWIntramax; }
+    string ToString();
 
-  TopDownHierModel(TopDownPar* par);
-
-  int GetK() { return k; }
-  int GetLevels() { return nlevels; }
-  void SetModel(Model* m, int i) { assert(m != NULL); models[i] = m; }
-  EdgeConnType GetEdgeConnType() { return edge_conn_type; }
-  Graph* Generate(); 
-  Graph* FlattenGraph(Graph* g);
-  void InterConnectBorders(Graph* g, Graph* flat_g);
-  int GetFlatRandomNode(int as, Graph* g, Graph* flat_g, vector<int>& p, RandomVariable& U);
-  int GetFlatSmallest(int, Graph*, Graph*, vector<int>& p); 
-  int GetFlatSmallestNoLeaf(int, Graph*, Graph*, vector<int>& p);
-  int GetFlatSmallestK(int ASid, Graph* g, Graph* flat_g, vector<int>& p);
-  int GetBWInterDist() { return BWInterdist; }
-  double GetBWInterMin() { return BWIntermin; }
-  double GetBWInterMax() { return BWIntermax; }
-  int GetBWIntraDist() { return BWIntradist; }
-  double GetBWIntraMin() { return BWIntramin; }
-  double GetBWIntraMax() { return BWIntramax; }
-  string ToString();
-
- private:
-    
-  int nlevels;
-  vector<Model*> models;
-  int k;
-  EdgeConnType edge_conn_type;
-  BWDistType BWInterdist;
-  double BWIntermin;
-  double BWIntermax;
-  BWDistType BWIntradist;
-  double BWIntramin;
-  double BWIntramax;
-  
+   private:
+    int nlevels;
+    vector<Model *> models;
+    int k;
+    EdgeConnType edge_conn_type;
+    BWDistType BWInterdist;
+    double BWIntermin;
+    double BWIntermax;
+    BWDistType BWIntradist;
+    double BWIntramin;
+    double BWIntramax;
 };
 
 #endif /* TD_MODEL_H */
-
-

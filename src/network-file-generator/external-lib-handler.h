@@ -22,30 +22,32 @@
  *     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  **/
 
-#ifndef  NFG_EXTERNAL_LIB_HANDLER_
-#define  NFG_EXTERNAL_LIB_HANDLER_
-
+#ifndef NFG_EXTERNAL_LIB_HANDLER_
+#define NFG_EXTERNAL_LIB_HANDLER_
 
 #include "core/network.h"
 #include "core/config-manager.h"
 
+namespace vne
+{
+namespace nfg
+{
+    template <typename A, typename B>
+    class ExternalLibHandler
+    {
+       public:
+        vne::ConfigType &getProperties() { return pt; };
+        virtual std::shared_ptr<Network<A, B>> getNetwork(
+            Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2,
+            double cpu_param3, Distribution bw_dist, double bw_param1, double bw_param2,
+            double bw_param3, Distribution delay_dist, double delay_param1, double delay_param2,
+            double delay_param3) = 0;
+        virtual std::string getPreferredFileName() = 0;
 
-namespace vne{
-    namespace nfg {
-      template<typename A, typename B>
-      class ExternalLibHandler
-      {
-      public:
-          vne::ConfigType& getProperties () {return pt;};
-          virtual std::shared_ptr<Network<A, B>> getNetwork
-            (Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-                    Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                    Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3) = 0;
-          virtual std::string getPreferredFileName () = 0;
-      protected:
-          vne::ConfigType pt;
-          ExternalLibHandler () {};
-      };
-    }
-}
+       protected:
+        vne::ConfigType pt;
+        ExternalLibHandler() {};
+    };
+}  // namespace nfg
+}  // namespace vne
 #endif

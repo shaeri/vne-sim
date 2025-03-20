@@ -26,167 +26,149 @@
 
 #include "Graph.h"
 
-Graph::Graph(int n) : nodes(n), adjList(n), incList(n) {
-
-  assert(n > 0);
-  numNodes = n;
-  numEdges = 0;
-
-}
-
-
-void Graph::AddNode(Node* node, int index)
+Graph::Graph(int n) : nodes(n), adjList(n), incList(n)
 {
-
-  assert(index >= 0 && index < numNodes); 
-
-  try {
-
-    nodes[index] = node;
-    
-  }
-
-  catch (bad_alloc) {
-
-    cout << "Graph::AddNode(): could not allocate node...\n" << flush;
-    exit(0);
-  
-  }
+    assert(n > 0);
+    numNodes = n;
+    numEdges = 0;
 }
 
-void Graph::AddEdge(Edge *edge) {
+void Graph::AddNode(Node *node, int index)
+{
+    assert(index >= 0 && index < numNodes);
 
-  assert(edge != NULL);
-  edges.insert(edges.end(), edge);
-  numEdges++;
+    try {
+        nodes[index] = node;
 
-  /* SPRINT */
-  edge->GetSrc()->AddIncEdge(edge);
-  edge->GetDst()->AddIncEdge(edge);
+    }
 
+    catch (bad_alloc) {
+        cout << "Graph::AddNode(): could not allocate node...\n" << flush;
+        exit(0);
+    }
 }
 
-void Graph::AddAdjListNode(int n1, int n2) {
+void Graph::AddEdge(Edge *edge)
+{
+    assert(edge != NULL);
+    edges.insert(edges.end(), edge);
+    numEdges++;
 
-  adjList[n1].insert(adjList[n1].begin(), n2);
-
+    /* SPRINT */
+    edge->GetSrc()->AddIncEdge(edge);
+    edge->GetDst()->AddIncEdge(edge);
 }
 
-void Graph::AddIncListNode(Edge* edge) {
-
-  assert(edge != NULL);
-  int n1 = edge->GetSrc()->GetId(); 
-  int n2 = edge->GetDst()->GetId(); 
-
-  incList[n1].insert(incList[n1].begin(), edge);
-  incList[n2].insert(incList[n2].begin(), edge);
-
+void Graph::AddAdjListNode(int n1, int n2)
+{
+    adjList[n1].insert(adjList[n1].begin(), n2);
 }
 
-Node* Graph::GetNodePtr(int index) {
+void Graph::AddIncListNode(Edge *edge)
+{
+    assert(edge != NULL);
+    int n1 = edge->GetSrc()->GetId();
+    int n2 = edge->GetDst()->GetId();
 
-  assert(index >= 0 && index < numNodes);
-  return nodes[index];
+    incList[n1].insert(incList[n1].begin(), edge);
+    incList[n2].insert(incList[n2].begin(), edge);
+}
 
+Node *Graph::GetNodePtr(int index)
+{
+    assert(index >= 0 && index < numNodes);
+    return nodes[index];
 };
 
-int Graph::GetNumNodes() { 
-
-  return numNodes; 
-
+int Graph::GetNumNodes()
+{
+    return numNodes;
 }
 
-int Graph::GetNumEdges() { 
-
-  return numEdges; 
-
+int Graph::GetNumEdges()
+{
+    return numEdges;
 }
 
-void Graph::SetNumNodes(int n) {
-    
+void Graph::SetNumNodes(int n)
+{
     assert(n > 0);
-    numNodes = n; 
-
+    numNodes = n;
 }
 
-bool Graph::AdjListFind(int n1, int n2) {
-
-  list<int>::iterator li;
-  for (li = adjList[n1].begin(); li != adjList[n1].end(); li++) {
-    if (*li == n2) {
-      return 1;
+bool Graph::AdjListFind(int n1, int n2)
+{
+    list<int>::iterator li;
+    for (li = adjList[n1].begin(); li != adjList[n1].end(); li++) {
+        if (*li == n2) {
+            return 1;
+        }
     }
-  }
-  
-  return 0;
 
+    return 0;
 }
 
-void Graph::DFS(vector<Color>& color, vector<int>& pi, int u) {
+void Graph::DFS(vector<Color> &color, vector<int> &pi, int u)
+{
+    int v;
 
-  int v;
+    color[u] = GRAY;
+    list<int>::iterator li;
 
-  color[u] = GRAY;
-  list<int>::iterator li;
-
-  for (li = adjList[u].begin(); li != adjList[u].end(); li++) {
-    v = *li;
-    if (color[v] == WHITE) {
-      pi[v] = u;
-      DFS(color, pi, v);
+    for (li = adjList[u].begin(); li != adjList[u].end(); li++) {
+        v = *li;
+        if (color[v] == WHITE) {
+            pi[v] = u;
+            DFS(color, pi, v);
+        }
     }
-  }
 
-  color[u] = BLACK;
-
-}
-  
-void Graph::RemoveEdge(int src, int dst) {
-
-  /* Make sure edge exists */
-  assert(AdjListFind(src,dst));
-
-  /* Remove dst from src's adjacency list */
-  list<int>::iterator adjl;
-  for (adjl = adjList[src].begin(); adjl != adjList[src].end(); adjl++) {
-    if (*adjl == dst) break;
-  }
-
-  adjList[src].remove(*adjl);
-
-  /* Remove edge from list of Edges */
-  list<Edge*>::iterator edgel;
-  for (edgel = edges.begin(); edgel != edges.end(); edgel++) {
-    if (((*edgel)->GetSrc()->GetId() == src) &&
-	((*edgel)->GetDst()->GetId() == dst)) break;
-  }
-
-  edges.remove(*edgel);
-
-  /* Remove edge (src,dst) or (dst,src) from incidency list of src */
-  list<Edge*>::iterator incl;
-  for (incl = incList[src].begin(); incl != incList[src].end(); incl++) {
-    if ((((*incl)->GetSrc()->GetId() == src) && ((*incl)->GetDst()->GetId() == dst)) ||
-	(((*incl)->GetSrc()->GetId() == dst) && ((*incl)->GetDst()->GetId() == src)))
-      break;
-  }
-  
-  incList[src].remove(*incl);
-
-  /* Remove edge (src,dst) or (dst,src) from incidency list of dst */
-  for (incl = incList[dst].begin(); incl != incList[dst].end(); incl++) {
-    if ((((*incl)->GetSrc()->GetId() == src) && ((*incl)->GetDst()->GetId() == dst)) ||
-	(((*incl)->GetSrc()->GetId() == dst) && ((*incl)->GetDst()->GetId() == src)))
-      break;
-  }
-
-  incList[dst].remove(*incl);
-
-  /* Decrease node degrees of src and dst */
-  nodes[src]->SetInDegree(nodes[src]->GetInDegree() - 1);
-  nodes[dst]->SetOutDegree(nodes[dst]->GetOutDegree() - 1);
-
+    color[u] = BLACK;
 }
 
+void Graph::RemoveEdge(int src, int dst)
+{
+    /* Make sure edge exists */
+    assert(AdjListFind(src, dst));
 
+    /* Remove dst from src's adjacency list */
+    list<int>::iterator adjl;
+    for (adjl = adjList[src].begin(); adjl != adjList[src].end(); adjl++) {
+        if (*adjl == dst)
+            break;
+    }
 
+    adjList[src].remove(*adjl);
+
+    /* Remove edge from list of Edges */
+    list<Edge *>::iterator edgel;
+    for (edgel = edges.begin(); edgel != edges.end(); edgel++) {
+        if (((*edgel)->GetSrc()->GetId() == src) && ((*edgel)->GetDst()->GetId() == dst))
+            break;
+    }
+
+    edges.remove(*edgel);
+
+    /* Remove edge (src,dst) or (dst,src) from incidency list of src */
+    list<Edge *>::iterator incl;
+    for (incl = incList[src].begin(); incl != incList[src].end(); incl++) {
+        if ((((*incl)->GetSrc()->GetId() == src) && ((*incl)->GetDst()->GetId() == dst)) ||
+            (((*incl)->GetSrc()->GetId() == dst) && ((*incl)->GetDst()->GetId() == src)))
+            break;
+    }
+
+    incList[src].remove(*incl);
+
+    /* Remove edge (src,dst) or (dst,src) from incidency list of dst */
+    for (incl = incList[dst].begin(); incl != incList[dst].end(); incl++) {
+        if ((((*incl)->GetSrc()->GetId() == src) && ((*incl)->GetDst()->GetId() == dst)) ||
+            (((*incl)->GetSrc()->GetId() == dst) && ((*incl)->GetDst()->GetId() == src)))
+            break;
+    }
+
+    incList[dst].remove(*incl);
+
+    /* Decrease node degrees of src and dst */
+    nodes[src]->SetInDegree(nodes[src]->GetInDegree() - 1);
+    nodes[dst]->SetOutDegree(nodes[dst]->GetOutDegree() - 1);
+}

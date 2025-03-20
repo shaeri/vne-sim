@@ -27,37 +27,31 @@
 
 #include "config-manager.h"
 
-namespace vne {
-    std::shared_ptr<ConfigManager> ConfigManager::_instance = nullptr;
-    std::shared_ptr<ConfigManager> ConfigManager::Instance ()
-    {
-        if (_instance==nullptr) {
-            _instance = std::shared_ptr<ConfigManager> (new ConfigManager);
-        }
-        return _instance;
+namespace vne
+{
+std::shared_ptr<ConfigManager> ConfigManager::_instance = nullptr;
+std::shared_ptr<ConfigManager> ConfigManager::Instance()
+{
+    if (_instance == nullptr) {
+        _instance = std::shared_ptr<ConfigManager>(new ConfigManager);
     }
-    void
-    ConfigManager::Destroy()
-    {
-    	if (_instance==nullptr)
-    		return;
-    	_instance.reset();
-    	_instance = nullptr;
-    	return;
-    }
-    ConfigManager::ConfigManager () :
-    		lock_configs (false),
-            _pt(toml::parse(vne::config_path))
-    {}
-    ConfigManager::~ConfigManager()
-    {
-    }
-    void
-    ConfigManager::saveConfigFile()
-    {
-        std::ofstream conf;
-        conf.open(vne::config_path);
-        conf << toml::format(_pt);
-        conf.close();
-    }
+    return _instance;
 }
+void ConfigManager::Destroy()
+{
+    if (_instance == nullptr)
+        return;
+    _instance.reset();
+    _instance = nullptr;
+    return;
+}
+ConfigManager::ConfigManager() : lock_configs(false), _pt(toml::parse(vne::config_path)) {}
+ConfigManager::~ConfigManager() {}
+void ConfigManager::saveConfigFile()
+{
+    std::ofstream conf;
+    conf.open(vne::config_path);
+    conf << toml::format(_pt);
+    conf.close();
+}
+}  // namespace vne

@@ -24,31 +24,38 @@
 
 #include "mcvne-simulator.h"
 
-namespace vne {
-    namespace mcvne {
-        template<>
-        MCVNESimulator<>::MCVNESimulator(std::shared_ptr<SUBSTRATE_TYPE> subs_net, std::shared_ptr<VNR_TYPE> vnr,
-                                    std::shared_ptr<LinkEmbeddingAlgorithm <SUBSTRATE_TYPE,VNR_TYPE>> _link_embedder)
-        : VNEMCTSSimulator<Network<VYSubstrateNode<>, VYSubstrateLink<> >, VYVirtualNetRequest<> >(subs_net,vnr,_link_embedder)
-        {
-        }
-        
-        template<>
-        MCVNESimulator<>::~MCVNESimulator()
-        {
-        }
-        
-        template<>
-        std::shared_ptr<std::set<int>>
-        MCVNESimulator<>::getValidSubstrateNodeIdSetForVNNodeId (int vn_id, std::shared_ptr<std::set<int>> used_sn_ids) const
-        {
-            double distance = vnr->getMaxDistance();
-            if (link_embedder->getType() == Link_Embedding_Algo_Types::WITH_PATH_SPLITTING)
-                return substrate_net->getNodesIDsWithConditions<ReachabilityConditionWithPathSpliting> (vnr->getVN()->getNode(vn_id), vnr->getVN()->getLinksForNodeId(vn_id), distance, used_sn_ids);
-            return substrate_net->getNodesIDsWithConditions<ReachabilityConditionNoPathSpliting> (vnr->getVN()->getNode(vn_id), vnr->getVN()->getLinksForNodeId(vn_id), distance, used_sn_ids);
-            
-        }
- /*
+namespace vne
+{
+namespace mcvne
+{
+    template <>
+    MCVNESimulator<>::MCVNESimulator(
+        std::shared_ptr<SUBSTRATE_TYPE> subs_net, std::shared_ptr<VNR_TYPE> vnr,
+        std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedder)
+        : VNEMCTSSimulator<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>(
+              subs_net, vnr, _link_embedder)
+    {
+    }
+
+    template <>
+    MCVNESimulator<>::~MCVNESimulator()
+    {
+    }
+
+    template <>
+    std::shared_ptr<std::set<int>> MCVNESimulator<>::getValidSubstrateNodeIdSetForVNNodeId(
+        int vn_id, std::shared_ptr<std::set<int>> used_sn_ids) const
+    {
+        double distance = vnr->getMaxDistance();
+        if (link_embedder->getType() == Link_Embedding_Algo_Types::WITH_PATH_SPLITTING)
+            return substrate_net->getNodesIDsWithConditions<ReachabilityConditionWithPathSpliting>(
+                vnr->getVN()->getNode(vn_id), vnr->getVN()->getLinksForNodeId(vn_id), distance,
+                used_sn_ids);
+        return substrate_net->getNodesIDsWithConditions<ReachabilityConditionNoPathSpliting>(
+            vnr->getVN()->getNode(vn_id), vnr->getVN()->getLinksForNodeId(vn_id), distance,
+            used_sn_ids);
+    }
+    /*
         template<>
         double
         MCVNESimulator<>::calculateImmediateReward (std::shared_ptr<VNENMState> st, int action) const
@@ -92,54 +99,53 @@ namespace vne {
             return -finalReward;
         }
         */
-        template<>
-		double
-		MCVNESimulator<>::calculateImmediateReward (std::shared_ptr<VNENMState> st, int action) const
-		{
-        	return 0;
-		}
-
-		template<>
-		double
-		MCVNESimulator<>::calculateFinalReward (std::shared_ptr<VNENMState> st,
-		const std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap) const
-		{
-
-			double revenue = 0.0;
-			const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> vnr_node_vec = vnr->getVN()->getAllNodes();
-			const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualLink<>>>> vnr_link_vec = vnr->getVN()->getAllLinks();
-			for (int i = 0; i< vnr_node_vec->size(); i++)
-			{
-				revenue += vnr_node_vec->at(i)->getCPU();
-			}
-			for (int i = 0; i< vnr_link_vec->size(); i++)
-			{
-				revenue += vnr_link_vec->at(i)->getBandwidth();
-			}
-            BOOST_LOG_TRIVIAL(debug) <<  " ============= in calculateFinalReward ==================" << std::endl;
-			double cost = 0.0;
-            int count = 0;
-			for (auto it = linkMap->begin(); it != linkMap->end(); it++)
-			{
-				for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
-				{
-					double flow_bw = std::get<0>(*(it2->second));
-					cost+= flow_bw;
-                    BOOST_LOG_TRIVIAL(debug) << "vnr link ID: " << count << " SUB BW: " << std::get<0>(*it2->second) <<
-                    " using substrate link ID: "<< it2->first <<std::endl;
-				}
-                count++;
-			}
-            BOOST_LOG_TRIVIAL(debug) << "total link cost: " <<  cost << std::endl;
-            
-			for (auto it = st->getNodeMap()->begin(); it != st->getNodeMap()->end(); it++)
-			{
-				double vn_cpu = vnr->getVN()->getNode(it->first)->getCPU();
-				cost += vn_cpu;
-			}
-            BOOST_LOG_TRIVIAL(debug) << "total cost: " << cost << std::endl;
-            BOOST_LOG_TRIVIAL(debug) << "total reward: " << revenue - cost << std::endl;
-			return (1000+revenue-cost);
-		}
+    template <>
+    double MCVNESimulator<>::calculateImmediateReward(std::shared_ptr<VNENMState> st,
+                                                      int action) const
+    {
+        return 0;
     }
-}
+
+    template <>
+    double MCVNESimulator<>::calculateFinalReward(
+        std::shared_ptr<VNENMState> st,
+        const std::map<int, std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>
+            *linkMap) const
+    {
+        double revenue = 0.0;
+        const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualNode<>>>> vnr_node_vec =
+            vnr->getVN()->getAllNodes();
+        const std::shared_ptr<std::vector<std::shared_ptr<VYVirtualLink<>>>> vnr_link_vec =
+            vnr->getVN()->getAllLinks();
+        for (int i = 0; i < vnr_node_vec->size(); i++) {
+            revenue += vnr_node_vec->at(i)->getCPU();
+        }
+        for (int i = 0; i < vnr_link_vec->size(); i++) {
+            revenue += vnr_link_vec->at(i)->getBandwidth();
+        }
+        BOOST_LOG_TRIVIAL(debug) << " ============= in calculateFinalReward =================="
+                                 << std::endl;
+        double cost = 0.0;
+        int count = 0;
+        for (auto it = linkMap->begin(); it != linkMap->end(); it++) {
+            for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+                double flow_bw = std::get<0>(*(it2->second));
+                cost += flow_bw;
+                BOOST_LOG_TRIVIAL(debug)
+                    << "vnr link ID: " << count << " SUB BW: " << std::get<0>(*it2->second)
+                    << " using substrate link ID: " << it2->first << std::endl;
+            }
+            count++;
+        }
+        BOOST_LOG_TRIVIAL(debug) << "total link cost: " << cost << std::endl;
+
+        for (auto it = st->getNodeMap()->begin(); it != st->getNodeMap()->end(); it++) {
+            double vn_cpu = vnr->getVN()->getNode(it->first)->getCPU();
+            cost += vn_cpu;
+        }
+        BOOST_LOG_TRIVIAL(debug) << "total cost: " << cost << std::endl;
+        BOOST_LOG_TRIVIAL(debug) << "total reward: " << revenue - cost << std::endl;
+        return (1000 + revenue - cost);
+    }
+}  // namespace mcvne
+}  // namespace vne

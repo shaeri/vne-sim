@@ -24,117 +24,127 @@
 
 #include "vy-vnr-embedding-proc.h"
 
-namespace vne {
-    namespace vineyard{
-        
-        template<>
-        VYVNREmbeddingProc<>::VYVNREmbeddingProc
-                        (std::shared_ptr<EmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>>embeddingAlgo)
-        : VNREmbeddingProcessor<SUBSTRATE_TYPE,VNR_TYPE>(embeddingAlgo)
-        {
-        }
-        template<>
-        VYVNREmbeddingProc<>::~VYVNREmbeddingProc()
-        {
-        }
-        template<>
-        double VYVNREmbeddingProc<>::ta()
-        {
-            /*if (!vnr_queue.empty() && !vnr_release_queue.empty())
+namespace vne
+{
+namespace vineyard
+{
+
+    template <>
+    VYVNREmbeddingProc<>::VYVNREmbeddingProc(
+        std::shared_ptr<EmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> embeddingAlgo)
+        : VNREmbeddingProcessor<SUBSTRATE_TYPE, VNR_TYPE>(embeddingAlgo)
+    {
+    }
+    template <>
+    VYVNREmbeddingProc<>::~VYVNREmbeddingProc()
+    {
+    }
+    template <>
+    double VYVNREmbeddingProc<>::ta()
+    {
+        /*if (!vnr_queue.empty() && !vnr_release_queue.empty())
                 return  std::min (vnr_embedding_queue.top()->getArrivalTime(), vnr_release_queue.top()->getDepartureTime());
             else if (vnr_embedding_queue.empty() && !vnr_release_queue.empty())
                 return vnr_release_queue.top()-> getDepartureTime();
             else if (!vnr_embedding_queue.empty() && vnr_release_queue.empty())
                 return vnr_embedding_queue.top()->getArrivalTime();
             else return DBL_MAX;*/
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: ta (): ";
-            if (vnr_queue.empty())
-                return DBL_MAX;
-            
-            BOOST_LOG_TRIVIAL(info) << "VNR ID: " << vnr_queue.top()->getId();
-            BOOST_LOG_TRIVIAL(info) << "Current time: " << time;
-            BOOST_LOG_TRIVIAL(info) << "Processing time: " << vnr_queue.top()->getProccessingTime();
-            BOOST_LOG_TRIVIAL(info) << "Arrival time: " << vnr_queue.top()->getArrivalTime();
-            BOOST_LOG_TRIVIAL(info) << "Queuing Time: " << vnr_queue.top()->getQueuingTime();
-            BOOST_LOG_TRIVIAL(info) << "Ta Returns: " << (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime() + vnr_queue.top()->getQueuingTime())-time;
-            BOOST_LOG_TRIVIAL(info) << "Processing queue size: " << vnr_queue.size();
-            
-            return (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime() + vnr_queue.top()->getQueuingTime())-time;
+        BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: ta (): ";
+        if (vnr_queue.empty())
+            return DBL_MAX;
+
+        BOOST_LOG_TRIVIAL(info) << "VNR ID: " << vnr_queue.top()->getId();
+        BOOST_LOG_TRIVIAL(info) << "Current time: " << time;
+        BOOST_LOG_TRIVIAL(info) << "Processing time: " << vnr_queue.top()->getProccessingTime();
+        BOOST_LOG_TRIVIAL(info) << "Arrival time: " << vnr_queue.top()->getArrivalTime();
+        BOOST_LOG_TRIVIAL(info) << "Queuing Time: " << vnr_queue.top()->getQueuingTime();
+        BOOST_LOG_TRIVIAL(info) << "Ta Returns: "
+                                << (vnr_queue.top()->getArrivalTime() +
+                                    vnr_queue.top()->getProccessingTime() +
+                                    vnr_queue.top()->getQueuingTime()) -
+                                       time;
+        BOOST_LOG_TRIVIAL(info) << "Processing queue size: " << vnr_queue.size();
+
+        return (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime() +
+                vnr_queue.top()->getQueuingTime()) -
+               time;
+    }
+
+    template <>
+    void VYVNREmbeddingProc<>::delta_int()
+    {
+        BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: delta_int()";
+        BOOST_LOG_TRIVIAL(info) << "Time advance: "
+                                << (vnr_queue.top()->getArrivalTime() +
+                                    vnr_queue.top()->getProccessingTime() +
+                                    vnr_queue.top()->getQueuingTime()) -
+                                       time;
+        time += (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime() +
+                 vnr_queue.top()->getQueuingTime()) -
+                time;
+        double queue_time = 0.0;
+        double prev_arriv_t = 0.0;
+        if (vnr_queue.size() > 1) {
+            queue_time = vnr_queue.top()->getQueuingTime() + vnr_queue.top()->getProccessingTime();
+            prev_arriv_t = vnr_queue.top()->getArrivalTime();
+            vnr_queue.pop();
+            vnr_queue.top()->setQueuingTime(queue_time -
+                                            (vnr_queue.top()->getArrivalTime() - prev_arriv_t));
+            assert(vnr_queue.top()->getQueuingTime() > 0);
+        } else
+            vnr_queue.pop();
+
+        BOOST_LOG_TRIVIAL(info) << "VNR ID: " << vnr_queue.top()->getId();
+        BOOST_LOG_TRIVIAL(info) << "VNR Queuing Time: " << vnr_queue.top()->getQueuingTime();
+    }
+
+    template <>
+    void VYVNREmbeddingProc<>::delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE> &xb)
+    {
+        BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC:  delta_ext(). e:" << e;
+        time += e;
+        BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC:  delta_ext(). time:" << time;
+        if (vnr_queue.size() > 0) {
         }
-        
-        template<>
-        void VYVNREmbeddingProc<>::delta_int()
-        {
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: delta_int()";
-            BOOST_LOG_TRIVIAL(info) << "Time advance: " << (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime()+ vnr_queue.top()->getQueuingTime())-time;
-            time += (vnr_queue.top()->getArrivalTime() + vnr_queue.top()->getProccessingTime()+ vnr_queue.top()->getQueuingTime())-time;
-            double queue_time = 0.0;
-            double prev_arriv_t = 0.0;
-            if (vnr_queue.size()>1)
-            {
-                queue_time = vnr_queue.top()->getQueuingTime() + vnr_queue.top()->getProccessingTime();
-                prev_arriv_t = vnr_queue.top()->getArrivalTime();
-                vnr_queue.pop();
-                vnr_queue.top()->setQueuingTime(queue_time - (vnr_queue.top()->getArrivalTime() - prev_arriv_t));
-                assert(vnr_queue.top()->getQueuingTime()>0);
-            }
-            else
-                vnr_queue.pop();
-            
-            BOOST_LOG_TRIVIAL(info) << "VNR ID: " << vnr_queue.top()->getId();
-            BOOST_LOG_TRIVIAL(info) << "VNR Queuing Time: " << vnr_queue.top()->getQueuingTime();
-        }
-        
-        template<>
-        void VYVNREmbeddingProc<>::delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb)
-        {
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC:  delta_ext(). e:"<< e;
-            time += e;
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC:  delta_ext(). time:"<< time;
-            if (vnr_queue.size()>0)
-            {
-            }
-            adevs::Bag<ADEVS_IO_TYPE>::const_iterator i = xb.begin();
-            for (; i != xb.end(); i++)
-            {
-                //statrt the chrono
-                start = std::chrono::system_clock::now();
-                this->embeddingAlgorithm->embeddVNR((*i).value);
-                //end the chrono
-                end = std::chrono::system_clock::now();
-                elapsed_seconds = end - start;
-                //Would be intersting to see various processing time distributions.
-                ((*i).value)->setActualProcessingTime(elapsed_seconds.count());
-                ((*i).value)->setProccessingTime(0);
-                // Copy the incoming vnr and place it at the back of the line.
-                vnr_queue.push((*i).value);
-            }
-        }
-        template<>
-        void VYVNREmbeddingProc<>::delta_conf(const adevs::Bag<ADEVS_IO_TYPE>& xb)
-        {
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: delta_conf()";
-            delta_int();
-            delta_ext(0.0,xb);
-        }
-        template<>
-        void VYVNREmbeddingProc<>::output_func(adevs::Bag<ADEVS_IO_TYPE>& yb)
-        {
-            BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func()";
-            PTR_TYPE leaving = vnr_queue.top ();
-            ADEVS_IO_TYPE y;
-            if (leaving->getVN()->getNumLinks() == leaving->getLinkMap()->size() &&
-                    leaving->getVN()->getNumNodes() == leaving->getNodeMap()->size())
-            {
-                y = ADEVS_IO_TYPE (depart_successful_embedding,leaving);
-                BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Successful Mapping ";
-            }
-            else
-            {
-                y = ADEVS_IO_TYPE (depart_unsuccessful_embedding,leaving);
-                BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Failed Mapping ";
-            }
-            yb.insert(y);
+        adevs::Bag<ADEVS_IO_TYPE>::const_iterator i = xb.begin();
+        for (; i != xb.end(); i++) {
+            //statrt the chrono
+            start = std::chrono::system_clock::now();
+            this->embeddingAlgorithm->embeddVNR((*i).value);
+            //end the chrono
+            end = std::chrono::system_clock::now();
+            elapsed_seconds = end - start;
+            //Would be intersting to see various processing time distributions.
+            ((*i).value)->setActualProcessingTime(elapsed_seconds.count());
+            ((*i).value)->setProccessingTime(0);
+            // Copy the incoming vnr and place it at the back of the line.
+            vnr_queue.push((*i).value);
         }
     }
-}
+    template <>
+    void VYVNREmbeddingProc<>::delta_conf(const adevs::Bag<ADEVS_IO_TYPE> &xb)
+    {
+        BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: delta_conf()";
+        delta_int();
+        delta_ext(0.0, xb);
+    }
+    template <>
+    void VYVNREmbeddingProc<>::output_func(adevs::Bag<ADEVS_IO_TYPE> &yb)
+    {
+        BOOST_LOG_TRIVIAL(info) << "VY-EMBEDDING-PROC: output_func()";
+        PTR_TYPE leaving = vnr_queue.top();
+        ADEVS_IO_TYPE y;
+        if (leaving->getVN()->getNumLinks() == leaving->getLinkMap()->size() &&
+            leaving->getVN()->getNumNodes() == leaving->getNodeMap()->size()) {
+            y = ADEVS_IO_TYPE(depart_successful_embedding, leaving);
+            BOOST_LOG_TRIVIAL(info)
+                << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Successful Mapping ";
+        } else {
+            y = ADEVS_IO_TYPE(depart_unsuccessful_embedding, leaving);
+            BOOST_LOG_TRIVIAL(info)
+                << "VY-EMBEDDING-PROC: output_func(): VNR leaving: Failed Mapping ";
+        }
+        yb.insert(y);
+    }
+}  // namespace vineyard
+}  // namespace vne

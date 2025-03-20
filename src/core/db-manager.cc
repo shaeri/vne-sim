@@ -24,33 +24,32 @@
 
 #include "db-manager.h"
 
-namespace vne {
-    std::shared_ptr<DBManager> DBManager::_instance = nullptr;
-    std::shared_ptr<DBManager> DBManager::Instance ()
-    {
-        if (_instance==nullptr) {
-            _instance = std::shared_ptr<DBManager> (new DBManager);
-        }
-        return _instance;
+namespace vne
+{
+std::shared_ptr<DBManager> DBManager::_instance = nullptr;
+std::shared_ptr<DBManager> DBManager::Instance()
+{
+    if (_instance == nullptr) {
+        _instance = std::shared_ptr<DBManager>(new DBManager);
     }
-    DBManager::DBManager ()
-    {
-    }
-    DBManager::~DBManager()
-    {
-    }
-    std::shared_ptr<hiberlite::Database> DBManager::createDB(std::string &dbName)
-    {
-        std::shared_ptr<hiberlite::Database> db (new hiberlite::Database(dbName));
-        int id = (int) dbMap.size();
-        dbIdNameMap[dbName] = id;
-        dbMap[id] = db;
-        return db;
-    }
-    std::shared_ptr<hiberlite::Database> DBManager::getDB (int dbId){
-        return dbMap[dbId];
-    }
-    std::shared_ptr<hiberlite::Database> DBManager::getDB (std::string &dbName){
-        return dbMap[dbIdNameMap[dbName]];
-    }
+    return _instance;
 }
+DBManager::DBManager() {}
+DBManager::~DBManager() {}
+std::shared_ptr<hiberlite::Database> DBManager::createDB(std::string &dbName)
+{
+    std::shared_ptr<hiberlite::Database> db(new hiberlite::Database(dbName));
+    int id = (int)dbMap.size();
+    dbIdNameMap[dbName] = id;
+    dbMap[id] = db;
+    return db;
+}
+std::shared_ptr<hiberlite::Database> DBManager::getDB(int dbId)
+{
+    return dbMap[dbId];
+}
+std::shared_ptr<hiberlite::Database> DBManager::getDB(std::string &dbName)
+{
+    return dbMap[dbIdNameMap[dbName]];
+}
+}  // namespace vne

@@ -26,50 +26,39 @@
 
 #include "RouterBarabasiAlbertModel.h"
 
-
-double RouterBarabasiAlbert::ProbFunc(Node* dst) {
-  
-  /* return interconnection probability */
-  assert(SumDj > 0);
-  return  dst->GetOutDegree() / (double)SumDj;
-  
+double RouterBarabasiAlbert::ProbFunc(Node *dst)
+{
+    /* return interconnection probability */
+    assert(SumDj > 0);
+    return dst->GetOutDegree() / (double)SumDj;
 }
 
-Graph* RouterBarabasiAlbert::Generate() {
-  
-  Graph* graph;
+Graph *RouterBarabasiAlbert::Generate()
+{
+    Graph *graph;
 
-  try {
-    
-    if (GetPlacementType() == P_HT) {
-      graph = new Graph((int)(size * 1.1));
-    }else {
-      graph = new Graph(size);
+    try {
+        if (GetPlacementType() == P_HT) {
+            graph = new Graph((int)(size * 1.1));
+        } else {
+            graph = new Graph(size);
+        }
+    } catch (bad_alloc) {
+        cerr << "RouterBarabasiAlbert::Generate(): Cannot create new  graph...\n" << flush;
+        exit(0);
     }
-  }
-  catch (bad_alloc) {
-    
-    cerr << "RouterBarabasiAlbert::Generate(): Cannot create new  graph...\n" << flush;
-    exit(0);
-    
-  }
-  
-  /* Place nodes into plane */
-  cout << "Placing nodes...\n" << flush;
-  PlaceNodes(graph);
-  
-  /* Build topology grasph using BarabasiAlbert */
-  cout << "Interconnecting nodes...\n" << flush;
-  InterconnectNodes(graph);
-  
-  /* Assign bandwidths to edges */
-  cout << "Assigning bandwidth...\n" << flush;
-  AssignBW(graph);
 
-  return graph;
-  
+    /* Place nodes into plane */
+    cout << "Placing nodes...\n" << flush;
+    PlaceNodes(graph);
+
+    /* Build topology grasph using BarabasiAlbert */
+    cout << "Interconnecting nodes...\n" << flush;
+    InterconnectNodes(graph);
+
+    /* Assign bandwidths to edges */
+    cout << "Assigning bandwidth...\n" << flush;
+    AssignBW(graph);
+
+    return graph;
 }
-
-
-
-

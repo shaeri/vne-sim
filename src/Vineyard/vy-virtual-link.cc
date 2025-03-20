@@ -25,58 +25,62 @@
 #include "vy-virtual-link.h"
 #include <fstream>
 
-namespace vne {
-    namespace vineyard {
-        template<>
-        VYVirtualLink<>::VYVirtualLink (double _bw, double _delay, int _from, int _to):
-            VirtualLink<double> (_bw, _from, _to),
-            pathLength (0),
-            pathDelay(0),
-            delay(_delay)
-        {
-        }
-        template<>
-        VYVirtualLink<>::~VYVirtualLink(){}
-        
-        template<>
-        void VYVirtualLink<>::addHostLink (SubstrateLink<double>* _l)
-        {
-            VirtualLink<double>::addHostLink(_l);
-            pathLength++;
-            pathDelay += dynamic_cast<VYSubstrateLink<>*>(_l)->getDelay();
-        }
-        template<>
-        void VYVirtualLink<>::addHostLink (SubstrateLink<double>* _l, std::shared_ptr<Resources<double>> _res)
-        {
-            VirtualLink<double>::addHostLink(_l,_res);
-            pathLength++;
-            pathDelay += dynamic_cast<VYSubstrateLink<>*>(_l)->getDelay();
-        }
-        template<>
-        void VYVirtualLink<>::removeHostLink (SubstrateLink<double>* _l)
-        {
-            VirtualLink<double>::removeHostLink(_l);
-            pathLength--;
-            pathDelay -= dynamic_cast<VYSubstrateLink<>*>(_l)->getDelay();
-        }
-        template<>
-        double VYVirtualLink<>::getBandwidth() const
-        {
-            return std::get<0>(this->resources);
-        }
-        template<>
-        double VYVirtualLink<>::getDelay() const
-        {
-            return delay;
-        }
-        template<>
-        void VYVirtualLink<>::writeLinkToFile (std::ofstream& ofstrm)
-        {
-            if (ofstrm.is_open()) {
-                ofstrm <<  node_from_local_id << " " << node_to_local_id << " " << getBandwidth() << " " << getDelay() << std::endl;
-            }
-            else
-                BOOST_LOG_TRIVIAL(error) << "VYVirtualLink<>::writeLinkToFile: VYThe file is not open for writing. " << std::endl;
-        }
+namespace vne
+{
+namespace vineyard
+{
+    template <>
+    VYVirtualLink<>::VYVirtualLink(double _bw, double _delay, int _from, int _to)
+        : VirtualLink<double>(_bw, _from, _to), pathLength(0), pathDelay(0), delay(_delay)
+    {
     }
-}
+    template <>
+    VYVirtualLink<>::~VYVirtualLink()
+    {
+    }
+
+    template <>
+    void VYVirtualLink<>::addHostLink(SubstrateLink<double> *_l)
+    {
+        VirtualLink<double>::addHostLink(_l);
+        pathLength++;
+        pathDelay += dynamic_cast<VYSubstrateLink<> *>(_l)->getDelay();
+    }
+    template <>
+    void VYVirtualLink<>::addHostLink(SubstrateLink<double> *_l,
+                                      std::shared_ptr<Resources<double>> _res)
+    {
+        VirtualLink<double>::addHostLink(_l, _res);
+        pathLength++;
+        pathDelay += dynamic_cast<VYSubstrateLink<> *>(_l)->getDelay();
+    }
+    template <>
+    void VYVirtualLink<>::removeHostLink(SubstrateLink<double> *_l)
+    {
+        VirtualLink<double>::removeHostLink(_l);
+        pathLength--;
+        pathDelay -= dynamic_cast<VYSubstrateLink<> *>(_l)->getDelay();
+    }
+    template <>
+    double VYVirtualLink<>::getBandwidth() const
+    {
+        return std::get<0>(this->resources);
+    }
+    template <>
+    double VYVirtualLink<>::getDelay() const
+    {
+        return delay;
+    }
+    template <>
+    void VYVirtualLink<>::writeLinkToFile(std::ofstream &ofstrm)
+    {
+        if (ofstrm.is_open()) {
+            ofstrm << node_from_local_id << " " << node_to_local_id << " " << getBandwidth() << " "
+                   << getDelay() << std::endl;
+        } else
+            BOOST_LOG_TRIVIAL(error)
+                << "VYVirtualLink<>::writeLinkToFile: VYThe file is not open for writing. "
+                << std::endl;
+    }
+}  // namespace vineyard
+}  // namespace vne

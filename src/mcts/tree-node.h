@@ -35,83 +35,78 @@
 
 #include <mcts/state.h>
 
-namespace vne{
-    namespace mcts{
-        template<class COUNT>
-        class Value
+namespace vne
+{
+namespace mcts
+{
+    template <class COUNT>
+    class Value
+    {
+       public:
+        void set(COUNT count, double value)
         {
-        public:
-            void set(COUNT count, double value)
-            {
-                Count = count;
-                Total = value * count;
-                //Total = value;
-                SumSquaredValue = count * value * value;
-            }
-            
-            void add(double totalReward)
-            {
-                Count += 1.0;
-                Total += totalReward;
-                //if (Total == 0)
-                //    Total = totalReward;
-                //else if (totalReward > Total)
-                //    Total = totalReward;
-                SumSquaredValue += totalReward * totalReward;
-            }
-            
-            void add(double totalReward, COUNT weight)
-            {
-                Count += weight;
-                Total += totalReward * weight;
-                SumSquaredValue += totalReward * totalReward * weight;
-            }
-            
-            double getValue() const
-            {
-                return Count == 0 ? Total : Total / Count;
-                //return Total;
-            }
-            
-            double getSumSquaredValue () const
-            {
-                return SumSquaredValue;
-            }
-            
-            COUNT getCount() const
-            {
-                return Count;
-            }
-            
-        private:
-            
-            COUNT Count;
-            double Total;
-            long double SumSquaredValue;
-        };
-        
-        class TreeNode {
-        public:
-            Value<int> value;
-            Value<double> AMAF;
-            
-            void setChildren(int count, double value);
-            std::shared_ptr<TreeNode> child(int c);
-            
-            const std::shared_ptr<State> getState () const;
-            
-            static int NumChildren;
-            
-            ~TreeNode();
-            TreeNode (std::shared_ptr<State> st);
-            
-        protected:
-            
-            TreeNode();
-            void Initialize();
-            std::shared_ptr<State> state;
-            std::vector<std::shared_ptr<TreeNode>> Children;
-        };
-    }
-}
+            Count = count;
+            Total = value * count;
+            //Total = value;
+            SumSquaredValue = count * value * value;
+        }
+
+        void add(double totalReward)
+        {
+            Count += 1.0;
+            Total += totalReward;
+            //if (Total == 0)
+            //    Total = totalReward;
+            //else if (totalReward > Total)
+            //    Total = totalReward;
+            SumSquaredValue += totalReward * totalReward;
+        }
+
+        void add(double totalReward, COUNT weight)
+        {
+            Count += weight;
+            Total += totalReward * weight;
+            SumSquaredValue += totalReward * totalReward * weight;
+        }
+
+        double getValue() const
+        {
+            return Count == 0 ? Total : Total / Count;
+            //return Total;
+        }
+
+        double getSumSquaredValue() const { return SumSquaredValue; }
+
+        COUNT getCount() const { return Count; }
+
+       private:
+        COUNT Count;
+        double Total;
+        long double SumSquaredValue;
+    };
+
+    class TreeNode
+    {
+       public:
+        Value<int> value;
+        Value<double> AMAF;
+
+        void setChildren(int count, double value);
+        std::shared_ptr<TreeNode> child(int c);
+
+        const std::shared_ptr<State> getState() const;
+
+        static int NumChildren;
+
+        ~TreeNode();
+        TreeNode(std::shared_ptr<State> st);
+
+       protected:
+        TreeNode();
+        void Initialize();
+        std::shared_ptr<State> state;
+        std::vector<std::shared_ptr<TreeNode>> Children;
+    };
+}  // namespace mcts
+}  // namespace vne
 #endif

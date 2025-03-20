@@ -26,26 +26,30 @@
 
 #include "substrate-node.h"
 
-namespace vne{
-
-template<typename...> class SubstrateNode;
-
-template<typename... NODERES>
-class VirtualNode: public Node<NODERES...>
+namespace vne
 {
-public:
-	//VirtualNode ();
-	VirtualNode (const Resources<NODERES...>& _res);
-    VirtualNode (const NODERES &... _res);
-	void setHostNode (SubstrateNode<NODERES...>* _n);
-	virtual ~VirtualNode();
-protected:
-    VirtualNode (const Resources<NODERES...>& _res, bool noid);
-    VirtualNode (const NODERES &... _args, bool noid);
-private:
-	typedef VirtualNode<NODERES...> this_t;
-	//the substrate node that is hosting the virtual node
-	SubstrateNode<NODERES...>* substrate_host_node;
+
+template <typename...>
+class SubstrateNode;
+
+template <typename... NODERES>
+class VirtualNode : public Node<NODERES...>
+{
+   public:
+    //VirtualNode ();
+    VirtualNode(const Resources<NODERES...> &_res);
+    VirtualNode(const NODERES &..._res);
+    void setHostNode(SubstrateNode<NODERES...> *_n);
+    virtual ~VirtualNode();
+
+   protected:
+    VirtualNode(const Resources<NODERES...> &_res, bool noid);
+    VirtualNode(const NODERES &..._args, bool noid);
+
+   private:
+    typedef VirtualNode<NODERES...> this_t;
+    //the substrate node that is hosting the virtual node
+    SubstrateNode<NODERES...> *substrate_host_node;
 };
 /*
 template<typename ... NODERES>
@@ -54,41 +58,41 @@ VirtualNode<NODERES...>::VirtualNode ()
 {
 }
 */
-template<typename ... NODERES>
-VirtualNode<NODERES...>::VirtualNode (const Resources<NODERES...>& _res)
-	: 	Node<NODERES...> (_res, Entity_t::virt)
+template <typename... NODERES>
+VirtualNode<NODERES...>::VirtualNode(const Resources<NODERES...> &_res)
+    : Node<NODERES...>(_res, Entity_t::virt)
 {
-	this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
+    this->id = vne::IdGenerator::Instance()->getId<this_t>(this);
 }
-template<typename ... NODERES>
-VirtualNode<NODERES...>::VirtualNode (const NODERES &... _res)
-	: 	Node<NODERES...> (_res..., Entity_t::virt)
+template <typename... NODERES>
+VirtualNode<NODERES...>::VirtualNode(const NODERES &..._res)
+    : Node<NODERES...>(_res..., Entity_t::virt)
 {
-	this->id  = vne::IdGenerator::Instance()->getId<this_t>(this);
+    this->id = vne::IdGenerator::Instance()->getId<this_t>(this);
 }
-template<typename ... NODERES>
-VirtualNode<NODERES...>::VirtualNode (const Resources<NODERES...>& _res, bool noid)
-: 	Node<NODERES...> (_res, Entity_t::virt, noid)
-{
-}
-template<typename ... NODERES>
-VirtualNode<NODERES...>::VirtualNode (const NODERES &... _res, bool noid)
-: 	Node<NODERES...> (_res..., Entity_t::virt, noid)
+template <typename... NODERES>
+VirtualNode<NODERES...>::VirtualNode(const Resources<NODERES...> &_res, bool noid)
+    : Node<NODERES...>(_res, Entity_t::virt, noid)
 {
 }
-template<typename ... NODERES>
-void VirtualNode<NODERES...>::setHostNode (SubstrateNode<NODERES...>* _n)
+template <typename... NODERES>
+VirtualNode<NODERES...>::VirtualNode(const NODERES &..._res, bool noid)
+    : Node<NODERES...>(_res..., Entity_t::virt, noid)
 {
-	BOOST_LOG_NAMED_SCOPE("VirtualNode::setHostNode")
-	substrate_host_node = _n;
-	//BOOST_LOG_TRIVIAL(debug) << "substrate node pointer count: " << _n.use_count () << endl;
-	//<<
 }
-template<typename ... NODERES>
-VirtualNode<NODERES...>::~VirtualNode ()
+template <typename... NODERES>
+void VirtualNode<NODERES...>::setHostNode(SubstrateNode<NODERES...> *_n)
 {
-	BOOST_LOG_TRIVIAL(debug) << "Destructing VirtualNode id : " << this->id <<std::endl;
+    BOOST_LOG_NAMED_SCOPE("VirtualNode::setHostNode")
+    substrate_host_node = _n;
+    //BOOST_LOG_TRIVIAL(debug) << "substrate node pointer count: " << _n.use_count () << endl;
+    //<<
 }
+template <typename... NODERES>
+VirtualNode<NODERES...>::~VirtualNode()
+{
+    BOOST_LOG_TRIVIAL(debug) << "Destructing VirtualNode id : " << this->id << std::endl;
 }
+}  // namespace vne
 
 #endif /* VIRTUAL_NODE_H_ */

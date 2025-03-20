@@ -24,134 +24,143 @@
 
 #include "grc-experiments.h"
 
-namespace vne {
-    namespace experiments {
-        template<>
-        GRCNodeMCFLinkExp<>::GRCNodeMCFLinkExp ()
-        {
-            sb  = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
+namespace vne
+{
+namespace experiments
+{
+    template <>
+    GRCNodeMCFLinkExp<>::GRCNodeMCFLinkExp()
+    {
+        sb = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
 
-            std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo (new VYVineTwoStageEmbeddingAlgo<>
-                                                                          (*sb,
-                                                                           std::shared_ptr<GRCNodeEmbeddingAlgo<>> (new GRCNodeEmbeddingAlgo<> ()),
-                                                                           std::shared_ptr<VYVineLinkEmbeddingAlgo<>> (new VYVineLinkEmbeddingAlgo<> ())
-                                                                           )
-                                                                          );
+        std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo(
+            new VYVineTwoStageEmbeddingAlgo<>(
+                *sb, std::shared_ptr<GRCNodeEmbeddingAlgo<>>(new GRCNodeEmbeddingAlgo<>()),
+                std::shared_ptr<VYVineLinkEmbeddingAlgo<>>(new VYVineLinkEmbeddingAlgo<>())));
 
-            std::shared_ptr<ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>> releaseAlgo (new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>(*sb));
+        std::shared_ptr<
+            ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>>
+            releaseAlgo(new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                             VYVirtualNetRequest<>>(*sb));
 
-            VYVNREmbeddingProc<>* embeddingProc (new VYVNREmbeddingProc<>(embeddingAlgo));
-            VYVNRReleaseProc<>* releaseProc (new VYVNRReleaseProc<>(releaseAlgo));
-            VYVNRProcObserver<>* observer (new VYVNRProcObserver<> (sb->getNetwork()));
-            VYVNRGenerator<>* gen (new VYVNRGenerator<>());
-            observer->registerSubscriber(this);
+        VYVNREmbeddingProc<> *embeddingProc(new VYVNREmbeddingProc<>(embeddingAlgo));
+        VYVNRReleaseProc<> *releaseProc(new VYVNRReleaseProc<>(releaseAlgo));
+        VYVNRProcObserver<> *observer(new VYVNRProcObserver<>(sb->getNetwork()));
+        VYVNRGenerator<> *gen(new VYVNRGenerator<>());
+        observer->registerSubscriber(this);
 
-            graph = new VYVNRProcDigraph<> (embeddingProc, releaseProc, gen, observer);
+        graph = new VYVNRProcDigraph<>(embeddingProc, releaseProc, gen, observer);
 
-            std::stringstream vnrDir;
-            vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "path") << "/"
-                << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "dir");
+        std::stringstream vnrDir;
+        vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard",
+                                                                    "VirtualNetRequest", "path")
+               << "/"
+               << ConfigManager::Instance()->getConfig<std::string>("vineyard",
+                                                                    "VirtualNetRequest", "dir");
 
-            std::stringstream snDir (ConfigManager::Instance()->getConfig<std::string>("vineyard", "SubstrateNetwork", "path"));
+        std::stringstream snDir(ConfigManager::Instance()->getConfig<std::string>(
+            "vineyard", "SubstrateNetwork", "path"));
 
-            std::stringstream ConfigFile;
-            ConfigFile << vnrDir.str() << "/vnr_generation_params.toml";
+        std::stringstream ConfigFile;
+        ConfigFile << vnrDir.str() << "/vnr_generation_params.toml";
 
-            auto VNRParams = toml::parse(ConfigFile.str());
+        auto VNRParams = toml::parse(ConfigFile.str());
 
-            ConfigFile.str (std::string());
-            ConfigFile << snDir.str() << "/substrate_net_generation_params.toml";
-            auto SNParams  = toml::parse(ConfigFile.str());
+        ConfigFile.str(std::string());
+        ConfigFile << snDir.str() << "/substrate_net_generation_params.toml";
+        auto SNParams = toml::parse(ConfigFile.str());
 
-            params.setAllParams(SNParams, VNRParams);
+        params.setAllParams(SNParams, VNRParams);
 
-            std::string link_algo ("MCF Link Mapping");
-            std::string node_algo ("GRC Node Mapping");
+        std::string link_algo("MCF Link Mapping");
+        std::string node_algo("GRC Node Mapping");
 
-            Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
-            this->initialize (graph, algo_type, node_algo, link_algo);
+        Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
+        this->initialize(graph, algo_type, node_algo, link_algo);
 
-            alpha = ConfigManager::Instance()->getConfig<double>("GRC", "alpha");
-            beta  = ConfigManager::Instance()->getConfig<double>("GRC", "beta");
-            sigma  = ConfigManager::Instance()->getConfig<double>("GRC", "sigma");
-            damping_factor  = ConfigManager::Instance()->getConfig<double>("GRC", "dampingFactor");
-        }
-
-        template<>
-        GRCNodeMCFLinkExp<>::~GRCNodeMCFLinkExp()
-        {};
-
-        template<>
-        void GRCNodeMCFLinkExp<>::statisticsGenerated (Statistics& stat)
-        {
-            statistics.push_back(*static_cast<VYStatistics*> (&stat));
-        }
-
-
-        template<>
-        GRCNodeBFSLinkExp<>::GRCNodeBFSLinkExp ()
-        {
-            sb  = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
-
-            std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo (new VYVineTwoStageEmbeddingAlgo<>
-                                                                          (*sb,
-                                                                           std::shared_ptr<GRCNodeEmbeddingAlgo<>>(new GRCNodeEmbeddingAlgo<>()),
-
-                                                                           std::shared_ptr<MCVNEBFSLinkEmbeddingAlgo<>>(new MCVNEBFSLinkEmbeddingAlgo<>())
-                                                                           )
-                                                                          );
-
-            std::shared_ptr<ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>> releaseAlgo (new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>(*sb));
-
-            VYVNREmbeddingProc<>* embeddingProc (new VYVNREmbeddingProc<>(embeddingAlgo));
-            VYVNRReleaseProc<>* releaseProc (new VYVNRReleaseProc<>(releaseAlgo));
-            VYVNRProcObserver<>* observer (new VYVNRProcObserver<> (sb->getNetwork()));
-            VYVNRGenerator<>* gen (new VYVNRGenerator<>());
-            observer->registerSubscriber(this);
-
-            graph = new VYVNRProcDigraph<> (embeddingProc, releaseProc, gen, observer);
-
-            std::stringstream vnrDir;
-            vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "path") << "/"
-            << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "dir");
-
-            std::stringstream snDir (ConfigManager::Instance()->getConfig<std::string>("vineyard", "SubstrateNetwork", "path"));
-
-            std::stringstream ConfigFile;
-            ConfigFile << vnrDir.str() << "/vnr_generation_params.toml";
-
-            auto VNRParams = toml::parse(ConfigFile.str());
-
-            ConfigFile.str (std::string());
-            ConfigFile << snDir.str() << "/substrate_net_generation_params.toml";
-            auto SNParams  = toml::parse(ConfigFile.str());
-
-            params.setAllParams(SNParams, VNRParams);
-
-            std::string link_algo ("BFS-SP Link Mapping");
-            std::string node_algo ("GRC Node Mapping");
-
-            Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
-            this->initialize (graph, algo_type, node_algo, link_algo);
-
-            alpha = ConfigManager::Instance()->getConfig<double>("GRC", "alpha");
-            beta  = ConfigManager::Instance()->getConfig<double>("GRC", "beta");
-            sigma  = ConfigManager::Instance()->getConfig<double>("GRC", "sigma");
-            damping_factor  = ConfigManager::Instance()->getConfig<double>("GRC", "dampingFactor");
-        }
-
-        template<>
-        GRCNodeBFSLinkExp<>::~GRCNodeBFSLinkExp()
-        {};
-
-        template<>
-        void GRCNodeBFSLinkExp<>::statisticsGenerated (Statistics& stat)
-        {
-            statistics.push_back(*static_cast<VYStatistics*> (&stat));
-        }
-
+        alpha = ConfigManager::Instance()->getConfig<double>("GRC", "alpha");
+        beta = ConfigManager::Instance()->getConfig<double>("GRC", "beta");
+        sigma = ConfigManager::Instance()->getConfig<double>("GRC", "sigma");
+        damping_factor = ConfigManager::Instance()->getConfig<double>("GRC", "dampingFactor");
     }
-}
+
+    template <>
+    GRCNodeMCFLinkExp<>::~GRCNodeMCFLinkExp(){};
+
+    template <>
+    void GRCNodeMCFLinkExp<>::statisticsGenerated(Statistics &stat)
+    {
+        statistics.push_back(*static_cast<VYStatistics *>(&stat));
+    }
+
+    template <>
+    GRCNodeBFSLinkExp<>::GRCNodeBFSLinkExp()
+    {
+        sb = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
+
+        std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo(
+            new VYVineTwoStageEmbeddingAlgo<>(
+                *sb, std::shared_ptr<GRCNodeEmbeddingAlgo<>>(new GRCNodeEmbeddingAlgo<>()),
+
+                std::shared_ptr<MCVNEBFSLinkEmbeddingAlgo<>>(new MCVNEBFSLinkEmbeddingAlgo<>())));
+
+        std::shared_ptr<
+            ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>>
+            releaseAlgo(new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                             VYVirtualNetRequest<>>(*sb));
+
+        VYVNREmbeddingProc<> *embeddingProc(new VYVNREmbeddingProc<>(embeddingAlgo));
+        VYVNRReleaseProc<> *releaseProc(new VYVNRReleaseProc<>(releaseAlgo));
+        VYVNRProcObserver<> *observer(new VYVNRProcObserver<>(sb->getNetwork()));
+        VYVNRGenerator<> *gen(new VYVNRGenerator<>());
+        observer->registerSubscriber(this);
+
+        graph = new VYVNRProcDigraph<>(embeddingProc, releaseProc, gen, observer);
+
+        std::stringstream vnrDir;
+        vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard",
+                                                                    "VirtualNetRequest", "path")
+               << "/"
+               << ConfigManager::Instance()->getConfig<std::string>("vineyard",
+                                                                    "VirtualNetRequest", "dir");
+
+        std::stringstream snDir(ConfigManager::Instance()->getConfig<std::string>(
+            "vineyard", "SubstrateNetwork", "path"));
+
+        std::stringstream ConfigFile;
+        ConfigFile << vnrDir.str() << "/vnr_generation_params.toml";
+
+        auto VNRParams = toml::parse(ConfigFile.str());
+
+        ConfigFile.str(std::string());
+        ConfigFile << snDir.str() << "/substrate_net_generation_params.toml";
+        auto SNParams = toml::parse(ConfigFile.str());
+
+        params.setAllParams(SNParams, VNRParams);
+
+        std::string link_algo("BFS-SP Link Mapping");
+        std::string node_algo("GRC Node Mapping");
+
+        Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
+        this->initialize(graph, algo_type, node_algo, link_algo);
+
+        alpha = ConfigManager::Instance()->getConfig<double>("GRC", "alpha");
+        beta = ConfigManager::Instance()->getConfig<double>("GRC", "beta");
+        sigma = ConfigManager::Instance()->getConfig<double>("GRC", "sigma");
+        damping_factor = ConfigManager::Instance()->getConfig<double>("GRC", "dampingFactor");
+    }
+
+    template <>
+    GRCNodeBFSLinkExp<>::~GRCNodeBFSLinkExp(){};
+
+    template <>
+    void GRCNodeBFSLinkExp<>::statisticsGenerated(Statistics &stat)
+    {
+        statistics.push_back(*static_cast<VYStatistics *>(&stat));
+    }
+
+}  // namespace experiments
+}  // namespace vne
 using namespace vne::experiments;
 using namespace vne;
 HIBERLITE_EXPORT_CLASS_WITH_NAME(GRCNodeMCFLinkExp<>, GRCNodeMCFLink)

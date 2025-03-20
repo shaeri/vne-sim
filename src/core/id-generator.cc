@@ -29,26 +29,19 @@ namespace vne
 std::shared_ptr<IdGenerator> IdGenerator::_instance = nullptr;
 std::shared_ptr<IdGenerator> IdGenerator::Instance()
 {
-    if (_instance==nullptr)
-    {
-        _instance = std::shared_ptr<IdGenerator> (new IdGenerator);
+    if (_instance == nullptr) {
+        _instance = std::shared_ptr<IdGenerator>(new IdGenerator);
     }
     return _instance;
 }
-void
-IdGenerator::Destroy()
+void IdGenerator::Destroy()
 {
-	if (_instance==nullptr)
-		return;
-	_instance.reset();
-	_instance = nullptr;
-	return;
+    if (_instance == nullptr)
+        return;
+    _instance.reset();
+    _instance = nullptr;
+    return;
 }
-IdGenerator::IdGenerator()
-{
-}
-IdGenerator::~IdGenerator()
-{
-}
-}
-
+IdGenerator::IdGenerator() {}
+IdGenerator::~IdGenerator() {}
+}  // namespace vne

@@ -28,27 +28,31 @@
 #include "core/virtual-link.h"
 #include "vy-substrate-link.h"
 
-namespace vne {
-    namespace vineyard {
-        template<typename = double>
-        class VYVirtualLink : public VirtualLink<double>
-        {
-        public:
-            VYVirtualLink (double _bw, double _delay, int _from, int _to);
-            virtual ~VYVirtualLink();
-            virtual void addHostLink (SubstrateLink<double>* _l) override;
-            virtual void addHostLink (SubstrateLink<double>* _l, std::shared_ptr<Resources<double>> _res) override;
-            virtual void removeHostLink (SubstrateLink<double>* _l) override ;
-            double getBandwidth () const;
-            double getDelay () const;
-            int getPathLength () const {return pathLength;};
-            double getPathDelay () {return pathDelay;};
-            virtual void writeLinkToFile (std::ofstream& ofstrm) override;
-        private:
-            int pathLength;
-            double pathDelay;
-            double delay;
-        };
-    }
-}
+namespace vne
+{
+namespace vineyard
+{
+    template <typename = double>
+    class VYVirtualLink : public VirtualLink<double>
+    {
+       public:
+        VYVirtualLink(double _bw, double _delay, int _from, int _to);
+        virtual ~VYVirtualLink();
+        virtual void addHostLink(SubstrateLink<double> *_l) override;
+        virtual void addHostLink(SubstrateLink<double> *_l,
+                                 std::shared_ptr<Resources<double>> _res) override;
+        virtual void removeHostLink(SubstrateLink<double> *_l) override;
+        double getBandwidth() const;
+        double getDelay() const;
+        int getPathLength() const { return pathLength; };
+        double getPathDelay() { return pathDelay; };
+        virtual void writeLinkToFile(std::ofstream &ofstrm) override;
+
+       private:
+        int pathLength;
+        double pathDelay;
+        double delay;
+    };
+}  // namespace vineyard
+}  // namespace vne
 #endif /* defined(__vne_mcts__vy_virtual_link__) */

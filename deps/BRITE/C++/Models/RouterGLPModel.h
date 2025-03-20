@@ -31,32 +31,26 @@
 ////////////////////////////////////////////////
 //
 // class RouterGLP
-// Derived class for BarabasiAlbert model. 
+// Derived class for BarabasiAlbert model.
 // Improves upon BarabasiAlbert Model
 // implies Incremental growth and preferential
 // connectivity.
-// Builds router-level topologies 
+// Builds router-level topologies
 //
 ////////////////////////////////////////////////
 
 class RouterGLPPar;
 
-class RouterGLP : public RouterBarabasiAlbert {
+class RouterGLP : public RouterBarabasiAlbert
+{
+   public:
+    RouterGLP(RouterGLPPar *par);
+    string ToString();
 
- public:
-
-  RouterGLP(RouterGLPPar* par);
-  string ToString();
-
- private:
-  
-  void InterconnectNodes(Graph *g);
-  double P;
-  double BETA;
-
+   private:
+    void InterconnectNodes(Graph *g);
+    double P;
+    double BETA;
 };
 
-
 #endif /* RT_GLP_MODEL_H */
-
-

@@ -30,22 +30,16 @@
 
 class ASGLPPar;
 
-class ASGLP : public ASBarabasiAlbert {
-    
- public:
-    
-  ASGLP(ASGLPPar* par);
-  string ToString();
-    
- private:
+class ASGLP : public ASBarabasiAlbert
+{
+   public:
+    ASGLP(ASGLPPar *par);
+    string ToString();
 
-  void InterconnectNodes(Graph *g);
-  double P;
-  double BETA;
-    
+   private:
+    void InterconnectNodes(Graph *g);
+    double P;
+    double BETA;
 };
 
-
 #endif /* AS_GLP_MODEL_H */
-
-

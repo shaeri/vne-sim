@@ -29,56 +29,59 @@
 
 #include "hiberlite/hiberlite.h"
 
-namespace vne {
-    namespace vineyard {
-        class VYStatistics : public Statistics
+namespace vne
+{
+namespace vineyard
+{
+    class VYStatistics : public Statistics
+    {
+        friend class hiberlite::access;
+        template <class Archive>
+        void hibernate(Archive &ar)
         {
-            friend class hiberlite::access;
-            template<class Archive>
-            void hibernate(Archive & ar)
-            {
-                ar & HIBERLITE_BASE_CLASS(Statistics);
-                ar & HIBERLITE_NVP(event_type);
-                ar & HIBERLITE_NVP(vnr_arrival_time);
-                ar & HIBERLITE_NVP(vnr_duration);
-                ar & HIBERLITE_NVP(vnr_id);
-                ar & HIBERLITE_NVP(avg_node_stress);
-                ar & HIBERLITE_NVP(max_node_stress);
-                ar & HIBERLITE_NVP(std_dev_node_stress);
-                ar & HIBERLITE_NVP(avg_link_stress);
-                ar & HIBERLITE_NVP(max_link_stress);
-                ar & HIBERLITE_NVP(std_dev_link_stress);
-                ar & HIBERLITE_NVP(link_mapping_objective_val);
-                ar & HIBERLITE_NVP(node_mapping_objective_val);
-                ar & HIBERLITE_NVP(processing_time);
-                ar & HIBERLITE_NVP(actual_processing_time);
-                ar & HIBERLITE_NVP(node_revenue);
-                ar & HIBERLITE_NVP(link_revenue);
-                ar & HIBERLITE_NVP(node_cost);
-                ar & HIBERLITE_NVP(link_cost);
-            }
-        public:
-            std::string event_type;
-            int vnr_id = 0;
-            double vnr_arrival_time;
-            double vnr_duration;
-            double avg_node_stress = 0.0;
-            double max_node_stress = 0.0;
-            double std_dev_node_stress = 0.0;
-            double avg_link_stress = 0.0;
-            double max_link_stress = 0.0;
-            double std_dev_link_stress = 0.0;
-            double link_mapping_objective_val = 0.0;
-            double node_mapping_objective_val = 0.0;
-            double processing_time = 0.0;
-            double actual_processing_time = 0.0;
-            double node_revenue = 0.0;
-            double link_revenue = 0.0;
-            double total_revenue = 0.0;
-            double link_cost = 0.0;
-            double node_cost = 0.0;
-            double total_cost  = 0.0;
-        };
-    }
-}
+            ar &HIBERLITE_BASE_CLASS(Statistics);
+            ar &HIBERLITE_NVP(event_type);
+            ar &HIBERLITE_NVP(vnr_arrival_time);
+            ar &HIBERLITE_NVP(vnr_duration);
+            ar &HIBERLITE_NVP(vnr_id);
+            ar &HIBERLITE_NVP(avg_node_stress);
+            ar &HIBERLITE_NVP(max_node_stress);
+            ar &HIBERLITE_NVP(std_dev_node_stress);
+            ar &HIBERLITE_NVP(avg_link_stress);
+            ar &HIBERLITE_NVP(max_link_stress);
+            ar &HIBERLITE_NVP(std_dev_link_stress);
+            ar &HIBERLITE_NVP(link_mapping_objective_val);
+            ar &HIBERLITE_NVP(node_mapping_objective_val);
+            ar &HIBERLITE_NVP(processing_time);
+            ar &HIBERLITE_NVP(actual_processing_time);
+            ar &HIBERLITE_NVP(node_revenue);
+            ar &HIBERLITE_NVP(link_revenue);
+            ar &HIBERLITE_NVP(node_cost);
+            ar &HIBERLITE_NVP(link_cost);
+        }
+
+       public:
+        std::string event_type;
+        int vnr_id = 0;
+        double vnr_arrival_time;
+        double vnr_duration;
+        double avg_node_stress = 0.0;
+        double max_node_stress = 0.0;
+        double std_dev_node_stress = 0.0;
+        double avg_link_stress = 0.0;
+        double max_link_stress = 0.0;
+        double std_dev_link_stress = 0.0;
+        double link_mapping_objective_val = 0.0;
+        double node_mapping_objective_val = 0.0;
+        double processing_time = 0.0;
+        double actual_processing_time = 0.0;
+        double node_revenue = 0.0;
+        double link_revenue = 0.0;
+        double total_revenue = 0.0;
+        double link_cost = 0.0;
+        double node_cost = 0.0;
+        double total_cost = 0.0;
+    };
+}  // namespace vineyard
+}  // namespace vne
 #endif /* defined(__vne_mcts__vy_statistics__) */

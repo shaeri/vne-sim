@@ -25,17 +25,21 @@
 
 #include "vy-vnr-proc-digraph.h"
 
-namespace vne {
-    namespace vineyard {
-       template<>
-        VYVNRProcDigraph<>::VYVNRProcDigraph(VYVNREmbeddingProc<>* embed, VYVNRReleaseProc<>* release, VYVNRGenerator<>* gen, VYVNRProcObserver<>* obs) :
-        VNRProcessDigraph<VYVNRGenerator<>, VYVNREmbeddingProc<>, VYVNRReleaseProc<>, VYVNRProcObserver<> >(embed,release,gen,obs)
-        {
-        }
-        template<>
-        VYVNRProcDigraph<>::~VYVNRProcDigraph ()
-        {
-            BOOST_LOG_TRIVIAL(debug) << "DESTROYING VYVNRProcDigraph" << std::endl;
-        }
+namespace vne
+{
+namespace vineyard
+{
+    template <>
+    VYVNRProcDigraph<>::VYVNRProcDigraph(VYVNREmbeddingProc<> *embed, VYVNRReleaseProc<> *release,
+                                         VYVNRGenerator<> *gen, VYVNRProcObserver<> *obs)
+        : VNRProcessDigraph<VYVNRGenerator<>, VYVNREmbeddingProc<>, VYVNRReleaseProc<>,
+                            VYVNRProcObserver<> >(embed, release, gen, obs)
+    {
     }
-}
+    template <>
+    VYVNRProcDigraph<>::~VYVNRProcDigraph()
+    {
+        BOOST_LOG_TRIVIAL(debug) << "DESTROYING VYVNRProcDigraph" << std::endl;
+    }
+}  // namespace vineyard
+}  // namespace vne

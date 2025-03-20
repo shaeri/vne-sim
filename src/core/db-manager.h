@@ -29,21 +29,25 @@
 
 #include <memory>
 
-namespace vne {
-    class DBManager {
-    public:
-        static std::shared_ptr<DBManager> Instance();
-        std::shared_ptr<hiberlite::Database> createDB (std::string &dbName);
-        std::shared_ptr<hiberlite::Database> getDB (int dbId);
-        std::shared_ptr<hiberlite::Database> getDB (std::string &dbName);
-        ~DBManager ();
-    protected:
-        DBManager ();
-    private:
-        static std::shared_ptr<DBManager> _instance;
-        std::map<int, std::shared_ptr<hiberlite::Database>> dbMap;
-        std::map<std::string, int> dbIdNameMap;
-    };
-}
+namespace vne
+{
+class DBManager
+{
+   public:
+    static std::shared_ptr<DBManager> Instance();
+    std::shared_ptr<hiberlite::Database> createDB(std::string &dbName);
+    std::shared_ptr<hiberlite::Database> getDB(int dbId);
+    std::shared_ptr<hiberlite::Database> getDB(std::string &dbName);
+    ~DBManager();
+
+   protected:
+    DBManager();
+
+   private:
+    static std::shared_ptr<DBManager> _instance;
+    std::map<int, std::shared_ptr<hiberlite::Database>> dbMap;
+    std::map<std::string, int> dbIdNameMap;
+};
+}  // namespace vne
 
 #endif /* defined */

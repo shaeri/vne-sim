@@ -41,38 +41,46 @@
 
 using namespace vne::vineyard;
 
-namespace vne {
-    namespace grc {
-        template<typename = Network<VYSubstrateNode<>,VYSubstrateLink<>> ,
-        typename = VYVirtualNetRequest<>>
-        class GRCNodeEmbeddingAlgo : public NodeEmbeddingAlgorithm
-        <Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>
-        {
-        public:
-            GRCNodeEmbeddingAlgo ();
-            ~GRCNodeEmbeddingAlgo ();
-            virtual Embedding_Result  embeddVNRNodes (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
-        private:
-            float sigma;
-            float dampingFactor;
-            double alpha;
-            double beta;
-            //bool compare_pair (const std::pair<int,double>& first, const std::pair<int,double>& second);
-            inline std::map<int, double> matrixMultiplication (std::map<int, std::map<int, double>>& mMat, std::map<int, double>& rVec);
-            inline void scalarVecMultiplication (float& scalar, std::map<int, double>& cMat);
-            inline double calculateNormOfDifference (std::map<int, double>& Mat1, std::map<int, double>& Mat2);
-            inline std::list<std::pair<int, double>> calculateSubstrateGRCVector (std::shared_ptr<SUBSTRATE_TYPE> substrate_network);
-            inline std::list<std::pair<int, double>> calculateVNRGRCVector (std::shared_ptr<VNR_TYPE> vnr);
-            
-            struct sort_order
+namespace vne
+{
+namespace grc
+{
+    template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+              typename = VYVirtualNetRequest<>>
+    class GRCNodeEmbeddingAlgo
+        : public NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                        VYVirtualNetRequest<>>
+    {
+       public:
+        GRCNodeEmbeddingAlgo();
+        ~GRCNodeEmbeddingAlgo();
+        virtual Embedding_Result embeddVNRNodes(std::shared_ptr<SUBSTRATE_TYPE> substrate_network,
+                                                std::shared_ptr<VNR_TYPE> vnr);
+
+       private:
+        float sigma;
+        float dampingFactor;
+        double alpha;
+        double beta;
+        //bool compare_pair (const std::pair<int,double>& first, const std::pair<int,double>& second);
+        inline std::map<int, double> matrixMultiplication(
+            std::map<int, std::map<int, double>> &mMat, std::map<int, double> &rVec);
+        inline void scalarVecMultiplication(float &scalar, std::map<int, double> &cMat);
+        inline double calculateNormOfDifference(std::map<int, double> &Mat1,
+                                                std::map<int, double> &Mat2);
+        inline std::list<std::pair<int, double>> calculateSubstrateGRCVector(
+            std::shared_ptr<SUBSTRATE_TYPE> substrate_network);
+        inline std::list<std::pair<int, double>> calculateVNRGRCVector(
+            std::shared_ptr<VNR_TYPE> vnr);
+
+        struct sort_order {
+            bool operator()(const std::pair<int, double> &first,
+                            const std::pair<int, double> &second) const
             {
-                bool operator()(const std::pair<int,double>& first, const std::pair<int,double>& second) const
-                {
-                    return ( first.second > second.second );
-                }
-            };
-            
+                return (first.second > second.second);
+            }
         };
-    }
-}
+    };
+}  // namespace grc
+}  // namespace vne
 #endif /* defined(GRC_GRC_NODE_EMBEDDING_ALGO_) */

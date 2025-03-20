@@ -33,104 +33,103 @@
 
 namespace vne
 {
-template<typename ... Args>
+template <typename... Args>
 class Link
 {
-    
-template<typename, typename> friend class Network;
-    
-public:
-	Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to);
-    Link(const Args &... _args, const Entity_t& t, int node_from, int node_to);
-	virtual ~Link();
-	const int& getId() const;
-	const int& getNodeFromId () const;
-	const int& getNodeToId () const;
-    const int& getNodeFromLocalId () const {return node_from_local_id;};
-    const int& getNodeToLocalId () const {return node_to_local_id;};
-	const Entity_t& getType() const;
-    const Resources<Args...>& getResources () const;
-    virtual void writeLinkToFile (std::ofstream& ofstrm) {};
-	/*
+    template <typename, typename>
+    friend class Network;
+
+   public:
+    Link(const Resources<Args...> &_res, const Entity_t &t, int node_from, int node_to);
+    Link(const Args &..._args, const Entity_t &t, int node_from, int node_to);
+    virtual ~Link();
+    const int &getId() const;
+    const int &getNodeFromId() const;
+    const int &getNodeToId() const;
+    const int &getNodeFromLocalId() const { return node_from_local_id; };
+    const int &getNodeToLocalId() const { return node_to_local_id; };
+    const Entity_t &getType() const;
+    const Resources<Args...> &getResources() const;
+    virtual void writeLinkToFile(std::ofstream &ofstrm) {};
+    /*
 	 * I do not think these functions are necessary
 	 */
-	//std::tuple<Args...> getResources();
-	//void setResources(std::tuple<Args...>);
-private:
-	typedef Link<Args...> this_t;
-protected:
-    Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to, bool noid);
-    Link(const Args &... _args, const Entity_t& t, int node_from, int node_to, bool noid);
-	int id;
-	Entity_t type;
+    //std::tuple<Args...> getResources();
+    //void setResources(std::tuple<Args...>);
+   private:
+    typedef Link<Args...> this_t;
+
+   protected:
+    Link(const Resources<Args...> &_res, const Entity_t &t, int node_from, int node_to, bool noid);
+    Link(const Args &..._args, const Entity_t &t, int node_from, int node_to, bool noid);
+    int id;
+    Entity_t type;
     Resources<Args...> resources;
-	int node_from_id;
-	int node_to_id;
+    int node_from_id;
+    int node_to_id;
     int node_from_local_id;
     int node_to_local_id;
 };
-template<typename ... Args>
-        Link<Args...>::Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to) :
-		id(IdGenerator::Instance()->getId<this_t>(this)),
-        resources(_res),
-		type(t),
-		node_from_id(node_from),
-		node_to_id(node_to)
+template <typename... Args>
+Link<Args...>::Link(const Resources<Args...> &_res, const Entity_t &t, int node_from, int node_to)
+    : id(IdGenerator::Instance()->getId<this_t>(this)),
+      resources(_res),
+      type(t),
+      node_from_id(node_from),
+      node_to_id(node_to)
 {
 }
-template<typename ... Args>
-        Link<Args...>::Link(const Args &... _args, const Entity_t& t, int node_from, int node_to) :
-		id(IdGenerator::Instance()->getId<this_t>(this)),
-        resources(Resources<Args...> (_args...)),
-		type(t),
-		node_from_id(node_from),
-		node_to_id(node_to)
+template <typename... Args>
+Link<Args...>::Link(const Args &..._args, const Entity_t &t, int node_from, int node_to)
+    : id(IdGenerator::Instance()->getId<this_t>(this)),
+      resources(Resources<Args...>(_args...)),
+      type(t),
+      node_from_id(node_from),
+      node_to_id(node_to)
 {
 }
-template<typename ... Args>
-        Link<Args...>::Link(const Resources<Args...>& _res, const Entity_t& t, int node_from, int node_to, bool noid) :
-        resources(_res),
-		type(t),
-		node_from_id(node_from),
-		node_to_id(node_to)
+template <typename... Args>
+Link<Args...>::Link(const Resources<Args...> &_res, const Entity_t &t, int node_from, int node_to,
+                    bool noid)
+    : resources(_res), type(t), node_from_id(node_from), node_to_id(node_to)
 {
 }
-template<typename ... Args>
-        Link<Args...>::Link(const Args &... _args, const Entity_t& t, int node_from, int node_to, bool noid) :
-        resources(Resources<Args...> (_args...)),
-		type(t),
-		node_from_id(node_from),
-		node_to_id(node_to)
+template <typename... Args>
+Link<Args...>::Link(const Args &..._args, const Entity_t &t, int node_from, int node_to, bool noid)
+    : resources(Resources<Args...>(_args...)),
+      type(t),
+      node_from_id(node_from),
+      node_to_id(node_to)
 {
 }
-template<typename ... Args>
+template <typename... Args>
 Link<Args...>::~Link()
 {
 }
-template<typename ... Args>
-const Entity_t& Link<Args...>::getType() const
+template <typename... Args>
+const Entity_t &Link<Args...>::getType() const
 {
-	return type;
+    return type;
 }
-template<typename ... Args>
-const int& Link<Args...>::getId() const
+template <typename... Args>
+const int &Link<Args...>::getId() const
 {
-	return id;
+    return id;
 }
-template<typename ... Args>
-const int& Link<Args...>::getNodeFromId() const
+template <typename... Args>
+const int &Link<Args...>::getNodeFromId() const
 {
-	return node_from_id;
+    return node_from_id;
 }
-template<typename ... Args>
-const int& Link<Args...>::getNodeToId() const
+template <typename... Args>
+const int &Link<Args...>::getNodeToId() const
 {
-	return node_to_id;
+    return node_to_id;
 }
-template<typename ... Args>
-const Resources<Args...>& Link<Args...>::getResources() const
+template <typename... Args>
+const Resources<Args...> &Link<Args...>::getResources() const
 {
-	return resources;
+    return resources;
 }
-}
+}  // namespace vne
 #endif

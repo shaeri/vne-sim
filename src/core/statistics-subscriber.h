@@ -25,22 +25,23 @@
 #ifndef STATISTICS_SUBSCRIBER_H_
 #define STATISTICS_SUBSCRIBER_H_
 #include "hiberlite/hiberlite.h"
-namespace vne {
-    class Statistics {
-        friend class hiberlite::access;
-        template<class Archive>
-        void hibernate(Archive & ar)
-        {
-        };
-    };
-    
-    class StatisticsSubscriber
-    {
-    public:
-        virtual void statisticsGenerated (Statistics& stat) = 0;
-        virtual ~StatisticsSubscriber() {};
-    protected:
-        StatisticsSubscriber () {};
-    };
-}
+namespace vne
+{
+class Statistics
+{
+    friend class hiberlite::access;
+    template <class Archive>
+    void hibernate(Archive &ar) {};
+};
+
+class StatisticsSubscriber
+{
+   public:
+    virtual void statisticsGenerated(Statistics &stat) = 0;
+    virtual ~StatisticsSubscriber() {};
+
+   protected:
+    StatisticsSubscriber() {};
+};
+}  // namespace vne
 #endif

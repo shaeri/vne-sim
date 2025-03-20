@@ -40,99 +40,93 @@
 
 #include "core/core-types.h"
 
-namespace vne {
-    namespace mcts {
-        class MCTSSimulator : public RNGSubscriber
-        {
-        public:
-            
-            struct Knowledge
+namespace vne
+{
+namespace mcts
+{
+    class MCTSSimulator : public RNGSubscriber
+    {
+       public:
+        struct Knowledge {
+            enum { PURE, LEGAL, SMART, NUM_LEVELS };
+
+            Knowledge();
+
+            int RolloutLevel;
+            int TreeLevel;
+            int SmartTreeCount;
+            double SmartTreeValue;
+
+            int Level(int phase) const
             {
-                enum
-                {
-                    PURE,
-                    LEGAL,
-                    SMART,
-                    NUM_LEVELS
-                };
-                
-                Knowledge();
-                
-                int RolloutLevel;
-                int TreeLevel;
-                int SmartTreeCount;
-                double SmartTreeValue;
-                
-                int Level(int phase) const
-                {
-                    assert(phase < Status::NUM_PHASES);
-                    if (phase == Status::TREE)
-                        return TreeLevel;
-                    else
-                        return RolloutLevel;
-                }
-            };
-            
-            struct Status
-            {
-                Status();
-                
-                enum
-                {
-                    TREE,
-                    ROLLOUT,
-                    NUM_PHASES
-                };
-                
-                int Phase;
-            };
-            
-            virtual std::shared_ptr<State> createStartState () const = 0;
-            
-            // Update state according to action, and get observation and reward.
-            // Return value of true indicates termination of episode (if episodic)
-            // Action is the ID of the substrate node that will be used to host the current VNR node.
-            virtual bool step (std::shared_ptr<State> state, int action, double& reward) const = 0;
-            
-            // Sanity check
-            virtual bool validate(const std::shared_ptr<State> state) const {return true;};
-            
-            // Modify state stochastically to some related state
-            virtual bool localMove(std::shared_ptr<State> state, const std::vector<int>& history,
-                                   const Status& status) const {return true;};
-            
-            // Use domain knowledge to assign prior value and confidence to actions
-            // Should only use fully observable state variables
-            void prior(std::shared_ptr<TreeNode> node, const std::vector<int>& history, const Status& status) const;
-            
-            // Use domain knowledge to select actions stochastically during rollouts
-            int selectRandom(const std::shared_ptr<State> state, const std::vector<int>& history,
-                             const Status& status) const;
-            
-            // Generate set of legal actions
-            virtual void generateLegal(const std::shared_ptr<State> state, const std::vector<int>& history,
-                                       std::vector<int>& actions, const Status& status) const;
-            
-            // Generate set of preferred actions
-            virtual void generatePreferred(const std::shared_ptr<State> state, const std::vector<int>& history,
-                                           std::vector<int>& actions, const Status& status) const;
-            
-            virtual ~MCTSSimulator ();
-            
-            int getNumActions () {return numActions;};
-            double getDiscount() const { return discount; }
-            double getRewardRange() const { return rewardRange; }
-            double getHorizon(double accuracy, int undiscountedHorizon = 100) const;
-            
-        protected:
-            MCTSSimulator ();
-            MCTSSimulator (int numActions);
-            
-            int numActions;
-            Knowledge knowledge;
-            double discount, rewardRange;
-            inline int Random (int max) const;
+                assert(phase < Status::NUM_PHASES);
+                if (phase == Status::TREE)
+                    return TreeLevel;
+                else
+                    return RolloutLevel;
+            }
         };
-    }
-}
+
+        struct Status {
+            Status();
+
+            enum { TREE, ROLLOUT, NUM_PHASES };
+
+            int Phase;
+        };
+
+        virtual std::shared_ptr<State> createStartState() const = 0;
+
+        // Update state according to action, and get observation and reward.
+        // Return value of true indicates termination of episode (if episodic)
+        // Action is the ID of the substrate node that will be used to host the current VNR node.
+        virtual bool step(std::shared_ptr<State> state, int action, double &reward) const = 0;
+
+        // Sanity check
+        virtual bool validate(const std::shared_ptr<State> state) const { return true; };
+
+        // Modify state stochastically to some related state
+        virtual bool localMove(std::shared_ptr<State> state, const std::vector<int> &history,
+                               const Status &status) const
+        {
+            return true;
+        };
+
+        // Use domain knowledge to assign prior value and confidence to actions
+        // Should only use fully observable state variables
+        void prior(std::shared_ptr<TreeNode> node, const std::vector<int> &history,
+                   const Status &status) const;
+
+        // Use domain knowledge to select actions stochastically during rollouts
+        int selectRandom(const std::shared_ptr<State> state, const std::vector<int> &history,
+                         const Status &status) const;
+
+        // Generate set of legal actions
+        virtual void generateLegal(const std::shared_ptr<State> state,
+                                   const std::vector<int> &history, std::vector<int> &actions,
+                                   const Status &status) const;
+
+        // Generate set of preferred actions
+        virtual void generatePreferred(const std::shared_ptr<State> state,
+                                       const std::vector<int> &history, std::vector<int> &actions,
+                                       const Status &status) const;
+
+        virtual ~MCTSSimulator();
+
+        int getNumActions() { return numActions; };
+        double getDiscount() const { return discount; }
+        double getRewardRange() const { return rewardRange; }
+        double getHorizon(double accuracy, int undiscountedHorizon = 100) const;
+
+       protected:
+        MCTSSimulator();
+        MCTSSimulator(int numActions);
+
+        int numActions;
+        Knowledge knowledge;
+        double discount, rewardRange;
+        inline int Random(int max) const;
+    };
+}  // namespace mcts
+}  // namespace vne
 #endif

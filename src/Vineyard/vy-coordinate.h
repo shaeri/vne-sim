@@ -1,4 +1,4 @@
-  /**
+/**
    * @file vy-coordinate.h
    * @author Soroush Haeri <soroosh.haeri@me.com>
    * @date 7/23/14
@@ -27,13 +27,15 @@
 
 #include "core/coordinate.h"
 
-namespace vne {
-    namespace vineyard{
-        class VYCoordinate : public CartesianCoord2D<int,int>
-        {
-        public:
-            VYCoordinate (int _x, int _y);
-        };
-    }
-}
+namespace vne
+{
+namespace vineyard
+{
+    class VYCoordinate : public CartesianCoord2D<int, int>
+    {
+       public:
+        VYCoordinate(int _x, int _y);
+    };
+}  // namespace vineyard
+}  // namespace vne
 #endif

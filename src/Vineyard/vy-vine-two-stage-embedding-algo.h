@@ -34,23 +34,27 @@
 
 namespace vne
 {
-    namespace vineyard
+namespace vineyard
+{
+    template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+              typename = VYVirtualNetRequest<>>
+    class VYVineTwoStageEmbeddingAlgo
+        : public TwoStageEmbeddingAlgo<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                       VYVirtualNetRequest<>>
     {
-        template<typename = Network<VYSubstrateNode<>,VYSubstrateLink<>> ,
-        typename = VYVirtualNetRequest<>>
-        class VYVineTwoStageEmbeddingAlgo :
-        public TwoStageEmbeddingAlgo <Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>
-        {
-        public:
-            VYVineTwoStageEmbeddingAlgo (std::shared_ptr<SUBSTRATE_TYPE> _sn,
-                std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
-                std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedding_algo);
-            VYVineTwoStageEmbeddingAlgo (NetworkBuilder<SUBSTRATE_TYPE>&  _nb,
-                std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
-                std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedding_algo);
-            virtual ~VYVineTwoStageEmbeddingAlgo();
-            
-        };
-    }
-}
+       public:
+        VYVineTwoStageEmbeddingAlgo(
+            std::shared_ptr<SUBSTRATE_TYPE> _sn,
+            std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
+            std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>>
+                _link_embedding_algo);
+        VYVineTwoStageEmbeddingAlgo(
+            NetworkBuilder<SUBSTRATE_TYPE> &_nb,
+            std::shared_ptr<NodeEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _node_embedding_algo,
+            std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>>
+                _link_embedding_algo);
+        virtual ~VYVineTwoStageEmbeddingAlgo();
+    };
+}  // namespace vineyard
+}  // namespace vne
 #endif /* defined(__vne_mcts__vy_vine_two_stage_embedding_algo__) */

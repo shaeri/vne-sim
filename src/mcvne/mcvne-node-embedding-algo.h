@@ -31,20 +31,25 @@
 
 using namespace vne::vineyard;
 
-namespace vne {
-    namespace mcvne {
-        template<typename = Network<VYSubstrateNode<>,VYSubstrateLink<>> ,
-        typename = VYVirtualNetRequest<>>
-        class MCVNENodeEmbeddingAlgo : public NodeEmbeddingAlgorithm
-                                        <Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>
-        {
-        public:
-            MCVNENodeEmbeddingAlgo ();
-            ~MCVNENodeEmbeddingAlgo ();
-            virtual Embedding_Result  embeddVNRNodes (std::shared_ptr<SUBSTRATE_TYPE> substrate_network, std::shared_ptr<VNR_TYPE> vnr);
-        private:
-            std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> link_embedder;
-        };
-    }
-}
+namespace vne
+{
+namespace mcvne
+{
+    template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+              typename = VYVirtualNetRequest<>>
+    class MCVNENodeEmbeddingAlgo
+        : public NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                        VYVirtualNetRequest<>>
+    {
+       public:
+        MCVNENodeEmbeddingAlgo();
+        ~MCVNENodeEmbeddingAlgo();
+        virtual Embedding_Result embeddVNRNodes(std::shared_ptr<SUBSTRATE_TYPE> substrate_network,
+                                                std::shared_ptr<VNR_TYPE> vnr);
+
+       private:
+        std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> link_embedder;
+    };
+}  // namespace mcvne
+}  // namespace vne
 #endif /* defined(__vne_mcts__mcvne_node_embedding_algo__) */

@@ -1,4 +1,4 @@
-  /**
+/**
    * @file coordinate.h
    * @author Soroush Haeri <soroosh.haeri@me.com>
    * @date 7/22/14
@@ -28,41 +28,41 @@
 #include <utility>
 #include <math.h>
 
-namespace vne{
-    template <typename T1, typename T2>
-    class Coordinate2D : public std::pair<T1,T2>
-    {
-    public:
-        Coordinate2D (T1 _1, T2 _2);
-        virtual inline double distanceFrom (const std::pair<T1,T2>& point) const = 0;
-        virtual ~Coordinate2D ();
-    };
-    template <typename T1, typename T2>
-    Coordinate2D<T1, T2>::Coordinate2D (T1 _1, T2 _2)
-        : std::pair<T1, T2> (_1,_2)
-    {
-    }
-    template <typename T1, typename T2>
-    Coordinate2D<T1, T2>::~Coordinate2D ()
-    {
-    }
-    
-    template<typename T1, typename T2>
-    class CartesianCoord2D : public Coordinate2D<T1,T2>
-    {
-    public:
-        CartesianCoord2D (T1 _1, T2 _2);
-        virtual inline double distanceFrom (const std::pair<T1,T2>& point) const;
-    };
-    template<typename T1, typename T2>
-    CartesianCoord2D<T1, T2>::CartesianCoord2D (T1 _1, T2 _2)
-    :   Coordinate2D<T1,T2>::Coordinate2D (_1, _2)
-    {
-    }
-    template<typename T1, typename T2>
-    inline double CartesianCoord2D<T1,T2>::distanceFrom(const std::pair<T1,T2>& point) const
-    {
-        return sqrt (pow((this->first - point.first), 2) + pow ((this->second - point.second),2));
-    }
+namespace vne
+{
+template <typename T1, typename T2>
+class Coordinate2D : public std::pair<T1, T2>
+{
+   public:
+    Coordinate2D(T1 _1, T2 _2);
+    virtual inline double distanceFrom(const std::pair<T1, T2> &point) const = 0;
+    virtual ~Coordinate2D();
+};
+template <typename T1, typename T2>
+Coordinate2D<T1, T2>::Coordinate2D(T1 _1, T2 _2) : std::pair<T1, T2>(_1, _2)
+{
 }
+template <typename T1, typename T2>
+Coordinate2D<T1, T2>::~Coordinate2D()
+{
+}
+
+template <typename T1, typename T2>
+class CartesianCoord2D : public Coordinate2D<T1, T2>
+{
+   public:
+    CartesianCoord2D(T1 _1, T2 _2);
+    virtual inline double distanceFrom(const std::pair<T1, T2> &point) const;
+};
+template <typename T1, typename T2>
+CartesianCoord2D<T1, T2>::CartesianCoord2D(T1 _1, T2 _2)
+    : Coordinate2D<T1, T2>::Coordinate2D(_1, _2)
+{
+}
+template <typename T1, typename T2>
+inline double CartesianCoord2D<T1, T2>::distanceFrom(const std::pair<T1, T2> &point) const
+{
+    return sqrt(pow((this->first - point.first), 2) + pow((this->second - point.second), 2));
+}
+}  // namespace vne
 #endif /* defined(__vne_mcts__coordinate__) */

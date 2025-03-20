@@ -31,219 +31,274 @@
 
 #include <cstring>
 
-namespace vne {
-    namespace experiments {
+namespace vne
+{
+namespace experiments
+{
 
-        template<>
-        MCVNENodeMCFNoDiskIOLinkExp<>::MCVNENodeMCFNoDiskIOLinkExp ()
-        {
-            sb  = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
+    template <>
+    MCVNENodeMCFNoDiskIOLinkExp<>::MCVNENodeMCFNoDiskIOLinkExp()
+    {
+        sb = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
 
-            std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo (new VYVineTwoStageEmbeddingAlgo<>
-                                                                          (*sb,
-                                                                           std::shared_ptr<MCVNENodeEmbeddingAlgo<>> (new MCVNENodeEmbeddingAlgo<> ()),
-                                                                           std::shared_ptr<VYVineLinkEmbeddingAlgoNoDiskIO<>> (new VYVineLinkEmbeddingAlgoNoDiskIO<> ())
-                                                                           )
-                                                                          );
+        std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo(
+            new VYVineTwoStageEmbeddingAlgo<>(
+                *sb, std::shared_ptr<MCVNENodeEmbeddingAlgo<>>(new MCVNENodeEmbeddingAlgo<>()),
+                std::shared_ptr<VYVineLinkEmbeddingAlgoNoDiskIO<>>(
+                    new VYVineLinkEmbeddingAlgoNoDiskIO<>())));
 
-            std::shared_ptr<ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>> releaseAlgo (new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>(*sb));
+        std::shared_ptr<
+            ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>>
+            releaseAlgo(new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                             VYVirtualNetRequest<>>(*sb));
 
-            VYVNREmbeddingProc<>* embeddingProc (new VYVNREmbeddingProc<>(embeddingAlgo));
-            VYVNRReleaseProc<>* releaseProc (new VYVNRReleaseProc<>(releaseAlgo));
-            VYVNRProcObserver<>* observer (new VYVNRProcObserver<> (sb->getNetwork()));
-            VYVNRGenerator<>* gen (new VYVNRGenerator<>());
-            observer->registerSubscriber(this);
+        VYVNREmbeddingProc<> *embeddingProc(new VYVNREmbeddingProc<>(embeddingAlgo));
+        VYVNRReleaseProc<> *releaseProc(new VYVNRReleaseProc<>(releaseAlgo));
+        VYVNRProcObserver<> *observer(new VYVNRProcObserver<>(sb->getNetwork()));
+        VYVNRGenerator<> *gen(new VYVNRGenerator<>());
+        observer->registerSubscriber(this);
 
-            graph = new VYVNRProcDigraph<> (embeddingProc, releaseProc, gen, observer);
+        graph = new VYVNRProcDigraph<>(embeddingProc, releaseProc, gen, observer);
 
-            std::stringstream vnrDir;
-            vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "path") << "/"
-            << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "dir");
+        std::stringstream vnrDir;
+        vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard",
+                                                                    "VirtualNetRequest", "path")
+               << "/"
+               << ConfigManager::Instance()->getConfig<std::string>("vineyard",
+                                                                    "VirtualNetRequest", "dir");
 
-            std::stringstream snDir (ConfigManager::Instance()->getConfig<std::string>("vineyard", "SubstrateNetwork", "path"));
+        std::stringstream snDir(ConfigManager::Instance()->getConfig<std::string>(
+            "vineyard", "SubstrateNetwork", "path"));
 
-            std::stringstream ConfigFile;
-            ConfigFile << vnrDir.str() << "/vnr_generation_params.toml";
+        std::stringstream ConfigFile;
+        ConfigFile << vnrDir.str() << "/vnr_generation_params.toml";
 
-            auto VNRParams = toml::parse(ConfigFile.str());
+        auto VNRParams = toml::parse(ConfigFile.str());
 
-            ConfigFile.str (std::string());
-            ConfigFile << snDir.str() << "/substrate_net_generation_params.toml";
-            auto SNParams  = toml::parse(ConfigFile.str());
+        ConfigFile.str(std::string());
+        ConfigFile << snDir.str() << "/substrate_net_generation_params.toml";
+        auto SNParams = toml::parse(ConfigFile.str());
 
-            params.setAllParams(SNParams, VNRParams);
+        params.setAllParams(SNParams, VNRParams);
 
-            std::string link_algo ("MCF Link Mapping");
-            std::string node_algo ("MCVNE Node Mapping");
+        std::string link_algo("MCF Link Mapping");
+        std::string node_algo("MCVNE Node Mapping");
 
-            Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
-            this->initialize (graph, algo_type, node_algo, link_algo);
+        Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
+        this->initialize(graph, algo_type, node_algo, link_algo);
 
-            setAlpha = ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator", "setAlpha");
-            setBeta  = ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator", "setBeta");
-            mcts_max_depth = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "MaxDepth");
-            mcts_num_simulations = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "NumSimulations");
-            mcts_expand_count = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "ExpandCount");
-            mcts_exploration_constant = ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "ExplorationConstant");
-            mcts_use_rave = (int) ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "UseRave");
-            mcts_rave_discount = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "RaveDiscount") : -1.0;
-            mcts_rave_constant = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "RaveConstant") : -1.0;
-            mcts_use_sp_mcts  = (int) ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "UseSinglePlayerMCTS");
-            mcts_sp_constant =  (mcts_use_sp_mcts > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "SPMCTSConstant") : -1.0;
-            mcts_discount = ConfigManager::Instance()->getConfig<double>("MCTS", "Simulator", "discount");
-
-        }
-
-        template<>
-        MCVNENodeMCFNoDiskIOLinkExp<>::~MCVNENodeMCFNoDiskIOLinkExp()
-        {};
-
-        template<>
-        void MCVNENodeMCFNoDiskIOLinkExp<>::statisticsGenerated (Statistics& stat)
-        {
-            statistics.push_back(*static_cast<VYStatistics*> (&stat));
-        }
-
-        template<>
-        MCVNENodeMCFLinkExp<>::MCVNENodeMCFLinkExp ()
-        {
-            sb  = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
-
-            std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo (new VYVineTwoStageEmbeddingAlgo<>
-                                                                          (*sb,
-                                                                           std::shared_ptr<MCVNENodeEmbeddingAlgo<>> (new MCVNENodeEmbeddingAlgo<> ()),
-                                                                           std::shared_ptr<VYVineLinkEmbeddingAlgo<>> (new VYVineLinkEmbeddingAlgo<> ())
-                                                                           )
-                                                                          );
-
-            std::shared_ptr<ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>> releaseAlgo (new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>(*sb));
-
-            VYVNREmbeddingProc<>* embeddingProc (new VYVNREmbeddingProc<>(embeddingAlgo));
-            VYVNRReleaseProc<>* releaseProc (new VYVNRReleaseProc<>(releaseAlgo));
-            VYVNRProcObserver<>* observer (new VYVNRProcObserver<> (sb->getNetwork()));
-            VYVNRGenerator<>* gen (new VYVNRGenerator<>());
-            observer->registerSubscriber(this);
-
-            graph = new VYVNRProcDigraph<> (embeddingProc, releaseProc, gen, observer);
-
-            std::stringstream vnrDir;
-            vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "path") << "/"
-            << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "dir");
-
-            std::stringstream snDir (ConfigManager::Instance()->getConfig<std::string>("vineyard", "SubstrateNetwork", "path"));
-
-            std::stringstream ConfigFile;
-            ConfigFile << vnrDir.str() << "/vnr_generation_params.toml";
-
-            auto VNRParams = toml::parse(ConfigFile.str());
-
-            ConfigFile.str (std::string());
-            ConfigFile << snDir.str() << "/substrate_net_generation_params.toml";
-            auto SNParams  = toml::parse(ConfigFile.str());
-
-            params.setAllParams(SNParams, VNRParams);
-
-            std::string link_algo ("MCF Link Mapping");
-            std::string node_algo ("MCVNE Node Mapping");
-
-            Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
-            this->initialize (graph, algo_type, node_algo, link_algo);
-
-            setAlpha = ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator", "setAlpha");
-            setBeta  = ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator", "setBeta");
-            mcts_max_depth = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "MaxDepth");
-            mcts_num_simulations = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "NumSimulations");
-            mcts_expand_count = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "ExpandCount");
-            mcts_exploration_constant = ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "ExplorationConstant");
-            mcts_use_rave = (int) ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "UseRave");
-            mcts_rave_discount = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "RaveDiscount") : -1.0;
-            mcts_rave_constant = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "RaveConstant") : -1.0;
-            mcts_use_sp_mcts  = (int) ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "UseSinglePlayerMCTS");
-            mcts_sp_constant =  (mcts_use_sp_mcts > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "SPMCTSConstant") : -1.0;
-            mcts_discount = ConfigManager::Instance()->getConfig<double>("MCTS", "Simulator", "discount");
-
-        }
-
-        template<>
-        MCVNENodeMCFLinkExp<>::~MCVNENodeMCFLinkExp()
-        {};
-
-        template<>
-        void MCVNENodeMCFLinkExp<>::statisticsGenerated (Statistics& stat)
-        {
-            statistics.push_back(*static_cast<VYStatistics*> (&stat));
-        }
-
-
-        template<>
-        MCVNENodeBFSLinkExp<>::MCVNENodeBFSLinkExp ()
-        {
-            sb  = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
-
-            std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo (new VYVineTwoStageEmbeddingAlgo<>
-                                                                          (*sb,
-                                                                           std::shared_ptr<MCVNENodeEmbeddingAlgo<>>(new MCVNENodeEmbeddingAlgo<>()),
-                                                                           std::shared_ptr<MCVNEBFSLinkEmbeddingAlgo<>>(new MCVNEBFSLinkEmbeddingAlgo<>())
-                                                                           )
-                                                                          );
-
-            std::shared_ptr<ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>> releaseAlgo (new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>(*sb));
-
-            VYVNREmbeddingProc<>* embeddingProc (new VYVNREmbeddingProc<>(embeddingAlgo));
-            VYVNRReleaseProc<>* releaseProc (new VYVNRReleaseProc<>(releaseAlgo));
-            VYVNRProcObserver<>* observer (new VYVNRProcObserver<> (sb->getNetwork()));
-            VYVNRGenerator<>* gen (new VYVNRGenerator<>());
-            observer->registerSubscriber(this);
-
-            graph = new VYVNRProcDigraph<> (embeddingProc, releaseProc, gen, observer);
-
-            std::stringstream vnrDir;
-            vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "path") << "/"
-            << ConfigManager::Instance()->getConfig<std::string>("vineyard", "VirtualNetRequest", "dir");
-
-            std::stringstream snDir (ConfigManager::Instance()->getConfig<std::string>("vineyard", "SubstrateNetwork", "path"));
-
-            std::stringstream ConfigFile;
-            ConfigFile << vnrDir.str() << "/vnr_generation_params.toml";
-
-            auto VNRParams = toml::parse(ConfigFile.str());
-
-            ConfigFile.str (std::string());
-            ConfigFile << snDir.str() << "/substrate_net_generation_params.toml";
-            auto SNParams  = toml::parse(ConfigFile.str());
-
-            params.setAllParams(SNParams, VNRParams);
-
-            std::string link_algo ("BFS-SP Link Mapping");
-            std::string node_algo ("MCVNE Node Mapping");
-
-            Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
-            this->initialize (graph, algo_type, node_algo, link_algo);
-
-            mcts_max_depth = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "MaxDepth");
-            mcts_num_simulations = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "NumSimulations");
-            mcts_expand_count = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "ExpandCount");
-            mcts_exploration_constant = ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "ExplorationConstant");
-            mcts_use_rave = (int) ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "UseRave");
-            mcts_rave_discount = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "RaveDiscount") : -1.0;
-            mcts_rave_constant = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "RaveConstant") : -1.0;
-            mcts_use_sp_mcts  = (int) ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "UseSinglePlayerMCTS");
-            mcts_sp_constant =  (mcts_use_sp_mcts > 0) ? ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "SPMCTSConstant") : -1.0;
-            mcts_discount = ConfigManager::Instance()->getConfig<double>("MCTS", "Simulator", "discount");
-        }
-
-        template<>
-        MCVNENodeBFSLinkExp<>::~MCVNENodeBFSLinkExp()
-        {};
-
-        template<>
-        void MCVNENodeBFSLinkExp<>::statisticsGenerated (Statistics& stat)
-        {
-            statistics.push_back(*static_cast<VYStatistics*> (&stat));
-        }
-
+        setAlpha = ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator",
+                                                              "setAlpha");
+        setBeta = ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator",
+                                                             "setBeta");
+        mcts_max_depth = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters",
+                                                                   "MaxDepth");
+        mcts_num_simulations = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters",
+                                                                         "NumSimulations");
+        mcts_expand_count = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters",
+                                                                      "ExpandCount");
+        mcts_exploration_constant = ConfigManager::Instance()->getConfig<double>(
+            "MCTS", "MCTSParameters", "ExplorationConstant");
+        mcts_use_rave = (int)ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters",
+                                                                        "UseRave");
+        mcts_rave_discount = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>(
+                                                       "MCTS", "MCTSParameters", "RaveDiscount")
+                                                 : -1.0;
+        mcts_rave_constant = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>(
+                                                       "MCTS", "MCTSParameters", "RaveConstant")
+                                                 : -1.0;
+        mcts_use_sp_mcts = (int)ConfigManager::Instance()->getConfig<bool>(
+            "MCTS", "MCTSParameters", "UseSinglePlayerMCTS");
+        mcts_sp_constant = (mcts_use_sp_mcts > 0) ? ConfigManager::Instance()->getConfig<double>(
+                                                        "MCTS", "MCTSParameters", "SPMCTSConstant")
+                                                  : -1.0;
+        mcts_discount = ConfigManager::Instance()->getConfig<double>("MCTS", "Simulator",
+                                                                     "discount");
     }
-}
+
+    template <>
+    MCVNENodeMCFNoDiskIOLinkExp<>::~MCVNENodeMCFNoDiskIOLinkExp(){};
+
+    template <>
+    void MCVNENodeMCFNoDiskIOLinkExp<>::statisticsGenerated(Statistics &stat)
+    {
+        statistics.push_back(*static_cast<VYStatistics *>(&stat));
+    }
+
+    template <>
+    MCVNENodeMCFLinkExp<>::MCVNENodeMCFLinkExp()
+    {
+        sb = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
+
+        std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo(
+            new VYVineTwoStageEmbeddingAlgo<>(
+                *sb, std::shared_ptr<MCVNENodeEmbeddingAlgo<>>(new MCVNENodeEmbeddingAlgo<>()),
+                std::shared_ptr<VYVineLinkEmbeddingAlgo<>>(new VYVineLinkEmbeddingAlgo<>())));
+
+        std::shared_ptr<
+            ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>>
+            releaseAlgo(new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                             VYVirtualNetRequest<>>(*sb));
+
+        VYVNREmbeddingProc<> *embeddingProc(new VYVNREmbeddingProc<>(embeddingAlgo));
+        VYVNRReleaseProc<> *releaseProc(new VYVNRReleaseProc<>(releaseAlgo));
+        VYVNRProcObserver<> *observer(new VYVNRProcObserver<>(sb->getNetwork()));
+        VYVNRGenerator<> *gen(new VYVNRGenerator<>());
+        observer->registerSubscriber(this);
+
+        graph = new VYVNRProcDigraph<>(embeddingProc, releaseProc, gen, observer);
+
+        std::stringstream vnrDir;
+        vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard",
+                                                                    "VirtualNetRequest", "path")
+               << "/"
+               << ConfigManager::Instance()->getConfig<std::string>("vineyard",
+                                                                    "VirtualNetRequest", "dir");
+
+        std::stringstream snDir(ConfigManager::Instance()->getConfig<std::string>(
+            "vineyard", "SubstrateNetwork", "path"));
+
+        std::stringstream ConfigFile;
+        ConfigFile << vnrDir.str() << "/vnr_generation_params.toml";
+
+        auto VNRParams = toml::parse(ConfigFile.str());
+
+        ConfigFile.str(std::string());
+        ConfigFile << snDir.str() << "/substrate_net_generation_params.toml";
+        auto SNParams = toml::parse(ConfigFile.str());
+
+        params.setAllParams(SNParams, VNRParams);
+
+        std::string link_algo("MCF Link Mapping");
+        std::string node_algo("MCVNE Node Mapping");
+
+        Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
+        this->initialize(graph, algo_type, node_algo, link_algo);
+
+        setAlpha = ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator",
+                                                              "setAlpha");
+        setBeta = ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator",
+                                                             "setBeta");
+        mcts_max_depth = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters",
+                                                                   "MaxDepth");
+        mcts_num_simulations = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters",
+                                                                         "NumSimulations");
+        mcts_expand_count = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters",
+                                                                      "ExpandCount");
+        mcts_exploration_constant = ConfigManager::Instance()->getConfig<double>(
+            "MCTS", "MCTSParameters", "ExplorationConstant");
+        mcts_use_rave = (int)ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters",
+                                                                        "UseRave");
+        mcts_rave_discount = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>(
+                                                       "MCTS", "MCTSParameters", "RaveDiscount")
+                                                 : -1.0;
+        mcts_rave_constant = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>(
+                                                       "MCTS", "MCTSParameters", "RaveConstant")
+                                                 : -1.0;
+        mcts_use_sp_mcts = (int)ConfigManager::Instance()->getConfig<bool>(
+            "MCTS", "MCTSParameters", "UseSinglePlayerMCTS");
+        mcts_sp_constant = (mcts_use_sp_mcts > 0) ? ConfigManager::Instance()->getConfig<double>(
+                                                        "MCTS", "MCTSParameters", "SPMCTSConstant")
+                                                  : -1.0;
+        mcts_discount = ConfigManager::Instance()->getConfig<double>("MCTS", "Simulator",
+                                                                     "discount");
+    }
+
+    template <>
+    MCVNENodeMCFLinkExp<>::~MCVNENodeMCFLinkExp(){};
+
+    template <>
+    void MCVNENodeMCFLinkExp<>::statisticsGenerated(Statistics &stat)
+    {
+        statistics.push_back(*static_cast<VYStatistics *>(&stat));
+    }
+
+    template <>
+    MCVNENodeBFSLinkExp<>::MCVNENodeBFSLinkExp()
+    {
+        sb = std::make_shared<VYSubstrateNetworkBuilder<>>(VYSubstrateNetworkBuilder<>());
+
+        std::shared_ptr<VYVineTwoStageEmbeddingAlgo<>> embeddingAlgo(
+            new VYVineTwoStageEmbeddingAlgo<>(
+                *sb, std::shared_ptr<MCVNENodeEmbeddingAlgo<>>(new MCVNENodeEmbeddingAlgo<>()),
+                std::shared_ptr<MCVNEBFSLinkEmbeddingAlgo<>>(new MCVNEBFSLinkEmbeddingAlgo<>())));
+
+        std::shared_ptr<
+            ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>, VYVirtualNetRequest<>>>
+            releaseAlgo(new ReleaseAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                             VYVirtualNetRequest<>>(*sb));
+
+        VYVNREmbeddingProc<> *embeddingProc(new VYVNREmbeddingProc<>(embeddingAlgo));
+        VYVNRReleaseProc<> *releaseProc(new VYVNRReleaseProc<>(releaseAlgo));
+        VYVNRProcObserver<> *observer(new VYVNRProcObserver<>(sb->getNetwork()));
+        VYVNRGenerator<> *gen(new VYVNRGenerator<>());
+        observer->registerSubscriber(this);
+
+        graph = new VYVNRProcDigraph<>(embeddingProc, releaseProc, gen, observer);
+
+        std::stringstream vnrDir;
+        vnrDir << ConfigManager::Instance()->getConfig<std::string>("vineyard",
+                                                                    "VirtualNetRequest", "path")
+               << "/"
+               << ConfigManager::Instance()->getConfig<std::string>("vineyard",
+                                                                    "VirtualNetRequest", "dir");
+
+        std::stringstream snDir(ConfigManager::Instance()->getConfig<std::string>(
+            "vineyard", "SubstrateNetwork", "path"));
+
+        std::stringstream ConfigFile;
+        ConfigFile << vnrDir.str() << "/vnr_generation_params.toml";
+
+        auto VNRParams = toml::parse(ConfigFile.str());
+
+        ConfigFile.str(std::string());
+        ConfigFile << snDir.str() << "/substrate_net_generation_params.toml";
+        auto SNParams = toml::parse(ConfigFile.str());
+
+        params.setAllParams(SNParams, VNRParams);
+
+        std::string link_algo("BFS-SP Link Mapping");
+        std::string node_algo("MCVNE Node Mapping");
+
+        Embedding_Algorithm_Types algo_type = Embedding_Algorithm_Types::TWO_STAGE;
+        this->initialize(graph, algo_type, node_algo, link_algo);
+
+        mcts_max_depth = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters",
+                                                                   "MaxDepth");
+        mcts_num_simulations = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters",
+                                                                         "NumSimulations");
+        mcts_expand_count = ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters",
+                                                                      "ExpandCount");
+        mcts_exploration_constant = ConfigManager::Instance()->getConfig<double>(
+            "MCTS", "MCTSParameters", "ExplorationConstant");
+        mcts_use_rave = (int)ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters",
+                                                                        "UseRave");
+        mcts_rave_discount = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>(
+                                                       "MCTS", "MCTSParameters", "RaveDiscount")
+                                                 : -1.0;
+        mcts_rave_constant = (mcts_use_rave > 0) ? ConfigManager::Instance()->getConfig<double>(
+                                                       "MCTS", "MCTSParameters", "RaveConstant")
+                                                 : -1.0;
+        mcts_use_sp_mcts = (int)ConfigManager::Instance()->getConfig<bool>(
+            "MCTS", "MCTSParameters", "UseSinglePlayerMCTS");
+        mcts_sp_constant = (mcts_use_sp_mcts > 0) ? ConfigManager::Instance()->getConfig<double>(
+                                                        "MCTS", "MCTSParameters", "SPMCTSConstant")
+                                                  : -1.0;
+        mcts_discount = ConfigManager::Instance()->getConfig<double>("MCTS", "Simulator",
+                                                                     "discount");
+    }
+
+    template <>
+    MCVNENodeBFSLinkExp<>::~MCVNENodeBFSLinkExp(){};
+
+    template <>
+    void MCVNENodeBFSLinkExp<>::statisticsGenerated(Statistics &stat)
+    {
+        statistics.push_back(*static_cast<VYStatistics *>(&stat));
+    }
+
+}  // namespace experiments
+}  // namespace vne
 using namespace vne::experiments;
 using namespace vne;
 HIBERLITE_EXPORT_CLASS_WITH_NAME(MCVNENodeMCFNoDiskIOLinkExp<>, MCVNENodeMCFLinkNoDiskIO)

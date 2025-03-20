@@ -32,42 +32,45 @@
 
 using namespace vne::mcts;
 
-namespace vne {
-    namespace mcvne {
-        
-        class VNENMState: public State
-        {
-        public:
-            VNENMState (std::shared_ptr<std::set<int>> _VNRNodeIdSet, int _vnrid, const std::map<int,int>* mappedNodes);
-            virtual ~VNENMState();
-            
-            virtual std::shared_ptr<State> getCopy () const override;
-            
-            void addNodeMapping (int sNodeId);
-            const std::map<int,int>* getNodeMap () const;
-            
-            int getPreviousVNId ();
-            int getCurrentVNId () const;
-            int getNextVNId ();
-            
-            int getVNRId () const;
-            
-            std::shared_ptr<std::set<int>> getUsedSNIds ();
-            
-            bool isTreminal () const;
-            bool isStartState () const;
-            
-        protected:
-            VNENMState ();
-            
-        private:
-            int vnrID;
-            std::set<int>::const_iterator VNIdSetIterator;
-            std::shared_ptr<std::set<int>> VNNodeIdSet;
-            //keeps the valid choices for embedding of the current VN.
-            //nodeMap<VirtualnodeId, SubstrateNodeId>;
-            std::map<int, int> nodeMap;
-        };
-    }
-}
+namespace vne
+{
+namespace mcvne
+{
+
+    class VNENMState : public State
+    {
+       public:
+        VNENMState(std::shared_ptr<std::set<int>> _VNRNodeIdSet, int _vnrid,
+                   const std::map<int, int> *mappedNodes);
+        virtual ~VNENMState();
+
+        virtual std::shared_ptr<State> getCopy() const override;
+
+        void addNodeMapping(int sNodeId);
+        const std::map<int, int> *getNodeMap() const;
+
+        int getPreviousVNId();
+        int getCurrentVNId() const;
+        int getNextVNId();
+
+        int getVNRId() const;
+
+        std::shared_ptr<std::set<int>> getUsedSNIds();
+
+        bool isTreminal() const;
+        bool isStartState() const;
+
+       protected:
+        VNENMState();
+
+       private:
+        int vnrID;
+        std::set<int>::const_iterator VNIdSetIterator;
+        std::shared_ptr<std::set<int>> VNNodeIdSet;
+        //keeps the valid choices for embedding of the current VN.
+        //nodeMap<VirtualnodeId, SubstrateNodeId>;
+        std::map<int, int> nodeMap;
+    };
+}  // namespace mcvne
+}  // namespace vne
 #endif

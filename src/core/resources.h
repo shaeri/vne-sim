@@ -1,4 +1,4 @@
-  /**
+/**
    * @file resources.h
    * @author Soroush Haeri <soroosh.haeri@me.com>
    * @date 7/2/14
@@ -35,134 +35,125 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/attributes/named_scope.hpp>
 
-namespace vne {
-
-template<typename... RES>
-    class Resources : public std::tuple<RES...>
+namespace vne
 {
-public:
-    Resources ();
-    Resources (RES ... _res);
-    virtual ~Resources ();
-    bool hasResources(const std::tuple<RES...>& _res);
-    bool hasResources(const RES &... _res);
-	Embedding_Result embedResources(const std::tuple<RES...>&  _res);
-    void freeResources(const std::tuple<RES...>& _res);
-    
-private:
-    template<std::size_t> struct int_
-	{
-	};
-    
-	template<size_t Pos>
-	bool hasResources(const std::tuple<RES...>& t, int_<Pos>, bool previousResult)
-	{
-		bool retVal;
-        
-        if (std::get<std::tuple_size<std::tuple<RES...>>::value - Pos> (t) >
-                      std::get<std::tuple_size<std::tuple<RES...>>::value - Pos> (*this))
-		{
+
+template <typename... RES>
+class Resources : public std::tuple<RES...>
+{
+   public:
+    Resources();
+    Resources(RES... _res);
+    virtual ~Resources();
+    bool hasResources(const std::tuple<RES...> &_res);
+    bool hasResources(const RES &..._res);
+    Embedding_Result embedResources(const std::tuple<RES...> &_res);
+    void freeResources(const std::tuple<RES...> &_res);
+
+   private:
+    template <std::size_t>
+    struct int_ {
+    };
+
+    template <size_t Pos>
+    bool hasResources(const std::tuple<RES...> &t, int_<Pos>, bool previousResult)
+    {
+        bool retVal;
+
+        if (std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(t) >
+            std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(*this)) {
             if (std::abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t) -
-                    std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this)) < 1E-4)
-            {
+                         std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this)) < 1E-4) {
                 return hasResources(t, int_<Pos - 1>(), previousResult && true);
             }
-			retVal = previousResult && false;
-		}
-		else
-			retVal = previousResult && true;
-		return hasResources(t, int_<Pos - 1>(), retVal);
-	}
-    
-	bool hasResources(const std::tuple<RES...>& t, int_<1>, bool previousResult = true)
-	{
-		bool retVal;
-        if (std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (t) >
-            std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this))
-		{
-            if (std::abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (t) -
-                    std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this)) < 1E-4)
-            {
+            retVal = previousResult && false;
+        } else
+            retVal = previousResult && true;
+        return hasResources(t, int_<Pos - 1>(), retVal);
+    }
+
+    bool hasResources(const std::tuple<RES...> &t, int_<1>, bool previousResult = true)
+    {
+        bool retVal;
+        if (std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t) >
+            std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this)) {
+            if (std::abs(std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t) -
+                         std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this)) < 1E-4) {
                 return previousResult && true;
             }
-			retVal = previousResult && false;
-		}
-		else
-			retVal = previousResult && true;
-		return retVal;
-	}
-    
-	template<size_t Pos>
-	void embedResources(const std::tuple<RES...>& t, int_<Pos>)
-	{
-		auto val =
-        std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(*this);
-		std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(*this)
-        = val - std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(t);
-		embedResources(t, int_<Pos - 1>());
-	}
-    
-	void embedResources(const std::tuple<RES...>& t, int_<1>)
-	{
-		auto val = std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this);
-		std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this)
-        = val - std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t);
-	}
-	template<size_t Pos>
-	void freeResources(const std::tuple<RES...>& t, int_<Pos>)
-	{
-		auto val = std::get<std::tuple_size<std::tuple<RES...>>::value - Pos> (*this);
-		std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(*this)
-        = val + std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(t);
-		freeResources(t, int_<Pos - 1>());
-	}
-    
-	void freeResources(const std::tuple<RES...>& t, int_<1>)
-	{
-		auto val = std::get<std::tuple_size<std::tuple<RES...>>::value - 1> (*this);
-		std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this) = val
-        + std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t);
-	}
+            retVal = previousResult && false;
+        } else
+            retVal = previousResult && true;
+        return retVal;
+    }
+
+    template <size_t Pos>
+    void embedResources(const std::tuple<RES...> &t, int_<Pos>)
+    {
+        auto val = std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(*this);
+        std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(
+            *this) = val - std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(t);
+        embedResources(t, int_<Pos - 1>());
+    }
+
+    void embedResources(const std::tuple<RES...> &t, int_<1>)
+    {
+        auto val = std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this);
+        std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(
+            *this) = val - std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t);
+    }
+    template <size_t Pos>
+    void freeResources(const std::tuple<RES...> &t, int_<Pos>)
+    {
+        auto val = std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(*this);
+        std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(
+            *this) = val + std::get<std::tuple_size<std::tuple<RES...>>::value - Pos>(t);
+        freeResources(t, int_<Pos - 1>());
+    }
+
+    void freeResources(const std::tuple<RES...> &t, int_<1>)
+    {
+        auto val = std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(*this);
+        std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(
+            *this) = val + std::get<std::tuple_size<std::tuple<RES...>>::value - 1>(t);
+    }
 };
-template<typename... RES>
-Resources<RES...>::Resources ()
-    : std::tuple<RES...> ()
+template <typename... RES>
+Resources<RES...>::Resources() : std::tuple<RES...>()
 {
 }
-template<typename ... RES>
-Resources<RES...>::Resources(RES ... _res)
-    : std::tuple<RES...> (_res...)
+template <typename... RES>
+Resources<RES...>::Resources(RES... _res) : std::tuple<RES...>(_res...)
 {
 }
-template<typename... RES>
+template <typename... RES>
 Resources<RES...>::~Resources()
 {
 }
-template<typename ... RES>
-bool Resources<RES...>::hasResources(const std::tuple<RES...>& _res)
+template <typename... RES>
+bool Resources<RES...>::hasResources(const std::tuple<RES...> &_res)
 {
-	return hasResources(_res, int_<sizeof...(RES)>(), true);
+    return hasResources(_res, int_<sizeof...(RES)>(), true);
 }
-template<typename ... RES>
-bool Resources<RES...>::hasResources(const RES &... _res)
+template <typename... RES>
+bool Resources<RES...>::hasResources(const RES &..._res)
 {
-	return hasResources(Resources<RES...>(_res...), int_<sizeof...(RES)>(), true);
+    return hasResources(Resources<RES...>(_res...), int_<sizeof...(RES)>(), true);
 }
-template<typename ... RES>
-Embedding_Result Resources<RES...>::embedResources(const std::tuple<RES...>&  _res)
+template <typename... RES>
+Embedding_Result Resources<RES...>::embedResources(const std::tuple<RES...> &_res)
 {
-	BOOST_LOG_NAMED_SCOPE("Resources::embedResources");
-	if(!hasResources(_res))
-	{
-		return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
-	}
-	embedResources(_res, int_<sizeof...(RES)>());
-	return Embedding_Result::SUCCESSFUL_EMBEDDING;
+    BOOST_LOG_NAMED_SCOPE("Resources::embedResources");
+    if (!hasResources(_res)) {
+        return Embedding_Result::NOT_ENOUGH_SUBSTRATE_RESOURCES;
+    }
+    embedResources(_res, int_<sizeof...(RES)>());
+    return Embedding_Result::SUCCESSFUL_EMBEDDING;
 }
-template<typename ... RES>
-void Resources<RES...>::freeResources(const std::tuple<RES...>& _res)
+template <typename... RES>
+void Resources<RES...>::freeResources(const std::tuple<RES...> &_res)
 {
-	freeResources(_res, int_<sizeof...(RES)>());
+    freeResources(_res, int_<sizeof...(RES)>());
 }
-}
+}  // namespace vne
 #endif

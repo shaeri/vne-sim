@@ -26,93 +26,80 @@
 
 #include "Util.h"
 
-RandomVariable::RandomVariable(unsigned short int *s) {
-
-  assert(s != NULL);
-  seed[0] = s[0];
-  seed[1] = s[1];
-  seed[2] = s[2];
-  sptr = s;
-
-}
-
-RandomVariable::~RandomVariable() {
-
-  assert(sptr != NULL);
-  sptr[0] = seed[0];
-  sptr[1] = seed[1];
-  sptr[2] = seed[2];
-
-}
-
-double RandomVariable::GetValNormal(double avg, double std) {
-  
-  static int parity = 0;
-  static double nextresult;
-  double sam1, sam2, rad;
-   
-  if (std == 0) return avg;
-  if (parity == 0) {
-    sam1 = 2 * GetValUniform() - 1;
-    sam2 = 2 * GetValUniform() - 1;
-    while ((rad = sam1*sam1 + sam2*sam2) >= 1) {
-      sam1 = 2 * GetValUniform() - 1;
-      sam2 = 2 * GetValUniform() - 1;
-    }
-    rad = sqrt((-2*log(rad))/rad);
-    nextresult = sam2 * rad;
-    parity = 1;
-    return (sam1 * rad * std + avg);
-  }
-  else {
-    parity = 0;
-    return (nextresult * std + avg);
-  }
-}
-
-
-void BucketSort(vector<double>& A)
+RandomVariable::RandomVariable(unsigned short int *s)
 {
+    assert(s != NULL);
+    seed[0] = s[0];
+    seed[1] = s[1];
+    seed[2] = s[2];
+    sptr = s;
+}
 
-  vector< list<double> > B(A.size());
+RandomVariable::~RandomVariable()
+{
+    assert(sptr != NULL);
+    sptr[0] = seed[0];
+    sptr[1] = seed[1];
+    sptr[2] = seed[2];
+}
 
-  vector<double>::iterator it;
+double RandomVariable::GetValNormal(double avg, double std)
+{
+    static int parity = 0;
+    static double nextresult;
+    double sam1, sam2, rad;
 
-  for (it = A.begin(); it != A.end(); it++) {
-    int index = (int)floor(*it * A.size());
-    B[index].insert(B[index].begin(), *it);
-  }
-
-  list<double>::iterator li;
-
-  int j = 0;
-  for (unsigned int i = 0; i < A.size(); i++) {
-    B[i].sort();
-    for (li = B[i].begin(); li != B[i].end(); li++) {
-      A[j++] = *li;
+    if (std == 0)
+        return avg;
+    if (parity == 0) {
+        sam1 = 2 * GetValUniform() - 1;
+        sam2 = 2 * GetValUniform() - 1;
+        while ((rad = sam1 * sam1 + sam2 * sam2) >= 1) {
+            sam1 = 2 * GetValUniform() - 1;
+            sam2 = 2 * GetValUniform() - 1;
+        }
+        rad = sqrt((-2 * log(rad)) / rad);
+        nextresult = sam2 * rad;
+        parity = 1;
+        return (sam1 * rad * std + avg);
+    } else {
+        parity = 0;
+        return (nextresult * std + avg);
     }
-  }
-
 }
 
+void BucketSort(vector<double> &A)
+{
+    vector<list<double> > B(A.size());
 
-int BinarySearch(vector<double>& A, int l, int h, double value) {
+    vector<double>::iterator it;
 
-  int mid = (h + l)/2;
+    for (it = A.begin(); it != A.end(); it++) {
+        int index = (int)floor(*it * A.size());
+        B[index].insert(B[index].begin(), *it);
+    }
 
-  if (l == h) return mid;
+    list<double>::iterator li;
 
-  if (A[mid] < value) {
-    return BinarySearch(A, mid + 1, h, value);
-  }else {
-    return BinarySearch(A, l, mid, value);
-  }
-
+    int j = 0;
+    for (unsigned int i = 0; i < A.size(); i++) {
+        B[i].sort();
+        for (li = B[i].begin(); li != B[i].end(); li++) {
+            A[j++] = *li;
+        }
+    }
 }
 
+int BinarySearch(vector<double> &A, int l, int h, double value)
+{
+    int mid = (h + l) / 2;
 
+    if (l == h)
+        return mid;
 
-
-
- 
-
+    if (A[mid] < value) {
+        return BinarySearch(A, mid + 1, h, value);
+    } else {
+        return BinarySearch(A, l, mid, value);
+    }
+}

@@ -31,33 +31,28 @@
 ////////////////////////////////////////////////
 //
 // class RouterBarabasiAlbert2
-// Derived class for RouterBarabasiAlbert model. 
-// This model is the new version of the model 
+// Derived class for RouterBarabasiAlbert model.
+// This model is the new version of the model
 // implemented by RouterBarabasi-1.
 // It implies Incremental growth and preferential
 // connectivity.
-// It Builds router-level topologies 
+// It Builds router-level topologies
 //
 ////////////////////////////////////////////////
 
 class RouterBarabasiAlbert_2_Par;
 
-class RouterBarabasiAlbert_2 : public RouterBarabasiAlbert {
+class RouterBarabasiAlbert_2 : public RouterBarabasiAlbert
+{
+   public:
+    RouterBarabasiAlbert_2(RouterBarabasiAlbert_2_Par *par);
+    string ToString();
 
- public:
-  
-  RouterBarabasiAlbert_2(RouterBarabasiAlbert_2_Par* par);
-  string ToString();
-
- private:
-
-  /*virtual*/ void InterconnectNodes(Graph *g);
-  int SumDj;  // Sum of outdegrees of all nodes
-  double P;
-  double Q;
-
+   private:
+    /*virtual*/ void InterconnectNodes(Graph *g);
+    int SumDj;  // Sum of outdegrees of all nodes
+    double P;
+    double Q;
 };
 
 #endif /* RT_BAR_2_MODEL_H */
-
-

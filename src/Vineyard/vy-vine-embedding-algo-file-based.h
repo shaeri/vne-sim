@@ -25,7 +25,6 @@
 #ifndef VINEYARD_VY_VINE_EMBEDDING_ALGO_FILE_BASED_
 #define VINEYARD_VY_VINE_EMBEDDING_ALGO_FILE_BASED_
 
-
 #include "glpk.h"
 
 #include "core/network.h"

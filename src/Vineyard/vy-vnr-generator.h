@@ -39,36 +39,45 @@
  * request files in numbered in ascending order
  * based on the arrival time of the VNRs.
  */
-namespace vne {
-    namespace vineyard {
-        using namespace boost::filesystem;
-        struct CompareRequestPaths{
-            bool operator()(const std::pair<int, path>& lhs, const std::pair<int, path>& rhs)
-            {
-                return lhs.first>rhs.first;
-            }
-        };
-        template<typename = VYVirtualNetRequest<>>
-        class VYVNRGenerator : public VNRGenerator<VYVirtualNetRequest<>>
+namespace vne
+{
+namespace vineyard
+{
+    using namespace boost::filesystem;
+    struct CompareRequestPaths {
+        bool operator()(const std::pair<int, path> &lhs, const std::pair<int, path> &rhs)
         {
-        public:
-            VYVNRGenerator (
-        std::function<std::shared_ptr<std::pair<double,double>>(const VYVirtualNetRequest<>* vnr)> calcRevenue = nullptr,
-        std::function<std::shared_ptr<std::pair<double,double>>(const VYVirtualNetRequest<>* vnr)> calcCost =nullptr);
-            
-            virtual ~VYVNRGenerator ();
-            virtual void delta_int();
-            virtual void output_func(adevs::Bag<ADEVS_IO_TYPE>& yb);
-            virtual double ta();
-            
-        private:
-            std::shared_ptr<VYVirtualNetRequest<>> vnr;
-            std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)>  revenue;
-            std::function<std::shared_ptr<std::pair<double,double>> (const VYVirtualNetRequest<>* vnr)>  cost;
-            std::priority_queue<std::pair<int, path>, std::vector<std::pair<int, path>>, CompareRequestPaths> _reqFiles;
-            inline void setVNR ();
-            double last_vnr_arrival;
-        };
-    }
-}
+            return lhs.first > rhs.first;
+        }
+    };
+    template <typename = VYVirtualNetRequest<>>
+    class VYVNRGenerator : public VNRGenerator<VYVirtualNetRequest<>>
+    {
+       public:
+        VYVNRGenerator(std::function<std::shared_ptr<std::pair<double, double>>(
+                           const VYVirtualNetRequest<> *vnr)>
+                           calcRevenue = nullptr,
+                       std::function<std::shared_ptr<std::pair<double, double>>(
+                           const VYVirtualNetRequest<> *vnr)>
+                           calcCost = nullptr);
+
+        virtual ~VYVNRGenerator();
+        virtual void delta_int();
+        virtual void output_func(adevs::Bag<ADEVS_IO_TYPE> &yb);
+        virtual double ta();
+
+       private:
+        std::shared_ptr<VYVirtualNetRequest<>> vnr;
+        std::function<std::shared_ptr<std::pair<double, double>>(const VYVirtualNetRequest<> *vnr)>
+            revenue;
+        std::function<std::shared_ptr<std::pair<double, double>>(const VYVirtualNetRequest<> *vnr)>
+            cost;
+        std::priority_queue<std::pair<int, path>, std::vector<std::pair<int, path>>,
+                            CompareRequestPaths>
+            _reqFiles;
+        inline void setVNR();
+        double last_vnr_arrival;
+    };
+}  // namespace vineyard
+}  // namespace vne
 #endif /* defined(__vne_mcts__vy_virtual_net_request_builder__) */

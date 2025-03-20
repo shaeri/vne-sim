@@ -1,12 +1,12 @@
-cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-project (vne-mcts CXX)
+project(vne-mcts CXX)
 
 # The version number.
-set (vne-mcts_VERSION_MAJOR 1.0)
-set (vne-mcts_VERSION_MINOR 0)
+set(vne-mcts_VERSION_MAJOR 1.0)
+set(vne-mcts_VERSION_MINOR 0)
 
-#Make sure compiler version is at least 4.9
+# Make sure compiler version is at least 4.9
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
     message(FATAL_ERROR "GCC 4.9 is required to compile VNE-Sim..")
@@ -14,52 +14,52 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 # Download and build dependencies
-IF(NOT EXISTS "${CMAKE_BINARY_DIR}/deps")
-    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/deps)
-    execute_process(COMMAND ${PROJECT_SOURCE_DIR}/scripts/build-deps.sh
-        WORKING_DIRECTORY deps
-        COMMAND_ECHO STDOUT
-        OUTPUT_FILE stdout.log
-        ERROR_FILE stderr.log
-        COMMAND_ERROR_IS_FATAL ANY)
-ENDIF()
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/deps")
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/deps)
+  execute_process(
+    COMMAND ${PROJECT_SOURCE_DIR}/scripts/build-deps.sh
+    WORKING_DIRECTORY deps COMMAND_ECHO STDOUT
+    OUTPUT_FILE stdout.log
+    ERROR_FILE stderr.log COMMAND_ERROR_IS_FATAL ANY)
+endif()
 
-# Enable C++11 compilation
-# list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -w")
+# Enable C++11 compilation list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -w")
 list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -w")
 # TODO: remove -w by fixing warning messages in code
 
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    SET(CMAKE_SHARED_LINKER_FLAGS " -ldl")
-    add_definitions (-DDARWIN)
-ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    SET(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl")
-ENDIF()
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(CMAKE_SHARED_LINKER_FLAGS " -ldl")
+  add_definitions(-DDARWIN)
+else(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(CMAKE_SHARED_LINKER_FLAGS " -Wl,--no-as-needed -ldl")
+endif()
 
 # Set the build directory
-SET(PROJECT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build)
+set(PROJECT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
 # Set library path
-SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 # Set executable path
-SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 set(HIBERLITE_LIBRARY hiberlite)
 add_library(${HIBERLITE_LIBRARY} STATIC IMPORTED)
-set_property(TARGET ${HIBERLITE_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/deps/lib/libhiberlite.a)
+set_property(
+  TARGET ${HIBERLITE_LIBRARY}
+  PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/deps/lib/libhiberlite.a)
 
-file(DOWNLOAD
-    "https://raw.githubusercontent.com/ToruNiina/toml11/refs/tags/v4.4.0/single_include/toml.hpp"
-    "${PROJECT_BINARY_DIR}/deps/include/toml.hpp"
-    TLS_VERIFY ON
-)
+# Download toml.hpp
+file(
+  DOWNLOAD
+  "https://raw.githubusercontent.com/ToruNiina/toml11/refs/tags/v4.4.0/single_include/toml.hpp"
+  "${PROJECT_BINARY_DIR}/deps/include/toml.hpp"
+  TLS_VERIFY ON)
 
 # Add the include directories of external-libraries
 include_directories(${PROJECT_BINARY_DIR}/deps/include)
 # For BRITE Network Generator
 include_directories(${PROJECT_SOURCE_DIR}/deps)
-
 
 # Local projec headers
 include_directories(${PROJECT_SOURCE_DIR}/src)
@@ -68,75 +68,78 @@ include_directories(${PROJECT_SOURCE_DIR}/src)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
 # Find boost libraries
-find_package(Boost
-             1.56.0
-             COMPONENTS
-                filesystem
-                log
-                log_setup
-                program_options
-                thread
-                system
-                unit_test_framework
-             REQUIRED)
+find_package(
+  Boost 1.56.0
+  COMPONENTS filesystem
+             log
+             log_setup
+             program_options
+             thread
+             system
+             unit_test_framework
+  REQUIRED)
 find_package(GSL REQUIRED)
 find_package(GLPK REQUIRED)
 find_package(SQLITE3 REQUIRED)
-option (WITH_FNSS_SUPPORT "WITH_FNSS_SUPPORT" OFF)
-IF (${WITH_FNSS_SUPPORT})
-    set(Python3_FIND_FRAMEWORK NEVER)
-    set(Python3_FIND_VIRTUALENV FIRST)
-    find_package(Python3 COMPONENTS Interpreter Development)
-    MESSAGE(STATUS "..EXEC ${Python3_EXECUTABLE}")
-    MESSAGE(STATUS "..LIBS ${Python3_LIBRARIES}")
-    MESSAGE(STATUS "..LIB_DIRS ${Python3_LIBRARY_DIRS}")
-    MESSAGE(STATUS "..RUNTIME_LIB_DIRS ${Python3_RUNTIME_LIBRARY_DIRS}")
-    MESSAGE(STATUS "..INC ${Python3_INCLUDE_DIRS}")
-    IF(Python3_RUNTIME_LIBRARY_DIRS)
-            MESSAGE (STATUS "Python Libraries were found! Compiling with FNSS support.")
-            add_definitions (-DPYTHON_AVAILABLE)
-            include_directories(${Python3_INCLUDE_DIRS})
-            IF (NOT EXISTS ${PROJECT_SOURCE_DIR}/build/deps/src/fnss)
-              MESSAGE (STATUS "FNSS DOES NOT EXIST...")
+option(WITH_FNSS_SUPPORT "WITH_FNSS_SUPPORT" OFF)
+if(${WITH_FNSS_SUPPORT})
+  set(Python3_FIND_FRAMEWORK NEVER)
+  set(Python3_FIND_VIRTUALENV FIRST)
+  find_package(Python3 COMPONENTS Interpreter Development)
+  message(STATUS "..EXEC ${Python3_EXECUTABLE}")
+  message(STATUS "..LIBS ${Python3_LIBRARIES}")
+  message(STATUS "..LIB_DIRS ${Python3_LIBRARY_DIRS}")
+  message(STATUS "..RUNTIME_LIB_DIRS ${Python3_RUNTIME_LIBRARY_DIRS}")
+  message(STATUS "..INC ${Python3_INCLUDE_DIRS}")
+  if(Python3_RUNTIME_LIBRARY_DIRS)
+    message(STATUS "Python Libraries were found! Compiling with FNSS support.")
+    add_definitions(-DPYTHON_AVAILABLE)
+    include_directories(${Python3_INCLUDE_DIRS})
+    if(NOT EXISTS ${PROJECT_SOURCE_DIR}/build/deps/src/fnss)
+      message(STATUS "FNSS DOES NOT EXIST...")
 
-      ENDIF()
-      set(FNSS_LIBRARY fnss)
-      add_library(${FNSS_LIBRARY} STATIC IMPORTED)
-      link_directories(${Python3_LIBRARY_DIRS})
-      set_property(TARGET ${FNSS_LIBRARY} PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/deps/lib/libfnss.a)
-      include_directories(${PROJECT_BINARY_DIR}/deps/include)
-      add_definitions(-DWITH_FNSS_SUPPORT)
-    ELSE()
-            MESSAGE (STATUS "Python Libraries were not found! Compiling without FNSS support.")
-    ENDIF()
-ENDIF ()
+    endif()
+    set(FNSS_LIBRARY fnss)
+    add_library(${FNSS_LIBRARY} STATIC IMPORTED)
+    link_directories(${Python3_LIBRARY_DIRS})
+    set_property(
+      TARGET ${FNSS_LIBRARY} PROPERTY IMPORTED_LOCATION
+                                      ${PROJECT_BINARY_DIR}/deps/lib/libfnss.a)
+    include_directories(${PROJECT_BINARY_DIR}/deps/include)
+    add_definitions(-DWITH_FNSS_SUPPORT)
+  else()
+    message(
+      STATUS "Python Libraries were not found! Compiling without FNSS support.")
+  endif()
+endif()
 
-#MPI Support
-option (ENABLE_MPI "ENABLE_MPI" OFF)
-IF (${ENABLE_MPI})
-    MESSAGE (STATUS "Trying to compile with MPI. Searching for MPI Libraries...")
-    find_package(MPI)
-    IF (${MPI_FOUND})
-        MESSAGE (STATUS "Compiling with MPI support.")
-        add_definitions (-DENABLE_MPI)
-        set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-        # set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
-        include_directories(${MPI_INCLUDE_PATH})
-    ELSE()
-        MESSAGE (STATUS "Could not find the MPI Libraries...")
+# MPI Support
+option(ENABLE_MPI "ENABLE_MPI" OFF)
+if(${ENABLE_MPI})
+  message(STATUS "Trying to compile with MPI. Searching for MPI Libraries...")
+  find_package(MPI)
+  if(${MPI_FOUND})
+    message(STATUS "Compiling with MPI support.")
+    add_definitions(-DENABLE_MPI)
+    set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+    # set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+    include_directories(${MPI_INCLUDE_PATH})
+  else()
+    message(STATUS "Could not find the MPI Libraries...")
 
-    ENDIF()
-ELSE()
-MESSAGE (STATUS "Compiling without MPI support. Use option -DENABLE_MPI=ON to compile with MPI support.")
-ENDIF()
+  endif()
+else()
+  message(
+    STATUS
+      "Compiling without MPI support. Use option -DENABLE_MPI=ON to compile with MPI support."
+  )
+endif()
 
-#add subdirectories that need to be compiled
+# add subdirectories that need to be compiled
 add_subdirectory(src)
 add_subdirectory(deps/BRITE)
 
-
-# Enable C++11 standard
-# set_property(TARGET vne-mcts PROPERTY CXX_STANDARD 11)
+# Enable C++11 standard set_property(TARGET vne-mcts PROPERTY CXX_STANDARD 11)
 # set_property(TARGET vne-mcts PROPERTY CXX_STANDARD_REQUIRED ON)
 
-#target_link_libraries(src hiberlite)
+# target_link_libraries(src hiberlite)

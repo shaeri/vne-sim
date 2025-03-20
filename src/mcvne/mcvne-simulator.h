@@ -36,72 +36,100 @@
 
 using namespace vne::vineyard;
 
-namespace vne {
-    namespace mcvne {
-        template<typename = Network<VYSubstrateNode<>,VYSubstrateLink<>> , typename = VYVirtualNetRequest<>>
-        class MCVNESimulator :
-        public VNEMCTSSimulator <Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>
-        {
-        public:
-            MCVNESimulator(std::shared_ptr<SUBSTRATE_TYPE> subs_net, std::shared_ptr<VNR_TYPE> vnr,
-                           std::shared_ptr<LinkEmbeddingAlgorithm <SUBSTRATE_TYPE,VNR_TYPE>> _link_embedder);
-            
-            ~MCVNESimulator();
-            
-        protected:
-            virtual std::shared_ptr<std::set<int>> getValidSubstrateNodeIdSetForVNNodeId (int vn_id, std::shared_ptr<std::set<int>> used_sn_ids) const override;
-            virtual double calculateImmediateReward (std::shared_ptr<VNENMState> st, int action) const override;
-            virtual double calculateFinalReward (std::shared_ptr<VNENMState> st,
-                                                 const std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>* linkMap) const override;
-        private:
-            
-            struct ReachabilityConditionWithPathSpliting
+namespace vne
+{
+namespace mcvne
+{
+    template <typename = Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+              typename = VYVirtualNetRequest<>>
+    class MCVNESimulator : public VNEMCTSSimulator<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                                   VYVirtualNetRequest<>>
+    {
+       public:
+        MCVNESimulator(
+            std::shared_ptr<SUBSTRATE_TYPE> subs_net, std::shared_ptr<VNR_TYPE> vnr,
+            std::shared_ptr<LinkEmbeddingAlgorithm<SUBSTRATE_TYPE, VNR_TYPE>> _link_embedder);
+
+        ~MCVNESimulator();
+
+       protected:
+        virtual std::shared_ptr<std::set<int>> getValidSubstrateNodeIdSetForVNNodeId(
+            int vn_id, std::shared_ptr<std::set<int>> used_sn_ids) const override;
+        virtual double calculateImmediateReward(std::shared_ptr<VNENMState> st,
+                                                int action) const override;
+        virtual double calculateFinalReward(
+            std::shared_ptr<VNENMState> st,
+            const std::map<int, std::list<std::pair<int, std::shared_ptr<Resources<double>>>>>
+                *linkMap) const override;
+
+       private:
+        struct ReachabilityConditionWithPathSpliting {
+            bool operator()(
+                const std::shared_ptr<const VYSubstrateNode<>> lhs,
+                const std::shared_ptr<const std::vector<std::shared_ptr<VYSubstrateLink<>>>>
+                    linksConnectedToLhs,
+                const std::shared_ptr<const VYVirtualNode<>> rhs,
+                const std::shared_ptr<const std::vector<std::shared_ptr<VYVirtualLink<>>>>
+                    linksConnectedToRhs,
+                double maxD, std::shared_ptr<std::set<int>> used_sn_ids) const
             {
-                bool operator()(const std::shared_ptr<const VYSubstrateNode<>> lhs, const std::shared_ptr<const std::vector<std::shared_ptr<VYSubstrateLink<>>> > linksConnectedToLhs, const std::shared_ptr<const VYVirtualNode<>> rhs, const std::shared_ptr<const std::vector<std::shared_ptr<VYVirtualLink<>>> > linksConnectedToRhs, double maxD, std::shared_ptr<std::set<int>> used_sn_ids) const
-                {
-                    double sum_sn_link_bw = 0.0;
-                    double sum_vn_link_bw = 0.0;
-                    for (auto it = linksConnectedToLhs->begin(); it != linksConnectedToLhs->end(); it++)
-                    {
-                        sum_sn_link_bw += (*it)->getBandwidth();
-                    }
-                    for (auto it = linksConnectedToRhs->begin(); it != linksConnectedToRhs->end(); it++)
-                    {
-                        sum_vn_link_bw += (*it)->getBandwidth();
-                    }
-                    if (NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>::IgnoreLocationConstrain ())
-                        return (sum_sn_link_bw >= sum_vn_link_bw && used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCPU()>=rhs->getCPU());
-                    return (sum_sn_link_bw >= sum_vn_link_bw && used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
-                            lhs->getCPU()>=rhs->getCPU() );
+                double sum_sn_link_bw = 0.0;
+                double sum_vn_link_bw = 0.0;
+                for (auto it = linksConnectedToLhs->begin(); it != linksConnectedToLhs->end();
+                     it++) {
+                    sum_sn_link_bw += (*it)->getBandwidth();
                 }
-            };
-            struct ReachabilityConditionNoPathSpliting
-            {
-                bool operator()(const std::shared_ptr<const VYSubstrateNode<>> lhs, const std::shared_ptr<const std::vector<std::shared_ptr<VYSubstrateLink<>>> > linksConnectedToLhs, const std::shared_ptr<const VYVirtualNode<>> rhs, const std::shared_ptr<const std::vector<std::shared_ptr<VYVirtualLink<>>> > linksConnectedToRhs, double maxD, std::shared_ptr<std::set<int>> used_sn_ids) const
-                {
-                    std::map<int,double> usedSLBW;
-                    for (auto itr = linksConnectedToRhs->begin(); itr != linksConnectedToRhs->end(); itr++)
-                    {
-                        int count = 0;
-                        for (auto itl = linksConnectedToLhs->begin(); itl != linksConnectedToLhs->end(); itl++)
-                        {
-                            if ((*itr)->getBandwidth() <= ((*itl)->getBandwidth() - usedSLBW[(*itl)->getId()]))
-                            {
-                                count++;
-                                usedSLBW[(*itl)->getId()] += (*itr)->getBandwidth();
-                                break;
-                            }
-                        }
-                        if (count == 0)
-                            return false;
-                    }
-                    if (NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>,VYSubstrateLink<>>, VYVirtualNetRequest<>>::IgnoreLocationConstrain ())
-                        return (used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCPU()>=rhs->getCPU());
-                    return (used_sn_ids->find(lhs->getId()) == used_sn_ids->end() && lhs->getCoordinates().distanceFrom(rhs->getCoordinates())<=maxD &&
-                            lhs->getCPU()>=rhs->getCPU() );
+                for (auto it = linksConnectedToRhs->begin(); it != linksConnectedToRhs->end();
+                     it++) {
+                    sum_vn_link_bw += (*it)->getBandwidth();
                 }
-            };
+                if (NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                           VYVirtualNetRequest<>>::IgnoreLocationConstrain())
+                    return (sum_sn_link_bw >= sum_vn_link_bw &&
+                            used_sn_ids->find(lhs->getId()) == used_sn_ids->end() &&
+                            lhs->getCPU() >= rhs->getCPU());
+                return (sum_sn_link_bw >= sum_vn_link_bw &&
+                        used_sn_ids->find(lhs->getId()) == used_sn_ids->end() &&
+                        lhs->getCoordinates().distanceFrom(rhs->getCoordinates()) <= maxD &&
+                        lhs->getCPU() >= rhs->getCPU());
+            }
         };
-    }
-}
+        struct ReachabilityConditionNoPathSpliting {
+            bool operator()(
+                const std::shared_ptr<const VYSubstrateNode<>> lhs,
+                const std::shared_ptr<const std::vector<std::shared_ptr<VYSubstrateLink<>>>>
+                    linksConnectedToLhs,
+                const std::shared_ptr<const VYVirtualNode<>> rhs,
+                const std::shared_ptr<const std::vector<std::shared_ptr<VYVirtualLink<>>>>
+                    linksConnectedToRhs,
+                double maxD, std::shared_ptr<std::set<int>> used_sn_ids) const
+            {
+                std::map<int, double> usedSLBW;
+                for (auto itr = linksConnectedToRhs->begin(); itr != linksConnectedToRhs->end();
+                     itr++) {
+                    int count = 0;
+                    for (auto itl = linksConnectedToLhs->begin();
+                         itl != linksConnectedToLhs->end(); itl++) {
+                        if ((*itr)->getBandwidth() <=
+                            ((*itl)->getBandwidth() - usedSLBW[(*itl)->getId()])) {
+                            count++;
+                            usedSLBW[(*itl)->getId()] += (*itr)->getBandwidth();
+                            break;
+                        }
+                    }
+                    if (count == 0)
+                        return false;
+                }
+                if (NodeEmbeddingAlgorithm<Network<VYSubstrateNode<>, VYSubstrateLink<>>,
+                                           VYVirtualNetRequest<>>::IgnoreLocationConstrain())
+                    return (used_sn_ids->find(lhs->getId()) == used_sn_ids->end() &&
+                            lhs->getCPU() >= rhs->getCPU());
+                return (used_sn_ids->find(lhs->getId()) == used_sn_ids->end() &&
+                        lhs->getCoordinates().distanceFrom(rhs->getCoordinates()) <= maxD &&
+                        lhs->getCPU() >= rhs->getCPU());
+            }
+        };
+    };
+}  // namespace mcvne
+}  // namespace vne
 #endif /* defined(__vne_mcts__mcvne_simulator__) */

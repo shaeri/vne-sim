@@ -26,251 +26,229 @@
 
 #include "RouterGLPModel.h"
 
-RouterGLP::RouterGLP(RouterGLPPar* par)
+RouterGLP::RouterGLP(RouterGLPPar *par)
 {
-  
-  size = par->GetN();
-  Scale_1 = par->GetHS();
-  Scale_2 = par->GetLS();
-  assert(par->GetNP() == P_RANDOM || par->GetNP() == P_HT);
-  NodePlacement = (PlacementType)par->GetNP();
-  Growth = G_INCR;
-  PrefConn = PC_NONE;
-  ConnLoc = CL_OFF;
-  assert(par->GetM() > 0);
-  m_edges = par->GetM();
-  SumDj = 0;
-  type = RT_GLP;
-  assert(par->GetBW() == BW_CONST ||
-	 par->GetBW() == BW_UNIF ||
-	 par->GetBW() == BW_EXP ||
-	 par->GetBW() == BW_HT);
-  SetBWDist((BWDistType)par->GetBW());
-  SetBWMin(par->GetBWMin());
-  SetBWMax(par->GetBWMax());
-  P = par->GetP();
-  BETA = par->GetBETA();
-  
+    size = par->GetN();
+    Scale_1 = par->GetHS();
+    Scale_2 = par->GetLS();
+    assert(par->GetNP() == P_RANDOM || par->GetNP() == P_HT);
+    NodePlacement = (PlacementType)par->GetNP();
+    Growth = G_INCR;
+    PrefConn = PC_NONE;
+    ConnLoc = CL_OFF;
+    assert(par->GetM() > 0);
+    m_edges = par->GetM();
+    SumDj = 0;
+    type = RT_GLP;
+    assert(par->GetBW() == BW_CONST || par->GetBW() == BW_UNIF || par->GetBW() == BW_EXP ||
+           par->GetBW() == BW_HT);
+    SetBWDist((BWDistType)par->GetBW());
+    SetBWMin(par->GetBWMin());
+    SetBWMax(par->GetBWMax());
+    P = par->GetP();
+    BETA = par->GetBETA();
 }
 
-string RouterGLP::ToString() {
-  
+string RouterGLP::ToString()
+{
     //  char buf[80];
     //  ostrstream os((char*)buf, 80);
     //  string s;
 
-  ostringstream os(ostringstream::out);
+    ostringstream os(ostringstream::out);
 
-  os << "Model ( 11 ): " 
-     << size << " "
-     << Scale_1 << " "
-     << Scale_2 << " "
-     << (int)NodePlacement  << " "
-     << m_edges << " "
-     << GetBWDist() << " "
-     << GetBWMin() << " "
-     << GetBWMax() << '\0';
+    os << "Model ( 11 ): " << size << " " << Scale_1 << " " << Scale_2 << " " << (int)NodePlacement
+       << " " << m_edges << " " << GetBWDist() << " " << GetBWMin() << " " << GetBWMax() << '\0';
 
-  return string(os.str());
-
+    return string(os.str());
 }
 
-void RouterGLP::InterconnectNodes(Graph *g) {
-  
-  int edges_added;
-  RandomVariable U(s_connect);
-  
-  cout << "RouterGLP: Interconnecting nodes...\n" << flush;
+void RouterGLP::InterconnectNodes(Graph *g)
+{
+    int edges_added;
+    RandomVariable U(s_connect);
 
-  SumDj = 0;
+    cout << "RouterGLP: Interconnecting nodes...\n" << flush;
 
-  /* Start with m nodes connected through m - 1 edges */
-  for (int i = 1; i <= m_edges; i++) {
+    SumDj = 0;
 
-    Node* src = g->GetNodePtr(i - 1);
-    Node* dst = g->GetNodePtr(i);
-    assert(src != NULL && dst != NULL);
+    /* Start with m nodes connected through m - 1 edges */
+    for (int i = 1; i <= m_edges; i++) {
+        Node *src = g->GetNodePtr(i - 1);
+        Node *dst = g->GetNodePtr(i);
+        assert(src != NULL && dst != NULL);
 
-    /* Create new Edge */
-    try {
-  
-      Edge* edge = new Edge(src, dst);
-      g->AddEdge(edge);
-      RouterEdgeConf* re_conf = new RouterEdgeConf(edge->Length());
-      re_conf->SetEdgeType(EdgeConf::RT_EDGE);
-      edge->SetConf(re_conf);
+        /* Create new Edge */
+        try {
+            Edge *edge = new Edge(src, dst);
+            g->AddEdge(edge);
+            RouterEdgeConf *re_conf = new RouterEdgeConf(edge->Length());
+            re_conf->SetEdgeType(EdgeConf::RT_EDGE);
+            edge->SetConf(re_conf);
 
-    }
-    catch (bad_alloc) {
-      cerr << "RouterGLP::Interconnect(): Cannot allocate new edge...\n" << flush;
-      exit(0);
-    }      
-    
-    /* Update adjacency lists */
-    g->AddAdjListNode(i - 1, i);
-    g->AddAdjListNode(i, i - 1);
-    
-    /* Update In and Outdegrees for src */
-    src->SetInDegree(src->GetInDegree() + 1);
-    src->SetOutDegree(src->GetOutDegree() + 1);
-    SumDj++;
-    
-    /* Update In and Outdegrees for dst */
-    dst->SetInDegree(dst->GetInDegree() + 1);
-    dst->SetOutDegree(dst->GetOutDegree() + 1);
-    SumDj++;
-    
-  }
+        } catch (bad_alloc) {
+            cerr << "RouterGLP::Interconnect(): Cannot allocate new edge...\n" << flush;
+            exit(0);
+        }
 
-  /* Initialize array of node outdegrees */
-  vector<double> d(g->GetNumNodes());
-  for (int i = 0; i < g->GetNumNodes(); i++) {
-    d[i] = (double)g->GetNodePtr(i)->GetOutDegree();
-  }
-  
-  int added_nodes = m_edges;
-  /* Add rest of nodes */
-  while (added_nodes < g->GetNumNodes() - 1) {
+        /* Update adjacency lists */
+        g->AddAdjListNode(i - 1, i);
+        g->AddAdjListNode(i, i - 1);
 
-    /* Flip coin to decide to add links or adding a new node */
-    double r = U.GetValUniform();
+        /* Update In and Outdegrees for src */
+        src->SetInDegree(src->GetInDegree() + 1);
+        src->SetOutDegree(src->GetOutDegree() + 1);
+        SumDj++;
 
-    /* If graph is nearly complete, don't add links, just add nodes */
-    int maxedges = (added_nodes * (added_nodes - 1)/2) - m_edges;
-    if (g->GetNumEdges() >= maxedges) {
-      r = P + 0.001; /* force node addition */
+        /* Update In and Outdegrees for dst */
+        dst->SetInDegree(dst->GetInDegree() + 1);
+        dst->SetOutDegree(dst->GetOutDegree() + 1);
+        SumDj++;
     }
 
-    if (r < P) { /* add m_egdes links */
-      
-      int added_edges = 0;
-      while (added_edges < m_edges) {
-
-	if (added_nodes == m_edges) break;
-	double v = U.GetValUniform();
-	double last = 0.0;
-	int src_index;
-	for (src_index = 0; src_index < added_nodes; src_index++) {
-	  last += (d[src_index] - BETA)/(SumDj - added_nodes * BETA);
-	  if (v < last) break;
-	}
-
-	v = U.GetValUniform();
-	int dst_index = 0;
-	for (dst_index = 0; dst_index < added_nodes; dst_index++) {
-	  last += (d[dst_index] - BETA)/(SumDj - added_nodes * BETA);
-	  if (v < last) break;
-	}	
-	
-	if (src_index == dst_index) continue;
-	if ((g->AdjListFind(src_index, dst_index)) ||
-	    (g->AdjListFind(dst_index, src_index))) continue;
-
-	Node* src = g->GetNodePtr(src_index);
-	Node* dst = g->GetNodePtr(dst_index);
-	assert(src != NULL && dst != NULL);
-
-	/* Create new Edge */
-	try {
-	  
-	  Edge* edge = new Edge(src, dst);
-	  g->AddEdge(edge);
-	  RouterEdgeConf* re_conf = new RouterEdgeConf(edge->Length());
-	  re_conf->SetEdgeType(EdgeConf::RT_EDGE);
-	  edge->SetConf(re_conf);
-	  
-	}
-	catch (bad_alloc) {
-	  cerr << "RouterGLP::Interconnect(): Cannot allocate new edge...\n" << flush;
-	  exit(0);
-	}      
-	
-	/* Update adjacency lists */
-	g->AddAdjListNode(src_index, dst_index);
-	g->AddAdjListNode(dst_index, src_index);
-	
-	/* Update In and Outdegrees for src */
-	src->SetInDegree(src->GetInDegree() + 1);
-	src->SetOutDegree(src->GetOutDegree() + 1);
-	SumDj++;
-    
-	/* Update In and Outdegrees for dst */
-	dst->SetInDegree(dst->GetInDegree() + 1);
-	dst->SetOutDegree(dst->GetOutDegree() + 1);
-	SumDj++;
-	
-	added_edges += 1;
-
-      }
-
-    }else {  /* Add new node and m_edges from it */
-
-      added_nodes += 1;
-      Node* src = g->GetNodePtr(added_nodes);      
-      edges_added = 0;
-      
-      while (edges_added < m_edges) {
-	
-	/* Flip coin to select target node*/
-	double u = U.GetValUniform();
-	
-	int k;
-	double last = 0.0;
-	for (k = 0; k < added_nodes; k++) {
-	  last += d[k]/SumDj;
-	  if (u <= last) break;
-	}
-
-	if (k == added_nodes ) continue;
-	
-	/* No multiple links between two nodes */
-	if (g->AdjListFind(added_nodes, k)) continue;
-	
-	/* Grab dest node pointer */
-	Node* dst = g->GetNodePtr(k);
-	
-	/* Create new Edge */
-	try {
-	  
-	  Edge* edge = new Edge(src, dst);
-	  g->AddEdge(edge);
-	  g->AddIncListNode(edge);
-	  RouterEdgeConf* rt_conf = new RouterEdgeConf(edge->Length());
-	  rt_conf->SetEdgeType(EdgeConf::RT_EDGE);
-	  edge->SetConf(rt_conf);
-	  
-	}
-	catch (bad_alloc) {
-	  cerr << "Interconnect(): Cannot allocate new edge...\n" << flush;
-	  exit(0);
-	}
-	
-	/* Update adjacency lists */
-	g->AddAdjListNode(added_nodes,k);
-	g->AddAdjListNode(k, added_nodes);
-	
-	/* Update In and Outdegrees for dst */
-	dst->SetInDegree(dst->GetInDegree() + 1);
-	dst->SetOutDegree(dst->GetOutDegree() + 1);
-	SumDj++;
-	d[k]++;
-	edges_added++;
-	
-      }
-
-      /* Update In and Outdegrees for src */
-      src->SetInDegree(src->GetInDegree() + m_edges);
-      src->SetOutDegree(src->GetOutDegree() + m_edges);
-      d[added_nodes] += m_edges;
-      SumDj += m_edges;
-    
+    /* Initialize array of node outdegrees */
+    vector<double> d(g->GetNumNodes());
+    for (int i = 0; i < g->GetNumNodes(); i++) {
+        d[i] = (double)g->GetNodePtr(i)->GetOutDegree();
     }
 
-  }
+    int added_nodes = m_edges;
+    /* Add rest of nodes */
+    while (added_nodes < g->GetNumNodes() - 1) {
+        /* Flip coin to decide to add links or adding a new node */
+        double r = U.GetValUniform();
 
-  cout << "\n" << flush;
-  cout << "Done interconnecting...\n" << flush;
+        /* If graph is nearly complete, don't add links, just add nodes */
+        int maxedges = (added_nodes * (added_nodes - 1) / 2) - m_edges;
+        if (g->GetNumEdges() >= maxedges) {
+            r = P + 0.001; /* force node addition */
+        }
 
+        if (r < P) { /* add m_egdes links */
+
+            int added_edges = 0;
+            while (added_edges < m_edges) {
+                if (added_nodes == m_edges)
+                    break;
+                double v = U.GetValUniform();
+                double last = 0.0;
+                int src_index;
+                for (src_index = 0; src_index < added_nodes; src_index++) {
+                    last += (d[src_index] - BETA) / (SumDj - added_nodes * BETA);
+                    if (v < last)
+                        break;
+                }
+
+                v = U.GetValUniform();
+                int dst_index = 0;
+                for (dst_index = 0; dst_index < added_nodes; dst_index++) {
+                    last += (d[dst_index] - BETA) / (SumDj - added_nodes * BETA);
+                    if (v < last)
+                        break;
+                }
+
+                if (src_index == dst_index)
+                    continue;
+                if ((g->AdjListFind(src_index, dst_index)) ||
+                    (g->AdjListFind(dst_index, src_index)))
+                    continue;
+
+                Node *src = g->GetNodePtr(src_index);
+                Node *dst = g->GetNodePtr(dst_index);
+                assert(src != NULL && dst != NULL);
+
+                /* Create new Edge */
+                try {
+                    Edge *edge = new Edge(src, dst);
+                    g->AddEdge(edge);
+                    RouterEdgeConf *re_conf = new RouterEdgeConf(edge->Length());
+                    re_conf->SetEdgeType(EdgeConf::RT_EDGE);
+                    edge->SetConf(re_conf);
+
+                } catch (bad_alloc) {
+                    cerr << "RouterGLP::Interconnect(): Cannot allocate new edge...\n" << flush;
+                    exit(0);
+                }
+
+                /* Update adjacency lists */
+                g->AddAdjListNode(src_index, dst_index);
+                g->AddAdjListNode(dst_index, src_index);
+
+                /* Update In and Outdegrees for src */
+                src->SetInDegree(src->GetInDegree() + 1);
+                src->SetOutDegree(src->GetOutDegree() + 1);
+                SumDj++;
+
+                /* Update In and Outdegrees for dst */
+                dst->SetInDegree(dst->GetInDegree() + 1);
+                dst->SetOutDegree(dst->GetOutDegree() + 1);
+                SumDj++;
+
+                added_edges += 1;
+            }
+
+        } else { /* Add new node and m_edges from it */
+
+            added_nodes += 1;
+            Node *src = g->GetNodePtr(added_nodes);
+            edges_added = 0;
+
+            while (edges_added < m_edges) {
+                /* Flip coin to select target node*/
+                double u = U.GetValUniform();
+
+                int k;
+                double last = 0.0;
+                for (k = 0; k < added_nodes; k++) {
+                    last += d[k] / SumDj;
+                    if (u <= last)
+                        break;
+                }
+
+                if (k == added_nodes)
+                    continue;
+
+                /* No multiple links between two nodes */
+                if (g->AdjListFind(added_nodes, k))
+                    continue;
+
+                /* Grab dest node pointer */
+                Node *dst = g->GetNodePtr(k);
+
+                /* Create new Edge */
+                try {
+                    Edge *edge = new Edge(src, dst);
+                    g->AddEdge(edge);
+                    g->AddIncListNode(edge);
+                    RouterEdgeConf *rt_conf = new RouterEdgeConf(edge->Length());
+                    rt_conf->SetEdgeType(EdgeConf::RT_EDGE);
+                    edge->SetConf(rt_conf);
+
+                } catch (bad_alloc) {
+                    cerr << "Interconnect(): Cannot allocate new edge...\n" << flush;
+                    exit(0);
+                }
+
+                /* Update adjacency lists */
+                g->AddAdjListNode(added_nodes, k);
+                g->AddAdjListNode(k, added_nodes);
+
+                /* Update In and Outdegrees for dst */
+                dst->SetInDegree(dst->GetInDegree() + 1);
+                dst->SetOutDegree(dst->GetOutDegree() + 1);
+                SumDj++;
+                d[k]++;
+                edges_added++;
+            }
+
+            /* Update In and Outdegrees for src */
+            src->SetInDegree(src->GetInDegree() + m_edges);
+            src->SetOutDegree(src->GetOutDegree() + m_edges);
+            d[added_nodes] += m_edges;
+            SumDj += m_edges;
+        }
+    }
+
+    cout << "\n" << flush;
+    cout << "Done interconnecting...\n" << flush;
 }
-
-

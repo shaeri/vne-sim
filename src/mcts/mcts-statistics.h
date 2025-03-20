@@ -34,115 +34,114 @@
 
 #include "core/core-types.h"
 
-namespace vne{
-    namespace mcts{
-        class MCTSStatistics {
-        public:
-            
-            MCTSStatistics();
-            MCTSStatistics(double val, int count);
-            
-            void Add(double val);
-            void Clear();
-            int GetCount() const;
-            void Initialise(double val, int count);
-            double GetTotal() const;
-            double GetMean() const;
-            double GetVariance() const;
-            double GetStdDev() const;
-            double GetStdErr() const;
-            double GetMax() const;
-            double GetMin() const;
-            void Print(const std::string& name, std::ostream& ostr) const;
-            
-        private:
-            
-            int Count;
-            double Mean;
-            double Variance;
-            double Min, Max;
-            
-        };
-        
-        inline MCTSStatistics::MCTSStatistics()
-        {
-            Clear();
-        }
-        
-        inline MCTSStatistics::MCTSStatistics(double val, int count)
-        {
-            Initialise(val, count);
-        }
-        
-        inline void MCTSStatistics::Add(double val)
-        {
-            double meanOld = Mean;
-            int countOld = Count;
-            ++Count;
-            assert(Count > 0); // overflow
-            Mean += (val - Mean) / Count;
-            Variance = (countOld * (Variance + meanOld * meanOld)
-                        + val * val) / Count - Mean * Mean;
-            if (val > Max)
-                Max = val;
-            if (val < Min)
-                Min = val;
-        }
-        
-        inline void MCTSStatistics::Clear()
-        {
-            Count = 0;
-            Mean = 0;
-            Variance = 0;
-            Min = +Infinity;
-            Max = -Infinity;
-        }
-        
-        inline int MCTSStatistics::GetCount() const
-        {
-            return Count;
-        }
-        
-        inline void MCTSStatistics::Initialise(double val, int count)
-        {
-            Count = count;
-            Mean = val;
-        }
-        
-        inline double MCTSStatistics::GetTotal() const
-        {
-            return Mean * Count;
-        }
-        
-        inline double MCTSStatistics::GetMean() const
-        {
-            return Mean;
-        }
-        
-        inline double MCTSStatistics::GetStdDev() const
-        {
-            return sqrt(Variance);
-        }
-        
-        inline double MCTSStatistics::GetStdErr() const
-        {
-            return sqrt(Variance / Count);
-        }
-        
-        inline double MCTSStatistics::GetMax() const
-        {
-            return Max;
-        }
-        
-        inline double MCTSStatistics::GetMin() const
-        {
-            return Min;
-        }
-        
-        inline void MCTSStatistics::Print(const std::string& name, std::ostream& ostr) const
-        {
-            ostr << name << ": " << Mean << " [" << Min << ", " << Max << "]" << std::endl;
-        }
+namespace vne
+{
+namespace mcts
+{
+    class MCTSStatistics
+    {
+       public:
+        MCTSStatistics();
+        MCTSStatistics(double val, int count);
+
+        void Add(double val);
+        void Clear();
+        int GetCount() const;
+        void Initialise(double val, int count);
+        double GetTotal() const;
+        double GetMean() const;
+        double GetVariance() const;
+        double GetStdDev() const;
+        double GetStdErr() const;
+        double GetMax() const;
+        double GetMin() const;
+        void Print(const std::string &name, std::ostream &ostr) const;
+
+       private:
+        int Count;
+        double Mean;
+        double Variance;
+        double Min, Max;
+    };
+
+    inline MCTSStatistics::MCTSStatistics()
+    {
+        Clear();
     }
-}
+
+    inline MCTSStatistics::MCTSStatistics(double val, int count)
+    {
+        Initialise(val, count);
+    }
+
+    inline void MCTSStatistics::Add(double val)
+    {
+        double meanOld = Mean;
+        int countOld = Count;
+        ++Count;
+        assert(Count > 0);  // overflow
+        Mean += (val - Mean) / Count;
+        Variance = (countOld * (Variance + meanOld * meanOld) + val * val) / Count - Mean * Mean;
+        if (val > Max)
+            Max = val;
+        if (val < Min)
+            Min = val;
+    }
+
+    inline void MCTSStatistics::Clear()
+    {
+        Count = 0;
+        Mean = 0;
+        Variance = 0;
+        Min = +Infinity;
+        Max = -Infinity;
+    }
+
+    inline int MCTSStatistics::GetCount() const
+    {
+        return Count;
+    }
+
+    inline void MCTSStatistics::Initialise(double val, int count)
+    {
+        Count = count;
+        Mean = val;
+    }
+
+    inline double MCTSStatistics::GetTotal() const
+    {
+        return Mean * Count;
+    }
+
+    inline double MCTSStatistics::GetMean() const
+    {
+        return Mean;
+    }
+
+    inline double MCTSStatistics::GetStdDev() const
+    {
+        return sqrt(Variance);
+    }
+
+    inline double MCTSStatistics::GetStdErr() const
+    {
+        return sqrt(Variance / Count);
+    }
+
+    inline double MCTSStatistics::GetMax() const
+    {
+        return Max;
+    }
+
+    inline double MCTSStatistics::GetMin() const
+    {
+        return Min;
+    }
+
+    inline void MCTSStatistics::Print(const std::string &name, std::ostream &ostr) const
+    {
+        ostr << name << ": " << Mean << " [" << Min << ", " << Max << "]" << std::endl;
+    }
+}  // namespace mcts
+}  // namespace vne
 #endif

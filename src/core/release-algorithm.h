@@ -27,62 +27,61 @@
 
 #include "core/network-builder.h"
 
-namespace vne {
-    template<typename,typename> class ReleaseAlgorithm;
-    
-    template<
-    typename ... SNODERES, template <typename ...> class SNODECLASS,
-    typename... SLINKRES, template <typename...> class SLINKCLASS,
-    typename ... VNODERES, template <typename ...> class VNODECLASS,
-    typename... VLINKRES, template <typename...> class VLINKCLASS,
-    template<typename> class VNRCLASS>
-    class ReleaseAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
-    VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>
-    {
-        static_assert (std::is_base_of<SubstrateNode<SNODERES...>, SNODECLASS<SNODERES...>>::value,
-                       "Template arguments are not correctly set.");
-        static_assert (std::is_base_of<VirtualNode<VNODERES...>, VNODECLASS<VNODERES...>>::value,
-                       "Template arguments are not correctly set.");
-        static_assert (std::is_base_of<SubstrateLink<SLINKRES...>, SLINKCLASS<SLINKRES...>>::value,
-                       "Template arguments are not correctly set.");
-        static_assert (std::is_base_of<VirtualLink<VLINKRES...>, VLINKCLASS<VLINKRES...>>::value,
-                       "Template arguments are not correctly set.");
-        static_assert (std::is_base_of<VirtualNetworkRequest<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>,
-                       VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::value, "Template arguments are not correctly set.");
-        
-    public:
-        typedef VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>> VNR_TYPE;
-        typedef Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>> SUBSTRATE_TYPE;
-        
-        ReleaseAlgorithm (NetworkBuilder<SUBSTRATE_TYPE>& _sb) : substrate_network(_sb.getNetwork()) {};
-        ReleaseAlgorithm (std::shared_ptr<SUBSTRATE_TYPE> _sn) : substrate_network(_sn) {};
-        
-        virtual void releaseVNR (std::shared_ptr<VNR_TYPE> vnr);
-        
-    protected:
-        std::shared_ptr<SUBSTRATE_TYPE> substrate_network;
-    };
-    
-    template<
-    typename ... SNODERES, template <typename ...> class SNODECLASS,
-    typename... SLINKRES, template <typename...> class SLINKCLASS,
-    typename ... VNODERES, template <typename ...> class VNODECLASS,
-    typename... VLINKRES, template <typename...> class VLINKCLASS,
-    template<typename> class VNRCLASS>
-    void ReleaseAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
-    VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::releaseVNR (std::shared_ptr<VNR_TYPE> vnr)
-    {
-        for (auto it = vnr->getNodeMap()->begin(); it != vnr->getNodeMap()->end(); it++)
-        {
-            substrate_network->getNode(it->second)->freeResources(it->first);
-        }
-        for(auto it1 = vnr->getLinkMap()->begin(); it1 != vnr->getLinkMap()->end(); it1++)
-        {
-            for(auto it2 = it1->second.begin(); it2 != it1->second.end() ;it2++)
-            {
-                this->substrate_network->getLink(it2->first)->freeResources(it1->first);
-            }
+namespace vne
+{
+template <typename, typename>
+class ReleaseAlgorithm;
+
+template <typename... SNODERES, template <typename...> class SNODECLASS, typename... SLINKRES,
+          template <typename...> class SLINKCLASS, typename... VNODERES,
+          template <typename...> class VNODECLASS, typename... VLINKRES,
+          template <typename...> class VLINKCLASS, template <typename> class VNRCLASS>
+class ReleaseAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
+                       VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>
+{
+    static_assert(std::is_base_of<SubstrateNode<SNODERES...>, SNODECLASS<SNODERES...>>::value,
+                  "Template arguments are not correctly set.");
+    static_assert(std::is_base_of<VirtualNode<VNODERES...>, VNODECLASS<VNODERES...>>::value,
+                  "Template arguments are not correctly set.");
+    static_assert(std::is_base_of<SubstrateLink<SLINKRES...>, SLINKCLASS<SLINKRES...>>::value,
+                  "Template arguments are not correctly set.");
+    static_assert(std::is_base_of<VirtualLink<VLINKRES...>, VLINKCLASS<VLINKRES...>>::value,
+                  "Template arguments are not correctly set.");
+    static_assert(
+        std::is_base_of<
+            VirtualNetworkRequest<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>,
+            VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::value,
+        "Template arguments are not correctly set.");
+
+   public:
+    typedef VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>> VNR_TYPE;
+    typedef Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>> SUBSTRATE_TYPE;
+
+    ReleaseAlgorithm(NetworkBuilder<SUBSTRATE_TYPE> &_sb) : substrate_network(_sb.getNetwork()) {};
+    ReleaseAlgorithm(std::shared_ptr<SUBSTRATE_TYPE> _sn) : substrate_network(_sn) {};
+
+    virtual void releaseVNR(std::shared_ptr<VNR_TYPE> vnr);
+
+   protected:
+    std::shared_ptr<SUBSTRATE_TYPE> substrate_network;
+};
+
+template <typename... SNODERES, template <typename...> class SNODECLASS, typename... SLINKRES,
+          template <typename...> class SLINKCLASS, typename... VNODERES,
+          template <typename...> class VNODECLASS, typename... VLINKRES,
+          template <typename...> class VLINKCLASS, template <typename> class VNRCLASS>
+void ReleaseAlgorithm<Network<SNODECLASS<SNODERES...>, SLINKCLASS<SLINKRES...>>,
+                      VNRCLASS<Network<VNODECLASS<VNODERES...>, VLINKCLASS<VLINKRES...>>>>::
+    releaseVNR(std::shared_ptr<VNR_TYPE> vnr)
+{
+    for (auto it = vnr->getNodeMap()->begin(); it != vnr->getNodeMap()->end(); it++) {
+        substrate_network->getNode(it->second)->freeResources(it->first);
+    }
+    for (auto it1 = vnr->getLinkMap()->begin(); it1 != vnr->getLinkMap()->end(); it1++) {
+        for (auto it2 = it1->second.begin(); it2 != it1->second.end(); it2++) {
+            this->substrate_network->getLink(it2->first)->freeResources(it1->first);
         }
     }
 }
+}  // namespace vne
 #endif

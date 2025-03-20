@@ -26,182 +26,167 @@
 
 #include "RouterModel.h"
 
-void RouterModel::AssignBW(Graph* g) {
+void RouterModel::AssignBW(Graph *g)
+{
+    double v;
+    RandomVariable BW(s_bandwidth);
 
-  double v;
-  RandomVariable BW(s_bandwidth);
+    list<Edge *>::iterator el;
+    for (el = g->edges.begin(); el != g->edges.end(); el++) {
+        assert((*el)->GetConf()->GetEdgeType() == EdgeConf::RT_EDGE);
 
-  list<Edge*>::iterator el;
-  for (el = g->edges.begin(); el != g->edges.end(); el++) {
+        switch (BWdist) {
+            case BW_CONST:
+                v = BWmin;
+                break;
 
-    assert((*el)->GetConf()->GetEdgeType() == EdgeConf::RT_EDGE);
+            case BW_UNIF:
+                v = BW.GetValUniform(BWmin, BWmax);
+                break;
 
-    switch (BWdist) {
-    case BW_CONST:
-      v = BWmin;
-      break;
-      
-    case BW_UNIF:
-      v =  BW.GetValUniform(BWmin, BWmax);
-      break;
-      
-    case BW_EXP:    
-      v = BW.GetValExponential(1.0/BWmin);
-      break;
-      
-    case BW_HT:
-      v = BW.GetValPareto(BWmax, 1.2);
-      break;
-      
-    default:
-      cerr << "RouterModel::AssignBW():  invalid BW distribution (" 
-	   << (int)BWdist << ")...\n" << flush;
-      exit(0);
+            case BW_EXP:
+                v = BW.GetValExponential(1.0 / BWmin);
+                break;
+
+            case BW_HT:
+                v = BW.GetValPareto(BWmax, 1.2);
+                break;
+
+            default:
+                cerr << "RouterModel::AssignBW():  invalid BW distribution (" << (int)BWdist
+                     << ")...\n"
+                     << flush;
+                exit(0);
+        }
+
+        (*el)->GetConf()->SetBW(v);
     }
-
-    (*el)->GetConf()->SetBW(v);
-  }
-
 }
 
+void RouterModel::PlaceNodes(Graph *g)
+{
+    double x, y, z;
+    int num_squares, num_placed, num;
+    Node *node;
+    RouterNodeConf *rt_conf;
+    RandomVariable U(s_places);
 
-void RouterModel::PlaceNodes(Graph* g) {
+    int n = size;
+    switch (GetPlacementType()) {
+        case P_RANDOM: /* Random Node placement */
 
-  double x, y, z;
-  int num_squares, num_placed, num;
-  Node* node;
-  RouterNodeConf* rt_conf; 
-  RandomVariable U(s_places);
+            cout << "random placement...\n" << flush;
+            for (int i = 0; i < n; i++) {
+                //bool found = true;
+                //do {
+                /* Pick random location */
+                x = floor(U.GetValUniform((double)Scale_1));
+                y = floor(U.GetValUniform((double)Scale_1));
+                /* 3rd dimension disabled for now */
+                z = 0.0;
+                /* Check for Placement Collision */
+                //int tx = (int)x;
+                //int ty = (int)y;
 
-  int n  = size;
-  switch (GetPlacementType()) {
+                //found = PlaneCollision(tx, ty);
 
-  case P_RANDOM: /* Random Node placement */
-    
-    cout << "random placement...\n" << flush;
-    for (int i = 0; i < n; i++) {
-      
-      //bool found = true;
-      //do {
-	/* Pick random location */
-	x = floor(U.GetValUniform((double) Scale_1));
-	y = floor(U.GetValUniform((double) Scale_1));
-	/* 3rd dimension disabled for now */
-	z = 0.0; 
-	/* Check for Placement Collision */       
-	//int tx = (int)x;
-	//int ty = (int)y;
+                //}while(found);
 
-	//found = PlaneCollision(tx, ty);
+                try {
+                    /* Add node to Graph */
+                    node = new Node(i);
+                    g->AddNode(node, i);
 
-      //}while(found);
-      
-      try {
+                    /* Set information specific to router nodes */
+                    rt_conf = new RouterNodeConf();
+                    rt_conf->SetCoord(x, y, z);
+                    rt_conf->SetNodeType(NodeConf::RT_NODE);
+                    rt_conf->SetRouterType(RouterNodeConf::RT_NONE);
+                    rt_conf->SetASId(-1);
+                    node->SetNodeInfo(rt_conf);
 
-	/* Add node to Graph */
-	node = new Node(i);
-	g->AddNode(node, i);
+                }
 
-	/* Set information specific to router nodes */
-	rt_conf = new RouterNodeConf();
-	rt_conf->SetCoord(x, y, z); 
-	rt_conf->SetNodeType(NodeConf::RT_NODE);
-	rt_conf->SetRouterType(RouterNodeConf::RT_NONE);
-	rt_conf->SetASId(-1);
-	node->SetNodeInfo(rt_conf);
-	
-      }
+                catch (bad_alloc) {
+                    cerr << "PlaceNmodes: could not create new node configuration...\n" << flush;
+                    exit(0);
+                }
+            }
+            break;
 
-      catch (bad_alloc) {
+        case P_HT: /* NodePlacement == HEAVY TAILED */
 
-	cerr << "PlaceNmodes: could not create new node configuration...\n" << flush;
-	exit(0);
+            cout << "HT Node placement...\n" << flush;
+            num_squares = (int)::floor(Scale_1 / Scale_2);
+            num_placed = 0;
+            while (num_placed < n) {
+                for (int i = 0; i < num_squares; i++) {
+                    for (int j = 0; j < num_squares; j++) {
+                        num = (int)floor(U.GetValPareto(1000000 * Scale_2 * Scale_2, 1.0));
+                        num = (num <= (3 * Scale_2 * Scale_2 / 4))
+                                  ? num
+                                  : (int)(3 * Scale_2 * Scale_2 / 4);
 
-      }
+                        for (int k = 0; k < num; k++) {
+                            bool found = true;
+                            do {
+                                /* Pick random location in proper square*/
+                                x = (int)floor(U.GetValUniform((double)Scale_2) + j * Scale_2);
+                                y = (int)floor(U.GetValUniform((double)Scale_2) + i * Scale_2);
+                                /* 3rd dimension disabled for now */
+                                z = 0;
+                                /* Check for Placement Collision */
+                                int tx = (int)x;
+                                int ty = (int)y;
 
+                                found = PlaneCollision(tx, ty);
+
+                            } while (found);
+
+                            /* Create Node and Node configuration */
+                            try {
+                                node = new Node(num_placed);
+                                g->AddNode(node, num_placed);
+
+                                /* Set information specific to router nodes */
+                                rt_conf = new RouterNodeConf();
+                                rt_conf->SetCoord(x, y, z);
+                                rt_conf->SetNodeType(NodeConf::RT_NODE);
+                                rt_conf->SetRouterType(RouterNodeConf::RT_NONE);
+                                rt_conf->SetASId(-1);
+                                node->SetNodeInfo(rt_conf);
+
+                            } catch (bad_alloc) {
+                                cerr << "PlaceNode: could not create new node configuration\n"
+                                     << flush;
+                                exit(0);
+                            }
+
+                            /* keep trace of num of nodes placed */
+                            num_placed++;
+                            if (num_placed >= n) {
+                                break;
+                            }
+                        }
+
+                        if (num_placed >= n) {
+                            break;
+                        }
+                    }
+                    if (num_placed >= n) {
+                        break;
+                    }
+                }
+            }
+
+            g->SetNumNodes(num_placed);
+            cout << "Number of nodes placed: " << num_placed << "\n" << flush;
+            break;
+
+        default:
+
+            cout << "Invalid Node Placement Model...\n" << flush;
+            assert(0);
     }
-    break;
-
-  case P_HT:  /* NodePlacement == HEAVY TAILED */
-
-    cout << "HT Node placement...\n" << flush;
-    num_squares = (int)::floor(Scale_1/Scale_2);
-    num_placed = 0;
-    while (num_placed < n) {
-      
-      for (int i = 0; i < num_squares; i++) {
-	for (int j = 0; j < num_squares; j++) {		 
-	  
-	  num = (int)floor(U.GetValPareto(1000000*Scale_2*Scale_2, 1.0));
-	  num = (num <= (3*Scale_2 * Scale_2/4))?num:(int)(3*Scale_2 * Scale_2/4);
-	  
-	  for (int k = 0; k < num; k++) { 
-	     
-	    bool found = true;
-	    do {
-
-	       /* Pick random location in proper square*/
-	       x = (int)floor(U.GetValUniform((double)Scale_2) + j*Scale_2);
-	       y = (int)floor(U.GetValUniform((double)Scale_2) + i*Scale_2);
-	       /* 3rd dimension disabled for now */
-	       z = 0; 
-	       /* Check for Placement Collision */       
-	       int tx = (int)x;
-	       int ty = (int)y;
-
-	       found = PlaneCollision(tx, ty);
-
-	     }while(found);
-	     
-	     /* Create Node and Node configuration */
-	     try {
-	       
-	       node = new Node(num_placed);
-	       g->AddNode(node, num_placed);
-	       
-	       /* Set information specific to router nodes */
-	       rt_conf = new RouterNodeConf();
-	       rt_conf->SetCoord(x, y, z); 
-	       rt_conf->SetNodeType(NodeConf::RT_NODE);
-	       rt_conf->SetRouterType(RouterNodeConf::RT_NONE);
-	       rt_conf->SetASId(-1);
-	       node->SetNodeInfo(rt_conf);
-	       
-	     }
-	     catch (bad_alloc) {
-	       cerr << "PlaceNode: could not create new node configuration\n" << flush;
-	       exit(0);
-	     }
-	     
-	     /* keep trace of num of nodes placed */
-	     num_placed++;
-	     if (num_placed >= n) {
-	       break;
-	     }
-	   }
-	   
-	   if (num_placed >= n) {
-	     break;
-	   }
-	 }
-	 if (num_placed >= n) {
-	   break;
-	 }
-       }
-
-     }
-
-     g->SetNumNodes(num_placed);
-     cout << "Number of nodes placed: " << num_placed << "\n" << flush;
-     break;
-
-  default:
-       
-    cout << "Invalid Node Placement Model...\n" << flush;
-    assert(0);
-       
-  }
-  cout << "done!\n" << flush;
+    cout << "done!\n" << flush;
 }
-
-

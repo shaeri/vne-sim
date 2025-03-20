@@ -32,28 +32,22 @@
 class Model;
 class Graph;
 
-class Topology {
+class Topology
+{
+   public:
+    Topology(Model *model);
+    int GetNumNodes();
+    int GetNumEdges();
+    Graph *GetGraph() { return g; }
+    Model *GetModel() { return m; }
+    void BriteOutput(char *f);
+    void OtterOutput(char *f);
+    bool IsConnected();
+    void Classify();
 
- public:
-
-  Topology(Model* model);
-  int GetNumNodes();
-  int GetNumEdges();
-  Graph* GetGraph() { return g; }
-  Model* GetModel() { return  m; }
-  void BriteOutput(char* f);
-  void OtterOutput(char* f);
-  bool IsConnected();
-  void Classify();
-
- private:
-
-  Graph* g;
-  Model* m;
-
+   private:
+    Graph *g;
+    Model *m;
 };
 
 #endif /* TOPOLOGY_H */
-
-
-

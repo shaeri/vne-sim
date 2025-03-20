@@ -32,7 +32,7 @@
 ////////////////////////////////////////
 //
 // class ImportedFileModel
-// Base class for models that generate 
+// Base class for models that generate
 // topologies imported from files containing
 // Previously generated topologies
 //
@@ -40,103 +40,98 @@
 
 class ImportedFilePar;
 
-class ImportedFileModel : public Model {
+class ImportedFileModel : public Model
+{
+   public:
+    enum ImportedFileFormat {
+        IF_BRITE = 1,
+        IF_GTITM = 2,
+        IF_NLANR = 3,
+        IF_SKITTER = 4,
+        IF_GTITM_TS = 5,
+        IF_INET = 6
+    };
+    enum Level { RT_LEVEL = 1, AS_LEVEL = 2 };
+    ImportedFileModel(ImportedFilePar *par);
+    virtual Graph *Generate() { return (Graph *)NULL; }
+    ImportedFileFormat GetFileFormat() { return format; }
+    int GetBW() { return BWdist; }
+    double GetBWMin() { return BWmin; }
+    double GetBWMax() { return BWmax; }
+    string ToString();
+    void AssignBW(Graph *g);
+    BWDistType GetBWDist() { return BWdist; }
+    void SetBWDist(BWDistType t) { BWdist = t; }
+    void SetBWMin(double bw) { BWmin = bw; }
+    void SetBWMax(double bw) { BWmax = bw; }
 
- public:
-  
-  enum ImportedFileFormat { IF_BRITE = 1, IF_GTITM = 2, 
-			    IF_NLANR = 3, IF_SKITTER = 4, 
-			    IF_GTITM_TS = 5, IF_INET = 6 };
-  enum Level {RT_LEVEL = 1, AS_LEVEL = 2 };
-  ImportedFileModel(ImportedFilePar* par);
-  virtual Graph* Generate() { return (Graph*)NULL; }
-  ImportedFileFormat GetFileFormat() { return format; }
-  int GetBW() { return BWdist; }
-  double GetBWMin() { return BWmin; }
-  double GetBWMax() { return BWmax; }
-  string ToString();
-  void AssignBW(Graph* g);
-  BWDistType GetBWDist() { return BWdist; }
-  void SetBWDist(BWDistType t) { BWdist = t; }
-  void SetBWMin(double bw) { BWmin = bw; }
-  void SetBWMax(double bw) { BWmax = bw; }
+   protected:
+    ImportedFileFormat format;
+    vector<string> model_strings;
+    Level level;
+    int num_strings;
+    string filename;
 
- protected:
-  ImportedFileFormat format;
-  vector<string> model_strings;
-  Level level;
-  int num_strings;
-  string filename;
-
- private:
-  BWDistType BWdist;
-  double BWmin;
-  double BWmax;
-
+   private:
+    BWDistType BWdist;
+    double BWmin;
+    double BWmax;
 };
 
+class ImportedBriteTopologyModel : public ImportedFileModel
+{
+   public:
+    ImportedBriteTopologyModel(ImportedFilePar *par);
+    Graph *Generate();
 
-class ImportedBriteTopologyModel : public ImportedFileModel {
-
- public:
-  ImportedBriteTopologyModel(ImportedFilePar* par);
-  Graph* Generate(); 
-
- private:
-  Graph* ParseFile();
-  
+   private:
+    Graph *ParseFile();
 };
 
-class ImportedGTitmTopologyModel : public ImportedFileModel {
+class ImportedGTitmTopologyModel : public ImportedFileModel
+{
+   public:
+    ImportedGTitmTopologyModel(ImportedFilePar *par);
+    Graph *Generate();
 
- public:
-  ImportedGTitmTopologyModel(ImportedFilePar* par);
-  Graph* Generate(); 
-
- private:
-  Graph* ParseFile();
-  Graph* ParseFlatGTITM();
-  Graph* ParseTSGTITM();
-
+   private:
+    Graph *ParseFile();
+    Graph *ParseFlatGTITM();
+    Graph *ParseTSGTITM();
 };
 
+class ImportedNLANRTopologyModel : public ImportedFileModel
+{
+   public:
+    ImportedNLANRTopologyModel(ImportedFilePar *par);
+    Graph *Generate();
 
-class ImportedNLANRTopologyModel : public ImportedFileModel {
- public:
-  ImportedNLANRTopologyModel(ImportedFilePar* par);
-  Graph* Generate(); 
-
- private:
-  Graph* ParseFile();
-  void PlaceNode(Graph*, int, string);
-  void PlaceEdge(Graph*, int, int);
-  RandomVariable U;
-
+   private:
+    Graph *ParseFile();
+    void PlaceNode(Graph *, int, string);
+    void PlaceEdge(Graph *, int, int);
+    RandomVariable U;
 };
 
-class ImportedInetTopologyModel : public ImportedFileModel {
+class ImportedInetTopologyModel : public ImportedFileModel
+{
+   public:
+    ImportedInetTopologyModel(ImportedFilePar *par);
+    Graph *Generate();
 
- public:
-  ImportedInetTopologyModel(ImportedFilePar* par);
-  Graph* Generate(); 
-
- private:
-  Graph* ParseFile();
-  
+   private:
+    Graph *ParseFile();
 };
 
-class ImportedSkitterTopologyModel : public ImportedFileModel {
+class ImportedSkitterTopologyModel : public ImportedFileModel
+{
+   public:
+    ImportedSkitterTopologyModel(ImportedFilePar *par);
+    Graph *Generate();
+    int GetNumStrings() { return num_strings; }
 
- public:
-  ImportedSkitterTopologyModel(ImportedFilePar* par);
-  Graph* Generate();
-  int GetNumStrings() { return num_strings; }
-
- private:
-  Graph* ParseFile();
-
+   private:
+    Graph *ParseFile();
 };
 
 #endif /* IF_MODEL_H */
-
-

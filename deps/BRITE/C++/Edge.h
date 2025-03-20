@@ -36,102 +36,83 @@ class EdgeConf;
 
 enum EdgeType { E_NONE, E_STUB, E_BACKBONE };
 
-class Edge {
+class Edge
+{
+   public:
+    Edge(Node *s, Node *d);
+    ~Edge();
 
-public:
+    EdgeConf *GetConf() { return conf; }
+    int GetId() { return id; }
+    void SetId(int i) { id = i; }
+    int GetEdgeCount() { return edge_count; }
+    void SetConf(EdgeConf *c) { conf = c; }
+    Color GetColor() { return color; }
+    void SetColor(Color c) { color = c; }
+    Node *GetSrc() { return src; }
+    Node *GetDst() { return dst; }
+    double Length();
+    void SetDirection(bool s) { directed = s; }
+    bool GetDirection() { return directed; }
 
-  Edge(Node* s, Node* d);
-  ~Edge();
-
-  EdgeConf* GetConf() { return conf; }
-  int GetId() { return id; }
-  void SetId(int i) { id = i; }
-  int GetEdgeCount() { return edge_count; }
-  void SetConf(EdgeConf* c) { conf = c; }
-  Color GetColor() { return color; }
-  void SetColor(Color c) { color = c; }
-  Node* GetSrc() { return src; }
-  Node* GetDst() { return dst; }
-  double Length();
-  void SetDirection(bool s) { directed = s;}
-  bool GetDirection() { return directed;}
-
- private:
-
-  int id;
-  Node* src;
-  Node* dst;
-  Color color;
-  EdgeConf* conf;
-  static int edge_count;
-  bool directed;
-
+   private:
+    int id;
+    Node *src;
+    Node *dst;
+    Color color;
+    EdgeConf *conf;
+    static int edge_count;
+    bool directed;
 };
 
+class EdgeConf
+{
+   public:
+    enum EdgeType { RT_EDGE, AS_EDGE };
+    EdgeType GetEdgeType() { return edge_type; }
+    void SetEdgeType(EdgeType t) { edge_type = t; }
+    double GetBW() { return BW; }
+    double GetWeight() { return Weight; }
+    void SetBW(double bw) { BW = bw; }
+    void SetWeight(double w) { Weight = w; }
 
-
-class EdgeConf {
-
- public:
-
-  enum EdgeType { RT_EDGE, AS_EDGE };
-  EdgeType GetEdgeType() { return edge_type; }
-  void SetEdgeType(EdgeType t) { edge_type = t; }
-  double GetBW() { return BW; }
-  double GetWeight() { return Weight; }
-  void SetBW(double bw) { BW = bw; }
-  void SetWeight(double w) { Weight = w; }
-
- private:
-
-  EdgeType edge_type;
-  double BW;
-  double Weight;
-
+   private:
+    EdgeType edge_type;
+    double BW;
+    double Weight;
 };
 
+class ASEdgeConf : public EdgeConf
+{
+   public:
+    ASEdgeConf();
+    ~ASEdgeConf();
+    enum ASEdgeType { AS_NONE, AS_STUB, AS_BORDER, AS_BACKBONE };
+    ASEdgeType GetASEdgeType() { return as_edge_type; }
+    void SetASEdgeType(ASEdgeType t) { as_edge_type = t; }
 
-
-class ASEdgeConf : public EdgeConf {
-
- public:
-
-  ASEdgeConf();
-  ~ASEdgeConf();
-  enum ASEdgeType {AS_NONE, AS_STUB, AS_BORDER, AS_BACKBONE};  
-  ASEdgeType GetASEdgeType() { return as_edge_type; }
-  void SetASEdgeType(ASEdgeType t) {  as_edge_type = t; }
-
-
- private:
-
-  ASEdgeType as_edge_type;
-
-
+   private:
+    ASEdgeType as_edge_type;
 };
 
-class RouterEdgeConf : public EdgeConf {
+class RouterEdgeConf : public EdgeConf
+{
+   public:
+    enum RouterEdgeType { RT_NONE, RT_LEAF, RT_STUB, RT_BORDER, RT_BACKBONE };
+    RouterEdgeConf(double length);
+    ~RouterEdgeConf();
+    double GetLength() { return length; }
+    double GetDelay() { return delay; }
 
- public:
+    RouterEdgeType GetRouterEdgeType() { return rt_edge_type; }
+    void SetLength(double l) { length = l; }
+    void SetDelay(double d) { delay = d; }
+    void SetRouterEdgeType(RouterEdgeType t) { rt_edge_type = t; }
 
-  enum RouterEdgeType { RT_NONE, RT_LEAF, RT_STUB, RT_BORDER, RT_BACKBONE };
-  RouterEdgeConf(double length);
-  ~RouterEdgeConf();
-  double GetLength() { return length; }
-  double GetDelay() { return delay; }
-
-  RouterEdgeType GetRouterEdgeType() { return rt_edge_type; }
-  void SetLength(double l) { length = l; }
-  void SetDelay(double d) { delay = d; }
-  void SetRouterEdgeType(RouterEdgeType t) {  rt_edge_type = t; }
-
-
- private:
-
-  RouterEdgeType rt_edge_type;
-  double length;	
-  double delay;
-  
+   private:
+    RouterEdgeType rt_edge_type;
+    double length;
+    double delay;
 };
 
 #endif /* EDGE_H */

@@ -33,101 +33,116 @@
 
 namespace vne
 {
-template<typename> class VirtualNetworkRequest;
+template <typename>
+class VirtualNetworkRequest;
 
-template<typename ... NODERES, template <typename ...> class NODECLASS,
-            typename... LINKRES, template <typename...> class LINKCLASS>
+template <typename... NODERES, template <typename...> class NODECLASS, typename... LINKRES,
+          template <typename...> class LINKCLASS>
 class VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>
 {
-static_assert (std::is_base_of<VirtualNode<NODERES...>, NODECLASS<NODERES...>>::value,
-                   "First template argument must be a VirtualNode derivative.");
-static_assert (std::is_base_of<VirtualLink<LINKRES...>, LINKCLASS<LINKRES...>>::value,
-                   "Second template argument must be a VirtualLink derivative.");
-//template<typename, typename> friend class NodeEmbeddingAlgorithm;
-//template<typename, typename> friend class LinkEmbeddingAlgorithm;
-    
-public:
-	VirtualNetworkRequest(std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> _vn,
-                          double time, double duration);
-	int getId () const {return id;};
-    double getDuration () const {return duration;};
-    double getArrivalTime() const {return arrivalTime;};
+    static_assert(std::is_base_of<VirtualNode<NODERES...>, NODECLASS<NODERES...>>::value,
+                  "First template argument must be a VirtualNode derivative.");
+    static_assert(std::is_base_of<VirtualLink<LINKRES...>, LINKCLASS<LINKRES...>>::value,
+                  "Second template argument must be a VirtualLink derivative.");
+    //template<typename, typename> friend class NodeEmbeddingAlgorithm;
+    //template<typename, typename> friend class LinkEmbeddingAlgorithm;
+
+   public:
+    VirtualNetworkRequest(
+        std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> _vn, double time,
+        double duration);
+    int getId() const { return id; };
+    double getDuration() const { return duration; };
+    double getArrivalTime() const { return arrivalTime; };
     // Proc time is usually not known in advance so after the embedding
     // algorithm is completed this value is set for simulation purposes
-    double getProccessingTime() const {return proc_time;};
-    double getActualProccessingTime() const {return actual_proc_time;};
-    void setProccessingTime (double t) {proc_time = t;}
-    void setActualProcessingTime (double t) {actual_proc_time = t;};
-    double getQueuingTime() const {return queuing_time;};
-    void setQueuingTime (double t) {queuing_time = t;}
-    double getDepartureTime() const {return arrivalTime + duration + proc_time + queuing_time;};
+    double getProccessingTime() const { return proc_time; };
+    double getActualProccessingTime() const { return actual_proc_time; };
+    void setProccessingTime(double t) { proc_time = t; }
+    void setActualProcessingTime(double t) { actual_proc_time = t; };
+    double getQueuingTime() const { return queuing_time; };
+    void setQueuingTime(double t) { queuing_time = t; }
+    double getDepartureTime() const { return arrivalTime + duration + proc_time + queuing_time; };
     //bool successfulEmbedding () const {return successful_embedding;};
     //void setEmbeddingResult (bool arg) {successful_embedding = arg;};
-    bool operator< (VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>& rhs) const {return this->time<rhs.getTime();};
-    std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> getVN () const {return vn;};
-    
-    const std::map<int,std::list<std::pair<int, std::shared_ptr<Resources<LINKRES...>>>>>* getLinkMap () const {return &linkMap;};
-    const std::map<int,int>* getNodeMap () const {return &nodeMap;};
-    void addNodeMapping (int sNodeId, int vNodeId);
-    void addLinkMapping (int sLinkId, int vLinkId, std::shared_ptr<Resources<LINKRES...>> _res);
-    virtual void writeVNRToFile (std::ofstream& ofstrm) {};
-    
-protected:
-	int id;
+    bool operator<(
+        VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> &rhs) const
+    {
+        return this->time < rhs.getTime();
+    };
+    std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> getVN() const
+    {
+        return vn;
+    };
+
+    const std::map<int, std::list<std::pair<int, std::shared_ptr<Resources<LINKRES...>>>>> *
+    getLinkMap() const
+    {
+        return &linkMap;
+    };
+    const std::map<int, int> *getNodeMap() const { return &nodeMap; };
+    void addNodeMapping(int sNodeId, int vNodeId);
+    void addLinkMapping(int sLinkId, int vLinkId, std::shared_ptr<Resources<LINKRES...>> _res);
+    virtual void writeVNRToFile(std::ofstream &ofstrm) {};
+
+   protected:
+    int id;
     double arrivalTime;
     double duration;
     double proc_time;
     double actual_proc_time;
     //time that a request waits in a queue to be processed
     double queuing_time;
-    
+
     //bool successful_embedding;
     std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> vn;
-    VirtualNetworkRequest(std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> _vn,
-                          double time, double duration, bool noid);
+    VirtualNetworkRequest(
+        std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> _vn, double time,
+        double duration, bool noid);
     ///These two maps hold the temporary mappings based on node and link IDs
     //nodeMap<VirtualnodeId, SubstrateNodeId>;
     std::map<int, int> nodeMap;
     //linkMap<virtualLinkId, list<substrateLinkIds>>
-    std::map<int,std::list<std::pair<int,std::shared_ptr<Resources<LINKRES...>>>>> linkMap;
-    
-private:
-	typedef VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> this_t;
-    
+    std::map<int, std::list<std::pair<int, std::shared_ptr<Resources<LINKRES...>>>>> linkMap;
+
+   private:
+    typedef VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> this_t;
 };
-template<typename ... NODERES, template <typename ...> class NODECLASS,
-    typename... LINKRES, template <typename...> class LINKCLASS>
-    VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>::
-    VirtualNetworkRequest(std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> _vn,
-                          double _time, double _duration)
-    : id (vne::IdGenerator::Instance()->getId<this_t>(this)),
-      arrivalTime (_time),
+template <typename... NODERES, template <typename...> class NODECLASS, typename... LINKRES,
+          template <typename...> class LINKCLASS>
+VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>::
+    VirtualNetworkRequest(
+        std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> _vn, double _time,
+        double _duration)
+    : id(vne::IdGenerator::Instance()->getId<this_t>(this)),
+      arrivalTime(_time),
       duration(_duration),
       proc_time(0),
       queuing_time(0),
       vn(std::move(_vn)),
       //successful_embedding(false),
-      linkMap (std::map<int,std::list<std::pair<int,std::shared_ptr<Resources<LINKRES...>>>>>()),
-      nodeMap (std::map<int,int>())
-    {}
-template<typename ... NODERES, template <typename ...> class NODECLASS,
-    typename... LINKRES, template <typename...> class LINKCLASS>
-    void VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>::
-            addNodeMapping (int sNodeId, int vNodeId)
-    {
-        BOOST_LOG_TRIVIAL(debug) << "vnodeId: " << vNodeId << std::endl;
-        BOOST_LOG_TRIVIAL(debug) << "snodeId: " << sNodeId << std::endl;
-        BOOST_LOG_TRIVIAL(debug) << "-------------------------" << std::endl;
-       nodeMap.insert(std::make_pair(vNodeId, sNodeId));
-    }
-
-template<typename ... NODERES, template <typename ...> class NODECLASS,
-    typename... LINKRES, template <typename...> class LINKCLASS>
-    void VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>::
-            addLinkMapping (int sLinkId, int vLinkId, std::shared_ptr<Resources<LINKRES...>> _res)
-    {
-        linkMap[vLinkId].push_back(std::make_pair(sLinkId,_res));
-    }
+      linkMap(std::map<int, std::list<std::pair<int, std::shared_ptr<Resources<LINKRES...>>>>>()),
+      nodeMap(std::map<int, int>())
+{
 }
+template <typename... NODERES, template <typename...> class NODECLASS, typename... LINKRES,
+          template <typename...> class LINKCLASS>
+void VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>::addNodeMapping(
+    int sNodeId, int vNodeId)
+{
+    BOOST_LOG_TRIVIAL(debug) << "vnodeId: " << vNodeId << std::endl;
+    BOOST_LOG_TRIVIAL(debug) << "snodeId: " << sNodeId << std::endl;
+    BOOST_LOG_TRIVIAL(debug) << "-------------------------" << std::endl;
+    nodeMap.insert(std::make_pair(vNodeId, sNodeId));
+}
+
+template <typename... NODERES, template <typename...> class NODECLASS, typename... LINKRES,
+          template <typename...> class LINKCLASS>
+void VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>::addLinkMapping(
+    int sLinkId, int vLinkId, std::shared_ptr<Resources<LINKRES...>> _res)
+{
+    linkMap[vLinkId].push_back(std::make_pair(sLinkId, _res));
+}
+}  // namespace vne
 
 #endif /* REQUEST_H_ */

@@ -29,54 +29,55 @@
 
 #include "core/virtual-network-request.h"
 
+namespace vne
+{
+//template <typename ...> class NetworkBuilder;
+//template<typename ... NODET, typename ... LINKT>
+//class NetworkBuilder<Network<Node<NODET...>, Link <LINKT...>>>{
 
-namespace vne{
-    //template <typename ...> class NetworkBuilder;
-    //template<typename ... NODET, typename ... LINKT>
-    //class NetworkBuilder<Network<Node<NODET...>, Link <LINKT...>>>{
-    
-    template<typename> class VNRGenerator;
-    template<template<typename> class VNR,
-    typename ... NODERES, template <typename ...> class NODECLASS,
-    typename ... LINKRES, template <typename ...> class LINKCLASS>
-    class VNRGenerator<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>
-    : public adevs::Atomic<adevs::PortValue<std::shared_ptr<VNR
-                <Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>> >>
-    {
-    public:
-        static_assert (std::is_base_of<
-                       VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>,
-                       VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::value,
-                       "Template argument of VNRGenerator must be derived from VirtualNetworkRequest.");
-        
-        typedef adevs::PortValue< std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>> > ADEVS_IO_TYPE;
-        typedef std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>> PTR_TYPE;
-        
-        virtual ~VNRGenerator() {};
-        
-        // This is the internal transition function. It should entail the logic of the sequence of events
-        // that will occur after an output has been generated.
-        virtual void delta_int() = 0;
-        
-        // The generator is input free, and so it ignores external events.
-        virtual void delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE>& xb) {} ;
-        // The generator is input free, and so it ignores input.
-        virtual void delta_conf(const adevs::Bag<ADEVS_IO_TYPE>& xb) {delta_int();};
-        virtual void output_func(adevs::Bag<ADEVS_IO_TYPE>& yb) = 0;
-        virtual double ta() = 0;
-        virtual void gc_output(adevs::Bag<ADEVS_IO_TYPE>& g) {};
-        
-        static const int arrive;
-        //virtual std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>> getVNR () = 0;
-        
-    protected:
-        VNRGenerator()
-        : adevs::Atomic<ADEVS_IO_TYPE> ()
-        {};
-    };
-    template<template<typename> class VNR,
-    typename ... NODERES, template <typename ...> class NODECLASS,
-    typename ... LINKRES, template <typename ...> class LINKCLASS>
-    const int VNRGenerator<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::arrive = 0;
-}
+template <typename>
+class VNRGenerator;
+template <template <typename> class VNR, typename... NODERES,
+          template <typename...> class NODECLASS, typename... LINKRES,
+          template <typename...> class LINKCLASS>
+class VNRGenerator<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>
+    : public adevs::Atomic<adevs::PortValue<
+          std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>>>
+{
+   public:
+    static_assert(std::is_base_of<
+                      VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>,
+                      VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::value,
+                  "Template argument of VNRGenerator must be derived from VirtualNetworkRequest.");
+
+    typedef adevs::PortValue<
+        std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>>
+        ADEVS_IO_TYPE;
+    typedef std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>> PTR_TYPE;
+
+    virtual ~VNRGenerator() {};
+
+    // This is the internal transition function. It should entail the logic of the sequence of events
+    // that will occur after an output has been generated.
+    virtual void delta_int() = 0;
+
+    // The generator is input free, and so it ignores external events.
+    virtual void delta_ext(double e, const adevs::Bag<ADEVS_IO_TYPE> &xb) {};
+    // The generator is input free, and so it ignores input.
+    virtual void delta_conf(const adevs::Bag<ADEVS_IO_TYPE> &xb) { delta_int(); };
+    virtual void output_func(adevs::Bag<ADEVS_IO_TYPE> &yb) = 0;
+    virtual double ta() = 0;
+    virtual void gc_output(adevs::Bag<ADEVS_IO_TYPE> &g) {};
+
+    static const int arrive;
+    //virtual std::shared_ptr<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>> getVNR () = 0;
+
+   protected:
+    VNRGenerator() : adevs::Atomic<ADEVS_IO_TYPE>() {};
+};
+template <template <typename> class VNR, typename... NODERES,
+          template <typename...> class NODECLASS, typename... LINKRES,
+          template <typename...> class LINKCLASS>
+const int VNRGenerator<VNR<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>>>::arrive = 0;
+}  // namespace vne
 #endif

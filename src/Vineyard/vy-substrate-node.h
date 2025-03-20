@@ -1,4 +1,4 @@
-  /**
+/**
    * @file vy-substrate-node.h
    * @author Soroush Haeri <soroosh.haeri@me.com>
    * @date 7/16/14
@@ -33,31 +33,33 @@
 
 #include <vector>
 
-namespace vne {
-    namespace vineyard {
-    template<typename = double>
+namespace vne
+{
+namespace vineyard
+{
+    template <typename = double>
     class VYSubstrateNode : public SubstrateNode<double>
     {
-    public:
-        VYSubstrateNode (double cpu, const VYCoordinate& coord);
-        VYSubstrateNode (double cpu, int _x, int _y);
-        ~VYSubstrateNode ();
-        const VYCoordinate& getCoordinates () const;
+       public:
+        VYSubstrateNode(double cpu, const VYCoordinate &coord);
+        VYSubstrateNode(double cpu, int _x, int _y);
+        ~VYSubstrateNode();
+        const VYCoordinate &getCoordinates() const;
         Embedding_Result embedNode(std::shared_ptr<VYVirtualNode<> > _n);
-        virtual void writeNodeToFile (std::ofstream& ofstrm);
-        double getCPU () const;
-        double getMaxCPU () const;
-        int getCount () const;
-        int operator++ (int);
-        int operator-- (int);
-        int operator++ ();
-        int operator-- ();
+        virtual void writeNodeToFile(std::ofstream &ofstrm);
+        double getCPU() const;
+        double getMaxCPU() const;
+        int getCount() const;
+        int operator++(int);
+        int operator--(int);
+        int operator++();
+        int operator--();
         bool touched;
-        
-    private:
+
+       private:
         VYCoordinate coordinate;
         int count;
     };
-    }
-}
+}  // namespace vineyard
+}  // namespace vne
 #endif /* defined(__VNE_MCTS__VY_SUBSTRATE_NODE__) */

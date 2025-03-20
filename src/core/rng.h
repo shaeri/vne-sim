@@ -34,49 +34,52 @@
 
 #include "core/core-types.h"
 
-namespace vne {
-    struct RNGSubscriber {};
-    class RNG {
-        
-    public:
-        static std::shared_ptr<RNG> Instance ();
-        static void Destroy ();
+namespace vne
+{
+struct RNGSubscriber {
+};
+class RNG
+{
+   public:
+    static std::shared_ptr<RNG> Instance();
+    static void Destroy();
 
-        const gsl_rng* getMyRNG (RNGSubscriber* objectPtr);
-        const gsl_rng* getGeneralRNG ();
-        void unsubscribe (RNGSubscriber* objectPtr);
-        
-        template<typename RetVAL, typename... PARAMS>
-        RetVAL sampleDistribution (Distribution d, std::tuple<PARAMS...> p, const gsl_rng* r = nullptr)
-        {
-            if (r == nullptr)
-            {
-                r = getGeneralRNG ();
-            }
-            switch (d) {
-                case Distribution::UNIFORM :
-                    return gsl_ran_flat (r, std::get<0> (p), std::get<1> (p));
-                case Distribution::EXPONENTIAL :
-                    return gsl_ran_exponential (r, std::get<0> (p));
-                case Distribution::POISSON :
-                    return gsl_ran_poisson (r, std::get<0> (p));
-                default:
-                    return INT_MAX;
-            }
+    const gsl_rng *getMyRNG(RNGSubscriber *objectPtr);
+    const gsl_rng *getGeneralRNG();
+    void unsubscribe(RNGSubscriber *objectPtr);
+
+    template <typename RetVAL, typename... PARAMS>
+    RetVAL sampleDistribution(Distribution d, std::tuple<PARAMS...> p, const gsl_rng *r = nullptr)
+    {
+        if (r == nullptr) {
+            r = getGeneralRNG();
         }
-        ~RNG ();
-    protected:
-        RNG(unsigned long int _seed);
-    private:
-        static std::shared_ptr<RNG> _instance;
-        
-        std::map<RNGSubscriber*, gsl_rng*> rng_map;
-        gsl_rng* generalRNG;
-        gsl_rng_type rng_type;
-        unsigned long int seed;
-        
-        bool useSameSeedForParallelRuns;
-    };
-}
+        switch (d) {
+            case Distribution::UNIFORM:
+                return gsl_ran_flat(r, std::get<0>(p), std::get<1>(p));
+            case Distribution::EXPONENTIAL:
+                return gsl_ran_exponential(r, std::get<0>(p));
+            case Distribution::POISSON:
+                return gsl_ran_poisson(r, std::get<0>(p));
+            default:
+                return INT_MAX;
+        }
+    }
+    ~RNG();
+
+   protected:
+    RNG(unsigned long int _seed);
+
+   private:
+    static std::shared_ptr<RNG> _instance;
+
+    std::map<RNGSubscriber *, gsl_rng *> rng_map;
+    gsl_rng *generalRNG;
+    gsl_rng_type rng_type;
+    unsigned long int seed;
+
+    bool useSameSeedForParallelRuns;
+};
+}  // namespace vne
 
 #endif /* defined(__vne_mcts__rng__) */

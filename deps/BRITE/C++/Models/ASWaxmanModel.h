@@ -34,30 +34,26 @@
 // Derived class for Waxman model. This model
 // implies no incremental growth and Waxman's
 // connectivity probability function.
-// Builds AS-level topologies 
+// Builds AS-level topologies
 //
 //////////////////////////////////////////////
 
 class ASWaxPar;
 
-class ASWaxman : public ASModel {
-    
- public:
-    
-  ASWaxman(ASWaxPar* par);
-  Graph* Generate();
-  string ToString();
+class ASWaxman : public ASModel
+{
+   public:
+    ASWaxman(ASWaxPar *par);
+    Graph *Generate();
+    string ToString();
 
- protected:
-  void InterconnectNodes(Graph* graph);
-  double ProbFunc(Node* src, Node* dst);
-  
- private:
-  double alpha;
-  double beta;
+   protected:
+    void InterconnectNodes(Graph *graph);
+    double ProbFunc(Node *src, Node *dst);
 
+   private:
+    double alpha;
+    double beta;
 };
 
 #endif /* AS_WAX_MODEL_H */
-
-

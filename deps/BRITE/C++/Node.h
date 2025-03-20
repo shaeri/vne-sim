@@ -35,114 +35,102 @@ class NodeConf;
 class Graph;
 class Edge;
 
-class Node {
+class Node
+{
+   public:
+    Node(int i);
+    Node(NodeConf *info);
 
- public:
+    int GetId() { return nodeId; }
+    int GetAddr() { return nodeAddr; }
+    int GetInDegree() { return inDegree; }
+    int GetOutDegree() { return outDegree; }
+    Color GetColor() { return nodeColor; }
+    NodeConf *GetNodeInfo() { return nodeInfo; }
 
-  Node(int i);
-  Node(NodeConf* info);
+    void SetId(int id) { nodeId = id; }
+    void SetAddr(int addr) { nodeAddr = addr; }
+    void SetInDegree(int degree) { inDegree = degree; }
+    void SetOutDegree(int degree) { outDegree = degree; }
+    void SetColor(Color col) { nodeColor = col; }
+    void SetNodeInfo(NodeConf *info) { nodeInfo = info; }
+    /* SPRINT */
+    void AddIncEdge(Edge *edge);
+    Edge *GetEdge(int v);
 
-  int GetId() { return nodeId;  }
-  int GetAddr() { return nodeAddr; }
-  int GetInDegree() { return inDegree; }
-  int GetOutDegree() { return outDegree; }
-  Color GetColor() { return nodeColor; }
-  NodeConf* GetNodeInfo() { return nodeInfo; }
-  
-  void SetId(int id) { nodeId = id;  }
-  void SetAddr(int addr) { nodeAddr = addr; }
-  void SetInDegree(int degree) { inDegree = degree; }
-  void SetOutDegree(int degree) { outDegree = degree; }
-  void SetColor(Color col) { nodeColor = col; }
-  void SetNodeInfo(NodeConf*  info) { nodeInfo = info; }
-  /* SPRINT */
-  void AddIncEdge(Edge* edge);
-  Edge* GetEdge(int v);
-
- private:
-
-  int nodeId;
-  int nodeAddr;
-  int inDegree;
-  int outDegree;
-  Color nodeColor;
-  NodeConf* nodeInfo;
-  /* SPRINT */
-  list<Edge*> incEdges;
-
+   private:
+    int nodeId;
+    int nodeAddr;
+    int inDegree;
+    int outDegree;
+    Color nodeColor;
+    NodeConf *nodeInfo;
+    /* SPRINT */
+    list<Edge *> incEdges;
 };
 
 // to derive from it specific node types
-class NodeConf {
+class NodeConf
+{
+   public:
+    enum NodeType { AS_NODE = 1, RT_NODE = 2 };
+    double GetCost() { return cost; }
+    void SetCost(double c) { cost = c; }
+    string GetName() { return name; }
+    void SetName(string s) { name = s; }
+    NodeType GetNodeType() { return type; }
+    void SetNodeType(NodeType t) { type = t; }
+    double GetCoordX() { return x; }
+    double GetCoordY() { return y; }
+    double GetCoordZ() { return z; }
+    void SetCoord(double xval, double yval, double zval)
+    {
+        x = xval;
+        y = yval;
+        z = zval;
+    }
 
- public:
-
-  enum NodeType { AS_NODE = 1, RT_NODE = 2 };
-  double GetCost() { return cost; }
-  void SetCost(double c) { cost = c; }
-  string GetName() { return name; }
-  void SetName(string s) { name = s; }
-  NodeType GetNodeType() { return type; }
-  void SetNodeType(NodeType t) { type = t; }
-  double GetCoordX() { return x; }
-  double GetCoordY() { return y; }
-  double GetCoordZ() { return z; }
-  void SetCoord(double xval, double yval, double zval) {
-    x = xval;
-    y = yval;
-    z = zval;
-  }
-
- private:
-  
-  string name;
-  double cost;
-  NodeType type;
-  double x;
-  double y;
-  double z;
-
+   private:
+    string name;
+    double cost;
+    NodeType type;
+    double x;
+    double y;
+    double z;
 };
 
+class RouterNodeConf : public NodeConf
+{
+   public:
+    RouterNodeConf();
+    enum RouterNodeType { RT_NONE, RT_LEAF, RT_BORDER, RT_STUB, RT_BACKBONE };
+    RouterNodeType GetRouterType() { return rttype; }
+    void SetRouterType(RouterNodeType t) { rttype = t; }
+    int GetASId() { return ASid; }
+    void SetASId(int i) { ASid = i; }
 
-class RouterNodeConf : public NodeConf {
-
- public:
-
-  RouterNodeConf();
-  enum RouterNodeType { RT_NONE, RT_LEAF, RT_BORDER, RT_STUB, RT_BACKBONE };
-  RouterNodeType GetRouterType() { return rttype; }
-  void SetRouterType(RouterNodeType t) { rttype = t; }
-  int GetASId() { return ASid; }
-  void SetASId(int i) { ASid = i; }
-
- private:
-  
-  RouterNodeType rttype;
-  int ASid;
-
+   private:
+    RouterNodeType rttype;
+    int ASid;
 };
 
-class ASNodeConf : public NodeConf {
+class ASNodeConf : public NodeConf
+{
+   public:
+    enum ASNodeType { AS_NONE, AS_LEAF, AS_STUB, AS_BORDER, AS_BACKBONE };
+    ASNodeConf();
+    ~ASNodeConf();
+    Topology *GetTopology() { return t; }
+    void SetTopology(Topology *top, int asid);
+    ASNodeType GetASType() { return astype; }
+    void SetASType(ASNodeType t) { astype = t; }
+    int GetASId() { return ASid; }
+    void SetASId(int i) { ASid = i; }
 
- public:
-
-  enum ASNodeType {AS_NONE, AS_LEAF, AS_STUB, AS_BORDER, AS_BACKBONE};
-  ASNodeConf();
-  ~ASNodeConf();
-  Topology* GetTopology() { return t; }
-  void SetTopology(Topology* top, int asid);
-  ASNodeType GetASType() { return astype; }
-  void SetASType(ASNodeType t) { astype = t; }
-  int GetASId() { return ASid; }
-  void SetASId(int i) { ASid = i; }
-
- private:
-
-  Topology* t;
-  ASNodeType astype;
-  int ASid;
-
+   private:
+    Topology *t;
+    ASNodeType astype;
+    int ASid;
 };
 
 #endif /* NODE_H */

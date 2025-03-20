@@ -24,112 +24,99 @@
 
 #include "vne-nm-state.h"
 
-namespace vne {
-    namespace mcvne {
-        VNENMState::VNENMState (std::shared_ptr<std::set<int>> _idSet, int vnrid, const std::map<int,int>* mappedNodes) :
-        VNNodeIdSet (_idSet),
-        vnrID(vnrid)
-        {
-            if (mappedNodes->size() > 0)
-            {
-                for (auto it = mappedNodes->begin(); it != mappedNodes->end(); it++)
-                {
-                    auto it2 = VNNodeIdSet->find(it->first);
-                    assert(it2 != VNNodeIdSet->end());
-                    nodeMap.insert(std::make_pair(it->first,it->second));
-                    VNNodeIdSet->erase(it2);
-                }
+namespace vne
+{
+namespace mcvne
+{
+    VNENMState::VNENMState(std::shared_ptr<std::set<int>> _idSet, int vnrid,
+                           const std::map<int, int> *mappedNodes)
+        : VNNodeIdSet(_idSet), vnrID(vnrid)
+    {
+        if (mappedNodes->size() > 0) {
+            for (auto it = mappedNodes->begin(); it != mappedNodes->end(); it++) {
+                auto it2 = VNNodeIdSet->find(it->first);
+                assert(it2 != VNNodeIdSet->end());
+                nodeMap.insert(std::make_pair(it->first, it->second));
+                VNNodeIdSet->erase(it2);
             }
-            VNIdSetIterator = VNNodeIdSet->begin();
-        };
-        
-        VNENMState::VNENMState ()
-        {
-        };
-        
-        VNENMState::~VNENMState ()
-        {
-        };
-        
-        const std::map<int,int>*
-        VNENMState::getNodeMap () const
-        {
-            return &nodeMap;
-        };
-        
-        int
-        VNENMState::getPreviousVNId ()
-        {
-            if (VNIdSetIterator == VNNodeIdSet->begin())
-                return -1;
-            VNIdSetIterator--;
-            int nextId = *(VNIdSetIterator);
-            VNIdSetIterator++;
-            
-            return nextId;
-        };
-        
-        int
-        VNENMState::getCurrentVNId () const
-        {
-            if (VNIdSetIterator == VNNodeIdSet->end())
-                return -1;
-            
-            return *(VNIdSetIterator);
-        };
-        
-        int
-        VNENMState::getNextVNId ()
-        {
-            VNIdSetIterator++;
-            if (VNIdSetIterator == VNNodeIdSet->end())
-                return -1;
-            int nextId = *(VNIdSetIterator);
-            VNIdSetIterator--;
-            return nextId;
-        };
-        
-        int
-        VNENMState::getVNRId() const
-        {
-            return vnrID;
         }
-        
-        bool
-        VNENMState::isTreminal () const
-        {
-            return (VNIdSetIterator == VNNodeIdSet->end());
-        };
-        
-        bool
-        VNENMState::isStartState() const
-        {
-            return nodeMap.empty();
-        }
-        
-        std::shared_ptr<State>
-        VNENMState::getCopy() const
-        {
-            std::shared_ptr<VNENMState> newSt (new VNENMState ());
-            *newSt = *this;
-            return newSt;
-        }
-        
-        
-        std::shared_ptr<std::set<int>> VNENMState::getUsedSNIds ()
-        {
-            std::shared_ptr<std::set<int>> outSet (new std::set<int> ());
-            for (auto it = nodeMap.begin(); it != nodeMap.end(); it++) {
-                outSet->insert(it->second);
-            }
-            return outSet;
-        }
-        
-        void VNENMState::addNodeMapping(int sNodeId)
-        {
-            assert (nodeMap.find(*VNIdSetIterator) == nodeMap.end());
-            nodeMap.insert(std::make_pair(*VNIdSetIterator, sNodeId));
-            VNIdSetIterator++;
-        }
+        VNIdSetIterator = VNNodeIdSet->begin();
+    };
+
+    VNENMState::VNENMState() {};
+
+    VNENMState::~VNENMState() {};
+
+    const std::map<int, int> *VNENMState::getNodeMap() const
+    {
+        return &nodeMap;
+    };
+
+    int VNENMState::getPreviousVNId()
+    {
+        if (VNIdSetIterator == VNNodeIdSet->begin())
+            return -1;
+        VNIdSetIterator--;
+        int nextId = *(VNIdSetIterator);
+        VNIdSetIterator++;
+
+        return nextId;
+    };
+
+    int VNENMState::getCurrentVNId() const
+    {
+        if (VNIdSetIterator == VNNodeIdSet->end())
+            return -1;
+
+        return *(VNIdSetIterator);
+    };
+
+    int VNENMState::getNextVNId()
+    {
+        VNIdSetIterator++;
+        if (VNIdSetIterator == VNNodeIdSet->end())
+            return -1;
+        int nextId = *(VNIdSetIterator);
+        VNIdSetIterator--;
+        return nextId;
+    };
+
+    int VNENMState::getVNRId() const
+    {
+        return vnrID;
     }
-}
+
+    bool VNENMState::isTreminal() const
+    {
+        return (VNIdSetIterator == VNNodeIdSet->end());
+    };
+
+    bool VNENMState::isStartState() const
+    {
+        return nodeMap.empty();
+    }
+
+    std::shared_ptr<State> VNENMState::getCopy() const
+    {
+        std::shared_ptr<VNENMState> newSt(new VNENMState());
+        *newSt = *this;
+        return newSt;
+    }
+
+    std::shared_ptr<std::set<int>> VNENMState::getUsedSNIds()
+    {
+        std::shared_ptr<std::set<int>> outSet(new std::set<int>());
+        for (auto it = nodeMap.begin(); it != nodeMap.end(); it++) {
+            outSet->insert(it->second);
+        }
+        return outSet;
+    }
+
+    void VNENMState::addNodeMapping(int sNodeId)
+    {
+        assert(nodeMap.find(*VNIdSetIterator) == nodeMap.end());
+        nodeMap.insert(std::make_pair(*VNIdSetIterator, sNodeId));
+        VNIdSetIterator++;
+    }
+}  // namespace mcvne
+}  // namespace vne

@@ -34,26 +34,20 @@
 // Derived class for BarabasiAlbert model. This model
 // implies Incremental growth and preferential
 // connectivity.
-// Builds router-level topologies 
+// Builds router-level topologies
 //
 ////////////////////////////////////////////////
 
 class RouterBarabasiAlbert_1_Par;
 
-class RouterBarabasiAlbert_1 : public RouterBarabasiAlbert {
+class RouterBarabasiAlbert_1 : public RouterBarabasiAlbert
+{
+   public:
+    RouterBarabasiAlbert_1(RouterBarabasiAlbert_1_Par *par);
+    string ToString();
 
- public:
-
-  RouterBarabasiAlbert_1(RouterBarabasiAlbert_1_Par* par);
-  string ToString();
-
- protected:
-
- void InterconnectNodes(Graph *g);
-
+   protected:
+    void InterconnectNodes(Graph *g);
 };
 
-
 #endif /* RT_BAR_MODEL_1_H */
-
-

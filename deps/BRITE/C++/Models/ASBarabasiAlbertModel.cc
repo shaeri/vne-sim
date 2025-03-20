@@ -26,48 +26,39 @@
 
 #include "ASBarabasiAlbertModel.h"
 
-
-inline double ASBarabasiAlbert::ProbFunc(Node* dst) {
-
-  /* return interconnection probability */
-  assert(SumDj > 0);
-  return  dst->GetOutDegree() / (double)SumDj;
-  
+inline double ASBarabasiAlbert::ProbFunc(Node *dst)
+{
+    /* return interconnection probability */
+    assert(SumDj > 0);
+    return dst->GetOutDegree() / (double)SumDj;
 }
- 
-Graph* ASBarabasiAlbert::Generate() {
 
-  Graph* graph;
+Graph *ASBarabasiAlbert::Generate()
+{
+    Graph *graph;
 
-  try {
-    if (GetPlacementType() == P_HT) {
-      graph = new Graph((int)(size * 1.1));
-    }else {
-      graph = new Graph(size);
+    try {
+        if (GetPlacementType() == P_HT) {
+            graph = new Graph((int)(size * 1.1));
+        } else {
+            graph = new Graph(size);
+        }
+    } catch (bad_alloc) {
+        cerr << "ASBarabasiAlbert::Generate(): Cannot create new graph...\n" << flush;
+        exit(0);
     }
-  }
-  catch (bad_alloc) {
-    cerr << "ASBarabasiAlbert::Generate(): Cannot create new graph...\n" << flush;
-    exit(0);
-  }
 
-  /* Place nodes into plane */
-  cout << "Placing nodes...\n" << flush;
-  PlaceNodes(graph);
+    /* Place nodes into plane */
+    cout << "Placing nodes...\n" << flush;
+    PlaceNodes(graph);
 
-  /* Build topology grasph using BarabasiAlbert */
-  cout << "Interconnecting nodes...\n" << flush;
-  InterconnectNodes(graph);
-  
-  /* Assign bandwidths to edges */
-  cout << "Assigning bandwidths...\n" << flush;
-  AssignBW(graph);
+    /* Build topology grasph using BarabasiAlbert */
+    cout << "Interconnecting nodes...\n" << flush;
+    InterconnectNodes(graph);
 
-  return graph;
+    /* Assign bandwidths to edges */
+    cout << "Assigning bandwidths...\n" << flush;
+    AssignBW(graph);
 
+    return graph;
 }
-
-
-
-
-

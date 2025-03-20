@@ -1,4 +1,4 @@
-  /**
+/**
    * @file vy-substrate-node.cc
    * @author Soroush Haeri <soroosh.haeri@me.com>
    * @date 7/16/14
@@ -25,90 +25,87 @@
 #include "vy-substrate-node.h"
 #include <fstream>
 
-namespace vne {
-    namespace vineyard {
-        template<>
-        VYSubstrateNode<>::VYSubstrateNode (double cpu, const VYCoordinate& coord) :
-            SubstrateNode<double>(cpu),
-            coordinate(coord),
-            touched(false),
-            count(0)
-        {
-        }
-        template<>
-        VYSubstrateNode<>::VYSubstrateNode (double cpu, int _x, int _y) :
-            SubstrateNode<double>(cpu),
-            coordinate(VYCoordinate(_x, _y)),
-            touched(false),
-            count(0)
-        {
-        }
-        template<>
-        VYSubstrateNode<>::~VYSubstrateNode()
-        {
-        }
-        template<>
-        const VYCoordinate& VYSubstrateNode<>::getCoordinates() const
-        {
-            return coordinate;
-        }
-        template<>
-        Embedding_Result VYSubstrateNode<>::embedNode(std::shared_ptr<VYVirtualNode<> > _n)
-        {
-            Embedding_Result emr = SubstrateNode<double>::embedNode (_n);
-             if (  emr == Embedding_Result::SUCCESSFUL_EMBEDDING)
-             {
-                 count++;
-             }
-            return emr;
-        }
-        template<>
-        double VYSubstrateNode<>::getCPU() const
-        {
-            return std::get<0>(this->resources);
-        }
-        template<>
-        double VYSubstrateNode<>::getMaxCPU() const
-        {
-           return std::get<0>(this->getMaxResources());
-        }
-        template<>
-        int VYSubstrateNode<>::getCount() const
-        {
-            return count;
-        }
-        template<>
-        int VYSubstrateNode<>::operator++(int)
-        {
-            int val = count;
-            count++;
-            return val;
-        }
-        template<>
-        int VYSubstrateNode<>::operator--(int)
-        {
-            int val = count;
-            count--;
-            return val;
-        }
-        template<>
-        int VYSubstrateNode<>::operator++()
-        {
-            return ++count;
-        }
-        template<>
-        int VYSubstrateNode<>::operator--()
-        {
-            return --count;
-        }
-        template<>
-        void VYSubstrateNode<>::writeNodeToFile (std::ofstream& ofstrm)
-        {
-            if (ofstrm.is_open()) {
-                ofstrm << getCoordinates().first << " " << getCoordinates().second << " " << getCPU() <<  std::endl;
-            }
-            else
-                BOOST_LOG_TRIVIAL(error) << "VYSubstrateNode<>::writeNodeToFile: VYThe file is not open for writing. " << std::endl;
-        }
+namespace vne
+{
+namespace vineyard
+{
+    template <>
+    VYSubstrateNode<>::VYSubstrateNode(double cpu, const VYCoordinate &coord)
+        : SubstrateNode<double>(cpu), coordinate(coord), touched(false), count(0)
+    {
     }
-}
+    template <>
+    VYSubstrateNode<>::VYSubstrateNode(double cpu, int _x, int _y)
+        : SubstrateNode<double>(cpu), coordinate(VYCoordinate(_x, _y)), touched(false), count(0)
+    {
+    }
+    template <>
+    VYSubstrateNode<>::~VYSubstrateNode()
+    {
+    }
+    template <>
+    const VYCoordinate &VYSubstrateNode<>::getCoordinates() const
+    {
+        return coordinate;
+    }
+    template <>
+    Embedding_Result VYSubstrateNode<>::embedNode(std::shared_ptr<VYVirtualNode<> > _n)
+    {
+        Embedding_Result emr = SubstrateNode<double>::embedNode(_n);
+        if (emr == Embedding_Result::SUCCESSFUL_EMBEDDING) {
+            count++;
+        }
+        return emr;
+    }
+    template <>
+    double VYSubstrateNode<>::getCPU() const
+    {
+        return std::get<0>(this->resources);
+    }
+    template <>
+    double VYSubstrateNode<>::getMaxCPU() const
+    {
+        return std::get<0>(this->getMaxResources());
+    }
+    template <>
+    int VYSubstrateNode<>::getCount() const
+    {
+        return count;
+    }
+    template <>
+    int VYSubstrateNode<>::operator++(int)
+    {
+        int val = count;
+        count++;
+        return val;
+    }
+    template <>
+    int VYSubstrateNode<>::operator--(int)
+    {
+        int val = count;
+        count--;
+        return val;
+    }
+    template <>
+    int VYSubstrateNode<>::operator++()
+    {
+        return ++count;
+    }
+    template <>
+    int VYSubstrateNode<>::operator--()
+    {
+        return --count;
+    }
+    template <>
+    void VYSubstrateNode<>::writeNodeToFile(std::ofstream &ofstrm)
+    {
+        if (ofstrm.is_open()) {
+            ofstrm << getCoordinates().first << " " << getCoordinates().second << " " << getCPU()
+                   << std::endl;
+        } else
+            BOOST_LOG_TRIVIAL(error)
+                << "VYSubstrateNode<>::writeNodeToFile: VYThe file is not open for writing. "
+                << std::endl;
+    }
+}  // namespace vineyard
+}  // namespace vne

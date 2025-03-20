@@ -31,32 +31,28 @@
 //////////////////////////////////////////////
 //
 // class RouterWaxman
-// Derived class for Waxman model 
-// Builds router-level topologies 
+// Derived class for Waxman model
+// Builds router-level topologies
 //
 //////////////////////////////////////////////
 
 class RouterWaxPar;
 
-class RouterWaxman : public RouterModel {
+class RouterWaxman : public RouterModel
+{
+   public:
+    RouterWaxman(RouterWaxPar *par);
+    ~RouterWaxman() {}
+    Graph *Generate();
+    string ToString();
 
- public:
+   protected:
+    void InterconnectNodes(Graph *g);
 
-  RouterWaxman(RouterWaxPar* par);
-  ~RouterWaxman() { }
-  Graph* Generate();
-  string ToString();
-
- protected:
-
-  void InterconnectNodes(Graph *g);
-
- private:
-
-  double ProbFunc(Node* src, Node* dst);
-  double alpha;
-  double beta;
-
+   private:
+    double ProbFunc(Node *src, Node *dst);
+    double alpha;
+    double beta;
 };
 
 #endif /* RT_WAX_MODEL_H */
