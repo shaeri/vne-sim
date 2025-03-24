@@ -146,7 +146,7 @@ void ExperimentParameters::setSNNetParams(vne::ConfigType &pt, Topology_Type tt)
                                            "n_hosts");
         sn_two_tier_core_bw_multiplier = toml::find<int>(pt, "coreBWMultiplier");
     } else if (tt == Topology_Type::HyperCube) {
-        sn_hypercube_size = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "HyberCube",
+        sn_hypercube_size = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "HyperCube",
                                             "size");
     } else {
         int node_placement = toml::find<int>(pt, "NetworkFileGenerator", "BriteHandler",
