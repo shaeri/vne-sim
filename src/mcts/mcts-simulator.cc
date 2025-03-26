@@ -36,13 +36,13 @@ namespace mcts
         :
 
           TreeLevel(ConfigManager::Instance()->getConfig<int>("MCTS", "Simulator",
-                                                              "Knowledge.TreeLevel")),
+                                                              "Knowledge", "TreeLevel")),
           RolloutLevel(ConfigManager::Instance()->getConfig<int>("MCTS", "Simulator",
-                                                                 "Knowledge.RolloutLevel")),
+                                                                 "Knowledge", "RolloutLevel")),
           SmartTreeCount(ConfigManager::Instance()->getConfig<int>("MCTS", "Simulator",
                                                                    "Knowledge.SmartTreeCount")),
           SmartTreeValue(ConfigManager::Instance()->getConfig<double>("MCTS", "Simulator",
-                                                                      "Knowledge.SmartTreeValue"))
+                                                                      "Knowledge", "SmartTreeValue"))
     {
     }
 

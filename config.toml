@@ -178,7 +178,7 @@ SmartTreeValue = 1.0
 
 [MCTS.Simulator]
 # Discount in (0,1]
-discount = 1
+discount = 1.0
 rewardRange = 1000
 
 [MCTS.MCTSParameters]
