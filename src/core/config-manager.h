@@ -42,7 +42,7 @@ class ConfigManager
     template <typename T, typename... ARGS>
     const T getConfig(const ARGS &...conf) const;
     template <typename T, typename... ARGS>
-    bool setConfig(T &val, const ARGS &...conf);
+    bool setConfig(T val, const ARGS &...conf);
     ~ConfigManager();
 
    protected:
@@ -101,7 +101,7 @@ const T ConfigManager::getConfig(const ARGS &...conf) const
     return toml::find<T>(_pt, conf...);
 }
 template <typename T, typename... ARGS>
-bool ConfigManager::setConfig(T &val, const ARGS &...conf)
+bool ConfigManager::setConfig(T val, const ARGS &...conf)
 {
     if (lock_configs) {
         std::cerr << "Error in ConfigManager!!!" << std::endl;

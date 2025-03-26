@@ -24,7 +24,7 @@ if(NOT EXISTS "${CMAKE_BINARY_DIR}/deps")
 endif()
 
 # Enable C++11 compilation list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -w")
-list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -w")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++14 -w")
 # TODO: remove -w by fixing warning messages in code
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -54,6 +54,12 @@ file(
   DOWNLOAD
   "https://raw.githubusercontent.com/ToruNiina/toml11/refs/tags/v4.4.0/single_include/toml.hpp"
   "${PROJECT_BINARY_DIR}/deps/include/toml.hpp"
+  TLS_VERIFY ON)
+# Download cli11.hpp
+file(
+  DOWNLOAD
+  "https://github.com/CLIUtils/CLI11/releases/download/v2.5.0/CLI11.hpp"
+  "${PROJECT_BINARY_DIR}/deps/include/CLI11.hpp"
   TLS_VERIFY ON)
 
 # Add the include directories of external-libraries
