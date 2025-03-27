@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 project(vne-mcts CXX)
 
@@ -61,6 +61,14 @@ file(
   "https://github.com/CLIUtils/CLI11/releases/download/v2.5.0/CLI11.hpp"
   "${PROJECT_BINARY_DIR}/deps/include/CLI11.hpp"
   TLS_VERIFY ON)
+# Download and include {fmt} used for cli colors
+include(FetchContent)
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_TAG 11.1.4  # Use a stable release
+)
+FetchContent_MakeAvailable(fmt)
 
 # Add the include directories of external-libraries
 include_directories(${PROJECT_BINARY_DIR}/deps/include)

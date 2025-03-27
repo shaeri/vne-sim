@@ -13,7 +13,11 @@
 #include "core/experiment.h"
 #include "network-file-generator/network-file-generator.h"
 #include "utilities/logger.h"
-#include "cli11.hpp"
+#include "CLI11.hpp"
+
+#define FMT_HEADER_ONLY
+#include "fmt/core.h"
+#include "fmt/color.h"
 
 using namespace vne;
 using namespace vne::vineyard;
@@ -127,28 +131,106 @@ int run_experiment(string algo)
     return 0;
 }
 
+class ColorFormatter : public CLI::Formatter
+{
+   private:
+    std::string replaceCharWithTwo(const std::string &original, char target, char replacement1,
+                                   char replacement2) const
+    {
+        std::string result;
+        result.reserve(original.size() * 2);  // Pre-allocate memory for efficiency
+        for (char c : original) {
+            if (c == target) {
+                result += replacement1;
+                result += replacement2;
+            } else {
+                result += c;
+            }
+        }
+
+        return result;
+    }
+
+   public:
+    std::string make_description(const CLI::App *app) const override
+    {
+        std::string desc = CLI::Formatter::make_description(app);
+        return fmt::format(fg(fmt::color::aquamarine) | fmt::emphasis::bold, desc);
+    }
+    // std::string make_usage(const CLI::App *app, std::string name) const override
+    // {
+    //     std::string usage = CLI::Formatter::make_usage(app, name);
+    //     return fmt::format(fg(fmt::color::deep_pink) | fmt::emphasis::italic, usage);
+    // }
+    std::string make_option_opts(const CLI::Option *opt) const override
+    {
+        std::string str = CLI::Formatter::make_option_opts(opt);
+        str = replaceCharWithTwo(str, '{', '{', '{');
+        str = replaceCharWithTwo(str, '}', '}', '}');
+
+        if (opt->get_required()) {
+            return fmt::format(fg(fmt::color::medium_spring_green) | fmt::emphasis::bold, str);
+        } else {
+            return fmt::format(fg(fmt::color::medium_spring_green), str);
+        }
+    }
+
+    std::string make_option_name(const CLI::Option *opt, bool positional) const override
+    {
+        std::string str = CLI::Formatter::make_option_name(opt, positional);
+        if (opt->get_required()) {
+            return fmt::format(fg(fmt::color::light_sky_blue) | fmt::emphasis::bold, str);
+        } else {
+            return fmt::format(fg(fmt::color::light_sky_blue), str);
+        }
+    }
+
+    std::string make_option_desc(const CLI::Option *opt) const override
+    {
+        std::string str = CLI::Formatter::make_option_desc(opt);
+        return fmt::format(fg(fmt::color::khaki) | fmt::emphasis::italic, str);
+    }
+};
+
 int main(int argc, char **argv)
 {
-    CLI::App app{"vnesim - Virtual Network Embedding Simulator"};
+    // std::cout << rang::fg::blue << "testing" << std::endl;
+    CLI::App app{"VNE-SIM: A Virtual Network Embedding Simulator", "vnesim"};
+    // Create and configure the formatter
+    auto fmt = std::make_shared<ColorFormatter>();
+    // auto fmt = app.get_formatter();
+    fmt->column_width(20);  // Set line width
+    fmt->right_column_width(120);
+    fmt->label("REQUIRED",
+               fmt::format(fg(fmt::color::crimson) | fmt::emphasis::bold, "[REQUIRED]"));
+    // Assign the formatter to the app
+    app.formatter(fmt);
 
     std::string link_embedding;
 
     // Create subcommands
     auto experiment = app.add_subcommand("experiment", "Run experiments");
+    experiment->formatter(fmt);
     auto netgen = app.add_subcommand("netgen", "Generate network files");
+    netgen->formatter(fmt);
 
     // Experiment subcommands
     auto vineyard_exp = experiment->add_subcommand("vineyard", "Vineyard experiment");
+    vineyard_exp->formatter(fmt);
 
     auto grc_exp = experiment->add_subcommand("grc", "GRC experiment");
+    grc_exp->formatter(fmt);
+
     grc_exp
-        ->add_option("--link-embedding-algo", link_embedding,
+        ->add_option("-l,--link-embedding-algo", link_embedding,
                      "Link embedding algo to use: Shortest Path or Multi-Commodity Flow")
         ->required()
         ->check(CLI::IsMember({"sp", "mcf"}));
     auto mcvne_exp = experiment->add_subcommand("mcvne", "MCVNE experiment");
+    mcvne_exp->formatter(fmt);
+
     mcvne_exp
-        ->add_option("--link-embedding-algo", link_embedding,
+        ->add_option("-l,--link-embedding-algo", link_embedding,
                      "Link embedding algo to use: Shortest Path or Multi-Commodity Flow")
         ->required()
         ->check(CLI::IsMember({"sp", "mcf"}));
@@ -184,7 +266,7 @@ int main(int argc, char **argv)
     });
 
     // [utilities]
-    app.add_option_function<std::string>("--logLevel",
+    app.add_option_function<std::string>("-l,--logLevel",
                                          [](const std::string &level) {
                                              ConfigManager::Instance()->setConfig(
                                                  level, "utilities", "logLevel");
@@ -192,7 +274,7 @@ int main(int argc, char **argv)
         ->description("Log level (debug, info, warning, error, fatal)")
         ->check(CLI::IsMember({"debug", "info", "warning", "error", "fatal"}));
 
-    app.add_option_function<std::string>("--pythonPath",
+    app.add_option_function<std::string>("-p,--pythonPath",
                                          [](const std::string &path) {
                                              ConfigManager::Instance()->setConfig(
                                                  path, "utilities", "pythonPath");
@@ -201,14 +283,14 @@ int main(int argc, char **argv)
         ->check(CLI::ExistingFile);
 
     // [core]
-    app.add_flag_function("--ignoreLocationConstraint",
+    app.add_flag_function("-i,--ignoreLocationConstraint",
                           [](long ignore) {
                               ConfigManager::Instance()->setConfig(ignore > 0, "core",
                                                                    "ignoreLocationConstrain");
                           })
         ->description("Ignore location constraints during embedding");
 
-    app.add_option_function<std::string>("--dbPath",
+    app.add_option_function<std::string>("-d,--dbPath",
                                          [](const std::string &path) {
                                              ConfigManager::Instance()->setConfig(path, "core",
                                                                                   "dbPath");
@@ -217,19 +299,19 @@ int main(int argc, char **argv)
         ->check(CLI::ExistingDirectory);
 
     app.add_option_function<int>(
-           "--seed",
+           "-s,--seed",
            [](int seed) { ConfigManager::Instance()->setConfig(seed, "core", "rngSeed"); })
         ->description("Random number generator seed (0 for random)")
         ->check(CLI::NonNegativeNumber);
 
-    app.add_flag_function("--sameSeedForParallelRuns",
+    app.add_flag_function("-S,--parallel-runs-identical-seeds",
                           [](long use) {
                               ConfigManager::Instance()->setConfig(
                                   use > 0, "core", "rngUseSameSeedForParallelRuns");
                           })
         ->description("Use same RNG seed across parallel runs");
 
-    app.add_option_function<std::string>("--rng-algo",
+    app.add_option_function<std::string>("-r,--rng-algo",
                                          [](const std::string &type) {
                                              ConfigManager::Instance()->setConfig(type, "core",
                                                                                   "rngType");
@@ -238,7 +320,7 @@ int main(int argc, char **argv)
 
     // Network generation options
     netgen
-        ->add_option_function<std::string>("--handler",
+        ->add_option_function<std::string>("-H,--handler",
                                            [](const std::string &handler) {
                                                ConfigManager::Instance()->setConfig(
                                                    handler, "NetworkFileGenerator", "Handler");
@@ -248,7 +330,7 @@ int main(int argc, char **argv)
         ->required();
 
     netgen
-        ->add_option_function<std::string>("--dest",
+        ->add_option_function<std::string>("-d,--dest",
                                            [](const std::string &path) {
                                                ConfigManager::Instance()->setConfig(
                                                    path, "NetworkFileGenerator", "DirToSaveFiles");
@@ -257,7 +339,7 @@ int main(int argc, char **argv)
         ->check(CLI::ExistingDirectory);
 
     netgen
-        ->add_option_function<std::string>("--brite-seed-file",
+        ->add_option_function<std::string>("-b,--brite-seed-file",
                                            [](const std::string &path) {
                                                ConfigManager::Instance()->setConfig(
                                                    path, "NetworkFileGenerator", "BriteHandler",
@@ -267,7 +349,7 @@ int main(int argc, char **argv)
         ->check(CLI::ExistingFile);
 
     netgen
-        ->add_option_function<int>("--brite-node-placement",
+        ->add_option_function<int>("-p,--brite-node-placement",
                                    [](int placement) {
                                        ConfigManager::Instance()->setConfig(
                                            placement, "NetworkFileGenerator", "BriteHandler",
@@ -277,7 +359,7 @@ int main(int argc, char **argv)
         ->check(CLI::Range(1, 2));
 
     netgen
-        ->add_option_function<int>("--brite-num-neighbors",
+        ->add_option_function<int>("-n,--brite-num-neighbors",
                                    [](int num) {
                                        ConfigManager::Instance()->setConfig(
                                            num, "NetworkFileGenerator", "BriteHandler",
@@ -287,7 +369,7 @@ int main(int argc, char **argv)
         ->check(CLI::PositiveNumber);
 
     netgen
-        ->add_option_function<int>("--brite-inner-grid",
+        ->add_option_function<int>("-i,--brite-inner-grid",
                                    [](int size) {
                                        ConfigManager::Instance()->setConfig(
                                            size, "NetworkFileGenerator", "BriteHandler",
@@ -297,7 +379,7 @@ int main(int argc, char **argv)
         ->check(CLI::PositiveNumber);
 
     netgen
-        ->add_option_function<int>("--brite-outer-grid",
+        ->add_option_function<int>("-o,--brite-outer-grid",
                                    [](int size) {
                                        ConfigManager::Instance()->setConfig(
                                            size, "NetworkFileGenerator", "BriteHandler",
@@ -308,7 +390,7 @@ int main(int argc, char **argv)
 
     // [NetworkFileGenerator.BriteHandler.RTWaxman]
     netgen
-        ->add_option_function<int>("--waxman-growth-type",
+        ->add_option_function<int>("-g,--waxman-growth-type",
                                    [](int type) {
                                        ConfigManager::Instance()->setConfig(
                                            type, "NetworkFileGenerator", "BriteHandler",
@@ -318,7 +400,7 @@ int main(int argc, char **argv)
         ->check(CLI::Range(1, 2));
 
     netgen
-        ->add_option_function<double>("--waxman-alpha",
+        ->add_option_function<double>("-A,--waxman-alpha",
                                       [](double alpha) {
                                           ConfigManager::Instance()->setConfig(
                                               alpha, "NetworkFileGenerator", "BriteHandler",
@@ -328,7 +410,7 @@ int main(int argc, char **argv)
         ->check(CLI::Range(0.0, 1.0));
 
     netgen
-        ->add_option_function<double>("--waxman-beta",
+        ->add_option_function<double>("-B,--waxman-beta",
                                       [](double beta) {
                                           ConfigManager::Instance()->setConfig(
                                               beta, "NetworkFileGenerator", "BriteHandler",
@@ -338,7 +420,7 @@ int main(int argc, char **argv)
         ->check(CLI::Range(0.0, 1.0));
 
     substrate_gen
-        ->add_option_function<std::string>("--topology",
+        ->add_option_function<std::string>("-t,--topology",
                                            [](const std::string &type) {
                                                ConfigManager::Instance()->setConfig(
                                                    type, "NetworkFileGenerator", "SNTopologyType");
@@ -349,7 +431,7 @@ int main(int argc, char **argv)
         ->required();
 
     substrate_gen
-        ->add_option_function<int>("--num-nodes",
+        ->add_option_function<int>("-n,--num-nodes",
                                    [](int num) {
                                        ConfigManager::Instance()->setConfig(
                                            num, "NetworkFileGenerator", "SubstrateNodeNum");
@@ -358,7 +440,7 @@ int main(int argc, char **argv)
         ->check(CLI::PositiveNumber);
 
     vr_gen
-        ->add_option_function<std::string>("--topology",
+        ->add_option_function<std::string>("-t,--topology",
                                            [](const std::string &type) {
                                                ConfigManager::Instance()->setConfig(
                                                    type, "NetworkFileGenerator", "VNTopologyType");
@@ -368,7 +450,7 @@ int main(int argc, char **argv)
         ->required();
 
     vr_gen
-        ->add_option_function<int>("--total-time",
+        ->add_option_function<int>("-T,--total-time",
                                    [](int time) {
                                        ConfigManager::Instance()->setConfig(
                                            time, "NetworkFileGenerator", "TotalTime");
@@ -377,7 +459,7 @@ int main(int argc, char **argv)
         ->check(CLI::PositiveNumber);
 
     vr_gen
-        ->add_option_function<double>("--link-splitting-rate",
+        ->add_option_function<double>("-r,--link-splitting-rate",
                                       [](double rate) {
                                           ConfigManager::Instance()->setConfig(
                                               rate, "NetworkFileGenerator",
@@ -426,17 +508,17 @@ int main(int argc, char **argv)
             ->description(desc + " distribution parameter 3");
     };
 
-    add_dist_param(substrate_gen, "SNCPU", "Substrate node CPU distribution");
-    add_dist_param(substrate_gen, "SLBW", "Substrate link bandwidth distribution");
-    add_dist_param(substrate_gen, "SLDelay", "Substrate link delay distribution");
+    add_dist_param(substrate_gen, "sn-cpu", "Substrate node CPU distribution");
+    add_dist_param(substrate_gen, "sl-bw", "Substrate link bandwidth distribution");
+    add_dist_param(substrate_gen, "sl-delay", "Substrate link delay distribution");
 
-    add_dist_param(vr_gen, "VNRNumNodes", "VNR number of nodes distribution");
-    add_dist_param(vr_gen, "VNRDuration", "VNR duration distribution");
-    add_dist_param(vr_gen, "VNRArrival", "VNR arrival time distribution");
-    add_dist_param(vr_gen, "VNRMaxDistance", "VNR max distance distribution");
-    add_dist_param(vr_gen, "VNCPU", "Virtual node CPU distribution");
-    add_dist_param(vr_gen, "VLBW", "Virtual link bandwidth distribution");
-    add_dist_param(vr_gen, "VLDelay", "Virtual link delay distribution");
+    add_dist_param(vr_gen, "vnr-num-nodes", "VNR number of nodes distribution");
+    add_dist_param(vr_gen, "vnr-duration", "VNR duration distribution");
+    add_dist_param(vr_gen, "vnr-arrival", "VNR arrival time distribution");
+    add_dist_param(vr_gen, "vnr-max-distance", "VNR max distance distribution");
+    add_dist_param(vr_gen, "vn-cpu", "Virtual node CPU distribution");
+    add_dist_param(vr_gen, "vl-bw", "Virtual link bandwidth distribution");
+    add_dist_param(vr_gen, "vl-delay", "Virtual link delay distribution");
 
     // DCNBCube
     substrate_gen
@@ -534,7 +616,7 @@ int main(int argc, char **argv)
 
     // [vineyard.SubstrateNetwork]
     experiment
-        ->add_option_function<std::string>("--substrate-path",
+        ->add_option_function<std::string>("-p,--substrate-path",
                                            [](const std::string &path) {
                                                ConfigManager::Instance()->setConfig(
                                                    path, "vineyard", "SubstrateNetwork", "path");
@@ -543,7 +625,7 @@ int main(int argc, char **argv)
         ->check(CLI::ExistingDirectory);
 
     experiment
-        ->add_option_function<std::string>("--substreate-filename",
+        ->add_option_function<std::string>("-f,--substreate-filename",
                                            [](const std::string &name) {
                                                ConfigManager::Instance()->setConfig(
                                                    name, "vineyard", "SubstrateNetwork",
@@ -553,7 +635,7 @@ int main(int argc, char **argv)
 
     // [vineyard.VirtualNetRequest]
     experiment
-        ->add_option_function<std::string>("--vnr-root-path",
+        ->add_option_function<std::string>("-r,--vnr-root-path",
                                            [](const std::string &path) {
                                                ConfigManager::Instance()->setConfig(
                                                    path, "vineyard", "VirtualNetRequest", "path");
@@ -562,7 +644,7 @@ int main(int argc, char **argv)
         ->check(CLI::ExistingDirectory);
 
     experiment
-        ->add_option_function<std::string>("--vnr-dir-name",
+        ->add_option_function<std::string>("-d,--vnr-dir-name",
                                            [](const std::string &dir) {
                                                ConfigManager::Instance()->setConfig(
                                                    dir, "vineyard", "VirtualNetRequest", "dir");
@@ -570,7 +652,7 @@ int main(int argc, char **argv)
         ->description("Virtual network requests directory name");
 
     experiment
-        ->add_option_function<std::string>("--req-file-ext",
+        ->add_option_function<std::string>("-e,--req-file-ext",
                                            [](const std::string &ext) {
                                                ConfigManager::Instance()->setConfig(
                                                    ext, "vineyard", "VirtualNetRequest",
@@ -580,7 +662,7 @@ int main(int argc, char **argv)
 
     // [vineyard.Constants]
     experiment
-        ->add_option_function<double>("--revenue-multiplier",
+        ->add_option_function<double>("-m,--revenue-multiplier",
                                       [](double mult) {
                                           ConfigManager::Instance()->setConfig(
                                               mult, "vineyard", "Constants", "revenueMultiplier");
@@ -588,7 +670,7 @@ int main(int argc, char **argv)
         ->description("Revenue calculation multiplier");
 
     experiment
-        ->add_option_function<double>("--cost-multiplier",
+        ->add_option_function<double>("-M,--cost-multiplier",
                                       [](double mult) {
                                           ConfigManager::Instance()->setConfig(
                                               mult, "vineyard", "Constants", "costMultiplier");
@@ -597,13 +679,24 @@ int main(int argc, char **argv)
 
     // [vineyard.Configs]
     vineyard_exp
-        ->add_option_function<double>("--vineyard.Constants.epsilon",
+        ->add_option_function<std::string>("-t,--node-map-type",
+                                           [](const std::string &type) {
+                                               ConfigManager::Instance()->setConfig(
+                                                   type, "vineyard", "Configs", "nodeMappingType");
+                                           })
+        ->required()
+        ->description("Vineyard node mapping type")
+        ->check(CLI::IsMember({"deterministic", "randomized"}));
+
+    vineyard_exp
+        ->add_option_function<double>("--epsilon",
                                       [](double eps) {
                                           ConfigManager::Instance()->setConfig(
                                               eps, "vineyard", "Constants", "epsilon");
                                       })
         ->description("Numerical comparison epsilon")
         ->check(CLI::PositiveNumber);
+
     vineyard_exp
         ->add_flag_function("--set-alpha",
                             [](long set) {
@@ -619,16 +712,6 @@ int main(int argc, char **argv)
                                                                      "Configs", "setBeta");
                             })
         ->description("Enable beta parameter in Vineyard");
-
-    vineyard_exp
-        ->add_option_function<std::string>("--node-map-type",
-                                           [](const std::string &type) {
-                                               ConfigManager::Instance()->setConfig(
-                                                   type, "vineyard", "Configs", "nodeMappingType");
-                                           })
-        ->required()
-        ->description("Vineyard node mapping type")
-        ->check(CLI::IsMember({"deterministic", "randomized"}));
 
     // [vineyard.glpk]
     vineyard_exp
@@ -650,7 +733,7 @@ int main(int argc, char **argv)
         ->check(CLI::ExistingFile);
 
     experiment
-        ->add_option_function<std::string>("--mcf-model",
+        ->add_option_function<std::string>("-o,--mcf-model",
                                            [](const std::string &path) {
                                                ConfigManager::Instance()->setConfig(
                                                    path, "vineyard", "glpk", "MCFmodelFile");
@@ -659,7 +742,7 @@ int main(int argc, char **argv)
         ->check(CLI::ExistingFile);
 
     experiment
-        ->add_option_function<std::string>("--mcf-data",
+        ->add_option_function<std::string>("-O,--mcf-data",
                                            [](const std::string &path) {
                                                ConfigManager::Instance()->setConfig(
                                                    path, "vineyard", "glpk", "MCFdataFile");
@@ -668,7 +751,7 @@ int main(int argc, char **argv)
         ->check(CLI::ExistingFile);
 
     experiment
-        ->add_flag_function("--enable-glpk-terminal",
+        ->add_flag_function("-E,--enable-glpk-terminal",
                             [](long enabled) {
                                 ConfigManager::Instance()->setConfig(enabled > 0, "vineyard",
                                                                      "glpk", "terminalEnabled");
