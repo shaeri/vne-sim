@@ -192,10 +192,10 @@ AutoExploration = false
 ExplorationConstant = 0.5
 # Rave Parameters: 0 -> rave is not set
 UseRave = false
-RaveDiscount = 1
+RaveDiscount = 1.0
 RaveConstant = 0.01
 # When set, the baseline rollout algorithm is run.
-DisableTree = 0
+DisableTree = false
 UseSinglePlayerMCTS = false
 SPMCTSConstant = 10000
 # 0: Action Root Parallelization, 1: Full Tree parallelization

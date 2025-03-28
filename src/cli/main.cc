@@ -1,10 +1,9 @@
-//
-// Created by Rob Ballantyne on 2025-01-20.
-//
+/**
+ * @file main.cc
+ * @brief Main CLI interface for VNE-SIM Virtual Network Embedding Simulator
+ */
 
 #include <iostream>
-#include <boost/program_options.hpp>
-
 #include "experiments/vineyard-experiments.h"
 #include "experiments/mcvne-experiments.h"
 #include "experiments/grc-experiments.h"
@@ -25,8 +24,12 @@ using namespace vne::utilities;
 using namespace vne::nfg;
 using namespace std;
 
-namespace po = boost::program_options;
-
+/**
+ * Runs the specified VNE algorithm experiment and stores results in database
+ *
+ * @param algo The algorithm to run (mcvne_mcf, mcvne_sp, grc_mcf, grc_sp, vineyard)
+ * @return 0 on success, -1 on unknown algorithm
+ */
 int run_experiment(string algo)
 {
     auto dbPath = ConfigManager::Instance()->getConfig<std::string>("core", "dbPath");
@@ -46,11 +49,6 @@ int run_experiment(string algo)
         db->createModel();
         db->copyBean(exp);
 
-        //destroy all singleton classes to start fresh for next simulations
-        ConfigManager::Destroy();
-        IdGenerator::Destroy();
-        RNG::Destroy();
-
     } else if (algo == "mcvne_sp") {
         vne::experiments::MCVNENodeBFSLinkExp<> exp = vne::experiments::MCVNENodeBFSLinkExp<>();
 
@@ -63,11 +61,6 @@ int run_experiment(string algo)
         db->dropModel();
         db->createModel();
         db->copyBean(exp);
-
-        //destroy all singleton classes to start fresh for next simulations
-        ConfigManager::Destroy();
-        IdGenerator::Destroy();
-        RNG::Destroy();
 
     } else if (algo == "grc_mcf") {
         vne::experiments::GRCNodeMCFLinkExp<> exp = vne::experiments::GRCNodeMCFLinkExp<>();
@@ -82,11 +75,6 @@ int run_experiment(string algo)
         db->createModel();
         db->copyBean(exp);
 
-        //destroy all singleton classes to start fresh for next simulations
-        ConfigManager::Destroy();
-        IdGenerator::Destroy();
-        RNG::Destroy();
-
     } else if (algo == "grc_sp") {
         vne::experiments::GRCNodeBFSLinkExp<> exp = vne::experiments::GRCNodeBFSLinkExp<>();
 
@@ -99,11 +87,6 @@ int run_experiment(string algo)
         db->dropModel();
         db->createModel();
         db->copyBean(exp);
-
-        //destroy all singleton classes to start fresh for next simulations
-        ConfigManager::Destroy();
-        IdGenerator::Destroy();
-        RNG::Destroy();
 
     } else if (algo == "vineyard") {
         vne::experiments::VineNodeMCFLinkExp<> exp = vne::experiments::VineNodeMCFLinkExp<>();
@@ -118,19 +101,28 @@ int run_experiment(string algo)
         db->createModel();
         db->copyBean(exp);
 
+    } else {
+        cout << "Error - unkown algorithm name" << endl;
+
         //destroy all singleton classes to start fresh for next simulations
         ConfigManager::Destroy();
         IdGenerator::Destroy();
         RNG::Destroy();
 
-    } else {
-        cout << "Error - unkown algorithm name" << endl;
         exit(-1);
     }
+
+    //destroy all singleton classes to start fresh for next simulations
+    ConfigManager::Destroy();
+    IdGenerator::Destroy();
+    RNG::Destroy();
 
     return 0;
 }
 
+/**
+ * Custom formatter for CLI output with colored text
+ */
 class ColorFormatter : public CLI::Formatter
 {
    private:
@@ -138,7 +130,7 @@ class ColorFormatter : public CLI::Formatter
                                    char replacement2) const
     {
         std::string result;
-        result.reserve(original.size() * 2);  // Pre-allocate memory for efficiency
+        result.reserve(original.size() * 2);
         for (char c : original) {
             if (c == target) {
                 result += replacement1;
@@ -147,7 +139,6 @@ class ColorFormatter : public CLI::Formatter
                 result += c;
             }
         }
-
         return result;
     }
 
@@ -157,22 +148,30 @@ class ColorFormatter : public CLI::Formatter
         std::string desc = CLI::Formatter::make_description(app);
         return fmt::format(fg(fmt::color::aquamarine) | fmt::emphasis::bold, desc);
     }
-    // std::string make_usage(const CLI::App *app, std::string name) const override
-    // {
-    //     std::string usage = CLI::Formatter::make_usage(app, name);
-    //     return fmt::format(fg(fmt::color::deep_pink) | fmt::emphasis::italic, usage);
-    // }
+
     std::string make_option_opts(const CLI::Option *opt) const override
     {
-        std::string str = CLI::Formatter::make_option_opts(opt);
-        str = replaceCharWithTwo(str, '{', '{', '{');
-        str = replaceCharWithTwo(str, '}', '}', '}');
-
+        std::string opts;
+        // First the required label
         if (opt->get_required()) {
-            return fmt::format(fg(fmt::color::medium_spring_green) | fmt::emphasis::bold, str);
-        } else {
-            return fmt::format(fg(fmt::color::medium_spring_green), str);
+            opts += fmt::format(fg(fmt::color::crimson) | fmt::emphasis::bold, "  REQUIRED");
         }
+
+        // then type names
+        if (!opt->get_type_name().empty()) {
+            std::string str = "  " + opt->get_type_name();
+            str = replaceCharWithTwo(str, '{', '{', '{');
+            str = replaceCharWithTwo(str, '}', '}', '}');
+            opts += fmt::format(fg(fmt::color::medium_spring_green), str);
+        }
+
+        // then default value
+        if (opt->get_default_str().size() > 0) {
+            opts += fmt::format(fg(fmt::color::medium_purple),
+                                "  [" + opt->get_default_str() + "]");
+        }
+
+        return opts;
     }
 
     std::string make_option_name(const CLI::Option *opt, bool positional) const override
@@ -180,9 +179,8 @@ class ColorFormatter : public CLI::Formatter
         std::string str = CLI::Formatter::make_option_name(opt, positional);
         if (opt->get_required()) {
             return fmt::format(fg(fmt::color::light_sky_blue) | fmt::emphasis::bold, str);
-        } else {
-            return fmt::format(fg(fmt::color::light_sky_blue), str);
         }
+        return fmt::format(fg(fmt::color::light_sky_blue), str);
     }
 
     std::string make_option_desc(const CLI::Option *opt) const override
@@ -194,72 +192,98 @@ class ColorFormatter : public CLI::Formatter
 
 int main(int argc, char **argv)
 {
-    // std::cout << rang::fg::blue << "testing" << std::endl;
+    // First parse just the config file path if specified
+    std::string config_path;
+    CLI::App prefix_app;
+    prefix_app.prefix_command();
+    prefix_app
+        .add_option_function<std::string>("-c,--config",
+                                          [&config_path](const std::string &cfg_path) {
+                                              config_path = cfg_path;
+                                              ConfigManager::Instance()->loadConfig(cfg_path);
+                                          })
+        ->description("Path to TOML configuration file")
+        ->default_val("./config.toml")
+        ->check(CLI::ExistingFile);
+    prefix_app.allow_extras();
+    prefix_app.set_help_flag("", "");  // Disable help for prefix command
+    prefix_app.set_help_all_flag("", "");
+
+    try {
+        prefix_app.parse(argc, argv);
+    } catch (const CLI::ParseError &e) {
+        return prefix_app.exit(e);
+    }
+
+    // Main CLI application setup
     CLI::App app{"VNE-SIM: A Virtual Network Embedding Simulator", "vnesim"};
-    // Create and configure the formatter
+
+    // Set callback to lock the configs after parsing of the arguments is finished
+    app.parse_complete_callback([]() { ConfigManager::Instance()->lockConfigs(); });
+
+    // Enable help all flag to show all subcommands
+    app.set_help_all_flag("--help-all", "Expand all help");
+
+    // Setup colored formatter
     auto fmt = std::make_shared<ColorFormatter>();
-    // auto fmt = app.get_formatter();
-    fmt->column_width(20);  // Set line width
+    fmt->column_width(20);
     fmt->right_column_width(120);
-    fmt->label("REQUIRED",
-               fmt::format(fg(fmt::color::crimson) | fmt::emphasis::bold, "[REQUIRED]"));
-    // Assign the formatter to the app
+
+    // set the app formatter
     app.formatter(fmt);
 
+    // Config file option (already parsed, just show status)
+    app.add_option("-c,--config", "Path to config file")
+        ->description(config_path.empty()
+                          ? "not specified, default TOML config file path will be used"
+                          : "Already specified: [" + config_path + "] will be used.")
+        ->default_val("./config.toml");
+
+    // Shared variables
     std::string link_embedding;
 
-    // Create subcommands
-    auto experiment = app.add_subcommand("experiment", "Run experiments");
-    experiment->formatter(fmt);
-    auto netgen = app.add_subcommand("netgen", "Generate network files");
-    netgen->formatter(fmt);
+    ////////////////////////////////////////////////////////////////////////////
+    // Experiment Subcommands
+    ////////////////////////////////////////////////////////////////////////////
+    auto experiment = app.add_subcommand("experiment", "Run VNE experiments");
 
-    // Experiment subcommands
-    auto vineyard_exp = experiment->add_subcommand("vineyard", "Vineyard experiment");
-    vineyard_exp->formatter(fmt);
+    // Vineyard experiment
+    auto vineyard_exp = experiment->add_subcommand("vineyard", "Run Vineyard algorithm");
+    vineyard_exp->callback([]() { run_experiment("vineyard"); });
 
-    auto grc_exp = experiment->add_subcommand("grc", "GRC experiment");
-    grc_exp->formatter(fmt);
-
+    // GRC experiment
+    auto grc_exp = experiment->add_subcommand("grc", "Run GRC algorithm");
     grc_exp
         ->add_option("-l,--link-embedding-algo", link_embedding,
-                     "Link embedding algo to use: Shortest Path or Multi-Commodity Flow")
+                     "Link embedding algorithm: sp (Shortest Path) or mcf (Multi-Commodity Flow)")
         ->required()
         ->check(CLI::IsMember({"sp", "mcf"}));
-    auto mcvne_exp = experiment->add_subcommand("mcvne", "MCVNE experiment");
-    mcvne_exp->formatter(fmt);
+    grc_exp->callback([&]() { run_experiment(link_embedding == "sp" ? "grc_sp" : "grc_mcf"); });
 
+    // MCVNE experiment
+    auto mcvne_exp = experiment->add_subcommand("mcvne", "Run MCVNE algorithm");
     mcvne_exp
         ->add_option("-l,--link-embedding-algo", link_embedding,
-                     "Link embedding algo to use: Shortest Path or Multi-Commodity Flow")
+                     "Link embedding algorithm: sp (Shortest Path) or mcf (Multi-Commodity Flow)")
         ->required()
         ->check(CLI::IsMember({"sp", "mcf"}));
+    mcvne_exp->callback(
+        [&]() { run_experiment(link_embedding == "sp" ? "mcvne_sp" : "mcvne_mcf"); });
 
-    // Netgen subcommands
+    ////////////////////////////////////////////////////////////////////////////
+    // Network Generation Subcommands
+    ////////////////////////////////////////////////////////////////////////////
+    auto netgen = app.add_subcommand("netgen", "Generate network files");
+
+    // Substrate network generation
     auto substrate_gen = netgen->add_subcommand("substrate", "Generate substrate network");
-    auto vr_gen = netgen->add_subcommand("vr", "Generate virtual network requests");
-
-    // Subcommand callbacks
-    vineyard_exp->callback([]() { run_experiment("vineyard"); });
-    grc_exp->callback([&]() {
-        if (link_embedding == "sp") {
-            run_experiment("grc_sp");
-        } else {
-            run_experiment("grc_mcf");
-        }
-    });
-    mcvne_exp->callback([&]() {
-        if (link_embedding == "sp") {
-            run_experiment("mcvne_sp");
-        } else {
-            run_experiment("mcvne_mcf");
-        }
-    });
-
     substrate_gen->callback([]() {
         NetworkFileGenerator nfg;
         nfg.VYSubstrateNetFileGenerator(true);
     });
+
+    // Virtual network requests generation
+    auto vr_gen = netgen->add_subcommand("vr", "Generate virtual network requests");
     vr_gen->callback([]() {
         NetworkFileGenerator nfg;
         nfg.VYVirtualNetRequestGenerator(true);
@@ -272,6 +296,7 @@ int main(int argc, char **argv)
                                                  level, "utilities", "logLevel");
                                          })
         ->description("Log level (debug, info, warning, error, fatal)")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>("utilities", "logLevel"))
         ->check(CLI::IsMember({"debug", "info", "warning", "error", "fatal"}));
 
     app.add_option_function<std::string>("-p,--pythonPath",
@@ -280,6 +305,7 @@ int main(int argc, char **argv)
                                                  path, "utilities", "pythonPath");
                                          })
         ->description("Path to python interpreter for FNSS")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>("utilities", "pythonPath"))
         ->check(CLI::ExistingFile);
 
     // [core]
@@ -288,7 +314,9 @@ int main(int argc, char **argv)
                               ConfigManager::Instance()->setConfig(ignore > 0, "core",
                                                                    "ignoreLocationConstrain");
                           })
-        ->description("Ignore location constraints during embedding");
+        ->description("Ignore location constraints during embedding")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<bool>("core", "ignoreLocationConstrain"));
 
     app.add_option_function<std::string>("-d,--dbPath",
                                          [](const std::string &path) {
@@ -296,12 +324,14 @@ int main(int argc, char **argv)
                                                                                   "dbPath");
                                          })
         ->description("Path to store result databases")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>("core", "dbPath"))
         ->check(CLI::ExistingDirectory);
 
     app.add_option_function<int>(
            "-s,--seed",
            [](int seed) { ConfigManager::Instance()->setConfig(seed, "core", "rngSeed"); })
         ->description("Random number generator seed (0 for random)")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("core", "rngSeed"))
         ->check(CLI::NonNegativeNumber);
 
     app.add_flag_function("-S,--parallel-runs-identical-seeds",
@@ -309,14 +339,18 @@ int main(int argc, char **argv)
                               ConfigManager::Instance()->setConfig(
                                   use > 0, "core", "rngUseSameSeedForParallelRuns");
                           })
-        ->description("Use same RNG seed across parallel runs");
+        ->description("Use same RNG seed across parallel runs")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<bool>("core", "rngUseSameSeedForParallelRuns"));
 
     app.add_option_function<std::string>("-r,--rng-algo",
                                          [](const std::string &type) {
                                              ConfigManager::Instance()->setConfig(type, "core",
                                                                                   "rngType");
                                          })
-        ->description("GSL RNG algorithm (e.g. gsl_rng_mt19937)");
+        ->description("GSL RNG algorithm (e.g. gsl_rng_mt19937)")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>("core", "rngType"))
+        ->check(CLI::IsMember({"gsl_rng_mt19937", "gsl_rng_ranlxs4096", "gsl_rng_default"}));
 
     // Network generation options
     netgen
@@ -326,6 +360,8 @@ int main(int argc, char **argv)
                                                    handler, "NetworkFileGenerator", "Handler");
                                            })
         ->description("Network generator handler (BRITE or FNSS)")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<std::string>("NetworkFileGenerator", "Handler"))
         ->check(CLI::IsMember({"BRITE", "FNSS"}))
         ->required();
 
@@ -336,6 +372,8 @@ int main(int argc, char **argv)
                                                    path, "NetworkFileGenerator", "DirToSaveFiles");
                                            })
         ->description("Directory to save generated network files")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>("NetworkFileGenerator",
+                                                                        "DirToSaveFiles"))
         ->check(CLI::ExistingDirectory);
 
     netgen
@@ -346,6 +384,8 @@ int main(int argc, char **argv)
                                                    "BriteSeedFile");
                                            })
         ->description("BRITE seed file path")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>(
+            "NetworkFileGenerator", "BriteHandler", "BriteSeedFile"))
         ->check(CLI::ExistingFile);
 
     netgen
@@ -356,6 +396,8 @@ int main(int argc, char **argv)
                                            "nodePlacement");
                                    })
         ->description("BRITE node placement (1:Random, 2:HeavyTailed)")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator",
+                                                                "BriteHandler", "nodePlacement"))
         ->check(CLI::Range(1, 2));
 
     netgen
@@ -366,6 +408,8 @@ int main(int argc, char **argv)
                                            "numNeighbors");
                                    })
         ->description("BRITE neighbors per node")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator",
+                                                                "BriteHandler", "numNeighbors"))
         ->check(CLI::PositiveNumber);
 
     netgen
@@ -376,6 +420,8 @@ int main(int argc, char **argv)
                                            "innerGridSize");
                                    })
         ->description("BRITE inner grid size")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator",
+                                                                "BriteHandler", "innerGridSize"))
         ->check(CLI::PositiveNumber);
 
     netgen
@@ -386,6 +432,8 @@ int main(int argc, char **argv)
                                            "outerGridSize");
                                    })
         ->description("BRITE outer grid size")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator",
+                                                                "BriteHandler", "outerGridSize"))
         ->check(CLI::PositiveNumber);
 
     // [NetworkFileGenerator.BriteHandler.RTWaxman]
@@ -397,6 +445,8 @@ int main(int argc, char **argv)
                                            "RTWaxman", "growthType");
                                    })
         ->description("Waxman growth type (1:Incremental, 2:All)")
+        ->default_val(ConfigManager::Instance()->getConfig<int>(
+            "NetworkFileGenerator", "BriteHandler", "RTWaxman", "growthType"))
         ->check(CLI::Range(1, 2));
 
     netgen
@@ -407,6 +457,8 @@ int main(int argc, char **argv)
                                               "RTWaxman", "alpha");
                                       })
         ->description("Waxman alpha parameter (0-1)")
+        ->default_val(ConfigManager::Instance()->getConfig<double>(
+            "NetworkFileGenerator", "BriteHandler", "RTWaxman", "alpha"))
         ->check(CLI::Range(0.0, 1.0));
 
     netgen
@@ -417,6 +469,8 @@ int main(int argc, char **argv)
                                               "RTWaxman", "beta");
                                       })
         ->description("Waxman beta parameter (0-1)")
+        ->default_val(ConfigManager::Instance()->getConfig<double>(
+            "NetworkFileGenerator", "BriteHandler", "RTWaxman", "beta"))
         ->check(CLI::Range(0.0, 1.0));
 
     substrate_gen
@@ -426,6 +480,8 @@ int main(int argc, char **argv)
                                                    type, "NetworkFileGenerator", "SNTopologyType");
                                            })
         ->description("Substrate network topology type")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>("NetworkFileGenerator",
+                                                                        "SNTopologyType"))
         ->check(CLI::IsMember({"Waxman", "Barabasi", "DCNTwoTier", "DCNThreeTier", "DCNBCube",
                                "DCNFatTree", "HyperCube"}))
         ->required();
@@ -437,6 +493,8 @@ int main(int argc, char **argv)
                                            num, "NetworkFileGenerator", "SubstrateNodeNum");
                                    })
         ->description("Number of nodes in substrate network")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "SubstrateNodeNum"))
         ->check(CLI::PositiveNumber);
 
     vr_gen
@@ -446,6 +504,8 @@ int main(int argc, char **argv)
                                                    type, "NetworkFileGenerator", "VNTopologyType");
                                            })
         ->description("Virtual network topology type")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>("NetworkFileGenerator",
+                                                                        "VNTopologyType"))
         ->check(CLI::IsMember({"Waxman", "Barabasi"}))
         ->required();
 
@@ -456,6 +516,8 @@ int main(int argc, char **argv)
                                            time, "NetworkFileGenerator", "TotalTime");
                                    })
         ->description("Total simulation time in an arbitrary unit.")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "TotalTime"))
         ->check(CLI::PositiveNumber);
 
     vr_gen
@@ -466,59 +528,69 @@ int main(int argc, char **argv)
                                               "VNRLinkSplittingRate");
                                       })
         ->description("VNR link splitting probability (0-1)")
+        ->default_val(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator",
+                                                                   "VNRLinkSplittingRate"))
         ->check(CLI::Range(0.0, 1.0));
 
     // Distribution parameters
     auto add_dist_param = [&](CLI::App *sub_cmd, const std::string &name,
-                              const std::string &desc) {
+                              const std::string &config, const std::string &desc) {
         sub_cmd
             ->add_option_function<int>("--" + name + "-dist",
-                                       [name](int dist) {
+                                       [name, config](int dist) {
                                            ConfigManager::Instance()->setConfig(
-                                               dist, "NetworkFileGenerator", name + "Dist");
+                                               dist, "NetworkFileGenerator", config + "Dist");
                                        })
             ->description(desc + " distribution (0:Uniform, 1:Exponential, 2:Poisson)")
+            ->default_val(
+                ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", config + "Dist"))
             ->check(CLI::Range(0, 2));
 
         sub_cmd
             ->add_option_function<double>("--" + name + "-p1",
-                                          [name](double param) {
+                                          [name, config](double param) {
                                               ConfigManager::Instance()->setConfig(
                                                   param, "NetworkFileGenerator",
-                                                  name + "DistParam1");
+                                                  config + "DistParam1");
                                           })
-            ->description(desc + " distribution parameter 1");
+            ->description(desc + " distribution parameter 1")
+            ->default_val(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator",
+                                                                       config + "DistParam1"));
 
         sub_cmd
             ->add_option_function<double>("--" + name + "-p2",
-                                          [name](double param) {
+                                          [name, config](double param) {
                                               ConfigManager::Instance()->setConfig(
                                                   param, "NetworkFileGenerator",
-                                                  name + "DistParam2");
+                                                  config + "DistParam2");
                                           })
-            ->description(desc + " distribution parameter 2");
+            ->description(desc + " distribution parameter 2")
+            ->default_val(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator",
+                                                                       config + "DistParam2"));
 
         sub_cmd
             ->add_option_function<double>("--" + name + "-p3",
-                                          [name](double param) {
+                                          [name, config](double param) {
                                               ConfigManager::Instance()->setConfig(
                                                   param, "NetworkFileGenerator",
-                                                  name + "DistParam3");
+                                                  config + "DistParam3");
                                           })
-            ->description(desc + " distribution parameter 3");
+            ->description(desc + " distribution parameter 3")
+            ->default_val(ConfigManager::Instance()->getConfig<double>("NetworkFileGenerator",
+                                                                       config + "DistParam3"));
     };
 
-    add_dist_param(substrate_gen, "sn-cpu", "Substrate node CPU distribution");
-    add_dist_param(substrate_gen, "sl-bw", "Substrate link bandwidth distribution");
-    add_dist_param(substrate_gen, "sl-delay", "Substrate link delay distribution");
+    add_dist_param(substrate_gen, "sn-cpu", "SNCPU", "Substrate node CPU distribution");
+    add_dist_param(substrate_gen, "sl-bw", "SLBW", "Substrate link bandwidth distribution");
+    add_dist_param(substrate_gen, "sl-delay", "SLDelay", "Substrate link delay distribution");
 
-    add_dist_param(vr_gen, "vnr-num-nodes", "VNR number of nodes distribution");
-    add_dist_param(vr_gen, "vnr-duration", "VNR duration distribution");
-    add_dist_param(vr_gen, "vnr-arrival", "VNR arrival time distribution");
-    add_dist_param(vr_gen, "vnr-max-distance", "VNR max distance distribution");
-    add_dist_param(vr_gen, "vn-cpu", "Virtual node CPU distribution");
-    add_dist_param(vr_gen, "vl-bw", "Virtual link bandwidth distribution");
-    add_dist_param(vr_gen, "vl-delay", "Virtual link delay distribution");
+    add_dist_param(vr_gen, "vnr-num-nodes", "VNRNumNodes", "VNR number of nodes distribution");
+    add_dist_param(vr_gen, "vnr-duration", "VNRDuration", "VNR duration distribution");
+    add_dist_param(vr_gen, "vnr-arrival", "VNRArrival", "VNR arrival time distribution");
+    add_dist_param(vr_gen, "vnr-max-distance", "VNRMaxDistance", "VNR max distance distribution");
+    add_dist_param(vr_gen, "vn-cpu", "VNCPU", "Virtual node CPU distribution");
+    add_dist_param(vr_gen, "vl-bw", "VLBW", "Virtual link bandwidth distribution");
+    add_dist_param(vr_gen, "vl-delay", "VLDelay", "Virtual link delay distribution");
 
     // DCNBCube
     substrate_gen
@@ -529,6 +601,8 @@ int main(int argc, char **argv)
                                            "N");
                                    })
         ->description("Hosts per Bcube_0")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator",
+                                                                "FNSSHandler", "DCNBCube", "N"))
         ->check(CLI::PositiveNumber);
 
     substrate_gen
@@ -539,6 +613,8 @@ int main(int argc, char **argv)
                                            "K");
                                    })
         ->description("Bcube level")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator",
+                                                                "FNSSHandler", "DCNBCube", "K"))
         ->check(CLI::PositiveNumber);
 
     // DCNTwoTier
@@ -547,9 +623,11 @@ int main(int argc, char **argv)
                                    [](int n) {
                                        ConfigManager::Instance()->setConfig(
                                            n, "NetworkFileGenerator", "FNSSHandler", "DCNTwoTier",
-                                           "n_cores");
+                                           "n_core");
                                    })
         ->description("Number of core switches")
+        ->default_val(ConfigManager::Instance()->getConfig<int>(
+            "NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_core"))
         ->check(CLI::PositiveNumber);
 
     substrate_gen
@@ -560,6 +638,8 @@ int main(int argc, char **argv)
                                            "n_edges");
                                    })
         ->description("Number of edges per switch")
+        ->default_val(ConfigManager::Instance()->getConfig<int>(
+            "NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_edges"))
         ->check(CLI::PositiveNumber);
 
     substrate_gen
@@ -570,6 +650,8 @@ int main(int argc, char **argv)
                                            "n_hosts");
                                    })
         ->description("Number of hosts per switch")
+        ->default_val(ConfigManager::Instance()->getConfig<int>(
+            "NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "n_hosts"))
         ->check(CLI::PositiveNumber);
 
     substrate_gen
@@ -580,6 +662,8 @@ int main(int argc, char **argv)
                                            "coreBWMultiplier");
                                    })
         ->description("Core links bandwidth multiplier")
+        ->default_val(ConfigManager::Instance()->getConfig<int>(
+            "NetworkFileGenerator", "FNSSHandler", "DCNTwoTier", "coreBWMultiplier"))
         ->check(CLI::PositiveNumber);
 
     // DCNFatTree
@@ -591,6 +675,8 @@ int main(int argc, char **argv)
                                            "K");
                                    })
         ->description("Number of switch ports.")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator",
+                                                                "FNSSHandler", "DCNFatTree", "K"))
         ->check(CLI::PositiveNumber);
 
     substrate_gen
@@ -601,6 +687,8 @@ int main(int argc, char **argv)
                                            "coreBWMultiplier");
                                    })
         ->description("Core links bandwidth multiplier")
+        ->default_val(ConfigManager::Instance()->getConfig<int>(
+            "NetworkFileGenerator", "FNSSHandler", "DCNFatTree", "coreBWMultiplier"))
         ->check(CLI::PositiveNumber);
 
     // HyperCube
@@ -612,6 +700,8 @@ int main(int argc, char **argv)
                                            "size");
                                    })
         ->description("Hypercube dimenstion")
+        ->default_val(ConfigManager::Instance()->getConfig<int>(
+            "NetworkFileGenerator", "FNSSHandler", "HyperCube", "size"))
         ->check(CLI::PositiveNumber);
 
     // [vineyard.SubstrateNetwork]
@@ -622,6 +712,8 @@ int main(int argc, char **argv)
                                                    path, "vineyard", "SubstrateNetwork", "path");
                                            })
         ->description("Substrate network files directory")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>(
+            "vineyard", "SubstrateNetwork", "path"))
         ->check(CLI::ExistingDirectory);
 
     experiment
@@ -631,7 +723,9 @@ int main(int argc, char **argv)
                                                    name, "vineyard", "SubstrateNetwork",
                                                    "filename");
                                            })
-        ->description("Substrate network filename");
+        ->description("Substrate network filename")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>(
+            "vineyard", "SubstrateNetwork", "filename"));
 
     // [vineyard.VirtualNetRequest]
     experiment
@@ -641,6 +735,8 @@ int main(int argc, char **argv)
                                                    path, "vineyard", "VirtualNetRequest", "path");
                                            })
         ->description("Virtual network requests root directory")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>(
+            "vineyard", "VirtualNetRequest", "path"))
         ->check(CLI::ExistingDirectory);
 
     experiment
@@ -649,7 +745,9 @@ int main(int argc, char **argv)
                                                ConfigManager::Instance()->setConfig(
                                                    dir, "vineyard", "VirtualNetRequest", "dir");
                                            })
-        ->description("Virtual network requests directory name");
+        ->description("Virtual network requests directory name")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>(
+            "vineyard", "VirtualNetRequest", "dir"));
 
     experiment
         ->add_option_function<std::string>("-e,--req-file-ext",
@@ -658,7 +756,9 @@ int main(int argc, char **argv)
                                                    ext, "vineyard", "VirtualNetRequest",
                                                    "reqfileExtension");
                                            })
-        ->description("Virtual network request file extension (txt)");
+        ->description("Virtual network request file extension (txt)")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>(
+            "vineyard", "VirtualNetRequest", "reqfileExtension"));
 
     // [vineyard.Constants]
     experiment
@@ -667,7 +767,9 @@ int main(int argc, char **argv)
                                           ConfigManager::Instance()->setConfig(
                                               mult, "vineyard", "Constants", "revenueMultiplier");
                                       })
-        ->description("Revenue calculation multiplier");
+        ->description("Revenue calculation multiplier")
+        ->default_val(ConfigManager::Instance()->getConfig<double>("vineyard", "Constants",
+                                                                   "revenueMultiplier"));
 
     experiment
         ->add_option_function<double>("-M,--cost-multiplier",
@@ -675,9 +777,10 @@ int main(int argc, char **argv)
                                           ConfigManager::Instance()->setConfig(
                                               mult, "vineyard", "Constants", "costMultiplier");
                                       })
-        ->description("Cost calculation multiplier");
+        ->description("Cost calculation multiplier")
+        ->default_val(ConfigManager::Instance()->getConfig<double>("vineyard", "Constants",
+                                                                   "costMultiplier"));
 
-    // [vineyard.Configs]
     vineyard_exp
         ->add_option_function<std::string>("-t,--node-map-type",
                                            [](const std::string &type) {
@@ -686,6 +789,8 @@ int main(int argc, char **argv)
                                            })
         ->required()
         ->description("Vineyard node mapping type")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>("vineyard", "Configs",
+                                                                        "nodeMappingType"))
         ->check(CLI::IsMember({"deterministic", "randomized"}));
 
     vineyard_exp
@@ -695,6 +800,8 @@ int main(int argc, char **argv)
                                               eps, "vineyard", "Constants", "epsilon");
                                       })
         ->description("Numerical comparison epsilon")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<double>("vineyard", "Constants", "epsilon"))
         ->check(CLI::PositiveNumber);
 
     vineyard_exp
@@ -703,7 +810,9 @@ int main(int argc, char **argv)
                                 ConfigManager::Instance()->setConfig(set > 0, "vineyard",
                                                                      "Configs", "setAlpha");
                             })
-        ->description("Enable alpha parameter in Vineyard");
+        ->description("Enable alpha parameter in Vineyard")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setAlpha"));
 
     vineyard_exp
         ->add_flag_function("--set-beta",
@@ -711,7 +820,9 @@ int main(int argc, char **argv)
                                 ConfigManager::Instance()->setConfig(set > 0, "vineyard",
                                                                      "Configs", "setBeta");
                             })
-        ->description("Enable beta parameter in Vineyard");
+        ->description("Enable beta parameter in Vineyard")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<bool>("vineyard", "Configs", "setBeta"));
 
     // [vineyard.glpk]
     vineyard_exp
@@ -721,6 +832,8 @@ int main(int argc, char **argv)
                                                    path, "vineyard", "glpk", "LPmodelFile");
                                            })
         ->description("GLPK LP model file")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "LPmodelFile"))
         ->check(CLI::ExistingFile);
 
     vineyard_exp
@@ -730,6 +843,8 @@ int main(int argc, char **argv)
                                                    path, "vineyard", "glpk", "LPdataFile");
                                            })
         ->description("GLPK LP data file")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "LPdataFile"))
         ->check(CLI::ExistingFile);
 
     experiment
@@ -739,6 +854,8 @@ int main(int argc, char **argv)
                                                    path, "vineyard", "glpk", "MCFmodelFile");
                                            })
         ->description("GLPK MCF model file")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "MCFmodelFile"))
         ->check(CLI::ExistingFile);
 
     experiment
@@ -748,15 +865,19 @@ int main(int argc, char **argv)
                                                    path, "vineyard", "glpk", "MCFdataFile");
                                            })
         ->description("GLPK MCF data file")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "MCFdataFile"))
         ->check(CLI::ExistingFile);
 
     experiment
         ->add_flag_function("-E,--enable-glpk-terminal",
-                            [](long enabled) {
-                                ConfigManager::Instance()->setConfig(enabled > 0, "vineyard",
-                                                                     "glpk", "terminalEnabled");
+                            [](int enabled) {
+                                ConfigManager::Instance()->setConfig(enabled, "vineyard", "glpk",
+                                                                     "terminalEnabled");
                             })
-        ->description("Enable GLPK terminal output");
+        ->description("Enable GLPK terminal output")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<int>("vineyard", "glpk", "terminalEnabled"));
 
     // [MCTS.Simulator.Knowledge]
     mcvne_exp
@@ -766,6 +887,8 @@ int main(int argc, char **argv)
                                            level, "MCTS", "Simulator", "Knowledge", "TreeLevel");
                                    })
         ->description("MCTS tree knowledge level (0:PURE, 1:LEGAL, 2:SMART)")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("MCTS", "Simulator", "Knowledge",
+                                                                "TreeLevel"))
         ->check(CLI::Range(0, 2));
 
     mcvne_exp
@@ -776,6 +899,8 @@ int main(int argc, char **argv)
                                            "RolloutLevel");
                                    })
         ->description("MCTS rollout knowledge level (0:PURE, 1:LEGAL, 2:SMART)")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("MCTS", "Simulator", "Knowledge",
+                                                                "RolloutLevel"))
         ->check(CLI::Range(0, 2));
 
     mcvne_exp
@@ -786,6 +911,8 @@ int main(int argc, char **argv)
                                            "SmartTreeCount");
                                    })
         ->description("MCTS smart tree count")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("MCTS", "Simulator", "Knowledge",
+                                                                "SmartTreeCount"))
         ->check(CLI::PositiveNumber);
 
     mcvne_exp
@@ -796,6 +923,8 @@ int main(int argc, char **argv)
                                               "SmartTreeValue");
                                       })
         ->description("MCTS smart tree value")
+        ->default_val(ConfigManager::Instance()->getConfig<double>("MCTS", "Simulator",
+                                                                   "Knowledge", "SmartTreeValue"))
         ->check(CLI::PositiveNumber);
 
     // [MCTS.Simulator]
@@ -806,6 +935,8 @@ int main(int argc, char **argv)
                                               discount, "MCTS", "Simulator", "discount");
                                       })
         ->description("MCTS discount factor (0-1]")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<double>("MCTS", "Simulator", "discount"))
         ->check(CLI::Range(0.0, 1.0));
 
     mcvne_exp
@@ -815,6 +946,8 @@ int main(int argc, char **argv)
                                            range, "MCTS", "Simulator", "rewardRange");
                                    })
         ->description("MCTS reward range")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<int>("MCTS", "Simulator", "rewardRange"))
         ->check(CLI::PositiveNumber);
 
     // [MCTS.MCTSParameters]
@@ -825,6 +958,8 @@ int main(int argc, char **argv)
                                            depth, "MCTS", "MCTSParameters", "MaxDepth");
                                    })
         ->description("MCTS maximum search depth")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "MaxDepth"))
         ->check(CLI::PositiveNumber);
 
     mcvne_exp
@@ -834,6 +969,8 @@ int main(int argc, char **argv)
                                            num, "MCTS", "MCTSParameters", "NumSimulations");
                                    })
         ->description("MCTS number of simulations (self-plays) to generate a rollout")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "NumSimulations"))
         ->check(CLI::PositiveNumber);
 
     mcvne_exp
@@ -843,6 +980,8 @@ int main(int argc, char **argv)
                                            count, "MCTS", "MCTSParameters", "ExpandCount");
                                    })
         ->description("MCTS nodes to expand per step")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "ExpandCount"))
         ->check(CLI::PositiveNumber);
 
     mcvne_exp
@@ -851,7 +990,9 @@ int main(int argc, char **argv)
                                 ConfigManager::Instance()->setConfig(
                                     autoexp > 0, "MCTS", "MCTSParameters", "AutoExploration");
                             })
-        ->description("Enable MCTS automatic exploration");
+        ->description("Enable MCTS automatic exploration")
+        ->default_val(ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters",
+                                                                 "AutoExploration"));
 
     mcvne_exp
         ->add_option_function<double>("--exploration-constant",
@@ -860,6 +1001,8 @@ int main(int argc, char **argv)
                                               c, "MCTS", "MCTSParameters", "ExplorationConstant");
                                       })
         ->description("MCTS exploration constant")
+        ->default_val(ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters",
+                                                                   "ExplorationConstant"))
         ->check(CLI::PositiveNumber);
 
     mcvne_exp
@@ -868,7 +1011,9 @@ int main(int argc, char **argv)
                                 ConfigManager::Instance()->setConfig(use > 0, "MCTS",
                                                                      "MCTSParameters", "UseRave");
                             })
-        ->description("Enable MCTS RAVE");
+        ->description("Enable MCTS RAVE")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "UseRave"));
 
     mcvne_exp
         ->add_option_function<double>("--rave-discount",
@@ -877,6 +1022,8 @@ int main(int argc, char **argv)
                                               discount, "MCTS", "MCTSParameters", "RaveDiscount");
                                       })
         ->description("MCTS RAVE discount factor")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "RaveDiscount"))
         ->check(CLI::Range(0.0, 1.0));
 
     mcvne_exp
@@ -886,6 +1033,8 @@ int main(int argc, char **argv)
                                               c, "MCTS", "MCTSParameters", "RaveConstant");
                                       })
         ->description("MCTS RAVE constant")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<double>("MCTS", "MCTSParameters", "RaveConstant"))
         ->check(CLI::PositiveNumber);
 
     mcvne_exp
@@ -894,7 +1043,9 @@ int main(int argc, char **argv)
                                 ConfigManager::Instance()->setConfig(
                                     disable > 0, "MCTS", "MCTSParameters", "DisableTree");
                             })
-        ->description("Disable MCTS tree (use rollout only)");
+        ->description("Disable MCTS tree (use rollout only)")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters", "DisableTree"));
 
     mcvne_exp
         ->add_flag_function("--single-player-mcts",
@@ -902,7 +1053,9 @@ int main(int argc, char **argv)
                                 ConfigManager::Instance()->setConfig(
                                     use > 0, "MCTS", "MCTSParameters", "UseSinglePlayerMCTS");
                             })
-        ->description("Enable single-player MCTS");
+        ->description("Enable single-player MCTS")
+        ->default_val(ConfigManager::Instance()->getConfig<bool>("MCTS", "MCTSParameters",
+                                                                 "UseSinglePlayerMCTS"));
 
     mcvne_exp
         ->add_option_function<int>("--spmcts-constant",
@@ -911,6 +1064,8 @@ int main(int argc, char **argv)
                                            c, "MCTS", "MCTSParameters", "SPMCTSConstant");
                                    })
         ->description("Single-player MCTS constant")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters", "SPMCTSConstant"))
         ->check(CLI::PositiveNumber);
 
     mcvne_exp
@@ -920,6 +1075,8 @@ int main(int argc, char **argv)
                                            type, "MCTS", "MCTSParameters", "ParallelizationType");
                                    })
         ->description("MCTS parallelization type (0:ActionRoot, 1:FullTree)")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("MCTS", "MCTSParameters",
+                                                                "ParallelizationType"))
         ->check(CLI::Range(0, 1));
 
     // [MCVNE.VNEMCTSSimulator]
@@ -929,7 +1086,9 @@ int main(int argc, char **argv)
                                 ConfigManager::Instance()->setConfig(
                                     set > 0, "MCVNE", "VNEMCTSSimulator", "setAlpha");
                             })
-        ->description("Enable MCVNE substrate links weight (alpha)");
+        ->description("Enable MCVNE substrate links weight (alpha)")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator", "setAlpha"));
 
     mcvne_exp
         ->add_flag_function("--set-beta",
@@ -937,7 +1096,9 @@ int main(int argc, char **argv)
                                 ConfigManager::Instance()->setConfig(
                                     set > 0, "MCVNE", "VNEMCTSSimulator", "setBeta");
                             })
-        ->description("Enable MCVNE substrate node weight (beta)");
+        ->description("Enable MCVNE substrate node weight (beta)")
+        ->default_val(
+            ConfigManager::Instance()->getConfig<bool>("MCVNE", "VNEMCTSSimulator", "setBeta"));
 
     // [MCVNE.NodeEmbeddingAlgo]
     mcvne_exp
@@ -948,6 +1109,8 @@ int main(int argc, char **argv)
                                                    "LinkEmbedder");
                                            })
         ->description("MCVNE link embedding algorithm for self-plays")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>(
+            "MCVNE", "NodeEmbeddingAlgo", "LinkEmbedder"))
         ->check(CLI::IsMember({"MCF", "BFS-SP"}));
 
     // [GRC]
@@ -956,6 +1119,7 @@ int main(int argc, char **argv)
             "--alpha",
             [](double alpha) { ConfigManager::Instance()->setConfig(alpha, "GRC", "alpha"); })
         ->description("GRC computing resources unit price")
+        ->default_val(ConfigManager::Instance()->getConfig<double>("GRC", "alpha"))
         ->check(CLI::PositiveNumber);
 
     grc_exp
@@ -963,6 +1127,7 @@ int main(int argc, char **argv)
             "--beta",
             [](double beta) { ConfigManager::Instance()->setConfig(beta, "GRC", "beta"); })
         ->description("GRC bandwidth resources unit price")
+        ->default_val(ConfigManager::Instance()->getConfig<double>("GRC", "beta"))
         ->check(CLI::PositiveNumber);
 
     grc_exp
@@ -970,6 +1135,7 @@ int main(int argc, char **argv)
             "--sigma",
             [](double sigma) { ConfigManager::Instance()->setConfig(sigma, "GRC", "sigma"); })
         ->description("GRC convergence threshold")
+        ->default_val(ConfigManager::Instance()->getConfig<double>("GRC", "sigma"))
         ->check(CLI::PositiveNumber);
 
     grc_exp
@@ -979,11 +1145,10 @@ int main(int argc, char **argv)
                                                                                "dampingFactor");
                                       })
         ->description("GRC damping factor (0-1)")
+        ->default_val(ConfigManager::Instance()->getConfig<double>("GRC", "dampingFactor"))
         ->check(CLI::Range(0.0, 1.0));
 
-    CLI11_PARSE(app, argc, argv);
-    std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-    std::cout << ConfigManager::Instance()->getConfig<int>("core", "rngSeed") << std::endl;
+    CLI11_PARSE(app, prefix_app.remaining_for_passthrough(true));
 
     return 0;
 }
