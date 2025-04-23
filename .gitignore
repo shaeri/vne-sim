@@ -82,3 +82,4 @@ vne-sim.kdev4
 out.txt
 vne-mcts.xccheckout
 .settings
+.aider*

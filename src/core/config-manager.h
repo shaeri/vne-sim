@@ -42,16 +42,20 @@ class ConfigManager
     template <typename T, typename... ARGS>
     const T getConfig(const ARGS &...conf) const;
     template <typename T, typename... ARGS>
-    bool setConfig(T &val, const ARGS &...conf);
+    bool setConfig(T val, const ARGS &...conf);
+    void loadConfig(const std::string &p);
+    void lockConfigs();
     ~ConfigManager();
 
    protected:
     ConfigManager();
+    ConfigManager(const std::string &p);
 
    private:
     mutable bool lock_configs;
     static std::shared_ptr<ConfigManager> _instance;
     toml::basic_value<toml::type_config> _pt;
+    std::string config_path;
 };
 
 // Base case: Set the value for the final key
@@ -95,13 +99,10 @@ template <typename T, typename... ARGS>
 const T ConfigManager::getConfig(const ARGS &...conf) const
 {
     //if its the first time that a config being read write and reload the config file.
-    if (!lock_configs)
-        lock_configs = true;
-
     return toml::find<T>(_pt, conf...);
 }
 template <typename T, typename... ARGS>
-bool ConfigManager::setConfig(T &val, const ARGS &...conf)
+bool ConfigManager::setConfig(T val, const ARGS &...conf)
 {
     if (lock_configs) {
         std::cerr << "Error in ConfigManager!!!" << std::endl;

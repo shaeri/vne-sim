@@ -37,6 +37,10 @@ std::shared_ptr<ConfigManager> ConfigManager::Instance()
     }
     return _instance;
 }
+void ConfigManager::lockConfigs()
+{
+    lock_configs = true;
+}
 void ConfigManager::Destroy()
 {
     if (_instance == nullptr)
@@ -45,12 +49,24 @@ void ConfigManager::Destroy()
     _instance = nullptr;
     return;
 }
-ConfigManager::ConfigManager() : lock_configs(false), _pt(toml::parse(vne::config_path)) {}
+void ConfigManager::loadConfig(const std::string &p)
+{
+    _instance = std::shared_ptr<ConfigManager>(new ConfigManager(p));
+}
+ConfigManager::ConfigManager() : lock_configs(false), _pt(toml::parse(vne::config_path))
+{
+    config_path = vne::config_path;
+}
+ConfigManager::ConfigManager(const std::string &p) : lock_configs(false), _pt(toml::parse(p))
+{
+    config_path = p;
+}
+
 ConfigManager::~ConfigManager() {}
 void ConfigManager::saveConfigFile()
 {
     std::ofstream conf;
-    conf.open(vne::config_path);
+    conf.open(config_path);
     conf << toml::format(_pt);
     conf.close();
 }
