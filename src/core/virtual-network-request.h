@@ -2,9 +2,9 @@
  * @file request.h
  * @author Soroush Haeri <soroosh.haeri@me.com>
  * @date Jun 12, 2014
- * 
+ *
  * @copyright Copyright (c) Jun 12, 2014                      SOROUSH HAERI
- *            All Rights Reserved 
+ *            All Rights Reserved
  *
  *            Permission to use, copy, modify, and distribute this software and its
  *            documentation for any purpose and without fee is hereby granted, provided
@@ -44,8 +44,6 @@ class VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>
                   "First template argument must be a VirtualNode derivative.");
     static_assert(std::is_base_of<VirtualLink<LINKRES...>, LINKCLASS<LINKRES...>>::value,
                   "Second template argument must be a VirtualLink derivative.");
-    //template<typename, typename> friend class NodeEmbeddingAlgorithm;
-    //template<typename, typename> friend class LinkEmbeddingAlgorithm;
 
    public:
     VirtualNetworkRequest(
@@ -63,13 +61,7 @@ class VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>
     double getQueuingTime() const { return queuing_time; };
     void setQueuingTime(double t) { queuing_time = t; }
     double getDepartureTime() const { return arrivalTime + duration + proc_time + queuing_time; };
-    //bool successfulEmbedding () const {return successful_embedding;};
-    //void setEmbeddingResult (bool arg) {successful_embedding = arg;};
-    bool operator<(
-        VirtualNetworkRequest<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> &rhs) const
-    {
-        return this->time < rhs.getTime();
-    };
+
     std::shared_ptr<Network<NODECLASS<NODERES...>, LINKCLASS<LINKRES...>>> getVN() const
     {
         return vn;
