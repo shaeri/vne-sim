@@ -483,7 +483,7 @@ int main(int argc, char **argv)
         ->default_val(ConfigManager::Instance()->getConfig<std::string>("NetworkFileGenerator",
                                                                         "SNTopologyType"))
         ->check(CLI::IsMember({"Waxman", "Barabasi", "DCNTwoTier", "DCNThreeTier", "DCNBCube",
-                               "DCNFatTree", "HyperCube"}))
+                               "DCNFatTree", "HyperCube", "ButterFly"}))
         ->required();
 
     substrate_gen
@@ -699,10 +699,22 @@ int main(int argc, char **argv)
                                            n, "NetworkFileGenerator", "FNSSHandler", "HyperCube",
                                            "size");
                                    })
-        ->description("Hypercube dimenstion")
+        ->description("Hypercube dimension d (2^d hosts)")
         ->default_val(ConfigManager::Instance()->getConfig<int>(
             "NetworkFileGenerator", "FNSSHandler", "HyperCube", "size"))
         ->check(CLI::PositiveNumber);
+
+    substrate_gen
+            ->add_option_function<int>("--butterfly-size",
+                                       [](int n) {
+                                           ConfigManager::Instance()->setConfig(
+                                                   n, "NetworkFileGenerator", "FNSSHandler", "ButterFly",
+                                                   "size");
+                                       })
+            ->description("ButterFly dimension d (2^d compute hosts)")
+            ->default_val(ConfigManager::Instance()->getConfig<int>(
+                    "NetworkFileGenerator", "FNSSHandler", "ButterFly", "size"))
+            ->check(CLI::PositiveNumber);
 
     // [vineyard.SubstrateNetwork]
     experiment
