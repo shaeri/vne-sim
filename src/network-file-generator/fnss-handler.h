@@ -79,11 +79,6 @@ namespace nfg
                 HyperCube();
                 int size;
             } hypercube;
-
-            struct ButterFly {
-                ButterFly();
-                int size;
-            } butterfly;
         };
         virtual std::shared_ptr<Network<A, B>> getNetwork(
             Topology_Type tt, int n, Distribution cpu_dist, double cpu_param1, double cpu_param2,
@@ -123,12 +118,6 @@ namespace nfg
             Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
             Distribution delay_dist, double delay_param1, double delay_param2,
             double delay_param3);
-
-        std::shared_ptr<Network<A, B>> getNetwork_ButterFly(
-                Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-                Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-                Distribution delay_dist, double delay_param1, double delay_param2,
-                double delay_param3);
     };
 
     template <typename A, typename B>
@@ -174,10 +163,6 @@ namespace nfg
                                          delay_param2, delay_param3);
         else if (tt == Topology_Type::HyperCube)
             return getNetwork_HyperCube(cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist,
-                                        bw_param1, bw_param2, bw_param3, delay_dist, delay_param1,
-                                        delay_param2, delay_param3);
-        else if (tt == Topology_Type::ButterFly)
-            return getNetwork_ButterFly(cpu_dist, cpu_param1, cpu_param2, cpu_param3, bw_dist,
                                         bw_param1, bw_param2, bw_param3, delay_dist, delay_param1,
                                         delay_param2, delay_param3);
     }
@@ -414,10 +399,15 @@ namespace nfg
     {
         std::stringstream pythonScript;
         vne::utilities::PythonRunner pr;
-        pythonScript << "import fnss\n";
-        pythonScript << "import vnelib\n";
-        pythonScript << "topology = " << "vnelib.hypercube_topology(k=" << params.hypercube.size << ")\n";
-        pythonScript << "fnss.write_topology(topology, '.hypercube_topology.xml')\n";
+        pythonScript << "import fnss\n"
+                     << "import networkx as nx\n"
+                     << "\n"
+                     << "n = 6\n"
+                     << "intercon = fnss.topologies.topology.Topology(nx.hypercube_graph("
+                     << params.hypercube.size << "))\n"
+                     << "intercon.name = 'hypergraph_topology(n=%d, size=%d)' % (n, 2**n)\n"
+                     << "intercon.graph['type'] = 'hypergraph'\n"
+                     << "fnss.write_topology(intercon, '.hypercube_topology.xml')\n";
         pr.run(pythonScript.str());
         if (pr.get_status_code() != 0) {
             vne::utilities::Logger::Instance()->logFatal(
@@ -476,85 +466,6 @@ namespace nfg
     }
 
     template <typename A, typename B>
-    std::shared_ptr<Network<A, B>> FNSSHandler<A, B>::getNetwork_ButterFly(
-            Distribution cpu_dist, double cpu_param1, double cpu_param2, double cpu_param3,
-            Distribution bw_dist, double bw_param1, double bw_param2, double bw_param3,
-            Distribution delay_dist, double delay_param1, double delay_param2, double delay_param3)
-    {
-        std::stringstream pythonScript;
-        vne::utilities::PythonRunner pr;
-        pythonScript << "import fnss\n";
-        pythonScript << "import vnelib\n";
-        pythonScript << "topology = " << "vnelib.butterfly_topology(k=" << params.butterfly.size << ")\n";
-        pythonScript << "fnss.write_topology(topology, '.butterfly_topology.xml')\n";
-        pr.run(pythonScript.str());
-        if (pr.get_status_code() != 0) {
-            vne::utilities::Logger::Instance()->logFatal(
-                    "Python script to generate network failed with python error result code.");
-            exit(-1);
-        }
-
-        fnss::Topology t = fnss::Parser::parseTopology(".butterfly_topology.xml");
-        std::set<std::pair<std::string, std::string>> edges = t.getAllEdges();
-        std::set<std::string> nodes = t.getAllNodes();
-        assert(nodes.size() > 0 && edges.size() > 0);
-
-        std::shared_ptr<Network<A, B>> net(new Network<A, B>());
-        std::map<std::string, int> fnssNodeIdToVNESimNodeId;
-
-        for (set<string>::iterator it = nodes.begin(); it != nodes.end(); it++) {
-            fnss::Node fnssNode = t.getNode(*it);
-
-            std::shared_ptr<A> n = nullptr;
-            // If the node is a host create it with a cpu capacity
-            if (fnssNode.getProperty("type").compare("host") == 0) {
-                numHosts++;
-                double node_cpu = RNG::Instance()
-                        ->sampleDistribution<double, double, double, double>(
-                                cpu_dist, std::tuple<double, double, double>(
-                                        cpu_param1, cpu_param2, cpu_param3));
-                n.reset(new A(node_cpu, 0, 0));
-            } else {
-                numSwitches++;
-                n.reset(new A(0, 0, 0));
-            }
-
-            double node_cpu = RNG::Instance()->sampleDistribution<double, double, double, double>(
-                    cpu_dist, std::tuple<double, double, double>(cpu_param1, cpu_param2, cpu_param3));
-            n.reset(new A(node_cpu, 0, 0));
-
-            fnssNodeIdToVNESimNodeId[*it] = n->getId();
-            net->addNode(n);
-        }
-
-        for (set<pair<string, string>>::iterator it = edges.begin(); it != edges.end(); it++) {
-            double link_bw = RNG::Instance()->sampleDistribution<double, double, double, double>(
-                    bw_dist, std::tuple<double, double, double>(bw_param1, bw_param2, bw_param3));
-
-            double link_delay = RNG::Instance()
-                    ->sampleDistribution<double, double, double, double>(
-                            delay_dist, std::tuple<double, double, double>(
-                                    delay_param1, delay_param2, delay_param3));
-
-            std::shared_ptr<B> l = nullptr;
-            int nodeFromId = fnssNodeIdToVNESimNodeId[(*it).first];
-            fnss::Node fnssNodeFrom = t.getNode((*it).first);
-            int nodeToId = fnssNodeIdToVNESimNodeId[(*it).second];
-            fnss::Node fnssNodeTo = t.getNode((*it).second);
-
-            l.reset(new B(params.fattree.coreBWMultiplier * link_bw, link_delay, nodeFromId,
-                          nodeToId));
-
-            net->addLink(l);
-        }
-        this->pt["n_switches"] = numSwitches;
-        this->pt["n_hosts"] = numHosts;
-        this->pt["n_links"] = net->getNumLinks();
-
-        return net;
-    }
-
-    template <typename A, typename B>
     FNSSHandler<A, B>::Parameters::DCNBCube::DCNBCube()
         : n(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler",
                                                       "DCNBCube", "N")),
@@ -593,13 +504,6 @@ namespace nfg
     }
 
     template <typename A, typename B>
-    FNSSHandler<A, B>::Parameters::ButterFly::ButterFly()
-            : size(ConfigManager::Instance()->getConfig<int>("NetworkFileGenerator", "FNSSHandler",
-                                                             "ButterFly", "size"))
-    {
-    }
-
-    template <typename A, typename B>
     FNSSHandler<A, B>::Parameters::Parameters()
         : bcube(DCNBCube()), twotier(DCNTwoTier()), fattree(DCNFatTree())
     {
@@ -624,8 +528,6 @@ namespace nfg
             params.twotier.coreBWMultiplier;
         this->pt["NetworkFileGenerator"]["FNSSHandler"]["HyperCube"]["size"] = params.hypercube
                                                                                    .size;
-        this->pt["NetworkFileGenerator"]["FNSSHandler"]["ButterFly"]["size"] =
-                params.butterfly.size;
     }
 }  // namespace nfg
 }  // namespace vne
