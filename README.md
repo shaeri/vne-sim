@@ -76,6 +76,8 @@ VNE-Sim is designed with a modular architecture, comprising the following key co
    python3 setup.py install --user
    # alternatively you can install it system wide
    sudo python3 setup.py install
+   # arrange it so that the python installation can find the venlib.py library (assuming bash)
+   export PYTHONPATH=<PATH_TO_ROOT_OF_VNESIM_PROJECT>/scripts
    ```
 
 3. **Compile VNE-Sim**
