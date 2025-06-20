@@ -1,0 +1,6 @@
+build
+setuptools
+looseversion
+numpy
+networkx
+mako

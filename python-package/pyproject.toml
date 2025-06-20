@@ -1,0 +1,11 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vnelib"
+version = "0.0.1"
+description = "vnelib python component to vnesim"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [ "fnss >= 0.9.1", "looseversion" ]
