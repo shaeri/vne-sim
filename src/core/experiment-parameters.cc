@@ -149,6 +149,9 @@ void ExperimentParameters::setSNNetParams(vne::ConfigType &pt, Topology_Type tt)
     } else if (tt == Topology_Type::HyperCube) {
         sn_hypercube_size = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "HyperCube",
                                             "size");
+    } else if (tt == Topology_Type::ButterFly) {
+        sn_butterfly_size = toml::find<int>(pt, "NetworkFileGenerator", "FNSSHandler", "ButterFly",
+                                            "size");
     } else {
         int node_placement = toml::find<int>(pt, "NetworkFileGenerator", "BriteHandler",
                                              "nodePlacement");

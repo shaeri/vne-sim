@@ -66,7 +66,8 @@ enum class Topology_Type {
     Waxman,
     Barabasi,
     Erdos,
-    HyperCube
+    HyperCube,
+    ButterFly
 };
 
 static inline std::string get_Topology_Type_Str(Topology_Type tt)
@@ -87,6 +88,8 @@ static inline std::string get_Topology_Type_Str(Topology_Type tt)
         return std::string("Erdos");
     if (tt == Topology_Type::HyperCube)
         return std::string("HyperCube");
+    if (tt == Topology_Type::ButterFly)
+        return std::string("ButterFly");
 
     // Fallthrough
     return std::string("Uniform");
@@ -110,6 +113,8 @@ static inline Topology_Type get_Topology_Type(std::string tt)
         return Topology_Type::Erdos;
     if (tt.compare("HyperCube") == 0)
         return Topology_Type::HyperCube;
+    if (tt.compare("ButterFly") == 0)
+        return Topology_Type::ButterFly;
 
     // Fallthrough
     return Topology_Type::DCNTwoTier;
