@@ -219,7 +219,10 @@ int main(int argc, char **argv)
     CLI::App app{"VNE-SIM: A Virtual Network Embedding Simulator", "vnesim"};
 
     // Set callback to lock the configs after parsing of the arguments is finished
-    app.parse_complete_callback([]() { ConfigManager::Instance()->lockConfigs(); });
+    app.parse_complete_callback([]() {
+        ConfigManager::Instance()->lockConfigs();
+        Logger::Instance();
+    });
 
     // Enable help all flag to show all subcommands
     app.set_help_all_flag("--help-all", "Expand all help");
@@ -856,8 +859,25 @@ int main(int argc, char **argv)
                                            })
         ->description("GLPK LP data file")
         ->default_val(
-            ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "LPdataFile"))
-        ->check(CLI::ExistingFile);
+            ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "LPdataFile"));
+
+    vineyard_exp
+        ->add_option_function<int>("--lptimelimit",
+                              [](const int val) {
+                                  ConfigManager::Instance()->setConfig(val, "vineyard", "glpk", "lptimelimit");
+                              })
+        ->description("Time limit (in seconds) for each LP instance (0=unlimited)")
+        ->default_val(ConfigManager::Instance()->getConfig<int>("vineyard", "glpk", "lptimelimit"))
+        ->check(CLI::PositiveNumber);
+
+    vineyard_exp
+        ->add_option_function<std::string>("--lpalgorithm",
+                      [](const std::string &algo) {
+                            ConfigManager::Instance()->setConfig(algo, "vineyard", "glpk", "lpalgorithm");
+                      })
+        ->description("LP solution algorithm ")
+        ->default_val(ConfigManager::Instance()->getConfig<std::string>("vineyard", "glpk", "lpalgorithm"))
+        ->check(CLI::IsMember({"simplex", "interior"}));
 
     experiment
         ->add_option_function<std::string>("-o,--mcf-model",

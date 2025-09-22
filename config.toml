@@ -132,6 +132,9 @@ coreBWMultiplier = 1
 [NetworkFileGenerator.FNSSHandler.HyperCube]
 size = 6
 
+[NetworkFileGenerator.FNSSHandler.ButterFly]
+size = 4
+
 [vineyard.SubstrateNetwork]
 # Path to the folder containing the substrate network file
 path = "./nets/substrate"
@@ -167,6 +170,10 @@ MCFmodelFile = "./src/Vineyard/files/lp/MCF.mod"
 MCFdataFile = "./src/Vineyard/files/lp/MCF.dat"
 # 0 disabled, 1 enabled
 terminalEnabled = 0
+# timelimit for LP algorithms to run in seconds, 0 is unlimited.
+lptimelimit = 0
+# LP Solution Algorithm {simplex, interior}
+lpalgorithm = "simplex"
 
 [MCTS.Simulator.Knowledge]
 # 0:PURE 1:LEGAL 2:SMART

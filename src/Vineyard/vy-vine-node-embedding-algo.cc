@@ -267,11 +267,16 @@ namespace vineyard
         } else
             glp_erase_prob(lp_problem);
 
+        auto cm = ConfigManager::Instance();
+        std::string algo = cm->getConfig<std::string>("vineyard", "glpk", "lpalgorithm");
+        int tm_lim = cm->getConfig<int>("vineyard", "glpk", "lptimelimit");
+
         int ret;
         glp_smcp param;
         glp_init_smcp(&param);
         //turn on the preprocessor
         param.presolve = GLP_ON;
+
 
         glp_tran *tran;
         tran = glp_mpl_alloc_wksp();
@@ -295,7 +300,26 @@ namespace vineyard
         }
         glp_mpl_build_prob(tran, lp_problem);
 
-        glp_simplex(this->lp_problem, &param);
+        if ( algo == "simplex" ) {
+            if ( tm_lim != 0 ) {
+                param.tm_lim = tm_lim * 1000;
+            }
+            int ret = glp_simplex(this->lp_problem, &param);
+            switch (ret) {
+                case GLP_ETMLIM:
+                    BOOST_LOG_TRIVIAL(warning) << "SIMPLEX Method exceeded time limit!";
+                    break;
+                case 0:
+                    break;
+                default:
+                    BOOST_LOG_TRIVIAL(warning) << "SIMPLEX Method returned error code " << ret;
+            };
+        } else if ( algo == "interior" ) {
+            glp_interior(this->lp_problem, NULL);
+        } else {
+            std::cerr << "Unknown LP algorith.  It must be one of: simplex, interior";
+            exit(-1);
+        }
 
         ret = glp_mpl_postsolve(tran, lp_problem, GLP_SOL);
         if (ret != 0) {
